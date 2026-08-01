@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      viewport meta tag = makes the site responsive on mobile devices.
+      Without it, mobile browsers zoom out and the site looks tiny.
+    -->
+    <title>DocConnect - Find & Book Doctors</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  </head>
+  <body>
+    <!--
+      This is the ONLY HTML file in a React app (Single Page Application).
+      React takes over the <div id="root"> and renders everything inside it.
+      The actual content comes from JavaScript (React components).
+      
+      When you navigate between "pages", React just swaps what's inside this div.
+      The browser never actually loads a new HTML page — that's why it's so fast!
+    -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!--
+      type="module" = use ES modules (modern JavaScript imports)
+      src="/src/main.jsx" = the JavaScript entry point
+    -->
+  </body>
+</html>

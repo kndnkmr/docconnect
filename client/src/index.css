@@ -1,0 +1,51 @@
+/* ============================================
+   Global Styles - Tailwind CSS Entry Point
+   ============================================
+   These three lines import Tailwind's styles into our app.
+   
+   @tailwind base;       → Reset default browser styles (normalize)
+   @tailwind components; → Tailwind's component classes
+   @tailwind utilities;  → All the utility classes (bg-blue-500, p-4, etc.)
+   
+   You can also add custom global CSS below these imports.
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Custom Global Styles ---- */
+/* These apply to the ENTIRE app */
+
+body {
+  @apply bg-gray-50 text-gray-900 font-sans;
+  /* 
+    @apply = use Tailwind utilities inside regular CSS
+    bg-gray-50 = very light gray background
+    text-gray-900 = near-black text color
+    font-sans = clean sans-serif font (like Arial/Helvetica)
+  */
+}
+
+/* Smooth scrolling when navigating to anchors */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar (optional, makes it look nicer) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

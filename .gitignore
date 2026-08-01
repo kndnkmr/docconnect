@@ -1,0 +1,35 @@
+# ============================================
+# .gitignore - Files that Git should IGNORE
+# ============================================
+# Anything listed here will NOT be uploaded to GitHub.
+# This keeps your repo clean and secure.
+
+# --- Node modules ---
+# This folder contains all downloaded libraries (can be 100MB+).
+# Anyone who clones your repo can regenerate it by running "npm install"
+node_modules/
+
+# --- Environment variables ---
+# NEVER upload passwords, API keys, or secrets to GitHub!
+# Anyone can see public repos. Keep secrets local only.
+.env
+
+# --- OS files ---
+# These are hidden files your operating system creates automatically
+.DS_Store
+Thumbs.db
+
+# --- Editor files ---
+.vscode/
+.idea/
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- Uploads folder contents (we'll keep the folder but not the files) ---
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/thesis/
+server/uploads/thesis/*
+!server/uploads/thesis/.gitkeep
