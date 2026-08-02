@@ -30,6 +30,3 @@ npm-debug.log*
 # --- Uploads folder contents (we'll keep the folder but not the files) ---
 server/uploads/*
 !server/uploads/.gitkeep
-!server/uploads/thesis/
-server/uploads/thesis/*
-!server/uploads/thesis/.gitkeep

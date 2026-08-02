@@ -6,7 +6,7 @@
 //
 // KEY CONCEPT: Form with multiple fields + role selection
 // The role determines what they can do after registering:
-// - Doctor: update profile, manage appointments, upload thesis
+// - Doctor: update profile, manage appointments, set availability
 // - Patient: browse doctors, book appointments
 
 import { useState } from 'react';

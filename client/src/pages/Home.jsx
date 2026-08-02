@@ -32,7 +32,7 @@ function Home() {
             </h1>
             <p className="text-xl md:text-2xl text-primary-100 mb-8">
               Connect with qualified healthcare professionals. 
-              Browse profiles, read publications, and book consultations — all in one place.
+              Browse profiles and book consultations — all in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               {/* flex-col on mobile (stacked), flex-row on sm+ (side by side) */}
@@ -62,7 +62,7 @@ function Home() {
             How DocConnect Works
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/*
               grid = CSS Grid layout
               grid-cols-1 = 1 column on mobile
@@ -94,17 +94,6 @@ function Home() {
               </p>
             </div>
 
-            {/* Feature Card 3 */}
-            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-shadow">
-              <div className="text-5xl mb-4">📄</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                Read Research
-              </h3>
-              <p className="text-gray-600">
-                Access doctors' published research and thesis papers. 
-                Stay informed about the latest medical findings.
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -112,7 +101,7 @@ function Home() {
       {/* ---- Stats Section ---- */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-3xl md:text-4xl font-bold text-primary-600">100+</div>
               <div className="text-gray-600 mt-2">Doctors</div>
@@ -124,10 +113,6 @@ function Home() {
             <div>
               <div className="text-3xl md:text-4xl font-bold text-primary-600">1000+</div>
               <div className="text-gray-600 mt-2">Appointments</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-primary-600">50+</div>
-              <div className="text-gray-600 mt-2">Publications</div>
             </div>
           </div>
         </div>

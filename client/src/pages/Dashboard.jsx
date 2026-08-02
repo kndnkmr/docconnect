@@ -3,7 +3,7 @@
 // ============================================
 // Shows different content based on the user's role:
 // - PATIENT: their booked appointments, quick links
-// - DOCTOR: their appointments, profile edit, thesis management
+// - DOCTOR: their appointments, profile edit, availability management
 //
 // KEY CONCEPTS:
 // - Role-based rendering: same page, different content per role
@@ -14,7 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, thesisAPI, availabilityAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
@@ -22,7 +22,7 @@ function Dashboard() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('appointments');
-  // Tabs: 'appointments', 'profile' (doctor), 'publications' (doctor)
+  // Tabs: 'appointments', 'profile' (doctor), 'availability' (doctor)
 
   // Doctor-specific state
   const [profileData, setProfileData] = useState({
@@ -147,16 +147,6 @@ function Dashboard() {
               }`}
             >
               Edit Profile
-            </button>
-            <button
-              onClick={() => setActiveTab('publications')}
-              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'publications'
-                  ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              My Publications
             </button>
             <button
               onClick={() => setActiveTab('availability')}
@@ -356,184 +346,9 @@ function Dashboard() {
         </div>
       )}
 
-      {/* === PUBLICATIONS TAB (Doctor only) === */}
-      {activeTab === 'publications' && isDoctor && (
-        <DoctorPublications />
-      )}
-
       {/* === AVAILABILITY TAB (Doctor only) === */}
       {activeTab === 'availability' && isDoctor && (
         <DoctorAvailability />
-      )}
-    </div>
-  );
-}
-
-// ---- Doctor Publications Sub-component ----
-// Separated for cleanliness — manages its own state
-
-function DoctorPublications() {
-  const [publications, setPublications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    abstract: '',
-    tags: '',
-    visibility: 'public'
-  });
-
-  useEffect(() => {
-    fetchPublications();
-  }, []);
-
-  const fetchPublications = async () => {
-    try {
-      const response = await thesisAPI.getMine();
-      setPublications(response.data.publications);
-    } catch (error) {
-      console.error('Fetch publications error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      await thesisAPI.create(formData);
-      toast.success('Publication created!');
-      setShowForm(false);
-      setFormData({ title: '', abstract: '', tags: '', visibility: 'public' });
-      fetchPublications();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create publication');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this publication?')) return;
-    try {
-      await thesisAPI.delete(id);
-      toast.success('Publication deleted');
-      fetchPublications();
-    } catch (error) {
-      toast.error('Failed to delete');
-    }
-  };
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">My Publications</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-        >
-          {showForm ? 'Cancel' : '+ New Publication'}
-        </button>
-      </div>
-
-      {/* Create form */}
-      {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-md p-6 mb-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="Research paper title"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Abstract</label>
-            <textarea
-              value={formData.abstract}
-              onChange={(e) => setFormData(prev => ({ ...prev, abstract: e.target.value }))}
-              placeholder="Brief summary of your research..."
-              rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-              placeholder="e.g., cardiology, research, prevention"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Visibility</label>
-            <select
-              value={formData.visibility}
-              onChange={(e) => setFormData(prev => ({ ...prev, visibility: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-            >
-              <option value="public">Public (anyone can view)</option>
-              <option value="private">Private (only you can see)</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Publish
-          </button>
-        </form>
-      )}
-
-      {/* Publications list */}
-      {loading ? (
-        <div className="text-center py-8 text-gray-600">Loading...</div>
-      ) : publications.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl shadow-md">
-          <div className="text-5xl mb-4">📝</div>
-          <h3 className="text-xl font-medium text-gray-700">No publications yet</h3>
-          <p className="text-gray-500 mt-2">Share your research with the community!</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {publications.map((pub) => (
-            <div key={pub._id} className="bg-white rounded-xl shadow-md p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-lg">{pub.title}</h3>
-                  <p className="text-gray-600 text-sm mt-1 line-clamp-2">{pub.abstract}</p>
-                  <div className="flex items-center gap-3 mt-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      pub.visibility === 'public'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {pub.visibility}
-                    </span>
-                    <span className="text-gray-400 text-sm">
-                      {pub.viewCount} views
-                    </span>
-                    {pub.slug && (
-                      <span className="text-primary-600 text-sm">
-                        /publications/{pub.slug}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleDelete(pub._id)}
-                  className="text-red-500 hover:text-red-700 text-sm"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
       )}
     </div>
   );

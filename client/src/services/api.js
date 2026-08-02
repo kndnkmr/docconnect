@@ -143,45 +143,6 @@ export const appointmentAPI = {
 };
 
 // ============================================
-// THESIS API calls
-// ============================================
-
-export const thesisAPI = {
-  // Get all public publications
-  getAll: (params) => API.get('/thesis', { params }),
-  // params = { tag, search, sort, page, limit }
-
-  // Get thesis by share slug
-  getBySlug: (slug) => API.get(`/thesis/share/${slug}`),
-
-  // Get my publications (doctor only)
-  getMine: (params) => API.get('/thesis/my', { params }),
-
-  // Create new thesis (doctor only)
-  create: (data) => {
-    if (data instanceof FormData) {
-      return API.post('/thesis', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-    }
-    return API.post('/thesis', data);
-  },
-
-  // Update thesis (doctor only)
-  update: (id, data) => {
-    if (data instanceof FormData) {
-      return API.put(`/thesis/${id}`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-    }
-    return API.put(`/thesis/${id}`, data);
-  },
-
-  // Delete thesis (doctor only)
-  delete: (id) => API.delete(`/thesis/${id}`),
-};
-
-// ============================================
 // AVAILABILITY API calls
 // ============================================
 

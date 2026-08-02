@@ -25,8 +25,8 @@ const storage = multer.diskStorage({
   // WHERE to save the file
   destination: function (req, file, cb) {
     // cb = callback. Format: cb(error, destinationFolder)
-    // Put PDFs in uploads/thesis/, images in uploads/
-    const folder = file.mimetype === 'application/pdf' ? 'uploads/thesis/' : 'uploads/';
+    // Put PDFs in uploads/, images in uploads/
+    const folder = 'uploads/';
     cb(null, folder);
     // This folder must exist! We created them earlier.
   },
@@ -48,7 +48,7 @@ const storage = multer.diskStorage({
 });
 
 // ---- Configure WHAT files are allowed ----
-// We allow images (for profile photos) AND PDFs (for thesis uploads)
+// We allow images (for profile photos) AND PDFs (for document uploads)
 
 const fileFilter = (req, file, cb) => {
   // Check the file's MIME type (the file's actual type, not just extension)
@@ -56,7 +56,7 @@ const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
     'application/pdf'
-    // PDF added for thesis/publication uploads
+    // PDF added for document uploads
   ];
 
   if (allowedTypes.includes(file.mimetype)) {
@@ -80,7 +80,7 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024
     // ^ Maximum file size: 10MB
     // Calculation: 10 MB × 1024 KB/MB × 1024 bytes/KB = 10,485,760 bytes
-    // Increased from 5MB to support PDF thesis uploads
+    // Increased from 5MB to support larger document uploads
     // This prevents someone from uploading a 2GB file and crashing your server
   }
 });

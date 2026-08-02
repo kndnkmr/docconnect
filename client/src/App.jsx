@@ -31,8 +31,6 @@ import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
-import ThesisList from './pages/ThesisList';
-import ThesisDetail from './pages/ThesisDetail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
@@ -100,8 +98,6 @@ function App() {
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
           */}
-          <Route path="/publications" element={<ThesisList />} />
-          <Route path="/publications/:slug" element={<ThesisDetail />} />
 
           {/* ---- Protected Routes (login required) ---- */}
           <Route

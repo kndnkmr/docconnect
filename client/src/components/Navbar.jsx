@@ -64,13 +64,6 @@ function Navbar() {
               Find Doctors
             </Link>
 
-            <Link
-              to="/publications"
-              className="text-gray-600 hover:text-primary-600 transition-colors"
-            >
-              Publications
-            </Link>
-
             {/* Show different links based on auth status */}
             {isAuthenticated ? (
               <>
@@ -150,14 +143,6 @@ function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Find Doctors
-              </Link>
-
-              <Link
-                to="/publications"
-                className="text-gray-600 hover:text-primary-600 px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Publications
               </Link>
 
               {isAuthenticated ? (

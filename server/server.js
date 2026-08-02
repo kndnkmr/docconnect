@@ -81,7 +81,6 @@ app.get('/', (req, res) => {
       auth: '/api/auth (register, login, profile)',
       doctors: '/api/doctors (browse, view, update profiles)',
       appointments: '/api/appointments (book, view, manage)',
-      thesis: '/api/thesis (publications, share links)',
       availability: '/api/availability (doctor schedule, free slots)',
       health: '/api/health'
     }
@@ -114,11 +113,6 @@ app.use('/api/doctors', doctorRoutes);
 const appointmentRoutes = require('./routes/appointment');
 app.use('/api/appointments', appointmentRoutes);
 
-// Thesis routes — publish, browse, share research papers
-// Any request starting with /api/thesis → use the thesis router
-const thesisRoutes = require('./routes/thesis');
-app.use('/api/thesis', thesisRoutes);
-
 // Availability routes — doctor schedule management, free slot lookup
 // Any request starting with /api/availability → use the availability router
 const availabilityRoutes = require('./routes/availability');
@@ -130,7 +124,7 @@ app.use('/api/availability', availabilityRoutes);
 app.use((req, res) => {
   res.status(404).json({
     message: `Route not found: ${req.method} ${req.originalUrl}`,
-    hint: 'Check the URL and HTTP method. Available routes: /api/auth, /api/doctors, /api/appointments, /api/thesis, /api/availability, /api/health'
+    hint: 'Check the URL and HTTP method. Available routes: /api/auth, /api/doctors, /api/appointments, /api/availability, /api/health'
   });
 });
 
@@ -159,7 +153,6 @@ app.listen(PORT, () => {
   Auth API:     http://localhost:${PORT}/api/auth
   Doctors API:  http://localhost:${PORT}/api/doctors
   Booking API:  http://localhost:${PORT}/api/appointments
-  Thesis API:   http://localhost:${PORT}/api/thesis
   ==========================================
   Environment: ${process.env.NODE_ENV || 'development'}
   ==========================================
