@@ -22,6 +22,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Base API URL — uses environment variable in production, falls back to relative path in development
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 // Step 1: Create the Context (the "mailbox")
 const AuthContext = createContext(null);
 // null = default value (no user logged in initially)
@@ -58,7 +61,7 @@ export function AuthProvider({ children }) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
           // Fetch the user's profile from the backend
-          const response = await axios.get('/api/auth/me');
+          const response = await axios.get(`${API_BASE_URL}/auth/me`);
           setUser(response.data.user);
           // If successful, user is now logged in!
 
