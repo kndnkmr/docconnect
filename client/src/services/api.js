@@ -23,10 +23,10 @@ import axios from 'axios';
 // Create an axios instance with default config
 // All requests will use this base configuration
 const API = axios.create({
-  baseURL: '/api',
-  // ^ Base URL prepended to all requests
-  // So API.get('/doctors') actually calls /api/doctors
-  // The Vite proxy then forwards this to http://localhost:5000/api/doctors
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  // ^ In production: uses the real backend URL from environment variable
+  // In development: falls back to '/api' (Vite proxy forwards to localhost:5000)
+  // VITE_API_URL is set in Vercel dashboard when deploying
 
   headers: {
     'Content-Type': 'application/json'

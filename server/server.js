@@ -36,7 +36,12 @@ const app = express();
 // ---- STEP 4: Set up middleware ----
 // Middleware = functions that run on EVERY request before reaching routes
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+  // In production: only allow requests from your Vercel frontend URL
+  // In development: allow everything ('*')
+  credentials: true
+}));
 // Allow requests from our frontend (different port/domain)
 
 app.use(express.json());
