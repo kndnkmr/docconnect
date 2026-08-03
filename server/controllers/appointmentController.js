@@ -219,7 +219,7 @@ const getAppointmentById = async (req, res) => {
 
 const updateAppointmentStatus = async (req, res) => {
   try {
-    const { status, notes } = req.body;
+    const { status, notes, meetingLink } = req.body;
 
     if (!status) {
       return res.status(400).json({
@@ -262,6 +262,9 @@ const updateAppointmentStatus = async (req, res) => {
     appointment.status = status;
     if (notes) {
       appointment.notes = notes;
+    }
+    if (meetingLink) {
+      appointment.meetingLink = meetingLink;
     }
 
     await appointment.save();

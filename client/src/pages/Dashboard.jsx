@@ -31,7 +31,9 @@ function Dashboard() {
     qualification: '',
     clinicAddress: '',
     consultationFee: '',
-    bio: ''
+    bio: '',
+    phone: '',
+    whatsappNumber: ''
   });
 
   // ---- Fetch appointments on load ----
@@ -53,7 +55,17 @@ function Dashboard() {
   // ---- Doctor: Update appointment status ----
   const handleStatusUpdate = async (appointmentId, newStatus) => {
     try {
-      await appointmentAPI.updateStatus(appointmentId, { status: newStatus });
+      let data = { status: newStatus };
+      
+      // If confirming a video/phone appointment, ask for meeting link
+      if (newStatus === 'confirmed') {
+        const link = window.prompt('Add a meeting link (Google Meet/Zoom) for this appointment?\n\nLeave empty if in-person visit:');
+        if (link) {
+          data.meetingLink = link;
+        }
+      }
+      
+      await appointmentAPI.updateStatus(appointmentId, data);
       toast.success(`Appointment ${newStatus}`);
       fetchAppointments(); // Refresh the list
     } catch (error) {
@@ -223,6 +235,16 @@ function Dashboard() {
                         Notes: {apt.notes}
                       </p>
                     )}
+                    {apt.meetingLink && (
+                      <a
+                        href={apt.meetingLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
+                      >
+                        Join Meeting Link
+                      </a>
+                    )}
                   </div>
 
                   {/* Action buttons */}
@@ -335,6 +357,27 @@ function Dashboard() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
                 // resize-none = prevent user from dragging to resize the textarea
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input
+                type="tel"
+                value={profileData.phone}
+                onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                placeholder="+91 9876543210"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
+              <input
+                type="tel"
+                value={profileData.whatsappNumber}
+                onChange={(e) => setProfileData(prev => ({ ...prev, whatsappNumber: e.target.value }))}
+                placeholder="+91 9876543210 (patients can message you directly)"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">This will be shown on your public profile so patients can reach you</p>
             </div>
             <button
               type="submit"

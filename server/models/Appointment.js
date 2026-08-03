@@ -86,6 +86,15 @@ const appointmentSchema = new mongoose.Schema({
     // Modern healthcare offers multiple consultation modes
   },
 
+  // ---- Meeting link (for video/phone consultations) ----
+  meetingLink: {
+    type: String,
+    default: ''
+    // Doctor adds this when confirming the appointment
+    // e.g., a Google Meet or Zoom link for video calls
+    // Patient sees it in their dashboard after doctor confirms
+  },
+
   // ---- Cancellation reason (if cancelled) ----
   cancellationReason: {
     type: String,

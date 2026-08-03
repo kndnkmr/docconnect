@@ -43,7 +43,7 @@ const register = async (req, res) => {
   try {
     // Step 1: Extract data from the request body
     // req.body contains whatever JSON the frontend sent
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone } = req.body;
     // This is "destructuring" — a shortcut for:
     // const name = req.body.name;
     // const email = req.body.email; ... etc.
@@ -80,7 +80,8 @@ const register = async (req, res) => {
       name,
       email,
       password,  // Plain text here → hashed automatically before saving
-      role
+      role,
+      phone: phone || ''
     });
 
     // Step 6: Generate a token for the new user (log them in immediately)

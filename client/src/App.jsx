@@ -24,6 +24,7 @@ import { useAuth } from './context/AuthContext';
 
 // ---- Import Page Components ----
 import Navbar from './components/Navbar';
+import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -146,6 +147,9 @@ function App() {
           </p>
         </div>
       </footer>
+
+      {/* Floating WhatsApp button — visible on all pages */}
+      <WhatsAppButton />
 
       {/* Toast notification container */}
       <Toaster

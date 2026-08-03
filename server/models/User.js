@@ -60,6 +60,22 @@ const userSchema = new mongoose.Schema({
     default: ''            // Empty by default (no photo uploaded yet)
   },
 
+  // --- Phone Number ---
+  phone: {
+    type: String,
+    default: ''
+    // Contact number for calls/SMS. Added during registration or profile edit.
+    // e.g., "+919599150825"
+  },
+
+  // --- WhatsApp Number (Doctor-specific) ---
+  whatsappNumber: {
+    type: String,
+    default: ''
+    // Doctors can set their WhatsApp number so patients can reach them directly
+    // Shown on the doctor's public profile page
+  },
+
   // --- Doctor-specific fields ---
   // These only matter if role === 'doctor', but we keep them here for simplicity
   specialization: {

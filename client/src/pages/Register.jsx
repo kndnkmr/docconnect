@@ -22,6 +22,7 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
+    phone: '',
     role: 'patient'   // Default role
   });
   // Using ONE state object for all fields (alternative to separate useState for each)
@@ -74,6 +75,7 @@ function Register() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        phone: formData.phone,
         role: formData.role
       });
       // Note: we don't send confirmPassword to the server — it's just for client validation
@@ -174,6 +176,22 @@ function Register() {
                 placeholder="you@example.com"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                 required
+              />
+            </div>
+
+            {/* Phone Number Field */}
+            <div className="mb-4">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+91 9876543210"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               />
             </div>
 

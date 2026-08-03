@@ -146,7 +146,9 @@ const updateDoctorProfile = async (req, res) => {
       'clinicAddress',
       'consultationFee',
       'bio',
-      'profilePhoto'
+      'profilePhoto',
+      'phone',
+      'whatsappNumber'
     ];
 
     // Build an object with only the allowed fields that were actually sent
