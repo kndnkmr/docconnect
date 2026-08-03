@@ -136,7 +136,7 @@ const getMyAppointments = async (req, res) => {
     const appointments = await Appointment.find(filter)
       .populate('doctor', 'name specialization profilePhoto consultationFee')
       // ^ Fill in doctor details (instead of just showing their ID)
-      .populate('patient', 'name email')
+      .populate('patient', 'name email phone')
       // ^ Fill in patient details
       .sort({ date: -1 })
       // ^ Newest appointments first
@@ -172,7 +172,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
       .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress')
-      .populate('patient', 'name email');
+      .populate('patient', 'name email phone');
 
     if (!appointment) {
       return res.status(404).json({

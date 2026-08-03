@@ -227,6 +227,11 @@ function Dashboard() {
                     <p className="text-gray-600 text-sm">
                       {formatDate(apt.date)} • {apt.timeSlot}
                     </p>
+                    {isDoctor && apt.patient?.phone && (
+                      <p className="text-gray-600 text-sm mt-1">
+                        Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a>
+                      </p>
+                    )}
                     <p className="text-gray-500 text-sm mt-1">
                       Reason: {apt.reason}
                     </p>
