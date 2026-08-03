@@ -534,3 +534,134 @@ A: MongoDB Atlas has automatic replication (3 copies of your data). Atlas handle
 
 **Q: Can I add a custom domain (like docconnect.com)?**
 A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel dashboard → Domains.
+
+---
+
+## Recently Added Features
+
+### Phone Number (Registration + Profile)
+
+- Both doctors and patients provide phone number during registration
+- Doctors can update it in Dashboard → Edit Profile
+- Stored in User model: `phone` field
+- Used for contact between doctor and patient
+
+### WhatsApp Number (Doctor Profile)
+
+- Doctors set their WhatsApp number in Dashboard → Edit Profile → "WhatsApp Number" field
+- When set, a green **"Message on WhatsApp"** button appears on their public profile
+- Clicking it opens WhatsApp with a pre-filled message: "Hi Doctor, I would like to consult with you."
+- URL format: `https://wa.me/919876543210?text=...`
+
+### Floating WhatsApp Emergency Button
+
+- Green WhatsApp icon floating on the bottom-right corner of EVERY page
+- Visible to ALL users (even without login)
+- Clicking opens WhatsApp to: **+919599150825**
+- Pre-filled message: "Hi, I need to consult with a doctor. Can you help me?"
+- Purpose: patients in emergency can reach out instantly without going through registration
+- Component: `client/src/components/WhatsAppButton.jsx`
+- Added to: `client/src/App.jsx` (renders on all pages)
+
+### Meeting Link (Video/Phone Consultations)
+
+- When a patient books a video or phone consultation, the doctor needs a way to share the meeting link
+- **Flow:**
+  1. Patient books appointment (consultationType: "video" or "phone")
+  2. Doctor sees the appointment in Dashboard → clicks "Confirm"
+  3. A prompt appears: "Add a meeting link (Google Meet/Zoom) for this appointment?"
+  4. Doctor pastes their Google Meet / Zoom link
+  5. Link is saved in the appointment: `meetingLink` field
+  6. Patient sees a green **"Join Meeting Link"** button in their Dashboard next to the appointment
+  7. Clicking opens the meeting in a new tab
+- Stored in Appointment model: `meetingLink` field
+- If doctor leaves it empty (in-person visit), no button is shown
+
+### Login Page Clarification
+
+- Login page now shows: "Works for both Doctors and Patients — just use the email you registered with"
+- The system automatically detects the role from the database after login
+- No role selection needed at login — only during registration
+
+---
+
+## Complete File Reference
+
+### Backend (server/)
+
+| File | What it does |
+|------|-------------|
+| `server.js` | Entry point — connects MongoDB, loads routes, serves uploads, CORS config |
+| `models/User.js` | User schema: name, email, password (hashed), role, phone, whatsappNumber, specialization, availability, reset tokens |
+| `models/Appointment.js` | Booking schema: patient, doctor, date, timeSlot, status, reason, meetingLink, notes |
+| `middleware/auth.js` | JWT verification (protect) + role check (authorize) |
+| `middleware/upload.js` | File uploads: images + PDFs, 10MB limit, disk storage |
+| `controllers/authController.js` | Register, login, getMe, forgotPassword, resetPassword |
+| `controllers/doctorController.js` | getAllDoctors (search/paginate), getDoctorById, updateDoctorProfile |
+| `controllers/appointmentController.js` | book, getMyAppointments, getById, updateStatus (with meetingLink), cancel |
+| `controllers/availabilityController.js` | setAvailability, getMyAvailability, getFreeSlots (dynamic calculation) |
+| `routes/auth.js` | POST /register, /login, /forgot-password; PUT /reset-password/:token; GET /me |
+| `routes/doctor.js` | GET / (public browse), GET /:id (public profile), PUT /profile (doctor only) |
+| `routes/appointment.js` | POST / (patient books), GET /my, GET /:id, PUT /:id/status, PUT /:id/cancel |
+| `routes/availability.js` | GET /:doctorId/slots (public), GET / (doctor own), PUT / (doctor sets) |
+
+### Frontend (client/src/)
+
+| File | What it does |
+|------|-------------|
+| `main.jsx` | React entry — wraps app in BrowserRouter + AuthProvider |
+| `App.jsx` | All routes, ProtectedRoute wrapper, Navbar, Footer, WhatsAppButton, Toaster |
+| `context/AuthContext.jsx` | Global auth state, login/logout functions, token persistence, API_BASE_URL |
+| `services/api.js` | All API calls: authAPI, doctorAPI, appointmentAPI, availabilityAPI |
+| `components/Navbar.jsx` | Top nav — responsive, role-based links, mobile menu |
+| `components/WhatsAppButton.jsx` | Floating green button → opens WhatsApp to emergency number |
+| `pages/Home.jsx` | Landing: hero, features (search + book), stats, CTA |
+| `pages/Login.jsx` | Email+password form, "works for both roles" note, forgot password link |
+| `pages/Register.jsx` | Role selector (Doctor/Patient), name, email, phone, password, confirm |
+| `pages/ForgotPassword.jsx` | Enter email → server logs reset link |
+| `pages/ResetPassword.jsx` | Token from URL → new password → auto-login |
+| `pages/DoctorList.jsx` | Search/filter doctors, card grid, pagination |
+| `pages/DoctorProfile.jsx` | Full profile, book button, WhatsApp "Message" button |
+| `pages/BookAppointment.jsx` | Date picker → dynamic free slots → consultation type → reason → book |
+| `pages/Dashboard.jsx` | Tabs: Appointments (both), Edit Profile (doctor), Availability (doctor) |
+
+---
+
+## Live URLs
+
+| What | URL |
+|------|-----|
+| Frontend (website) | https://docconnect-mocha.vercel.app |
+| Backend (API) | https://docconnect-fcg6.onrender.com |
+| API Health Check | https://docconnect-fcg6.onrender.com/api/health |
+| GitHub Repo | https://github.com/kndnkmr/docconnect |
+
+---
+
+## How to Make Changes (Future You)
+
+1. Open this project in Kiro (or any editor)
+2. Edit the code
+3. Test locally if possible (or just push and check live site)
+4. Run:
+   ```bash
+   git add .
+   git commit -m "description of change"
+   git push
+   ```
+5. Wait 1-2 min → both Vercel and Render auto-redeploy
+6. Check live site to verify
+
+---
+
+## Quick Reminder: Accounts You Created
+
+| Service | Login URL | What for |
+|---------|-----------|----------|
+| GitHub | github.com | Code repository |
+| MongoDB Atlas | cloud.mongodb.com | Database |
+| Render | dashboard.render.com | Backend hosting |
+| Vercel | vercel.com | Frontend hosting |
+
+All use your Google/GitHub account for login — no separate passwords to remember.
+
