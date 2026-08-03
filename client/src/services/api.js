@@ -159,4 +159,24 @@ export const availabilityAPI = {
   // date = "2024-03-15" (YYYY-MM-DD format)
 };
 
+// ============================================
+// ADMIN API calls
+// ============================================
+
+export const adminAPI = {
+  // Get dashboard stats
+  getStats: () => API.get('/admin/stats'),
+
+  // Get all users (with optional filters)
+  getUsers: (params) => API.get('/admin/users', { params }),
+  // params = { role, search, page, limit }
+
+  // Get all appointments (with optional filters)
+  getAppointments: (params) => API.get('/admin/appointments', { params }),
+  // params = { status, page, limit }
+
+  // Delete a user
+  deleteUser: (id) => API.delete(`/admin/users/${id}`),
+};
+
 export default API;

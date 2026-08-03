@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
   // This is how we know if someone is a doctor or patient
   role: {
     type: String,
-    enum: ['doctor', 'patient'],
+    enum: ['doctor', 'patient', 'admin'],
     // enum = "only these values are allowed". Anything else gets rejected.
     required: [true, 'Role is required']
   },

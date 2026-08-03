@@ -75,6 +75,15 @@ function Navbar() {
                   Dashboard
                 </Link>
 
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="text-gray-600 hover:text-primary-600 transition-colors"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
+
                 {/* User info + logout */}
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500">

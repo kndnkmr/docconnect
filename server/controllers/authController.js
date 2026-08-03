@@ -68,9 +68,9 @@ const register = async (req, res) => {
     }
 
     // Step 4: Validate role
-    if (!['doctor', 'patient'].includes(role)) {
+    if (!['doctor', 'patient', 'admin'].includes(role)) {
       return res.status(400).json({
-        message: 'Role must be either "doctor" or "patient"'
+        message: 'Role must be "doctor", "patient", or "admin"'
       });
     }
 

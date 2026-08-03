@@ -34,6 +34,7 @@ import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import AdminDashboard from './pages/AdminDashboard';
 
 // ---- Protected Route Component ----
 // A wrapper that checks: "Is the user logged in? If not, redirect to login."
@@ -119,6 +120,16 @@ function App() {
             }
           />
           {/* Only patients can book appointments */}
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Only admins can access the admin panel */}
 
           {/* ---- Catch-all: 404 page ---- */}
           <Route

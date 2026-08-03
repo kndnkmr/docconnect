@@ -123,6 +123,11 @@ app.use('/api/appointments', appointmentRoutes);
 const availabilityRoutes = require('./routes/availability');
 app.use('/api/availability', availabilityRoutes);
 
+// Admin routes — admin panel (users, appointments, stats)
+// Any request starting with /api/admin → use the admin router
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!
