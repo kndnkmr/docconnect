@@ -164,6 +164,19 @@ function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* ---- Notification Banner (Doctor: pending appointments) ---- */}
+      {isDoctor && appointments.filter(a => a.status === 'pending').length > 0 && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-3">
+          <span className="text-2xl">🔔</span>
+          <div>
+            <p className="font-semibold text-yellow-800">
+              You have {appointments.filter(a => a.status === 'pending').length} new appointment request{appointments.filter(a => a.status === 'pending').length > 1 ? 's' : ''}!
+            </p>
+            <p className="text-sm text-yellow-700">Please confirm or reject them from the Appointments tab below.</p>
+          </div>
+        </div>
+      )}
+
       {/* ---- Welcome Header ---- */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
