@@ -45,7 +45,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments
 - Patient complaints: patients file complaints, admin reviews and responds
 - Floating WhatsApp emergency button on all pages (+919599150825)
-- Admin panel: view stats, manage users, view all appointments, handle complaints
+- Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
+- In-app notification banner: doctor sees pending appointment count on Dashboard
+- Admin panel: view stats, manage users, view all appointments, handle complaints, handle complaints
 - Account settings: users can update email/phone or delete their account
 - Consultation fees displayed in ₹ (Indian Rupees)
 - Responsive design (mobile + desktop)
