@@ -254,8 +254,6 @@ function Register() {
                 />
               </div>
             </div>
-              />
-            </div>
 
             {/* Submit Button */}
             <button
