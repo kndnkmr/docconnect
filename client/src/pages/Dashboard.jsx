@@ -14,7 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, availabilityAPI, authAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
@@ -171,6 +171,18 @@ function Dashboard() {
               Availability
             </button>
           </>
+        )}
+        {isPatient && (
+          <button
+            onClick={() => setActiveTab('complaints')}
+            className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'complaints'
+                ? 'border-primary-600 text-primary-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Complaints
+          </button>
         )}
         <button
           onClick={() => setActiveTab('account')}
@@ -409,9 +421,168 @@ function Dashboard() {
         <DoctorAvailability />
       )}
 
+      {/* === COMPLAINTS TAB (Patient only) === */}
+      {activeTab === 'complaints' && isPatient && (
+        <PatientComplaints />
+      )}
+
       {/* === ACCOUNT SETTINGS TAB (All roles) === */}
       {activeTab === 'account' && (
         <AccountSettings />
+      )}
+    </div>
+  );
+}
+
+// ---- Patient Complaints Sub-component ----
+// Lets patients file and view their complaints
+
+function PatientComplaints() {
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    subject: '',
+    description: ''
+  });
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  const fetchComplaints = async () => {
+    try {
+      const response = await complaintAPI.getMine();
+      setComplaints(response.data.complaints);
+    } catch (error) {
+      console.error('Fetch complaints error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.subject || !formData.description) {
+      toast.error('Please fill in subject and description');
+      return;
+    }
+    try {
+      await complaintAPI.create(formData);
+      toast.success('Complaint submitted successfully');
+      setShowForm(false);
+      setFormData({ subject: '', description: '' });
+      fetchComplaints();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit complaint');
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'open': 'bg-yellow-100 text-yellow-800',
+      'in-progress': 'bg-blue-100 text-blue-800',
+      'resolved': 'bg-green-100 text-green-800',
+      'closed': 'bg-gray-100 text-gray-800'
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+  };
+
+  if (loading) {
+    return <div className="text-center py-8 text-gray-600">Loading...</div>;
+  }
+
+  return (
+    <div className="max-w-3xl">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">My Complaints</h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          {showForm ? 'Cancel' : '+ New Complaint'}
+        </button>
+      </div>
+
+      {/* Complaint form */}
+      {showForm && (
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h3 className="font-medium text-gray-800 mb-4">File a Complaint</h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+              <input
+                type="text"
+                value={formData.subject}
+                onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                placeholder="Brief title of your complaint"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                required
+                maxLength={200}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Describe your complaint in detail..."
+                rows={5}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Submit Complaint
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Complaints list */}
+      {complaints.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-md">
+          <div className="text-5xl mb-4">📋</div>
+          <h3 className="text-xl font-medium text-gray-700">No complaints filed</h3>
+          <p className="text-gray-500 mt-2">
+            If you have any issues with our service, click "New Complaint" to let us know.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {complaints.map((complaint) => (
+            <div key={complaint._id} className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-semibold text-gray-800">{complaint.subject}</h3>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(complaint.status)}`}>
+                  {complaint.status}
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mt-2">{complaint.description}</p>
+              {complaint.doctor && (
+                <p className="text-gray-500 text-xs mt-2">
+                  Regarding: Dr. {complaint.doctor.name} ({complaint.doctor.specialization})
+                </p>
+              )}
+              <p className="text-gray-400 text-xs mt-2">Filed on: {formatDate(complaint.createdAt)}</p>
+              {complaint.response && (
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800">Admin Response:</p>
+                  <p className="text-sm text-green-700 mt-1">{complaint.response}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -512,12 +683,15 @@ function AccountSettings() {
 
 // ---- Doctor Availability Sub-component ----
 // Lets doctors set their weekly schedule
+// Supports selecting MULTIPLE days and adding the same time slot across all selected days
 
 function DoctorAvailability() {
   const [schedule, setSchedule] = useState([]);
   const [slotDuration, setSlotDuration] = useState(30);
   const [loading, setLoading] = useState(true);
-  const [newSlot, setNewSlot] = useState({ day: 'Monday', startTime: '09:00', endTime: '17:00' });
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('17:00');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -537,19 +711,70 @@ function DoctorAvailability() {
     fetchAvailability();
   }, []);
 
-  // Add a new time slot
-  const handleAddSlot = () => {
-    if (newSlot.startTime >= newSlot.endTime) {
+  // Toggle a day selection
+  const toggleDay = (day) => {
+    setSelectedDays(prev =>
+      prev.includes(day)
+        ? prev.filter(d => d !== day)    // Remove if already selected
+        : [...prev, day]                  // Add if not selected
+    );
+  };
+
+  // Select all weekdays (Mon-Sat)
+  const selectWeekdays = () => {
+    setSelectedDays(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
+  };
+
+  // Clear all selections
+  const clearDays = () => {
+    setSelectedDays([]);
+  };
+
+  // Add time slot for ALL selected days
+  const handleAddSlots = () => {
+    if (selectedDays.length === 0) {
+      toast.error('Please select at least one day');
+      return;
+    }
+    if (startTime >= endTime) {
       toast.error('Start time must be before end time');
       return;
     }
-    setSchedule(prev => [...prev, { ...newSlot }]);
+
+    // Create a slot entry for each selected day
+    const newSlots = selectedDays.map(day => ({
+      day,
+      startTime,
+      endTime
+    }));
+
+    // Filter out duplicates (same day + same time already exists)
+    const filteredNewSlots = newSlots.filter(newSlot =>
+      !schedule.some(existing =>
+        existing.day === newSlot.day &&
+        existing.startTime === newSlot.startTime &&
+        existing.endTime === newSlot.endTime
+      )
+    );
+
+    if (filteredNewSlots.length === 0) {
+      toast.error('These slots already exist in your schedule');
+      return;
+    }
+
+    setSchedule(prev => [...prev, ...filteredNewSlots]);
+    toast.success(`Added ${filteredNewSlots.length} slot(s) to schedule`);
   };
 
   // Remove a time slot
   const handleRemoveSlot = (index) => {
     setSchedule(prev => prev.filter((_, i) => i !== index));
-    // filter keeps all items EXCEPT the one at this index
+  };
+
+  // Remove all slots for a specific day
+  const handleRemoveDay = (day) => {
+    setSchedule(prev => prev.filter(slot => slot.day !== day));
+    toast.success(`Removed all ${day} slots`);
   };
 
   // Save schedule to backend
@@ -561,6 +786,13 @@ function DoctorAvailability() {
       toast.error(error.response?.data?.message || 'Failed to save availability');
     }
   };
+
+  // Group schedule by day for display
+  const groupedSchedule = days.reduce((acc, day) => {
+    const daySlots = schedule.filter(slot => slot.day === day);
+    if (daySlots.length > 0) acc[day] = daySlots;
+    return acc;
+  }, {});
 
   if (loading) {
     return <div className="text-center py-8 text-gray-600">Loading...</div>;
@@ -590,28 +822,56 @@ function DoctorAvailability() {
         </p>
       </div>
 
-      {/* Add new slot form */}
+      {/* Add new slots form — supports multiple days */}
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <h3 className="font-medium text-gray-800 mb-4">Add Available Time</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Day</label>
-            <select
-              value={newSlot.day}
-              onChange={(e) => setNewSlot(prev => ({ ...prev, day: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-            >
-              {days.map(day => (
-                <option key={day} value={day}>{day}</option>
-              ))}
-            </select>
+        
+        {/* Day selection — checkboxes */}
+        <div className="mb-4">
+          <label className="block text-sm text-gray-600 mb-2">Select Days</label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {days.map(day => (
+              <button
+                key={day}
+                type="button"
+                onClick={() => toggleDay(day)}
+                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  selectedDays.includes(day)
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                {day.substring(0, 3)}
+              </button>
+            ))}
           </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={selectWeekdays}
+              className="text-xs text-primary-600 hover:underline"
+            >
+              Select Mon–Sat
+            </button>
+            <span className="text-gray-300">|</span>
+            <button
+              type="button"
+              onClick={clearDays}
+              className="text-xs text-gray-500 hover:underline"
+            >
+              Clear all
+            </button>
+          </div>
+        </div>
+
+        {/* Time selection */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
           <div>
             <label className="block text-sm text-gray-600 mb-1">From</label>
             <input
               type="time"
-              value={newSlot.startTime}
-              onChange={(e) => setNewSlot(prev => ({ ...prev, startTime: e.target.value }))}
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
             />
           </div>
@@ -619,46 +879,69 @@ function DoctorAvailability() {
             <label className="block text-sm text-gray-600 mb-1">To</label>
             <input
               type="time"
-              value={newSlot.endTime}
-              onChange={(e) => setNewSlot(prev => ({ ...prev, endTime: e.target.value }))}
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
             />
           </div>
           <button
-            onClick={handleAddSlot}
+            onClick={handleAddSlots}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
-            + Add
+            + Add to {selectedDays.length || 0} day(s)
           </button>
         </div>
+
+        <p className="text-xs text-gray-500 mt-2">
+          Tip: Select multiple days, set the time, and click Add. You can add different times by repeating this.
+        </p>
       </div>
 
-      {/* Current schedule */}
+      {/* Current schedule — grouped by day */}
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <h3 className="font-medium text-gray-800 mb-4">Your Current Schedule</h3>
-        {schedule.length === 0 ? (
+        {Object.keys(groupedSchedule).length === 0 ? (
           <p className="text-gray-500 text-center py-4">
-            No availability set yet. Add your available hours above.
+            No availability set yet. Select days and time above, then click Add.
           </p>
         ) : (
-          <div className="space-y-2">
-            {schedule.map((slot, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-              >
-                <div>
-                  <span className="font-medium text-gray-800">{slot.day}</span>
-                  <span className="text-gray-600 ml-3">
-                    {slot.startTime} — {slot.endTime}
-                  </span>
+          <div className="space-y-4">
+            {Object.entries(groupedSchedule).map(([day, slots]) => (
+              <div key={day} className="border border-gray-200 rounded-lg p-3">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-semibold text-gray-800">{day}</span>
+                  <button
+                    onClick={() => handleRemoveDay(day)}
+                    className="text-red-400 hover:text-red-600 text-xs"
+                  >
+                    Remove all {day}
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleRemoveSlot(index)}
-                  className="text-red-500 hover:text-red-700 text-sm font-medium"
-                >
-                  Remove
-                </button>
+                <div className="space-y-1">
+                  {slots.map((slot, idx) => {
+                    // Find the actual index in the full schedule array
+                    const actualIndex = schedule.findIndex(
+                      (s, i) => s.day === slot.day && s.startTime === slot.startTime && s.endTime === slot.endTime &&
+                      schedule.slice(0, i).filter(x => x.day === slot.day && x.startTime === slot.startTime && x.endTime === slot.endTime).length === idx
+                    );
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between py-1 px-2 bg-gray-50 rounded"
+                      >
+                        <span className="text-gray-600 text-sm">
+                          {slot.startTime} — {slot.endTime}
+                        </span>
+                        <button
+                          onClick={() => handleRemoveSlot(actualIndex >= 0 ? actualIndex : schedule.indexOf(slot))}
+                          className="text-red-500 hover:text-red-700 text-xs"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ))}
           </div>

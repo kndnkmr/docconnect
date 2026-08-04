@@ -186,4 +186,25 @@ export const adminAPI = {
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
 };
 
+// ============================================
+// COMPLAINT API calls
+// ============================================
+
+export const complaintAPI = {
+  // Patient files a complaint
+  create: (data) => API.post('/complaints', data),
+  // data = { subject, description, doctorId (optional), appointmentId (optional) }
+
+  // Patient views their complaints
+  getMine: () => API.get('/complaints/my'),
+
+  // Admin views all complaints
+  getAll: (params) => API.get('/complaints', { params }),
+  // params = { status, page, limit }
+
+  // Admin updates complaint status/response
+  update: (id, data) => API.put(`/complaints/${id}`, data),
+  // data = { status, response }
+};
+
 export default API;

@@ -128,6 +128,11 @@ app.use('/api/availability', availabilityRoutes);
 const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);
 
+// Complaint routes — patient complaints and feedback
+// Any request starting with /api/complaints → use the complaint router
+const complaintRoutes = require('./routes/complaint');
+app.use('/api/complaints', complaintRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!
