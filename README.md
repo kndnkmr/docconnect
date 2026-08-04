@@ -1,6 +1,8 @@
 # DocConnect — Doctor Consultation Platform
 
-A full-stack web application where doctors register profiles, patients browse and book consultations, and doctors share research publications publicly.
+A full-stack web application where doctors register profiles, patients browse and book consultations, and doctors can be reached directly via WhatsApp for emergencies.
+
+**Live Website:** https://docconnect-mocha.vercel.app
 
 Built as a learning project covering: authentication, CRUD operations, file uploads, role-based access, relational data, and responsive UI.
 
@@ -29,10 +31,15 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - JWT token authentication (login persists across sessions)
 - Password reset with secure token (logged to console for local testing)
 - Doctor profile management with photo upload
+- Phone number and WhatsApp contact for doctors
 - Search and filter doctors by name or specialization
 - Real-time availability: doctors set weekly schedule, patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
-- Thesis/publication upload with shareable public links, PDF support, tags, and view counter
+- Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
+- Floating WhatsApp emergency button on all pages
+- Admin panel: view stats, manage users, view all appointments
+- Account settings: users can update email/phone or delete their account
+- Consultation fees displayed in ₹ (Indian Rupees)
 - Responsive design (mobile + desktop)
 
 ---
@@ -69,6 +76,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 ```
 docconnect/
 ├── README.md                    ← You are here
+├── HOW_IT_WORKS.md              ← Full technical documentation
+├── WINDOWS_SETUP.md             ← Windows laptop setup guide
 ├── .gitignore                   ← Files excluded from Git
 │
 ├── server/                      ← BACKEND
@@ -77,35 +86,34 @@ docconnect/
 │   ├── server.js                ← Entry point: starts server, connects DB, loads routes
 │   │
 │   ├── models/                  ← Database schemas (shape of data)
-│   │   ├── User.js              ← Doctor/patient accounts
-│   │   ├── Appointment.js       ← Booking records
-│   │   └── Thesis.js            ← Research publications
+│   │   ├── User.js              ← Doctor/patient/admin accounts
+│   │   └── Appointment.js       ← Booking records
 │   │
 │   ├── middleware/              ← Code that runs before route handlers
 │   │   ├── auth.js              ← Token verification + role checking
 │   │   └── upload.js            ← File upload config (images + PDFs)
 │   │
 │   ├── controllers/             ← Business logic
-│   │   ├── authController.js    ← Register, login, password reset
+│   │   ├── authController.js    ← Register, login, password reset, update/delete account
 │   │   ├── doctorController.js  ← Profile CRUD, doctor search
-│   │   ├── appointmentController.js ← Booking management
-│   │   ├── thesisController.js  ← Publication management
-│   │   └── availabilityController.js ← Schedule + free slot calculation
+│   │   ├── appointmentController.js ← Booking management + meeting links
+│   │   ├── availabilityController.js ← Schedule + free slot calculation
+│   │   └── adminController.js   ← Admin: stats, user management
 │   │
 │   ├── routes/                  ← URL → controller mapping
 │   │   ├── auth.js
 │   │   ├── doctor.js
 │   │   ├── appointment.js
-│   │   ├── thesis.js
-│   │   └── availability.js
+│   │   ├── availability.js
+│   │   └── admin.js
 │   │
 │   └── uploads/                 ← Uploaded files stored here
-│       ├── .gitkeep
-│       └── thesis/.gitkeep
+│       └── .gitkeep
 │
 └── client/                      ← FRONTEND
     ├── package.json             ← Frontend dependencies
     ├── index.html               ← Single HTML page (React mounts here)
+    ├── vercel.json              ← Vercel routing config
     ├── vite.config.js           ← Dev server + API proxy config
     ├── tailwind.config.js       ← CSS theme configuration
     ├── postcss.config.js        ← CSS processing
@@ -122,20 +130,20 @@ docconnect/
         │   └── api.js           ← All API call functions
         │
         ├── components/
-        │   └── Navbar.jsx       ← Navigation bar
+        │   ├── Navbar.jsx       ← Navigation bar
+        │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
         │
         └── pages/
             ├── Home.jsx         ← Landing page
             ├── Login.jsx        ← Login form
-            ├── Register.jsx     ← Registration form
+            ├── Register.jsx     ← Registration form (with phone number)
             ├── ForgotPassword.jsx ← Request password reset
             ├── ResetPassword.jsx  ← Set new password
             ├── DoctorList.jsx   ← Browse/search doctors
-            ├── DoctorProfile.jsx ← View single doctor
+            ├── DoctorProfile.jsx ← View single doctor + WhatsApp contact
             ├── BookAppointment.jsx ← Book with real-time slot selection
-            ├── Dashboard.jsx    ← Appointments, profile, publications, availability
-            ├── ThesisList.jsx   ← Browse public publications
-            └── ThesisDetail.jsx ← Read a publication via share link
+            ├── Dashboard.jsx    ← Appointments, profile, availability, account settings
+            └── AdminDashboard.jsx ← Admin panel (stats, users, appointments)
 ```
 
 ---
@@ -293,6 +301,8 @@ You should see the DocConnect landing page!
 | GET | /api/auth/me | Protected | Get own profile |
 | POST | /api/auth/forgot-password | Public | Request reset link |
 | PUT | /api/auth/reset-password/:token | Public | Set new password |
+| PUT | /api/auth/update-account | Protected | Change email/phone |
+| DELETE | /api/auth/delete-account | Protected | Delete own account |
 
 ### Doctors
 | Method | Endpoint | Access | Description |
@@ -307,7 +317,7 @@ You should see the DocConnect landing page!
 | POST | /api/appointments | Patient only | Book appointment |
 | GET | /api/appointments/my | Protected | View my appointments |
 | GET | /api/appointments/:id | Protected | View single appointment |
-| PUT | /api/appointments/:id/status | Doctor only | Confirm/complete |
+| PUT | /api/appointments/:id/status | Doctor only | Confirm/complete (with meeting link) |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
 
 ### Availability
@@ -317,15 +327,13 @@ You should see the DocConnect landing page!
 | PUT | /api/availability | Doctor only | Set weekly schedule |
 | GET | /api/availability/:doctorId/slots?date=YYYY-MM-DD | Public | Get free slots |
 
-### Publications
+### Admin
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | /api/thesis | Public | Browse publications |
-| GET | /api/thesis/share/:slug | Public | View via share link |
-| GET | /api/thesis/my | Doctor only | My publications |
-| POST | /api/thesis | Doctor only | Create publication |
-| PUT | /api/thesis/:id | Doctor only | Edit publication |
-| DELETE | /api/thesis/:id | Doctor only | Delete publication |
+| GET | /api/admin/stats | Admin only | Dashboard stats |
+| GET | /api/admin/users | Admin only | List all users |
+| GET | /api/admin/appointments | Admin only | List all appointments |
+| DELETE | /api/admin/users/:id | Admin only | Delete a user |
 
 ---
 
