@@ -33,11 +33,15 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctor profile management with photo upload
 - Phone number and WhatsApp contact for doctors
 - Search and filter doctors by name or specialization
-- Real-time availability: doctors set weekly schedule, patients see only free slots
+- Real-time availability: doctors set weekly schedule (multi-day selection), patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
 - Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
-- Floating WhatsApp emergency button on all pages
-- Admin panel: view stats, manage users, view all appointments
+- UPI Payment: each doctor sets own fee + UPI ID, patient pays directly via UPI app
+- Prescription: doctor writes prescription after consultation (diagnosis, medicines, tests, notes)
+- Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments
+- Patient complaints: patients file complaints, admin reviews and responds
+- Floating WhatsApp emergency button on all pages (+919599150825)
+- Admin panel: view stats, manage users, view all appointments, handle complaints
 - Account settings: users can update email/phone or delete their account
 - Consultation fees displayed in ₹ (Indian Rupees)
 - Responsive design (mobile + desktop)
@@ -87,7 +91,10 @@ docconnect/
 │   │
 │   ├── models/                  ← Database schemas (shape of data)
 │   │   ├── User.js              ← Doctor/patient/admin accounts
-│   │   └── Appointment.js       ← Booking records
+│   │   ├── Appointment.js       ← Booking records + payment status
+│   │   ├── Prescription.js     ← Doctor prescriptions (medicines, tests)
+│   │   ├── MedicalReport.js    ← Patient uploaded test reports
+│   │   └── Complaint.js        ← Patient complaints
 │   │
 │   ├── middleware/              ← Code that runs before route handlers
 │   │   ├── auth.js              ← Token verification + role checking
@@ -96,8 +103,11 @@ docconnect/
 │   ├── controllers/             ← Business logic
 │   │   ├── authController.js    ← Register, login, password reset, update/delete account
 │   │   ├── doctorController.js  ← Profile CRUD, doctor search
-│   │   ├── appointmentController.js ← Booking management + meeting links
+│   │   ├── appointmentController.js ← Booking management + meeting links + payment
 │   │   ├── availabilityController.js ← Schedule + free slot calculation
+│   │   ├── prescriptionController.js ← Doctor writes prescriptions
+│   │   ├── reportController.js  ← Patient uploads test reports
+│   │   ├── complaintController.js ← Patient complaints
 │   │   └── adminController.js   ← Admin: stats, user management
 │   │
 │   ├── routes/                  ← URL → controller mapping
@@ -105,6 +115,9 @@ docconnect/
 │   │   ├── doctor.js
 │   │   ├── appointment.js
 │   │   ├── availability.js
+│   │   ├── prescription.js
+│   │   ├── report.js
+│   │   ├── complaint.js
 │   │   └── admin.js
 │   │
 │   └── uploads/                 ← Uploaded files stored here
@@ -142,7 +155,7 @@ docconnect/
             ├── DoctorList.jsx   ← Browse/search doctors
             ├── DoctorProfile.jsx ← View single doctor + WhatsApp contact
             ├── BookAppointment.jsx ← Book with real-time slot selection
-            ├── Dashboard.jsx    ← Appointments, profile, availability, account settings
+            ├── Dashboard.jsx    ← Appointments, profile, availability, prescriptions, reports, complaints, account settings
             └── AdminDashboard.jsx ← Admin panel (stats, users, appointments)
 ```
 
@@ -319,6 +332,7 @@ You should see the DocConnect landing page!
 | GET | /api/appointments/:id | Protected | View single appointment |
 | PUT | /api/appointments/:id/status | Doctor only | Confirm/complete (with meeting link) |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
+| PUT | /api/appointments/:id/payment | Doctor only | Mark payment received |
 
 ### Availability
 | Method | Endpoint | Access | Description |
@@ -326,6 +340,29 @@ You should see the DocConnect landing page!
 | GET | /api/availability | Doctor only | View own schedule |
 | PUT | /api/availability | Doctor only | Set weekly schedule |
 | GET | /api/availability/:doctorId/slots?date=YYYY-MM-DD | Public | Get free slots |
+
+### Prescriptions
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/prescriptions | Doctor only | Create prescription |
+| GET | /api/prescriptions/my | Protected | View my prescriptions |
+| GET | /api/prescriptions/appointment/:id | Protected | Get prescription for appointment |
+| PUT | /api/prescriptions/:id | Doctor only | Update prescription |
+
+### Medical Reports
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/reports | Patient only | Upload test report (with file) |
+| GET | /api/reports/my | Protected | View my reports |
+| PUT | /api/reports/:id/review | Doctor only | Review/comment on report |
+
+### Complaints
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/complaints | Patient only | File a complaint |
+| GET | /api/complaints/my | Patient only | View my complaints |
+| GET | /api/complaints | Admin only | View all complaints |
+| PUT | /api/complaints/:id | Admin only | Update status/respond |
 
 ### Admin
 | Method | Endpoint | Access | Description |
