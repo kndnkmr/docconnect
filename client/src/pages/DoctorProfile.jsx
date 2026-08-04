@@ -116,7 +116,7 @@ function DoctorProfile() {
               {doctor.consultationFee > 0 && (
                 <div className="bg-gray-100 px-4 py-2 rounded-lg">
                   <span className="text-sm text-gray-500">Consultation Fee</span>
-                  <p className="font-semibold text-gray-800">${doctor.consultationFee}</p>
+                  <p className="font-semibold text-gray-800">₹{doctor.consultationFee}</p>
                 </div>
               )}
             </div>

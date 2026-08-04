@@ -237,7 +237,7 @@ function DoctorCard({ doctor }) {
 
         {doctor.consultationFee > 0 && (
           <p className="text-gray-700 font-medium mt-2">
-            Consultation: ${doctor.consultationFee}
+            Consultation: ₹{doctor.consultationFee}
           </p>
         )}
 

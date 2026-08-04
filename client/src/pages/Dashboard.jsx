@@ -14,7 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, availabilityAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI, authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
@@ -172,6 +172,16 @@ function Dashboard() {
             </button>
           </>
         )}
+        <button
+          onClick={() => setActiveTab('account')}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'account'
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Account Settings
+        </button>
       </div>
 
       {/* ---- Tab Content ---- */}
@@ -333,7 +343,7 @@ function Dashboard() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Consultation Fee ($)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Consultation Fee (₹)</label>
               <input
                 type="number"
                 value={profileData.consultationFee}
@@ -398,6 +408,104 @@ function Dashboard() {
       {activeTab === 'availability' && isDoctor && (
         <DoctorAvailability />
       )}
+
+      {/* === ACCOUNT SETTINGS TAB (All roles) === */}
+      {activeTab === 'account' && (
+        <AccountSettings />
+      )}
+    </div>
+  );
+}
+
+// ---- Account Settings Sub-component ----
+// Allows users to change email/phone and delete their account
+
+function AccountSettings() {
+  const { user, logout } = useAuth();
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleUpdateAccount = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      await authAPI.updateAccount({ email, phone });
+      toast.success('Account updated successfully!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update account');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirm1 = window.confirm('Are you sure you want to delete your account? This cannot be undone.');
+    if (!confirm1) return;
+
+    const confirm2 = window.confirm('All your data (appointments, profile) will be permanently deleted. Continue?');
+    if (!confirm2) return;
+
+    try {
+      await authAPI.deleteAccount();
+      toast.success('Account deleted. Goodbye!');
+      logout();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete account');
+    }
+  };
+
+  return (
+    <div className="max-w-2xl">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">Account Settings</h2>
+
+      {/* Update email/phone */}
+      <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <h3 className="font-medium text-gray-800 mb-4">Update Contact Information</h3>
+        <form onSubmit={handleUpdateAccount} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+91 9876543210"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Update Account'}
+          </button>
+        </form>
+      </div>
+
+      {/* Delete account */}
+      <div className="bg-white rounded-xl shadow-md p-6 border border-red-200">
+        <h3 className="font-medium text-red-700 mb-2">Danger Zone</h3>
+        <p className="text-gray-600 text-sm mb-4">
+          Permanently delete your account and all associated data. This action cannot be undone.
+        </p>
+        <button
+          onClick={handleDeleteAccount}
+          className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Delete My Account
+        </button>
+      </div>
     </div>
   );
 }

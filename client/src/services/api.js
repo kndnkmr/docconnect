@@ -89,6 +89,13 @@ export const authAPI = {
   // Reset password with token
   resetPassword: (token, data) => API.put(`/auth/reset-password/${token}`, data),
   // data = { password }
+
+  // Update email/phone
+  updateAccount: (data) => API.put('/auth/update-account', data),
+  // data = { email, phone }
+
+  // Delete own account
+  deleteAccount: () => API.delete('/auth/delete-account'),
 };
 
 // ============================================

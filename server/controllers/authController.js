@@ -368,5 +368,99 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// ============================================
+// UPDATE ACCOUNT - Change email or phone
+// ============================================
+// Endpoint: PUT /api/auth/update-account
+// Body: { email, phone }
+// Requires: valid token (must be logged in)
+
+const updateAccount = async (req, res) => {
+  try {
+    const { email, phone } = req.body;
+
+    if (!email && !phone) {
+      return res.status(400).json({
+        message: 'Please provide email or phone to update'
+      });
+    }
+
+    // If changing email, check it's not already taken by another user
+    if (email && email !== req.user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({
+          message: 'This email is already in use by another account'
+        });
+      }
+    }
+
+    // Build updates
+    const updates = {};
+    if (email) updates.email = email.toLowerCase().trim();
+    if (phone) updates.phone = phone.trim();
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.json({
+      message: 'Account updated successfully!',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Update account error:', error.message);
+    res.status(500).json({ message: 'Error updating account' });
+  }
+};
+
+// ============================================
+// DELETE ACCOUNT - User deletes their own profile
+// ============================================
+// Endpoint: DELETE /api/auth/delete-account
+// Requires: valid token (must be logged in)
+// Also deletes their appointments
+
+const deleteAccount = async (req, res) => {
+  try {
+    const user = req.user;
+
+    // Don't allow admins to delete themselves (use MongoDB Atlas for that)
+    if (user.role === 'admin') {
+      return res.status(400).json({
+        message: 'Admin accounts cannot be self-deleted. Use the database directly.'
+      });
+    }
+
+    // Delete associated appointments
+    const Appointment = require('../models/Appointment');
+    if (user.role === 'patient') {
+      await Appointment.deleteMany({ patient: user._id });
+    } else if (user.role === 'doctor') {
+      await Appointment.deleteMany({ doctor: user._id });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(user._id);
+
+    res.json({
+      message: 'Your account has been deleted successfully. We\'re sorry to see you go.'
+    });
+
+  } catch (error) {
+    console.error('Delete account error:', error.message);
+    res.status(500).json({ message: 'Error deleting account' });
+  }
+};
+
 // ---- Export all controller functions ----
-module.exports = { register, login, getMe, forgotPassword, resetPassword };
+module.exports = { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount };

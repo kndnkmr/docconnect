@@ -19,7 +19,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import our controller functions (the actual logic)
-const { register, login, getMe, forgotPassword, resetPassword } = require('../controllers/authController');
+const { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount } = require('../controllers/authController');
 
 // Import our auth middleware (the security guard)
 const { protect } = require('../middleware/auth');
@@ -57,6 +57,14 @@ router.post('/forgot-password', forgotPassword);
 // Sends: { password }
 // Returns: { message, token, user } (auto-login after reset)
 router.put('/reset-password/:token', resetPassword);
+
+// PUT /api/auth/update-account
+// Logged-in user can change their email or phone number
+router.put('/update-account', protect, updateAccount);
+
+// DELETE /api/auth/delete-account
+// Logged-in user can delete their own account
+router.delete('/delete-account', protect, deleteAccount);
 
 // ---- Export the router ----
 // We'll import this in server.js and tell Express:
