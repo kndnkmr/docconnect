@@ -10,12 +10,16 @@
 // - Patient: browse doctors, book appointments
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Register() {
+  const [searchParams] = useSearchParams();
+  // Read ?role=doctor from the URL (if present)
+  const defaultRole = searchParams.get('role') === 'doctor' ? 'doctor' : 'patient';
+
   // ---- Form state ----
   const [formData, setFormData] = useState({
     name: '',
@@ -23,7 +27,7 @@ function Register() {
     password: '',
     confirmPassword: '',
     phone: '',
-    role: 'patient'   // Default role
+    role: defaultRole
   });
   // Using ONE state object for all fields (alternative to separate useState for each)
   // This is common for forms with many fields

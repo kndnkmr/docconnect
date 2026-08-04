@@ -44,7 +44,7 @@ function Home() {
               </Link>
               {!isAuthenticated && (
                 <Link
-                  to="/register"
+                  to="/register?role=doctor"
                   className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-700 transition-colors text-center"
                 >
                   Join as a Doctor
