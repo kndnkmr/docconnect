@@ -28,6 +28,10 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 ## Features
 
 - Doctor and patient registration with role-based access
+- Patients can register with phone number only (email optional)
+- Doctors register with email (required)
+- Login via email OR phone number (toggle switch)
+- Show/hide password toggle on login and registration pages
 - JWT token authentication (login persists across sessions)
 - Password reset with secure token (logged to console for local testing)
 - Doctor profile management with photo upload
