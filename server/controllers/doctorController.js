@@ -148,7 +148,8 @@ const updateDoctorProfile = async (req, res) => {
       'bio',
       'profilePhoto',
       'phone',
-      'whatsappNumber'
+      'whatsappNumber',
+      'upiId'
     ];
 
     // Build an object with only the allowed fields that were actually sent

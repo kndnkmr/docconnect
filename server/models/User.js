@@ -76,6 +76,14 @@ const userSchema = new mongoose.Schema({
     // Shown on the doctor's public profile page
   },
 
+  // --- UPI ID (Doctor-specific, for receiving payments) ---
+  upiId: {
+    type: String,
+    default: ''
+    // Doctor's UPI ID where patients pay consultation fees
+    // e.g., "Dr.poojasingh410@okicici"
+  },
+
   // --- Doctor-specific fields ---
   // These only matter if role === 'doctor', but we keep them here for simplicity
   specialization: {

@@ -134,7 +134,7 @@ const getMyAppointments = async (req, res) => {
 
     // Fetch appointments with populated references
     const appointments = await Appointment.find(filter)
-      .populate('doctor', 'name specialization profilePhoto consultationFee')
+      .populate('doctor', 'name specialization profilePhoto consultationFee upiId')
       // ^ Fill in doctor details (instead of just showing their ID)
       .populate('patient', 'name email phone')
       // ^ Fill in patient details

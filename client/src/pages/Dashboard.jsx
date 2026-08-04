@@ -33,7 +33,8 @@ function Dashboard() {
     consultationFee: '',
     bio: '',
     phone: '',
-    whatsappNumber: ''
+    whatsappNumber: '',
+    upiId: ''
   });
 
   // ---- Fetch appointments on load ----
@@ -350,10 +351,10 @@ function Dashboard() {
                           Pay ₹{apt.doctor?.consultationFee || 'as discussed'} via UPI
                         </p>
                         <p className="text-sm font-mono text-orange-900 mt-1 font-semibold">
-                          UPI: bhartisingh6613@oksbi
+                          UPI: {apt.doctor?.upiId || 'Dr.poojasingh410@okicici'}
                         </p>
                         <a
-                          href={`upi://pay?pa=bhartisingh6613@oksbi&pn=DocConnect&am=${apt.doctor?.consultationFee || ''}&cu=INR&tn=Consultation fee for appointment`}
+                          href={`upi://pay?pa=${apt.doctor?.upiId || 'Dr.poojasingh410@okicici'}&pn=${encodeURIComponent(apt.doctor?.name || 'Doctor')}&am=${apt.doctor?.consultationFee || ''}&cu=INR&tn=Consultation fee`}
                           className="inline-block mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
                         >
                           Pay via UPI App
@@ -518,6 +519,17 @@ function Dashboard() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               />
               <p className="text-xs text-gray-500 mt-1">This will be shown on your public profile so patients can reach you</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">UPI ID (for receiving payments)</label>
+              <input
+                type="text"
+                value={profileData.upiId}
+                onChange={(e) => setProfileData(prev => ({ ...prev, upiId: e.target.value }))}
+                placeholder="e.g., Dr.poojasingh410@okicici"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">Patients will pay consultation fees to this UPI ID</p>
             </div>
             <button
               type="submit"
