@@ -14,7 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI, prescriptionAPI, reportAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
@@ -87,6 +87,44 @@ function Dashboard() {
       fetchAppointments();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to cancel');
+    }
+  };
+
+  // ---- Doctor: Write Prescription ----
+  const handleWritePrescription = async (appointmentId, patientId) => {
+    const diagnosis = window.prompt('Enter diagnosis:');
+    if (!diagnosis) return;
+
+    const medicinesStr = window.prompt('Enter medicines (comma separated):\nExample: Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days');
+    const testsStr = window.prompt('Recommended tests (comma separated, leave empty if none):\nExample: Complete Blood Count, Thyroid Profile');
+    const notes = window.prompt('Additional notes/advice (optional):');
+
+    // Parse medicines
+    const medicines = medicinesStr ? medicinesStr.split(',').map(m => {
+      const parts = m.trim().split(' - ');
+      return {
+        name: parts[0] || m.trim(),
+        dosage: '',
+        frequency: parts[1] || '',
+        duration: parts[2] || '',
+        instructions: parts[3] || ''
+      };
+    }) : [];
+
+    // Parse tests
+    const testsRecommended = testsStr ? testsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+
+    try {
+      await prescriptionAPI.create({
+        appointmentId,
+        diagnosis,
+        medicines,
+        testsRecommended,
+        notes: notes || ''
+      });
+      toast.success('Prescription created successfully!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create prescription');
     }
   };
 
@@ -170,19 +208,51 @@ function Dashboard() {
             >
               Availability
             </button>
+            <button
+              onClick={() => setActiveTab('patientReports')}
+              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === 'patientReports'
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Patient Reports
+            </button>
           </>
         )}
         {isPatient && (
-          <button
-            onClick={() => setActiveTab('complaints')}
-            className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === 'complaints'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Complaints
-          </button>
+          <>
+            <button
+              onClick={() => setActiveTab('prescriptions')}
+              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === 'prescriptions'
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Prescriptions
+            </button>
+            <button
+              onClick={() => setActiveTab('reports')}
+              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === 'reports'
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              My Reports
+            </button>
+            <button
+              onClick={() => setActiveTab('complaints')}
+              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === 'complaints'
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Complaints
+            </button>
+          </>
         )}
         <button
           onClick={() => setActiveTab('account')}
@@ -299,6 +369,14 @@ function Dashboard() {
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600"
                       >
                         Mark Complete
+                      </button>
+                    )}
+                    {isDoctor && apt.status === 'completed' && (
+                      <button
+                        onClick={() => handleWritePrescription(apt._id, apt.patient?._id || apt.patient)}
+                        className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
+                      >
+                        Write Prescription
                       </button>
                     )}
 
@@ -421,6 +499,21 @@ function Dashboard() {
         <DoctorAvailability />
       )}
 
+      {/* === PATIENT REPORTS TAB (Doctor only) === */}
+      {activeTab === 'patientReports' && isDoctor && (
+        <DoctorPatientReports />
+      )}
+
+      {/* === PRESCRIPTIONS TAB (Patient only) === */}
+      {activeTab === 'prescriptions' && isPatient && (
+        <PatientPrescriptions />
+      )}
+
+      {/* === REPORTS TAB (Patient only) === */}
+      {activeTab === 'reports' && isPatient && (
+        <PatientReports />
+      )}
+
       {/* === COMPLAINTS TAB (Patient only) === */}
       {activeTab === 'complaints' && isPatient && (
         <PatientComplaints />
@@ -429,6 +522,433 @@ function Dashboard() {
       {/* === ACCOUNT SETTINGS TAB (All roles) === */}
       {activeTab === 'account' && (
         <AccountSettings />
+      )}
+    </div>
+  );
+}
+
+// ---- Doctor Patient Reports Sub-component ----
+// Doctor views reports uploaded by patients and can add comments
+
+function DoctorPatientReports() {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const response = await reportAPI.getMine();
+        setReports(response.data.reports);
+      } catch (error) {
+        console.error('Fetch reports error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReports();
+  }, []);
+
+  const handleReview = async (reportId) => {
+    const comment = window.prompt('Add your review/comment for this report:');
+    if (!comment) return;
+
+    try {
+      await reportAPI.review(reportId, { doctorComment: comment });
+      toast.success('Report reviewed');
+      // Refresh
+      const response = await reportAPI.getMine();
+      setReports(response.data.reports);
+    } catch (error) {
+      toast.error('Failed to review report');
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+  };
+
+  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+
+  return (
+    <div className="max-w-3xl">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">Patient Reports</h2>
+
+      {reports.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-md">
+          <div className="text-5xl mb-4">📋</div>
+          <h3 className="text-xl font-medium text-gray-700">No reports shared yet</h3>
+          <p className="text-gray-500 mt-2">When patients upload test reports for you, they'll appear here.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {reports.map((report) => (
+            <div key={report._id} className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{report.title}</h3>
+                  <p className="text-sm text-gray-500">
+                    Patient: {report.patient?.name} ({report.patient?.phone || report.patient?.email}) • {formatDate(report.createdAt)}
+                  </p>
+                  {report.description && (
+                    <p className="text-sm text-gray-600 mt-1">{report.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <a
+                    href={report.filePath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 bg-primary-100 text-primary-700 rounded-lg text-sm hover:bg-primary-200"
+                  >
+                    View File
+                  </a>
+                  {!report.isReviewed && (
+                    <button
+                      onClick={() => handleReview(report._id)}
+                      className="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
+                    >
+                      Review
+                    </button>
+                  )}
+                </div>
+              </div>
+              {report.isReviewed && report.doctorComment && (
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800">Your Review:</p>
+                  <p className="text-sm text-green-700 mt-1">{report.doctorComment}</p>
+                </div>
+              )}
+              {!report.isReviewed && (
+                <span className="inline-block mt-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-medium">
+                  Pending Review
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Patient Prescriptions Sub-component ----
+// Shows prescriptions written by doctors for this patient
+
+function PatientPrescriptions() {
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrescriptions = async () => {
+      try {
+        const response = await prescriptionAPI.getMine();
+        setPrescriptions(response.data.prescriptions);
+      } catch (error) {
+        console.error('Fetch prescriptions error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrescriptions();
+  }, []);
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+  };
+
+  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+
+  return (
+    <div className="max-w-3xl">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">My Prescriptions</h2>
+
+      {prescriptions.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-md">
+          <div className="text-5xl mb-4">💊</div>
+          <h3 className="text-xl font-medium text-gray-700">No prescriptions yet</h3>
+          <p className="text-gray-500 mt-2">Prescriptions from your doctors will appear here after consultations.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {prescriptions.map((rx) => (
+            <div key={rx._id} className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Dr. {rx.doctor?.name}</h3>
+                  <p className="text-sm text-gray-500">{rx.doctor?.specialization} • {formatDate(rx.createdAt)}</p>
+                </div>
+                {rx.appointment && (
+                  <span className="text-xs text-gray-400">
+                    Appt: {formatDate(rx.appointment.date)} {rx.appointment.timeSlot}
+                  </span>
+                )}
+              </div>
+
+              {/* Diagnosis */}
+              <div className="mb-3">
+                <span className="text-sm font-medium text-gray-700">Diagnosis: </span>
+                <span className="text-sm text-gray-800">{rx.diagnosis}</span>
+              </div>
+
+              {/* Medicines */}
+              {rx.medicines && rx.medicines.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-700 mb-1">Medicines:</p>
+                  <div className="space-y-1 ml-3">
+                    {rx.medicines.map((med, idx) => (
+                      <div key={idx} className="text-sm text-gray-600">
+                        • <span className="font-medium">{med.name}</span>
+                        {med.dosage && ` (${med.dosage})`}
+                        {med.frequency && ` — ${med.frequency}`}
+                        {med.duration && ` — ${med.duration}`}
+                        {med.instructions && <span className="text-gray-500 italic"> ({med.instructions})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tests recommended */}
+              {rx.testsRecommended && rx.testsRecommended.length > 0 && (
+                <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm font-medium text-yellow-800 mb-1">Tests Recommended:</p>
+                  <div className="space-y-1 ml-3">
+                    {rx.testsRecommended.map((test, idx) => (
+                      <div key={idx} className="text-sm text-yellow-700">• {test}</div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-yellow-600 mt-2">
+                    After completing these tests, upload your reports in the "My Reports" tab.
+                  </p>
+                </div>
+              )}
+
+              {/* Notes */}
+              {rx.notes && (
+                <div className="mb-2">
+                  <span className="text-sm font-medium text-gray-700">Notes: </span>
+                  <span className="text-sm text-gray-600 italic">{rx.notes}</span>
+                </div>
+              )}
+
+              {/* Follow-up */}
+              {rx.followUpDate && (
+                <p className="text-sm text-primary-600 font-medium mt-2">
+                  Follow-up: {formatDate(rx.followUpDate)}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Patient Reports Sub-component ----
+// Patient uploads test reports and views doctor comments
+
+function PatientReports() {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ title: '', description: '', doctorId: '' });
+  const [file, setFile] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    fetchReports();
+    fetchDoctors();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      const response = await reportAPI.getMine();
+      setReports(response.data.reports);
+    } catch (error) {
+      console.error('Fetch reports error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch doctors the patient has visited (for dropdown)
+  const fetchDoctors = async () => {
+    try {
+      const response = await appointmentAPI.getMine({ limit: 50 });
+      // Extract unique doctors from appointments
+      const uniqueDoctors = [];
+      const seen = new Set();
+      response.data.appointments.forEach(apt => {
+        const docId = apt.doctor?._id;
+        if (docId && !seen.has(docId)) {
+          seen.add(docId);
+          uniqueDoctors.push({ _id: docId, name: apt.doctor.name, specialization: apt.doctor.specialization });
+        }
+      });
+      setDoctors(uniqueDoctors);
+    } catch (error) {
+      console.error('Fetch doctors error:', error);
+    }
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!formData.title || !formData.doctorId || !file) {
+      toast.error('Please fill title, select doctor, and upload a file');
+      return;
+    }
+
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('description', formData.description);
+    data.append('doctorId', formData.doctorId);
+    data.append('reportFile', file);
+
+    try {
+      await reportAPI.upload(data);
+      toast.success('Report uploaded! Your doctor can now view it.');
+      setShowForm(false);
+      setFormData({ title: '', description: '', doctorId: '' });
+      setFile(null);
+      fetchReports();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to upload report');
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    });
+  };
+
+  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+
+  return (
+    <div className="max-w-3xl">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">My Medical Reports</h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          {showForm ? 'Cancel' : '+ Upload Report'}
+        </button>
+      </div>
+
+      {/* Upload form */}
+      {showForm && (
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h3 className="font-medium text-gray-800 mb-4">Upload Test Report</h3>
+          <form onSubmit={handleUpload} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Report Title</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="e.g., Blood Test Report, MRI Scan"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
+              <select
+                value={formData.doctorId}
+                onChange={(e) => setFormData(prev => ({ ...prev, doctorId: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                required
+              >
+                <option value="">Choose doctor to share with...</option>
+                {doctors.map(doc => (
+                  <option key={doc._id} value={doc._id}>
+                    Dr. {doc.name} ({doc.specialization || 'General'})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+              <input
+                type="text"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Any notes about this report"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Upload File (PDF or Image)</label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Upload Report
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Reports list */}
+      {reports.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-md">
+          <div className="text-5xl mb-4">📋</div>
+          <h3 className="text-xl font-medium text-gray-700">No reports uploaded</h3>
+          <p className="text-gray-500 mt-2">Upload your test reports here so your doctor can review them.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {reports.map((report) => (
+            <div key={report._id} className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{report.title}</h3>
+                  <p className="text-sm text-gray-500">
+                    Shared with: Dr. {report.doctor?.name} • {formatDate(report.createdAt)}
+                  </p>
+                  {report.description && (
+                    <p className="text-sm text-gray-600 mt-1">{report.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    report.isReviewed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {report.isReviewed ? 'Reviewed' : 'Pending Review'}
+                  </span>
+                  <a
+                    href={report.filePath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 text-sm hover:underline"
+                  >
+                    View File
+                  </a>
+                </div>
+              </div>
+              {report.doctorComment && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm font-medium text-blue-800">Doctor's Comment:</p>
+                  <p className="text-sm text-blue-700 mt-1">{report.doctorComment}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

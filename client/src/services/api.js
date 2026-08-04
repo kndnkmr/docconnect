@@ -207,4 +207,42 @@ export const complaintAPI = {
   // data = { status, response }
 };
 
+// ============================================
+// PRESCRIPTION API calls
+// ============================================
+
+export const prescriptionAPI = {
+  // Doctor creates prescription
+  create: (data) => API.post('/prescriptions', data),
+  // data = { appointmentId, diagnosis, medicines, testsRecommended, notes, followUpDate }
+
+  // Get my prescriptions (both roles)
+  getMine: () => API.get('/prescriptions/my'),
+
+  // Get prescription for a specific appointment
+  getByAppointment: (appointmentId) => API.get(`/prescriptions/appointment/${appointmentId}`),
+
+  // Doctor updates prescription
+  update: (id, data) => API.put(`/prescriptions/${id}`, data),
+};
+
+// ============================================
+// MEDICAL REPORT API calls
+// ============================================
+
+export const reportAPI = {
+  // Patient uploads a report (form-data with file)
+  upload: (data) => API.post('/reports', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  // data = FormData with: title, description, doctorId, reportFile
+
+  // Get my reports (both roles)
+  getMine: () => API.get('/reports/my'),
+
+  // Doctor reviews a report
+  review: (id, data) => API.put(`/reports/${id}/review`, data),
+  // data = { doctorComment }
+};
+
 export default API;

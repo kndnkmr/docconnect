@@ -133,6 +133,14 @@ app.use('/api/admin', adminRoutes);
 const complaintRoutes = require('./routes/complaint');
 app.use('/api/complaints', complaintRoutes);
 
+// Prescription routes — doctor writes prescriptions for patients
+const prescriptionRoutes = require('./routes/prescription');
+app.use('/api/prescriptions', prescriptionRoutes);
+
+// Medical report routes — patient uploads test reports for doctor
+const reportRoutes = require('./routes/report');
+app.use('/api/reports', reportRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!
