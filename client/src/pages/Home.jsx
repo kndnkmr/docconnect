@@ -50,6 +50,14 @@ function Home() {
                   Join as a Doctor
                 </Link>
               )}
+              {!isAuthenticated && (
+                <Link
+                  to="/login"
+                  className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-700 transition-colors text-center"
+                >
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
         </div>
