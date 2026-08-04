@@ -42,29 +42,40 @@ const generateToken = (userId) => {
 const register = async (req, res) => {
   try {
     // Step 1: Extract data from the request body
-    // req.body contains whatever JSON the frontend sent
     const { name, email, password, role, phone } = req.body;
-    // This is "destructuring" — a shortcut for:
-    // const name = req.body.name;
-    // const email = req.body.email; ... etc.
 
     // Step 2: Validate required fields
-    if (!name || !email || !password || !role) {
+    // For patients: either email OR phone is required
+    // For doctors: email is required (more professional)
+    if (!name || !password || !role) {
       return res.status(400).json({
-        message: 'Please provide all required fields: name, email, password, role'
+        message: 'Please provide name, password, and role'
       });
-      // 400 = Bad Request (the client sent incomplete data)
     }
 
-    // Step 3: Check if a user with this email already exists
-    const existingUser = await User.findOne({ email });
-    // findOne() searches the database for a matching document
-    // "await" means "wait for the database to respond before continuing"
-
-    if (existingUser) {
+    if (!email && !phone) {
       return res.status(400).json({
-        message: 'An account with this email already exists'
+        message: 'Please provide either email or phone number'
       });
+    }
+
+    // Step 3: Check if a user with this email or phone already exists
+    if (email) {
+      const existingByEmail = await User.findOne({ email });
+      if (existingByEmail) {
+        return res.status(400).json({
+          message: 'An account with this email already exists'
+        });
+      }
+    }
+
+    if (phone) {
+      const existingByPhone = await User.findOne({ phone });
+      if (existingByPhone) {
+        return res.status(400).json({
+          message: 'An account with this phone number already exists'
+        });
+      }
     }
 
     // Step 4: Validate role
@@ -120,17 +131,22 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, phone, password } = req.body;
 
-    // Step 1: Validate input
-    if (!email || !password) {
+    // Step 1: Validate input — need either email or phone + password
+    if ((!email && !phone) || !password) {
       return res.status(400).json({
-        message: 'Please provide email and password'
+        message: 'Please provide email or phone number, and password'
       });
     }
 
-    // Step 2: Find the user by email
-    const user = await User.findOne({ email });
+    // Step 2: Find the user by email OR phone
+    let user;
+    if (email) {
+      user = await User.findOne({ email });
+    } else if (phone) {
+      user = await User.findOne({ phone });
+    }
 
     if (!user) {
       return res.status(401).json({

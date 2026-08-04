@@ -33,6 +33,7 @@ function Register() {
   // This is common for forms with many fields
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -56,8 +57,13 @@ function Register() {
     e.preventDefault();
 
     // Validation
-    if (!formData.name || !formData.email || !formData.password) {
-      toast.error('Please fill in all required fields');
+    if (!formData.name || !formData.password) {
+      toast.error('Please fill in name and password');
+      return;
+    }
+
+    if (!formData.email && !formData.phone) {
+      toast.error('Please provide either email or phone number');
       return;
     }
 
@@ -166,10 +172,10 @@ function Register() {
               />
             </div>
 
-            {/* Email Field */}
+            {/* Email Field (optional for patients) */}
             <div className="mb-4">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+                Email Address {formData.role === 'patient' && <span className="text-gray-400">(optional)</span>}
               </label>
               <input
                 id="email"
@@ -179,14 +185,14 @@ function Register() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required
+                required={formData.role === 'doctor'}
               />
             </div>
 
-            {/* Phone Number Field */}
+            {/* Phone Number Field (required for patients if no email) */}
             <div className="mb-4">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                Phone Number {formData.role === 'patient' && !formData.email && <span className="text-red-500">*</span>}
               </label>
               <input
                 id="phone"
@@ -196,7 +202,11 @@ function Register() {
                 onChange={handleChange}
                 placeholder="+91 9876543210"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                required={formData.role === 'patient' && !formData.email}
               />
+              {formData.role === 'patient' && (
+                <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed)</p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -204,17 +214,26 @@ function Register() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="At least 6 characters"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="At least 6 characters"
+                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password Field */}
@@ -222,15 +241,19 @@ function Register() {
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Re-enter your password"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Re-enter your password"
+                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  required
+                />
+              </div>
+            </div>
               />
             </div>
 

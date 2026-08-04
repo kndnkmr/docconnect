@@ -25,9 +25,11 @@ import toast from 'react-hot-toast';
 function Login() {
   // ---- State for form fields ----
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'phone'
   const [isLoading, setIsLoading] = useState(false);
-  // isLoading = disable the button while waiting for the server
 
   const { login } = useAuth();
   // login function from our AuthContext
@@ -42,7 +44,8 @@ function Login() {
     // (default form behavior is to submit and reload — we don't want that in React)
 
     // Basic validation
-    if (!email || !password) {
+    const identifier = loginMethod === 'email' ? email : phone;
+    if (!identifier || !password) {
       toast.error('Please fill in all fields');
       return;
     }
@@ -51,7 +54,11 @@ function Login() {
 
     try {
       // Send login request to our backend
-      const response = await authAPI.login({ email, password });
+      const response = await authAPI.login(
+        loginMethod === 'email'
+          ? { email, password }
+          : { phone, password }
+      );
 
       // If successful, the response contains { token, user }
       const { token, user } = response.data;
@@ -86,56 +93,94 @@ function Login() {
           <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
           <p className="text-gray-600 mt-2">Sign in to your DocConnect account</p>
           <p className="text-gray-500 text-sm mt-1">
-            Works for both Doctors and Patients — just use the email you registered with
+            Works for both Doctors and Patients
           </p>
         </div>
 
         {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit}>
-            {/* onSubmit = run handleSubmit when the form is submitted (Enter key or button click) */}
 
-            {/* Email Field */}
-            <div className="mb-5">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
+            {/* Login method toggle */}
+            <div className="flex mb-5 border border-gray-200 rounded-lg overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setLoginMethod('email')}
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                  loginMethod === 'email' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
+                }`}
               >
-                Email Address
-              </label>
-              {/* htmlFor connects the label to the input (accessibility) */}
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                // e.target.value = what the user typed
-                placeholder="you@example.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                // focus:ring-2 = blue ring appears when input is focused (clicked)
-                // outline-none = removes the default browser outline
-                required
-              />
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginMethod('phone')}
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                  loginMethod === 'phone' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
+                }`}
+              >
+                Phone
+              </button>
             </div>
 
-            {/* Password Field */}
+            {/* Email or Phone Field */}
+            <div className="mb-5">
+              {loginMethod === 'email' ? (
+                <>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                    required
+                  />
+                </>
+              ) : (
+                <>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 9876543210"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                    required
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Password Field with show/hide toggle */}
             <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                // type="password" hides the characters as dots
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             {/* Submit Button */}

@@ -32,10 +32,12 @@ const userSchema = new mongoose.Schema({
 
   email: {
     type: String,
-    required: [true, 'Email is required'],
     unique: true,          // No two users can have the same email
+    sparse: true,          // Allows multiple users with no email (sparse index)
     lowercase: true,       // Converts "John@Gmail.COM" to "john@gmail.com"
-    trim: true
+    trim: true,
+    default: ''
+    // Email is optional for patients — they can register with just phone number
   },
 
   password: {
