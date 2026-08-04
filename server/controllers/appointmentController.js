@@ -15,6 +15,7 @@
 
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
+const { sendAppointmentNotification, sendAppointmentConfirmation } = require('../utils/sendEmail');
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -84,6 +85,10 @@ const bookAppointment = async (req, res) => {
     // So the frontend gets the doctor's name, not just their ID
     await appointment.populate('doctor', 'name specialization profilePhoto');
     // Second argument = which fields to include (space-separated)
+
+    // Send email notification to doctor (non-blocking — don't wait for it)
+    const patient = await User.findById(req.user._id).select('name phone email');
+    sendAppointmentNotification(doctor, patient, appointment);
 
     res.status(201).json({
       message: 'Appointment booked successfully! Waiting for doctor confirmation.',
@@ -271,8 +276,13 @@ const updateAppointmentStatus = async (req, res) => {
     // .save() triggers any pre-save hooks and validates the data
 
     // Populate before sending back
-    await appointment.populate('doctor', 'name specialization');
-    await appointment.populate('patient', 'name email');
+    await appointment.populate('doctor', 'name specialization consultationFee');
+    await appointment.populate('patient', 'name email phone');
+
+    // Send confirmation email to patient when doctor confirms
+    if (status === 'confirmed') {
+      sendAppointmentConfirmation(appointment.patient, appointment.doctor, appointment);
+    }
 
     res.json({
       message: `Appointment ${status} successfully`,
