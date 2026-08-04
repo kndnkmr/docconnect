@@ -22,7 +22,8 @@ const {
   getMyAppointments,
   getAppointmentById,
   updateAppointmentStatus,
-  cancelAppointment
+  cancelAppointment,
+  markPayment
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -61,6 +62,10 @@ router.put('/:id/status', authorize('doctor'), updateAppointmentStatus);
 // PUT /api/appointments/:id/cancel
 // Only the patient who booked can cancel
 router.put('/:id/cancel', authorize('patient'), cancelAppointment);
+
+// ---- DOCTOR: Mark payment received ----
+// PUT /api/appointments/:id/payment
+router.put('/:id/payment', authorize('doctor'), markPayment);
 
 module.exports = router;
 

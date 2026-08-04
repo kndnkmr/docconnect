@@ -339,11 +339,45 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+// ============================================
+// MARK PAYMENT RECEIVED - Doctor/Admin marks payment
+// ============================================
+// Endpoint: PUT /api/appointments/:id/payment
+// Body: { paymentStatus: 'paid' }
+
+const markPayment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Only the doctor of this appointment or admin can mark payment
+    if (appointment.doctor.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to update payment status' });
+    }
+
+    appointment.paymentStatus = 'paid';
+    await appointment.save();
+
+    res.json({
+      message: 'Payment marked as received',
+      appointment
+    });
+
+  } catch (error) {
+    console.error('Mark payment error:', error.message);
+    res.status(500).json({ message: 'Error updating payment status' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
   getMyAppointments,
   getAppointmentById,
   updateAppointmentStatus,
-  cancelAppointment
+  cancelAppointment,
+  markPayment
 };

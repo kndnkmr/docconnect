@@ -86,6 +86,14 @@ const appointmentSchema = new mongoose.Schema({
     // Modern healthcare offers multiple consultation modes
   },
 
+  // ---- Payment status ----
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid'],
+    default: 'pending'
+    // Admin/doctor marks as paid after receiving UPI payment
+  },
+
   // ---- Meeting link (for video/phone consultations) ----
   meetingLink: {
     type: String,

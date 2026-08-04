@@ -342,6 +342,29 @@ function Dashboard() {
                         Join Meeting Link
                       </a>
                     )}
+                    {/* Payment info for patients */}
+                    {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
+                      <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-sm font-medium text-orange-800">Payment Required</p>
+                        <p className="text-sm text-orange-700 mt-1">
+                          Pay ₹{apt.doctor?.consultationFee || 'as discussed'} via UPI
+                        </p>
+                        <p className="text-sm font-mono text-orange-900 mt-1 font-semibold">
+                          UPI: bhartisingh6613@oksbi
+                        </p>
+                        <a
+                          href={`upi://pay?pa=bhartisingh6613@oksbi&pn=DocConnect&am=${apt.doctor?.consultationFee || ''}&cu=INR&tn=Consultation fee for appointment`}
+                          className="inline-block mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
+                        >
+                          Pay via UPI App
+                        </a>
+                      </div>
+                    )}
+                    {apt.paymentStatus === 'paid' && (
+                      <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                        ✓ Payment Received
+                      </span>
+                    )}
                   </div>
 
                   {/* Action buttons */}
@@ -377,6 +400,18 @@ function Dashboard() {
                         className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
                       >
                         Write Prescription
+                      </button>
+                    )}
+                    {isDoctor && apt.paymentStatus !== 'paid' && ['confirmed', 'completed'].includes(apt.status) && (
+                      <button
+                        onClick={async () => {
+                          await appointmentAPI.markPayment(apt._id);
+                          toast.success('Payment marked as received');
+                          fetchAppointments();
+                        }}
+                        className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600"
+                      >
+                        Mark Paid
                       </button>
                     )}
 

@@ -147,6 +147,9 @@ export const appointmentAPI = {
   // Cancel appointment (patient only)
   cancel: (id, data) => API.put(`/appointments/${id}/cancel`, data),
   // data = { cancellationReason }
+
+  // Mark payment received (doctor only)
+  markPayment: (id) => API.put(`/appointments/${id}/payment`, { paymentStatus: 'paid' }),
 };
 
 // ============================================
