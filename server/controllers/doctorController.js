@@ -11,6 +11,7 @@
 // Here we focus on Read and Update.
 
 const User = require('../models/User');
+const { formatIndianPhone } = require('../utils/formatPhone');
 
 // ============================================
 // GET ALL DOCTORS - Public (anyone can browse)
@@ -156,7 +157,12 @@ const updateDoctorProfile = async (req, res) => {
     const updates = {};
     allowedUpdates.forEach(field => {
       if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+        // Format phone numbers with +91
+        if ((field === 'phone' || field === 'whatsappNumber') && req.body[field]) {
+          updates[field] = formatIndianPhone(req.body[field]);
+        } else {
+          updates[field] = req.body[field];
+        }
       }
     });
     // This prevents someone from sending { role: "admin" } and changing their role!

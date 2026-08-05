@@ -12,6 +12,7 @@ const crypto = require('crypto');
 // crypto = built-in Node.js module for generating random tokens and hashing
 // We use it to create secure, unguessable reset tokens
 const User = require('../models/User');
+const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
 
 // ---- Helper: Generate JWT Token ----
 // We'll call this after successful register or login.
@@ -85,6 +86,14 @@ const register = async (req, res) => {
       });
     }
 
+    // Validate phone number if provided
+    const formattedPhone = phone ? formatIndianPhone(phone) : '';
+    if (phone && !isValidIndianPhone(phone)) {
+      return res.status(400).json({
+        message: 'Please enter a valid 10-digit Indian mobile number'
+      });
+    }
+
     // Step 5: Create the user in the database
     // The password will be automatically hashed by our pre-save hook in User.js!
     const user = await User.create({
@@ -92,7 +101,7 @@ const register = async (req, res) => {
       email,
       password,  // Plain text here → hashed automatically before saving
       role,
-      phone: phone || ''
+      phone: formattedPhone
     });
 
     // Step 6: Generate a token for the new user (log them in immediately)
@@ -414,7 +423,7 @@ const updateAccount = async (req, res) => {
     // Build updates
     const updates = {};
     if (email) updates.email = email.toLowerCase().trim();
-    if (phone) updates.phone = phone.trim();
+    if (phone) updates.phone = formatIndianPhone(phone.trim());
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

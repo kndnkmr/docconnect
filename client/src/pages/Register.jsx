@@ -200,12 +200,12 @@ function Register() {
                 type="tel"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+91 9876543210"
+                placeholder="9876543210 (10 digits, +91 added automatically)"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                 required={formData.role === 'patient' && !formData.email}
               />
               {formData.role === 'patient' && (
-                <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed)</p>
+                <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed). We'll add +91 automatically.</p>
               )}
             </div>
 
