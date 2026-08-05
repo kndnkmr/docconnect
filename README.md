@@ -2,7 +2,7 @@
 
 A full-stack web application where doctors register profiles, patients browse and book consultations, and doctors can be reached directly via WhatsApp for emergencies.
 
-**Live Website:** https://docconnect-mocha.vercel.app
+**Live Website:** https://promedicoz.in (custom domain) | https://docconnect-mocha.vercel.app (backup)
 
 Built as a learning project covering: authentication, CRUD operations, file uploads, role-based access, relational data, and responsive UI.
 
@@ -28,6 +28,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 ## Features
 
 - Doctor and patient registration with role-based access
+- Smart specialization search with fuzzy matching (handles misspellings)
+- Phone number auto-formatting with +91 validation for Indian numbers
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
 - Login via email OR phone number (toggle switch)
