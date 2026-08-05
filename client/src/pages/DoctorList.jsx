@@ -32,6 +32,51 @@ function DoctorList() {
   // Search/filter state
   const [searchName, setSearchName] = useState('');
   const [searchSpecialization, setSearchSpecialization] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // List of common specializations (for smart suggestions)
+  const specializations = [
+    'Gynaecologist', 'Neurologist', 'Cardiologist', 'Dermatologist',
+    'Orthopedic', 'Pediatrician', 'Psychiatrist', 'Ophthalmologist',
+    'ENT Specialist', 'Dentist', 'General Physician', 'Urologist',
+    'Gastroenterologist', 'Pulmonologist', 'Endocrinologist',
+    'Oncologist', 'Nephrologist', 'Rheumatologist', 'Surgeon',
+    'Physiotherapist', 'Radiologist', 'Anesthesiologist',
+    'Plastic Surgeon', 'Sexologist', 'Homeopathy', 'Ayurveda'
+  ];
+
+  // Smart/fuzzy matching function
+  // Handles misspellings like "Gyeacologist" → suggests "Gynaecologist"
+  const getSmartSuggestions = (input) => {
+    if (!input || input.length < 2) return [];
+    const lower = input.toLowerCase();
+
+    // First try: starts with the input
+    const startsWith = specializations.filter(s =>
+      s.toLowerCase().startsWith(lower)
+    );
+    if (startsWith.length > 0) return startsWith;
+
+    // Second try: contains the input anywhere
+    const contains = specializations.filter(s =>
+      s.toLowerCase().includes(lower)
+    );
+    if (contains.length > 0) return contains;
+
+    // Third try: fuzzy match — check if most characters match (handles misspellings)
+    // Simple approach: check how many characters from input exist in the specialization
+    const fuzzy = specializations.filter(s => {
+      const sLower = s.toLowerCase();
+      let matchCount = 0;
+      for (let char of lower) {
+        if (sLower.includes(char)) matchCount++;
+      }
+      // If 60%+ characters match, it's probably what they meant
+      return matchCount >= lower.length * 0.6;
+    });
+
+    return fuzzy;
+  };
 
   // ---- Fetch doctors from API ----
   // This function is called on page load and when filters change
@@ -70,6 +115,7 @@ function DoctorList() {
   // ---- Handle search form submission ----
   const handleSearch = (e) => {
     e.preventDefault();
+    setShowSuggestions(false);
     fetchDoctors(1); // Reset to page 1 when searching
   };
 
@@ -93,6 +139,46 @@ function DoctorList() {
       {/* ---- Search/Filter Bar ---- */}
       <form onSubmit={handleSearch} className="bg-white rounded-xl shadow-md p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search by specialization (FIRST) with smart suggestions */}
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Specialization
+            </label>
+            <input
+              type="text"
+              value={searchSpecialization}
+              onChange={(e) => {
+                setSearchSpecialization(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder="e.g., Gynaecologist, Cardiologist..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              autoComplete="off"
+            />
+            {/* Smart suggestions dropdown */}
+            {showSuggestions && searchSpecialization.length >= 2 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {getSmartSuggestions(searchSpecialization).map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setSearchSpecialization(suggestion);
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+                {getSmartSuggestions(searchSpecialization).length === 0 && (
+                  <div className="px-4 py-2 text-sm text-gray-500">No matches found</div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Search by name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -103,20 +189,6 @@ function DoctorList() {
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               placeholder="Search by name..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-            />
-          </div>
-
-          {/* Search by specialization */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Specialization
-            </label>
-            <input
-              type="text"
-              value={searchSpecialization}
-              onChange={(e) => setSearchSpecialization(e.target.value)}
-              placeholder="e.g., Cardiologist, Dentist..."
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
             />
           </div>
