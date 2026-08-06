@@ -51,6 +51,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - In-app notification banner: doctor sees pending appointment count on Dashboard
 - Admin panel: view stats, manage users, view all appointments, handle complaints, handle complaints
 - Account settings: users can update email/phone or delete their account
+- Account deletion verified server-side before confirming (handles slow backend)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Consultation fees displayed in ₹ (Indian Rupees)
 - Responsive design (mobile + desktop)
