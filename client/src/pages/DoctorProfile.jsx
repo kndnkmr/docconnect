@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 // useParams = hook to access URL parameters (the :id part)
 
-import { doctorAPI } from '../services/api';
+import { doctorAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -24,6 +24,8 @@ function DoctorProfile() {
   const { isAuthenticated, isPatient } = useAuth();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ averageRating: 0, totalReviews: 0 });
 
   // Fetch doctor data when component loads
   useEffect(() => {
@@ -31,6 +33,10 @@ function DoctorProfile() {
       try {
         const response = await doctorAPI.getById(id);
         setDoctor(response.data.doctor);
+        // Also fetch reviews
+        const reviewResponse = await reviewAPI.getDoctorReviews(id);
+        setReviews(reviewResponse.data.reviews);
+        setReviewStats(reviewResponse.data.stats);
       } catch (error) {
         toast.error('Failed to load doctor profile');
         console.error('Fetch doctor error:', error);
@@ -162,6 +168,44 @@ function DoctorProfile() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* ---- Reviews Section ---- */}
+        <div className="border-t p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">Patient Reviews</h2>
+            {reviewStats.totalReviews > 0 && (
+              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                ⭐ {reviewStats.averageRating} / 5 ({reviewStats.totalReviews} reviews)
+              </span>
+            )}
+          </div>
+
+          {reviews.length === 0 ? (
+            <p className="text-gray-500">No reviews yet. Be the first to consult and rate!</p>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <div key={review._id} className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-yellow-500">{'⭐'.repeat(review.rating)}</span>
+                        <span className="text-sm text-gray-500">({review.rating}/5)</span>
+                      </div>
+                      {review.comment && (
+                        <p className="text-gray-700 mt-2 text-sm">"{review.comment}"</p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-gray-600">{review.patient?.name}</p>
+                      <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

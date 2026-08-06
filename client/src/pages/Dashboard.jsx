@@ -14,7 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI, prescriptionAPI, reportAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI, prescriptionAPI, reportAPI, reviewAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
@@ -112,6 +112,25 @@ function Dashboard() {
       fetchAppointments();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to cancel');
+    }
+  };
+
+  // ---- Patient: Rate doctor ----
+  const handleRateDoctor = async (appointmentId) => {
+    const ratingStr = window.prompt('Rate this doctor (1-5 stars):');
+    if (!ratingStr) return;
+    const rating = parseInt(ratingStr);
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+      toast.error('Please enter a number between 1 and 5');
+      return;
+    }
+    const comment = window.prompt('Write a short review (optional):') || '';
+
+    try {
+      await reviewAPI.create({ appointmentId, rating, comment });
+      toast.success('Thank you for your review!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
     }
   };
 
@@ -460,6 +479,14 @@ function Dashboard() {
                         className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
                       >
                         Cancel
+                      </button>
+                    )}
+                    {isPatient && apt.status === 'completed' && (
+                      <button
+                        onClick={() => handleRateDoctor(apt._id)}
+                        className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
+                        ⭐ Rate Doctor
                       </button>
                     )}
                   </div>

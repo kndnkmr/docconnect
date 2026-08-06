@@ -330,7 +330,7 @@ function DoctorCard({ doctor }) {
         )}
 
         {/* View Profile button */}
-        <div className="mt-4">
+        <div className="mt-4 flex justify-between items-center">
           <span className="text-primary-600 text-sm font-medium hover:underline">
             View Profile →
           </span>

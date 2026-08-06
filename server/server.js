@@ -133,6 +133,10 @@ app.use('/api/admin', adminRoutes);
 const complaintRoutes = require('./routes/complaint');
 app.use('/api/complaints', complaintRoutes);
 
+// Review routes — patient rates doctors after consultation
+const reviewRoutes = require('./routes/review');
+app.use('/api/reviews', reviewRoutes);
+
 // Prescription routes — doctor writes prescriptions for patients
 const prescriptionRoutes = require('./routes/prescription');
 app.use('/api/prescriptions', prescriptionRoutes);

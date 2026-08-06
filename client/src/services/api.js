@@ -239,14 +239,21 @@ export const reportAPI = {
   upload: (data) => API.post('/reports', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
-  // data = FormData with: title, description, doctorId, reportFile
-
-  // Get my reports (both roles)
   getMine: () => API.get('/reports/my'),
-
-  // Doctor reviews a report
   review: (id, data) => API.put(`/reports/${id}/review`, data),
-  // data = { doctorComment }
+};
+
+// ============================================
+// REVIEW API calls
+// ============================================
+
+export const reviewAPI = {
+  // Patient submits review
+  create: (data) => API.post('/reviews', data),
+  // data = { appointmentId, rating, comment }
+
+  // Get reviews for a doctor (public)
+  getDoctorReviews: (doctorId) => API.get(`/reviews/doctor/${doctorId}`),
 };
 
 export default API;
