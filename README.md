@@ -32,7 +32,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Phone number auto-formatting with +91 validation for Indian numbers
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
-- Login via email OR phone number (toggle switch)
+- Login via phone (default) OR email (toggle switch)
 - Show/hide password toggle on login and registration pages
 - JWT token authentication (login persists across sessions)
 - Password reset with secure token (logged to console for local testing)
