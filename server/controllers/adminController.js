@@ -168,4 +168,70 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser };
+// ============================================
+// GET ANALYTICS - Revenue and consultation insights
+// ============================================
+// Endpoint: GET /api/admin/analytics
+
+const getAnalytics = async (req, res) => {
+  try {
+    // Total revenue (sum of all paid appointments)
+    const revenueResult = await Appointment.aggregate([
+      { $match: { paymentStatus: 'paid' } },
+      { $group: { _id: null, totalRevenue: { $sum: '$amountCollected' }, count: { $sum: 1 } } }
+    ]);
+    const totalRevenue = revenueResult[0]?.totalRevenue || 0;
+    const totalPaidAppointments = revenueResult[0]?.count || 0;
+
+    // Revenue per doctor
+    const revenueByDoctor = await Appointment.aggregate([
+      { $match: { paymentStatus: 'paid' } },
+      { $group: { _id: '$doctor', revenue: { $sum: '$amountCollected' }, appointments: { $sum: 1 } } },
+      { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'doctorInfo' } },
+      { $unwind: '$doctorInfo' },
+      { $project: { doctorName: '$doctorInfo.name', specialization: '$doctorInfo.specialization', revenue: 1, appointments: 1 } },
+      { $sort: { revenue: -1 } }
+    ]);
+
+    // Consultation type breakdown
+    const consultationTypes = await Appointment.aggregate([
+      { $match: { status: { $in: ['confirmed', 'completed'] } } },
+      { $group: { _id: '$consultationType', count: { $sum: 1 } } }
+    ]);
+
+    // Top doctors by bookings
+    const topDoctors = await Appointment.aggregate([
+      { $group: { _id: '$doctor', totalBookings: { $sum: 1 }, completed: { $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] } } } },
+      { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'doctorInfo' } },
+      { $unwind: '$doctorInfo' },
+      { $project: { doctorName: '$doctorInfo.name', specialization: '$doctorInfo.specialization', totalBookings: 1, completed: 1 } },
+      { $sort: { totalBookings: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // Recent payments
+    const recentPayments = await Appointment.find({ paymentStatus: 'paid' })
+      .populate('doctor', 'name specialization')
+      .populate('patient', 'name phone')
+      .sort({ paidAt: -1 })
+      .limit(10)
+      .select('doctor patient amountCollected paidAt date timeSlot consultationType');
+
+    res.json({
+      revenue: {
+        total: totalRevenue,
+        totalPaidAppointments,
+        byDoctor: revenueByDoctor
+      },
+      consultationTypes,
+      topDoctors,
+      recentPayments
+    });
+
+  } catch (error) {
+    console.error('Get analytics error:', error.message);
+    res.status(500).json({ message: 'Error fetching analytics' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, getAnalytics };

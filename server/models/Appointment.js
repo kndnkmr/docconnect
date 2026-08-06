@@ -94,6 +94,20 @@ const appointmentSchema = new mongoose.Schema({
     // Admin/doctor marks as paid after receiving UPI payment
   },
 
+  // ---- Amount actually collected ----
+  amountCollected: {
+    type: Number,
+    default: 0
+    // Actual fee received (may differ from doctor's listed consultationFee)
+  },
+
+  // ---- Payment date ----
+  paidAt: {
+    type: Date,
+    default: null
+    // When the payment was marked as received
+  },
+
   // ---- Meeting link (for video/phone consultations) ----
   meetingLink: {
     type: String,

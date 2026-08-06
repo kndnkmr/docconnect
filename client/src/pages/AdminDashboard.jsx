@@ -17,6 +17,7 @@ function AdminDashboard() {
   const [userRoleFilter, setUserRoleFilter] = useState('');
   const [userSearch, setUserSearch] = useState('');
   const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('');
+  const [analytics, setAnalytics] = useState(null);
 
   // Fetch stats on load
   useEffect(() => {
@@ -54,6 +55,15 @@ function AdminDashboard() {
       setAppointments(response.data.appointments);
     } catch (error) {
       toast.error('Failed to load appointments');
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      const response = await adminAPI.getAnalytics();
+      setAnalytics(response.data);
+    } catch (error) {
+      toast.error('Failed to load analytics');
     }
   };
 
@@ -137,6 +147,14 @@ function AdminDashboard() {
           }`}
         >
           Appointments
+        </button>
+        <button
+          onClick={() => { setActiveTab('analytics'); fetchAnalytics(); }}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'analytics' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Revenue & Analytics
         </button>
       </div>
 
@@ -325,6 +343,125 @@ function AdminDashboard() {
             </div>
             {appointments.length === 0 && (
               <div className="text-center py-8 text-gray-500">No appointments found</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* === ANALYTICS TAB === */}
+      {activeTab === 'analytics' && analytics && (
+        <div>
+          {/* Revenue Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-3xl font-bold text-green-600">₹{analytics.revenue.total.toLocaleString()}</div>
+              <div className="text-gray-600 mt-1">Total Revenue</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-3xl font-bold text-primary-600">{analytics.revenue.totalPaidAppointments}</div>
+              <div className="text-gray-600 mt-1">Paid Appointments</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-3xl font-bold text-purple-600">
+                ₹{analytics.revenue.totalPaidAppointments > 0 ? Math.round(analytics.revenue.total / analytics.revenue.totalPaidAppointments) : 0}
+              </div>
+              <div className="text-gray-600 mt-1">Avg Fee per Consultation</div>
+            </div>
+          </div>
+
+          {/* Consultation Type Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Consultation Types</h3>
+              {analytics.consultationTypes.length === 0 ? (
+                <p className="text-gray-500">No data yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {analytics.consultationTypes.map((type, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <span className="text-gray-700 capitalize">{type._id || 'Unknown'}</span>
+                      <span className="font-semibold text-primary-600">{type.count} bookings</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Top Doctors */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Doctors (by Bookings)</h3>
+              {analytics.topDoctors.length === 0 ? (
+                <p className="text-gray-500">No data yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {analytics.topDoctors.map((doc, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <div>
+                        <span className="text-gray-800 font-medium">{doc.doctorName}</span>
+                        <span className="text-gray-500 text-xs ml-2">{doc.specialization}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-semibold text-primary-600">{doc.totalBookings}</span>
+                        <span className="text-gray-400 text-xs ml-1">({doc.completed} completed)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Revenue by Doctor */}
+          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue by Doctor</h3>
+            {analytics.revenue.byDoctor.length === 0 ? (
+              <p className="text-gray-500">No payment data yet</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Doctor</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Specialization</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Paid Appointments</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {analytics.revenue.byDoctor.map((doc, idx) => (
+                      <tr key={idx} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-800">{doc.doctorName}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{doc.specialization || '-'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{doc.appointments}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-green-600">₹{doc.revenue.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Recent Payments */}
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Payments</h3>
+            {analytics.recentPayments.length === 0 ? (
+              <p className="text-gray-500">No payments yet</p>
+            ) : (
+              <div className="space-y-3">
+                {analytics.recentPayments.map((payment, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{payment.patient?.name} → Dr. {payment.doctor?.name}</p>
+                      <p className="text-xs text-gray-500">{payment.consultationType} • {formatDate(payment.date)} • {payment.timeSlot}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-green-600">₹{payment.amountCollected}</p>
+                      <p className="text-xs text-gray-400">{payment.paidAt ? formatDate(payment.paidAt) : ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>

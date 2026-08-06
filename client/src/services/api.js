@@ -179,14 +179,15 @@ export const adminAPI = {
 
   // Get all users (with optional filters)
   getUsers: (params) => API.get('/admin/users', { params }),
-  // params = { role, search, page, limit }
 
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
-  // params = { status, page, limit }
 
   // Delete a user
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
+
+  // Get analytics (revenue, consultation types, top doctors)
+  getAnalytics: () => API.get('/admin/analytics'),
 };
 
 // ============================================

@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, getAnalytics } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -24,5 +24,8 @@ router.get('/appointments', getAllAppointments);
 
 // DELETE /api/admin/users/:id - Remove a user
 router.delete('/users/:id', deleteUser);
+
+// GET /api/admin/analytics - Revenue and consultation insights
+router.get('/analytics', getAnalytics);
 
 module.exports = router;

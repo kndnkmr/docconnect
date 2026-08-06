@@ -357,18 +357,21 @@ const cancelAppointment = async (req, res) => {
 
 const markPayment = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id);
+    const appointment = await Appointment.findById(req.params.id).populate('doctor', 'consultationFee');
 
     if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
     // Only the doctor of this appointment or admin can mark payment
-    if (appointment.doctor.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    if (appointment.doctor._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized to update payment status' });
     }
 
     appointment.paymentStatus = 'paid';
+    appointment.paidAt = new Date();
+    // Use custom amount if provided, otherwise use doctor's consultation fee
+    appointment.amountCollected = req.body.amount || appointment.doctor.consultationFee || 0;
     await appointment.save();
 
     res.json({
