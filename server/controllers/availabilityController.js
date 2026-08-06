@@ -226,13 +226,15 @@ const getFreeSlots = async (req, res) => {
     let freeSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
 
     // Filter: remove past time slots if the selected date is TODAY (in IST)
-    const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 min in ms
-    const nowIST = new Date(Date.now() + istOffset);
-    const todayIST = nowIST.toISOString().split('T')[0]; // "2026-08-05" in IST
+    // Use Intl to get the actual IST date/time regardless of server timezone
+    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const todayIST = nowInIST.getFullYear() + '-' +
+      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowInIST.getDate()).padStart(2, '0');
 
     if (date === todayIST) {
-      // Get current IST time in minutes since midnight
-      const currentMinutes = nowIST.getUTCHours() * 60 + nowIST.getUTCMinutes();
+      // Current time in IST as minutes since midnight
+      const currentMinutes = nowInIST.getHours() * 60 + nowInIST.getMinutes();
 
       freeSlots = freeSlots.filter(slot => {
         const startTimeStr = slot.split(' - ')[0]; // "09:30 AM"
