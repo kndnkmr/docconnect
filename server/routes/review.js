@@ -8,8 +8,11 @@
 const express = require('express');
 const router = express.Router();
 
-const { createReview, getDoctorReviews, deleteReview } = require('../controllers/reviewController');
+const { createReview, getDoctorReviews, deleteReview, getTopReviews } = require('../controllers/reviewController');
 const { protect, authorize } = require('../middleware/auth');
+
+// Public: get top reviews for homepage
+router.get('/top', getTopReviews);
 
 // Public: view doctor's reviews
 router.get('/doctor/:doctorId', getDoctorReviews);

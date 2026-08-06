@@ -250,10 +250,12 @@ export const reportAPI = {
 export const reviewAPI = {
   // Patient submits review
   create: (data) => API.post('/reviews', data),
-  // data = { appointmentId, rating, comment }
 
   // Get reviews for a doctor (public)
   getDoctorReviews: (doctorId) => API.get(`/reviews/doctor/${doctorId}`),
+
+  // Get top reviews for homepage testimonials (public)
+  getTopReviews: () => API.get('/reviews/top'),
 };
 
 export default API;

@@ -117,4 +117,26 @@ const deleteReview = async (req, res) => {
   }
 };
 
-module.exports = { createReview, getDoctorReviews, deleteReview };
+// ============================================
+// GET TOP REVIEWS - For homepage testimonials (public)
+// ============================================
+// Endpoint: GET /api/reviews/top
+// Returns 4-5 star reviews with comments for the scrolling testimonial
+
+const getTopReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ rating: { $gte: 4 }, comment: { $ne: '' } })
+      .populate('patient', 'name')
+      .populate('doctor', 'name specialization')
+      .sort({ createdAt: -1 })
+      .limit(15);
+
+    res.json({ reviews });
+
+  } catch (error) {
+    console.error('Get top reviews error:', error.message);
+    res.status(500).json({ message: 'Error fetching reviews' });
+  }
+};
+
+module.exports = { createReview, getDoctorReviews, deleteReview, getTopReviews };

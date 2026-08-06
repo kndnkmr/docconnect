@@ -10,13 +10,30 @@
 // - Tailwind responsive classes: sm:, md:, lg: prefixes
 // - Link navigation: buttons that go to other pages
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { reviewAPI } from '../services/api';
 
 function Home() {
   const { isAuthenticated } = useAuth();
   const [symptomSearch, setSymptomSearch] = useState('');
+  const [topReviews, setTopReviews] = useState([]);
+
+  // Fetch top reviews for testimonials
+  useEffect(() => {
+    const fetchTopReviews = async () => {
+      try {
+        // Get reviews from all doctors — we'll use a general endpoint
+        const response = await reviewAPI.getTopReviews();
+        setTopReviews(response.data.reviews || []);
+      } catch (error) {
+        // Silently fail — testimonials are optional
+        console.error('Fetch reviews error:', error);
+      }
+    };
+    fetchTopReviews();
+  }, []);
 
   // Smart symptom → specialization mapping
   const getSpecializationFromSymptom = (input) => {
@@ -221,6 +238,41 @@ function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ---- Testimonials Section (Auto-scrolling reviews) ---- */}
+      <section className="py-12 bg-white overflow-hidden">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+            What Our Patients Say
+          </h2>
+          <p className="text-center text-gray-500 mb-8 text-sm">Real reviews from real patients</p>
+        </div>
+
+        {/* Scrolling marquee */}
+        {topReviews.length > 0 ? (
+          <div className="relative">
+            <div className="flex animate-scroll gap-6 px-4">
+              {[...topReviews, ...topReviews].map((review, idx) => (
+                <div
+                  key={idx}
+                  className="min-w-[300px] max-w-[300px] bg-gray-50 border border-gray-100 rounded-xl p-5 flex-shrink-0"
+                >
+                  <div className="text-yellow-400 text-sm mb-2">{'⭐'.repeat(review.rating)}</div>
+                  <p className="text-gray-700 text-sm line-clamp-3">"{review.comment}"</p>
+                  <div className="mt-3 flex justify-between items-center">
+                    <span className="text-xs font-medium text-gray-800">{review.patient?.name}</span>
+                    <span className="text-xs text-gray-400">
+                      for Dr. {review.doctor?.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-400 text-sm">Reviews will appear here once patients start rating.</p>
+        )}
       </section>
 
       {/* ---- CTA (Call to Action) Section ---- */}
