@@ -28,7 +28,7 @@ function Login() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'phone'
+  const [loginMethod, setLoginMethod] = useState('phone'); // 'email' or 'phone'
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
@@ -105,15 +105,6 @@ function Login() {
             <div className="flex mb-5 border border-gray-200 rounded-lg overflow-hidden">
               <button
                 type="button"
-                onClick={() => setLoginMethod('email')}
-                className={`flex-1 py-2 text-sm font-medium transition-colors ${
-                  loginMethod === 'email' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
-                }`}
-              >
-                Email
-              </button>
-              <button
-                type="button"
                 onClick={() => setLoginMethod('phone')}
                 className={`flex-1 py-2 text-sm font-medium transition-colors ${
                   loginMethod === 'phone' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
@@ -121,11 +112,35 @@ function Login() {
               >
                 Phone
               </button>
+              <button
+                type="button"
+                onClick={() => setLoginMethod('email')}
+                className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                  loginMethod === 'email' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
+                }`}
+              >
+                Email
+              </button>
             </div>
 
             {/* Email or Phone Field */}
             <div className="mb-5">
-              {loginMethod === 'email' ? (
+              {loginMethod === 'phone' ? (
+                <>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="9876543210"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                    required
+                  />
+                </>
+              ) : (
                 <>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email Address
@@ -136,21 +151,6 @@ function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                    required
-                  />
-                </>
-              ) : (
-                <>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number
-                  </label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                     required
                   />
