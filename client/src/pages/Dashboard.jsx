@@ -40,7 +40,31 @@ function Dashboard() {
   // ---- Fetch appointments on load ----
   useEffect(() => {
     fetchAppointments();
+    // If doctor, also fetch their current profile data
+    if (isDoctor) {
+      fetchProfile();
+    }
   }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const response = await authAPI.getMe();
+      const userData = response.data.user;
+      setProfileData({
+        specialization: userData.specialization || '',
+        experience: userData.experience || '',
+        qualification: userData.qualification || '',
+        clinicAddress: userData.clinicAddress || '',
+        consultationFee: userData.consultationFee || '',
+        bio: userData.bio || '',
+        phone: userData.phone || '',
+        whatsappNumber: userData.whatsappNumber || '',
+        upiId: userData.upiId || ''
+      });
+    } catch (error) {
+      console.error('Fetch profile error:', error);
+    }
+  };
 
   const fetchAppointments = async () => {
     try {
