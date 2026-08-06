@@ -33,10 +33,6 @@ function DoctorProfile() {
       try {
         const response = await doctorAPI.getById(id);
         setDoctor(response.data.doctor);
-        // Also fetch reviews
-        const reviewResponse = await reviewAPI.getDoctorReviews(id);
-        setReviews(reviewResponse.data.reviews);
-        setReviewStats(reviewResponse.data.stats);
       } catch (error) {
         toast.error('Failed to load doctor profile');
         console.error('Fetch doctor error:', error);
@@ -45,7 +41,19 @@ function DoctorProfile() {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const reviewResponse = await reviewAPI.getDoctorReviews(id);
+        setReviews(reviewResponse.data.reviews);
+        setReviewStats(reviewResponse.data.stats);
+      } catch (error) {
+        // Silently fail — reviews are optional, don't block the page
+        console.error('Fetch reviews error:', error);
+      }
+    };
+
     fetchDoctor();
+    fetchReviews();
   }, [id]);
   // [id] = re-fetch if the ID in the URL changes
 
