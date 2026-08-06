@@ -38,20 +38,13 @@ function Navbar() {
   }, []);
 
   const handleInstall = async () => {
-    if (installPrompt) {
-      installPrompt.prompt();
-      const { outcome } = await installPrompt.userChoice;
-      if (outcome === 'accepted') {
-        toast.success('DocConnect installed!');
-        setInstallPrompt(null);
-        setIsInstalled(true);
-      }
-    } else {
-      // Fallback instructions when Chrome hasn't fired the prompt yet
-      toast('Tap the ⋮ menu in Chrome → "Add to Home screen"', {
-        icon: '📲',
-        duration: 6000
-      });
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      toast.success('DocConnect installed!');
+      setInstallPrompt(null);
+      setIsInstalled(true);
     }
   };
 
@@ -168,8 +161,8 @@ function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
 
-              {/* Install App — always first, always visible unless already installed as PWA */}
-              {!isInstalled && (
+              {/* Install App — only show when Chrome is ready to install (beforeinstallprompt fired) */}
+              {installPrompt && !isInstalled && (
                 <button
                   onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }}
                   className="flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2 font-medium"
