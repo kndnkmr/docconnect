@@ -223,7 +223,25 @@ const getFreeSlots = async (req, res) => {
     // Example: ["09:00 AM - 09:30 AM", "10:00 AM - 10:30 AM"]
 
     // Filter: remove booked slots from all slots
-    const freeSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+    let freeSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+
+    // Filter: remove past time slots if the selected date is TODAY
+    const today = new Date();
+    const selectedDateStr = selectedDate.toISOString().split('T')[0];
+    const todayStr = today.toISOString().split('T')[0];
+
+    if (selectedDateStr === todayStr) {
+      // Get current time in minutes since midnight (IST = UTC + 5:30)
+      const nowIST = new Date(today.getTime() + (5.5 * 60 * 60 * 1000));
+      const currentMinutes = nowIST.getUTCHours() * 60 + nowIST.getUTCMinutes();
+
+      freeSlots = freeSlots.filter(slot => {
+        // Parse start time from slot string: "09:30 AM - 10:00 AM" → get "09:30 AM"
+        const startTimeStr = slot.split(' - ')[0]; // "09:30 AM"
+        const slotMinutes = timeStringToMinutes(startTimeStr);
+        return slotMinutes > currentMinutes;
+      });
+    }
 
     res.json({
       date,
@@ -287,6 +305,18 @@ function minutesToTimeString(minutes) {
   const minsStr = mins.toString().padStart(2, '0');
 
   return `${hoursStr}:${minsStr} ${period}`;
+}
+
+// Convert "09:30 AM" or "01:30 PM" to minutes since midnight
+// "09:30 AM" → 570, "01:30 PM" → 810
+function timeStringToMinutes(timeStr) {
+  const [time, period] = timeStr.split(' '); // ["09:30", "AM"]
+  let [hours, mins] = time.split(':').map(Number); // [9, 30]
+
+  if (period === 'PM' && hours !== 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+
+  return hours * 60 + mins;
 }
 
 // ---- Export ----
