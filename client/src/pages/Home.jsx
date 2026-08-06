@@ -127,8 +127,8 @@ function Home() {
             )}
           </div>
 
-          {/* Symptom cards — all specializations with correct icons */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 max-w-4xl mx-auto">
+          {/* Symptom cards — all departments */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-5xl mx-auto">
             {[
               { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
               { symptom: 'Headache', icon: '🤕', specialization: 'Neurologist' },
@@ -142,16 +142,25 @@ function Home() {
               { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
               { symptom: 'Ear / Nose', icon: '👂', specialization: 'ENT Specialist' },
               { symptom: 'Stomach', icon: '🤢', specialization: 'Gastroenterologist' },
-              { symptom: 'Lungs / Breathing', icon: '🫁', specialization: 'Pulmonologist' },
+              { symptom: 'Lungs', icon: '🫁', specialization: 'Pulmonologist' },
               { symptom: 'Kidney / Urine', icon: '💧', specialization: 'Urologist' },
-              { symptom: 'Diabetes / Thyroid', icon: '💉', specialization: 'Endocrinologist' },
+              { symptom: 'Diabetes', icon: '💉', specialization: 'Endocrinologist' },
+              { symptom: 'Cancer', icon: '🎗️', specialization: 'Oncologist' },
+              { symptom: 'Kidney Disease', icon: '🫘', specialization: 'Nephrologist' },
+              { symptom: 'Arthritis', icon: '🖐️', specialization: 'Rheumatologist' },
+              { symptom: 'Surgery', icon: '🔪', specialization: 'Surgeon' },
+              { symptom: 'Physiotherapy', icon: '🏃', specialization: 'Physiotherapist' },
+              { symptom: 'Sexual Health', icon: '🔒', specialization: 'Sexologist' },
+              { symptom: 'Homeopathy', icon: '🌿', specialization: 'Homeopathy' },
+              { symptom: 'Ayurveda', icon: '🍃', specialization: 'Ayurveda' },
+              { symptom: 'Diet / Nutrition', icon: '🥗', specialization: 'Dietitian' },
             ].map((item, idx) => (
               <Link
                 key={idx}
                 to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                className="bg-gray-50 p-4 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
+                className="bg-gray-50 p-3 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
               >
-                <div className="text-4xl mb-2">{item.icon}</div>
+                <div className="text-3xl mb-1">{item.icon}</div>
                 <p className="text-xs font-medium text-gray-700 leading-tight">{item.symptom}</p>
               </Link>
             ))}
