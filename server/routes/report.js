@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { uploadReport, getMyReports, reviewReport } = require('../controllers/reportController');
+const { uploadReport, getMyReports, reviewReport, updateReport } = require('../controllers/reportController');
 const { protect, authorize } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
 
@@ -20,6 +20,9 @@ router.get('/my', getMyReports);
 
 // Patient uploads report (with file)
 router.post('/', authorize('patient'), upload.single('reportFile'), uploadReport);
+
+// Patient updates/replaces report (with optional new file)
+router.put('/:id', authorize('patient'), upload.single('reportFile'), updateReport);
 
 // Doctor reviews/comments on report
 router.put('/:id/review', authorize('doctor'), reviewReport);

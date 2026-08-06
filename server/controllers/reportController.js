@@ -111,4 +111,48 @@ const reviewReport = async (req, res) => {
   }
 };
 
-module.exports = { uploadReport, getMyReports, reviewReport };
+// ============================================
+// UPDATE REPORT - Patient re-uploads/replaces file
+// ============================================
+// Endpoint: PUT /api/reports/:id
+// Body (form-data): { title, description } + optional new file
+
+const updateReport = async (req, res) => {
+  try {
+    const report = await MedicalReport.findById(req.params.id);
+
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    // Only the patient who uploaded can update
+    if (report.patient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only update your own reports' });
+    }
+
+    // Update fields if provided
+    if (req.body.title) report.title = req.body.title;
+    if (req.body.description !== undefined) report.description = req.body.description;
+
+    // Replace file if new one uploaded
+    if (req.file) {
+      report.filePath = `/uploads/${req.file.filename}`;
+      // Reset review status since file changed
+      report.isReviewed = false;
+      report.doctorComment = '';
+    }
+
+    await report.save();
+
+    res.json({
+      message: 'Report updated successfully',
+      report
+    });
+
+  } catch (error) {
+    console.error('Update report error:', error.message);
+    res.status(500).json({ message: 'Error updating report' });
+  }
+};
+
+module.exports = { uploadReport, getMyReports, reviewReport, updateReport };

@@ -241,6 +241,10 @@ export const reportAPI = {
   }),
   getMine: () => API.get('/reports/my'),
   review: (id, data) => API.put(`/reports/${id}/review`, data),
+  // Patient updates/replaces report file
+  update: (id, data) => API.put(`/reports/${id}`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };
 
 // ============================================

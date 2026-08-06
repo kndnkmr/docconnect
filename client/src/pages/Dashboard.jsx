@@ -1049,6 +1049,27 @@ function PatientReports() {
                   >
                     View File
                   </a>
+                  <label className="cursor-pointer px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200 transition-colors">
+                    Replace File
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const data = new FormData();
+                        data.append('reportFile', file);
+                        try {
+                          await reportAPI.update(report._id, data);
+                          toast.success('File replaced successfully');
+                          fetchReports();
+                        } catch (error) {
+                          toast.error('Failed to replace file');
+                        }
+                      }}
+                    />
+                  </label>
                 </div>
               </div>
               {report.doctorComment && (
