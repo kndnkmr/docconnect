@@ -167,6 +167,17 @@ function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
+
+              {/* Install App — always first, always visible unless already installed as PWA */}
+              {!isInstalled && (
+                <button
+                  onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2 font-medium"
+                >
+                  📲 Install App on Phone
+                </button>
+              )}
+
               <Link to="/doctors" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                 Find Doctors
               </Link>
@@ -179,22 +190,12 @@ function Navbar() {
                   <div className="px-2 py-1 text-sm text-gray-500">
                     Signed in as {user.name} ({user.role})
                   </div>
-                  {!isInstalled && (
-                    <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
-                      📲 Install App on Phone
-                    </button>
-                  )}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
                   </button>
                 </>
               ) : (
                 <>
-                  {!isInstalled && (
-                    <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
-                      📲 Install App on Phone
-                    </button>
-                  )}
                   <Link to="/login" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Login
                   </Link>
