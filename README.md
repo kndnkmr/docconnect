@@ -29,39 +29,43 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 - Doctor and patient registration with role-based access
 - Smart specialization search with fuzzy matching (handles misspellings)
+- Advanced doctor search filters: specialization, name, max fee, "Available Today"
 - Phone number auto-formatting with +91 validation for Indian numbers
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
 - Login via phone (default) OR email (toggle switch)
 - Show/hide password toggle on login and registration pages
 - JWT token authentication (login persists across sessions)
+- Rate limiting on auth endpoints (prevents brute force attacks)
 - Password reset with secure token (logged to console for local testing)
 - Doctor profile management with photo upload
 - Phone number and WhatsApp contact for doctors
 - Search and filter doctors by name or specialization
 - Real-time availability: doctors set weekly schedule (multi-day selection), patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
+- Family members: patients can add/manage family members and book appointments on their behalf
+- Repeat booking: rebook a past appointment with same doctor/details (one-click "Book Again")
 - Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
 - UPI Payment: each doctor sets own fee + UPI ID, patient pays directly via UPI app
-- Prescription: doctor writes prescription after consultation (diagnosis, medicines, tests, notes)
+- Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes)
 - Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments
 - Patient complaints: patients file complaints, admin reviews and responds
-- Floating WhatsApp emergency button on all pages (+919599150825)
+- Floating WhatsApp emergency button on all pages (configurable via env var)
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
-- Doctor rating & review system (1-5 stars + text, shown on doctor profile)
+- Doctor rating & review system via modal (1-5 stars + text, shown on doctor profile)
 - Auto-scrolling patient testimonials on homepage (builds trust)
-- Admin panel: view stats, manage users, view all appointments, handle complaints, handle complaints
-- Account settings: users can update email/phone or delete their account
-- Account deletion verified server-side before confirming (handles slow backend)
-- Family members: patients can add family members and book appointments on their behalf
-- Repeat booking: patients can rebook a past appointment with same doctor/details (one-click "Book Again")
+- Admin panel: view stats, manage users, view all appointments, handle complaints
+- Account settings: users can update email/phone or delete their account (with confirmation modal)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
+- Styled modal dialogs replace all browser prompts/confirms (modern UX)
+- Paginated appointment history in Dashboard (Previous/Next navigation)
+- Modular Dashboard architecture: each tab is a separate component for maintainability
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Available Today" badge on doctor cards
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
 - Booking confirmation page with full summary
-- Past time slots hidden when booking for today (IST timezone)
+- Past time slots hidden when booking for today (IST timezone — works on any server)
 - Patients can replace/update uploaded report files anytime
 - Responsive design (mobile + desktop)
 
@@ -79,6 +83,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 | JWT (jsonwebtoken) | Authentication tokens |
 | bcryptjs | Password hashing |
 | multer | File upload handling |
+| express-rate-limit | Brute force protection |
 | cors | Cross-origin requests |
 | dotenv | Environment variable management |
 
@@ -165,6 +170,7 @@ docconnect/
         │
         ├── components/
         │   ├── Navbar.jsx       ← Navigation bar
+        │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal
         │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
         │
         └── pages/
@@ -173,10 +179,19 @@ docconnect/
             ├── Register.jsx     ← Registration form (with phone number)
             ├── ForgotPassword.jsx ← Request password reset
             ├── ResetPassword.jsx  ← Set new password
-            ├── DoctorList.jsx   ← Browse/search doctors
+            ├── DoctorList.jsx   ← Browse/search doctors (with filters)
             ├── DoctorProfile.jsx ← View single doctor + WhatsApp contact
-            ├── BookAppointment.jsx ← Book with real-time slot selection
-            ├── Dashboard.jsx    ← Appointments, profile, availability, prescriptions, reports, complaints, account settings
+            ├── BookAppointment.jsx ← Book with real-time slot selection + family member
+            ├── BookingConfirmation.jsx ← Post-booking summary
+            ├── Dashboard.jsx    ← Main dashboard layout + appointments tab
+            ├── dashboard/       ← Dashboard sub-components (split for maintainability)
+            │   ├── DoctorAvailability.jsx  ← Weekly schedule management
+            │   ├── DoctorPatientReports.jsx ← Doctor reviews patient reports
+            │   ├── PatientFamilyMembers.jsx ← Manage family members
+            │   ├── PatientPrescriptions.jsx ← View prescriptions
+            │   ├── PatientReports.jsx ← Upload/view medical reports
+            │   ├── PatientComplaints.jsx ← File/view complaints
+            │   └── AccountSettings.jsx ← Update email/phone, delete account
             └── AdminDashboard.jsx ← Admin panel (stats, users, appointments)
 ```
 
@@ -322,6 +337,9 @@ You should see the DocConnect landing page!
 | MONGODB_URI | Yes | Database connection string | mongodb+srv://user:pass@cluster.mongodb.net/docconnect |
 | JWT_SECRET | Yes | Secret key for token signing (any random string) | my_super_secret_key_12345 |
 | NODE_ENV | No | Environment mode | development |
+| RESEND_API_KEY | No | Resend email API key (enables email notifications) | re_xxxx... |
+| VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919599150825 |
+| VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
 
 ---
 
