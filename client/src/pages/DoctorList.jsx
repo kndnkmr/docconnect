@@ -221,6 +221,18 @@ function DoctorList() {
           <div className="text-5xl mb-4">🔍</div>
           <h3 className="text-xl font-medium text-gray-700">No doctors found</h3>
           <p className="text-gray-500 mt-2">Try adjusting your search criteria</p>
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl inline-block">
+            <p className="text-green-800 font-medium mb-2">Can't find the right doctor?</p>
+            <a
+              href="https://wa.me/919599150825?text=Hi%2C%20I%20need%20help%20finding%20a%20doctor"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+            >
+              <span>Chat with us on WhatsApp</span>
+            </a>
+            <p className="text-xs text-green-600 mt-2">We'll help you find the right specialist</p>
+          </div>
         </div>
       ) : (
         // Doctor cards grid

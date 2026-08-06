@@ -10,11 +10,42 @@
 // - Tailwind responsive classes: sm:, md:, lg: prefixes
 // - Link navigation: buttons that go to other pages
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Home() {
   const { isAuthenticated } = useAuth();
+  const [symptomSearch, setSymptomSearch] = useState('');
+
+  // Smart symptom → specialization mapping
+  const getSpecializationFromSymptom = (input) => {
+    const lower = input.toLowerCase();
+    const mapping = [
+      { keywords: ['fever', 'cold', 'cough', 'flu', 'infection', 'weakness', 'fatigue'], specialization: 'General Physician' },
+      { keywords: ['head', 'migraine', 'brain', 'nerve', 'seizure', 'numbness', 'dizziness'], specialization: 'Neurologist' },
+      { keywords: ['pregnan', 'ivf', 'period', 'menstrual', 'pcod', 'pcos', 'fertility', 'gynae', 'uterus', 'ovary'], specialization: 'Gynaecologist' },
+      { keywords: ['skin', 'acne', 'hair', 'rash', 'itch', 'pimple', 'dandruff', 'allergy'], specialization: 'Dermatologist' },
+      { keywords: ['heart', 'chest pain', 'bp', 'blood pressure', 'cholesterol'], specialization: 'Cardiologist' },
+      { keywords: ['bone', 'joint', 'knee', 'back pain', 'spine', 'fracture', 'shoulder'], specialization: 'Orthopedic' },
+      { keywords: ['child', 'baby', 'infant', 'kid', 'vaccination', 'newborn'], specialization: 'Pediatrician' },
+      { keywords: ['tooth', 'teeth', 'dental', 'gum', 'cavity', 'braces'], specialization: 'Dentist' },
+      { keywords: ['eye', 'vision', 'glass', 'cataract', 'spectacle'], specialization: 'Ophthalmologist' },
+      { keywords: ['depress', 'anxiety', 'stress', 'sleep', 'mental', 'panic', 'mood'], specialization: 'Psychiatrist' },
+      { keywords: ['ear', 'nose', 'throat', 'sinus', 'hearing', 'tonsil', 'snoring'], specialization: 'ENT Specialist' },
+      { keywords: ['stomach', 'digest', 'acid', 'gastric', 'liver', 'constipat', 'diarr', 'bloat'], specialization: 'Gastroenterologist' },
+      { keywords: ['urine', 'kidney', 'bladder', 'prostate'], specialization: 'Urologist' },
+      { keywords: ['diabetes', 'thyroid', 'hormone', 'sugar'], specialization: 'Endocrinologist' },
+      { keywords: ['lung', 'breath', 'asthma', 'wheez', 'pneumonia'], specialization: 'Pulmonologist' },
+    ];
+
+    for (const entry of mapping) {
+      if (entry.keywords.some(keyword => lower.includes(keyword))) {
+        return entry.specialization;
+      }
+    }
+    return 'General Physician'; // Default fallback
+  };
 
   return (
     <div>
@@ -63,6 +94,72 @@ function Home() {
         </div>
       </section>
 
+      {/* ---- Consult Now Section (Symptom-based search) — FIRST after hero ---- */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+            Consult Now
+          </h2>
+          <p className="text-center text-gray-600 mb-6">
+            Select your symptom or concern — we'll connect you with the right specialist
+          </p>
+
+          {/* Text input for custom symptoms */}
+          <div className="max-w-xl mx-auto mb-8">
+            <div className="relative">
+              <input
+                type="text"
+                value={symptomSearch}
+                onChange={(e) => setSymptomSearch(e.target.value)}
+                placeholder="Describe your problem (e.g., back pain, irregular periods, anxiety...)"
+                className="w-full px-5 py-3 pr-24 border-2 border-gray-200 rounded-full focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+              />
+              {symptomSearch && (
+                <Link
+                  to={`/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-primary-700"
+                >
+                  Find Doctor
+                </Link>
+              )}
+            </div>
+            {symptomSearch && (
+              <p className="text-xs text-primary-600 mt-2 text-center">
+                Suggested: {getSpecializationFromSymptom(symptomSearch)}
+              </p>
+            )}
+          </div>
+
+          {/* Symptom cards grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+            {[
+              { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
+              { symptom: 'Headache / Migraine', icon: '🤕', specialization: 'Neurologist' },
+              { symptom: 'Pregnancy / IVF', icon: '🤰', specialization: 'Gynaecologist' },
+              { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist' },
+              { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist' },
+              { symptom: 'Bone / Joint Pain', icon: '🦴', specialization: 'Orthopedic' },
+              { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician' },
+              { symptom: 'Dental / Teeth', icon: '🦷', specialization: 'Dentist' },
+              { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
+              { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
+              { symptom: 'Ear / Nose / Throat', icon: '👂', specialization: 'ENT Specialist' },
+              { symptom: 'Stomach / Digestion', icon: '🫁', specialization: 'Gastroenterologist' },
+            ].map((item, idx) => (
+              <Link
+                key={idx}
+                to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                className="bg-gray-50 p-4 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
+              >
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <p className="text-sm font-medium text-gray-800">{item.symptom}</p>
+                <p className="text-xs text-primary-600 mt-1">{item.specialization}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ---- Features Section ---- */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -102,45 +199,6 @@ function Home() {
               </p>
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* ---- Consult Now Section (Symptom-based search) ---- */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
-            Consult Now
-          </h2>
-          <p className="text-center text-gray-600 mb-8">
-            Select your symptom or concern — we'll connect you with the right specialist
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
-              { symptom: 'Headache / Migraine', icon: '🤕', specialization: 'Neurologist' },
-              { symptom: 'Pregnancy / IVF', icon: '🤰', specialization: 'Gynaecologist' },
-              { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist' },
-              { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist' },
-              { symptom: 'Bone / Joint Pain', icon: '🦴', specialization: 'Orthopedic' },
-              { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician' },
-              { symptom: 'Dental / Teeth', icon: '🦷', specialization: 'Dentist' },
-              { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
-              { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
-              { symptom: 'Ear / Nose / Throat', icon: '👂', specialization: 'ENT Specialist' },
-              { symptom: 'Stomach / Digestion', icon: '🫁', specialization: 'Gastroenterologist' },
-            ].map((item, idx) => (
-              <Link
-                key={idx}
-                to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200"
-              >
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <p className="text-sm font-medium text-gray-800">{item.symptom}</p>
-                <p className="text-xs text-primary-600 mt-1">{item.specialization}</p>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
