@@ -50,3 +50,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+// ---- Register Service Worker (PWA) ----
+// Only in production — dev mode doesn't need caching
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(() => console.log('Service Worker registered'))
+      .catch((err) => console.log('Service Worker registration failed:', err));
+  });
+}
