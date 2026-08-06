@@ -132,7 +132,17 @@ function BookAppointment() {
       });
 
       toast.success('Appointment booked! Waiting for doctor confirmation.');
-      navigate('/dashboard');
+      navigate('/booking-confirmation', {
+        state: {
+          doctorName: doctor?.name,
+          specialization: doctor?.specialization,
+          date: formData.date,
+          timeSlot: formData.timeSlot,
+          consultationType: formData.consultationType,
+          reason: formData.reason,
+          fee: doctor?.consultationFee
+        }
+      });
 
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to book appointment';

@@ -145,6 +145,21 @@ function DoctorProfile() {
                 as a patient to book an appointment.
               </p>
             )}
+
+            {/* Share Profile Button */}
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  const shareUrl = window.location.href;
+                  const shareText = `Check out ${doctor.name} (${doctor.specialization || 'Doctor'}) on ProMedicoz - ${shareUrl}`;
+                  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+                  window.open(whatsappUrl, '_blank');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+              >
+                <span>📤</span> Share Profile via WhatsApp
+              </button>
+            </div>
           </div>
         </div>
 

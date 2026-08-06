@@ -32,6 +32,7 @@ import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
+import BookingConfirmation from './pages/BookingConfirmation';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
@@ -120,6 +121,15 @@ function App() {
             }
           />
           {/* Only patients can book appointments */}
+
+          <Route
+            path="/booking-confirmation"
+            element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <BookingConfirmation />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/admin"

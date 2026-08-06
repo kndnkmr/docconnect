@@ -286,6 +286,12 @@ function DoctorList() {
 
 function DoctorCard({ doctor }) {
   // { doctor } = destructuring props (the data passed from parent)
+
+  // Check if doctor is available today
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const today = dayNames[new Date().getDay()];
+  const availableToday = doctor.availability && doctor.availability.some(slot => slot.day === today);
+
   return (
     <Link
       to={`/doctors/${doctor._id}`}
@@ -309,7 +315,14 @@ function DoctorCard({ doctor }) {
 
       {/* Doctor Info */}
       <div className="p-5">
-        <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
+          {availableToday && (
+            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+              Available Today
+            </span>
+          )}
+        </div>
 
         {doctor.specialization && (
           <p className="text-primary-600 text-sm font-medium mt-1">
