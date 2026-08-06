@@ -11,11 +11,8 @@
 // - useState: toggle mobile menu open/close
 // - Responsive design: looks different on mobile vs desktop
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// Link = like an <a> tag but doesn't reload the page
-// useNavigate = programmatic navigation (redirect from code, not a click)
-
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -23,7 +20,28 @@ function Navbar() {
   const { user, isAuthenticated, isDoctor, logout } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // State to track if the mobile hamburger menu is open
+  const [installPrompt, setInstallPrompt] = useState(null);
+  // Stores the browser's install event so we can trigger it on button click
+
+  useEffect(() => {
+    // Chrome fires this event when the PWA is installable
+    const handler = (e) => {
+      e.preventDefault(); // Don't show the default mini-infobar
+      setInstallPrompt(e); // Save it so our button can trigger it
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt(); // Show the install dialog
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      toast.success('DocConnect installed!');
+      setInstallPrompt(null); // Hide the button after install
+    }
+  };
 
   // Handle logout
   const handleLogout = () => {
@@ -54,37 +72,22 @@ function Navbar() {
           </Link>
 
           {/* ---- Desktop Navigation Links ---- */}
-          {/* hidden md:flex = hidden on mobile, visible on medium+ screens */}
           <div className="hidden md:flex items-center space-x-6">
 
-            <Link
-              to="/doctors"
-              className="text-gray-600 hover:text-primary-600 transition-colors"
-            >
+            <Link to="/doctors" className="text-gray-600 hover:text-primary-600 transition-colors">
               Find Doctors
             </Link>
 
-            {/* Show different links based on auth status */}
             {isAuthenticated ? (
               <>
-                {/* Fragment (<>) = groups elements without adding extra HTML */}
-                <Link
-                  to="/dashboard"
-                  className="text-gray-600 hover:text-primary-600 transition-colors"
-                >
+                <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 transition-colors">
                   Dashboard
                 </Link>
-
                 {user.role === 'admin' && (
-                  <Link
-                    to="/admin"
-                    className="text-gray-600 hover:text-primary-600 transition-colors"
-                  >
+                  <Link to="/admin" className="text-gray-600 hover:text-primary-600 transition-colors">
                     Admin Panel
                   </Link>
                 )}
-
-                {/* User info + logout */}
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500">
                     {user.name}
@@ -92,6 +95,15 @@ function Navbar() {
                       {user.role}
                     </span>
                   </span>
+                  {/* Install App button — only shown when Chrome says it's installable */}
+                  {installPrompt && (
+                    <button
+                      onClick={handleInstall}
+                      className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
+                    >
+                      📲 Install App
+                    </button>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition-colors"
@@ -102,17 +114,18 @@ function Navbar() {
               </>
             ) : (
               <>
-                {/* Not logged in — show login/register buttons */}
-                <Link
-                  to="/login"
-                  className="text-gray-600 hover:text-primary-600 transition-colors"
-                >
+                {installPrompt && (
+                  <button
+                    onClick={handleInstall}
+                    className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
+                  >
+                    📲 Install App
+                  </button>
+                )}
+                <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">
                   Login
                 </Link>
-                <Link
-                  to="/register"
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-                >
+                <Link to="/register" className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
                   Register
                 </Link>
               </>
@@ -139,54 +152,41 @@ function Navbar() {
           </button>
         </div>
 
-        {/* ---- Mobile Menu (dropdown) ---- */}
-        {/* Only shows when isMobileMenuOpen is true */}
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
-              {/* flex-col = stack vertically, space-y-3 = gap between items */}
-
-              <Link
-                to="/doctors"
-                className="text-gray-600 hover:text-primary-600 px-2 py-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
+              <Link to="/doctors" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                 Find Doctors
               </Link>
 
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/dashboard"
-                    className="text-gray-600 hover:text-primary-600 px-2 py-1"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Dashboard
                   </Link>
                   <div className="px-2 py-1 text-sm text-gray-500">
                     Signed in as {user.name} ({user.role})
                   </div>
-                  <button
-                    onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                    className="text-left text-red-500 hover:text-red-600 px-2 py-1"
-                  >
+                  {installPrompt && (
+                    <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
+                      📲 Install App on Phone
+                    </button>
+                  )}
+                  <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    className="text-gray-600 hover:text-primary-600 px-2 py-1"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  {installPrompt && (
+                    <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
+                      📲 Install App on Phone
+                    </button>
+                  )}
+                  <Link to="/login" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Login
                   </Link>
-                  <Link
-                    to="/register"
-                    className="text-primary-600 font-medium px-2 py-1"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link to="/register" className="text-primary-600 font-medium px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Register
                   </Link>
                 </>
