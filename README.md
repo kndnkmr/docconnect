@@ -56,6 +56,11 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Account deletion verified server-side before confirming (handles slow backend)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Consultation fees displayed in ₹ (Indian Rupees)
+- "Available Today" badge on doctor cards
+- Share doctor profile via WhatsApp (word-of-mouth marketing)
+- Booking confirmation page with full summary
+- Past time slots hidden when booking for today (IST timezone)
+- Patients can replace/update uploaded report files anytime
 - Responsive design (mobile + desktop)
 
 ---
