@@ -1222,11 +1222,17 @@ function AccountSettings() {
     if (!confirm2) return;
 
     try {
-      await authAPI.deleteAccount();
-      toast.success('Account deleted. Goodbye!');
-      logout();
+      const response = await authAPI.deleteAccount();
+      // Only show success if we got a confirmed response from the server
+      if (response.status === 200) {
+        toast.success('Account deleted. Goodbye!');
+        logout();
+        window.location.href = '/';
+      } else {
+        toast.error('Delete may not have completed. Please try again.');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to delete account');
+      toast.error(error.response?.data?.message || 'Failed to delete account. Please check your connection and try again.');
     }
   };
 
