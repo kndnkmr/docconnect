@@ -177,44 +177,51 @@ function Home() {
         </div>
       </section>
 
-      {/* ---- Features Section ---- */}
+      {/* ---- How It Works Section ---- */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
             How DocConnect Works
           </h2>
+          <p className="text-center text-gray-500 mb-12">Book a consultation in 4 simple steps</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/*
-              grid = CSS Grid layout
-              grid-cols-1 = 1 column on mobile
-              md:grid-cols-3 = 3 columns on medium+ screens
-              gap-8 = space between grid items
-            */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
 
-            {/* Feature Card 1 */}
-            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-shadow">
-              <div className="text-5xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                Search Doctors
-              </h3>
-              <p className="text-gray-600">
-                Browse our network of qualified doctors. 
-                Filter by specialization, experience, and location.
-              </p>
-            </div>
+            {/* Step 1 */}
+            <Link to="/register" className="group text-center p-6 rounded-xl border-2 border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all">
+              <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">1</div>
+              <div className="text-4xl mb-3">👤</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Create Account</h3>
+              <p className="text-gray-500 text-sm">Sign up free in seconds. No credit card needed.</p>
+              <span className="inline-block mt-3 text-primary-600 text-sm font-medium group-hover:underline">Register →</span>
+            </Link>
 
-            {/* Feature Card 2 */}
-            <div className="text-center p-6 rounded-xl hover:shadow-lg transition-shadow">
-              <div className="text-5xl mb-4">📅</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                Book Appointment
-              </h3>
-              <p className="text-gray-600">
-                Choose a convenient time slot and book your consultation. 
-                In-person, video, or phone — your choice.
-              </p>
-            </div>
+            {/* Step 2 */}
+            <Link to="/doctors" className="group text-center p-6 rounded-xl border-2 border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all">
+              <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">2</div>
+              <div className="text-4xl mb-3">🔍</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Find a Doctor</h3>
+              <p className="text-gray-500 text-sm">Browse by specialization, fee, or availability.</p>
+              <span className="inline-block mt-3 text-primary-600 text-sm font-medium group-hover:underline">Browse Doctors →</span>
+            </Link>
+
+            {/* Step 3 */}
+            <Link to="/doctors" className="group text-center p-6 rounded-xl border-2 border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all">
+              <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">3</div>
+              <div className="text-4xl mb-3">📅</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Book a Slot</h3>
+              <p className="text-gray-500 text-sm">Pick a date and time. In-person, video, or phone.</p>
+              <span className="inline-block mt-3 text-primary-600 text-sm font-medium group-hover:underline">Book Now →</span>
+            </Link>
+
+            {/* Step 4 */}
+            <Link to="/dashboard" className="group text-center p-6 rounded-xl border-2 border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all">
+              <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">4</div>
+              <div className="text-4xl mb-3">✅</div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Get Confirmed</h3>
+              <p className="text-gray-500 text-sm">Doctor confirms and you get notified instantly.</p>
+              <span className="inline-block mt-3 text-primary-600 text-sm font-medium group-hover:underline">View Dashboard →</span>
+            </Link>
 
           </div>
         </div>
