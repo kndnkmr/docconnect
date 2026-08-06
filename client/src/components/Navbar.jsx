@@ -21,25 +21,37 @@ function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
-  // Stores the browser's install event so we can trigger it on button click
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // Chrome fires this event when the PWA is installable
+    // Check if already running as installed PWA
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+    }
     const handler = (e) => {
-      e.preventDefault(); // Don't show the default mini-infobar
-      setInstallPrompt(e); // Save it so our button can trigger it
+      e.preventDefault();
+      setInstallPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setIsInstalled(true));
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
   const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt(); // Show the install dialog
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') {
-      toast.success('DocConnect installed!');
-      setInstallPrompt(null); // Hide the button after install
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') {
+        toast.success('DocConnect installed!');
+        setInstallPrompt(null);
+        setIsInstalled(true);
+      }
+    } else {
+      // Fallback instructions when Chrome hasn't fired the prompt yet
+      toast('Tap the ⋮ menu in Chrome → "Add to Home screen"', {
+        icon: '📲',
+        duration: 6000
+      });
     }
   };
 
@@ -95,8 +107,8 @@ function Navbar() {
                       {user.role}
                     </span>
                   </span>
-                  {/* Install App button — only shown when Chrome says it's installable */}
-                  {installPrompt && (
+                  {/* Install App button — always visible unless already installed */}
+                  {!isInstalled && (
                     <button
                       onClick={handleInstall}
                       className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
@@ -114,7 +126,7 @@ function Navbar() {
               </>
             ) : (
               <>
-                {installPrompt && (
+                {!isInstalled && (
                   <button
                     onClick={handleInstall}
                     className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
@@ -167,7 +179,7 @@ function Navbar() {
                   <div className="px-2 py-1 text-sm text-gray-500">
                     Signed in as {user.name} ({user.role})
                   </div>
-                  {installPrompt && (
+                  {!isInstalled && (
                     <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
                       📲 Install App on Phone
                     </button>
@@ -178,7 +190,7 @@ function Navbar() {
                 </>
               ) : (
                 <>
-                  {installPrompt && (
+                  {!isInstalled && (
                     <button onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }} className="text-left flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2">
                       📲 Install App on Phone
                     </button>
