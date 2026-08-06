@@ -40,6 +40,21 @@ const getAllDoctors = async (req, res) => {
       filter.name = new RegExp(req.query.name, 'i');
     }
 
+    // Filter by max consultation fee
+    if (req.query.maxFee) {
+      filter.consultationFee = { $lte: Number(req.query.maxFee) };
+    }
+
+    // Filter by consultation type availability (doctors who offer video/phone)
+    // This is implicit — all doctors can offer any type, but we can filter by fee range
+
+    // Filter by "available today"
+    if (req.query.availableToday === 'true') {
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const today = dayNames[new Date().getDay()];
+      filter['availability.day'] = today;
+    }
+
     // ---- Pagination ----
     // We don't want to return ALL doctors at once (could be thousands!)
     // Instead, we return "pages" of results (like Google search results)

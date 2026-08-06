@@ -14,9 +14,27 @@
 
 const express = require('express');
 
-// express.Router() creates a mini-app that handles routes.
-// We define routes here, then plug this router into the main app (server.js)
 const router = express.Router();
+
+const rateLimit = require('express-rate-limit');
+
+// Rate limiter for auth endpoints — prevents brute force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 requests per window per IP
+  message: { message: 'Too many attempts. Please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Stricter limiter for password reset (prevent email spam)
+const resetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // max 3 reset requests per hour
+  message: { message: 'Too many password reset requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
 
 // Import our controller functions (the actual logic)
 const { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount } = require('../controllers/authController');
@@ -30,13 +48,9 @@ const { protect } = require('../middleware/auth');
 // Anyone can access this (no middleware needed)
 // Sends: { name, email, password, role }
 // Returns: { message, token, user }
-router.post('/register', register);
+router.post('/register', authLimiter, register);
 
-// POST /api/auth/login
-// Anyone can access this
-// Sends: { email, password }
-// Returns: { message, token, user }
-router.post('/login', login);
+router.post('/login', authLimiter, login);
 
 // GET /api/auth/me
 // PROTECTED - only logged-in users can access this
@@ -49,7 +63,7 @@ router.get('/me', protect, getMe);
 // Anyone can request a password reset (no login needed — they forgot their password!)
 // Sends: { email }
 // Returns: success message + logs reset link to server console
-router.post('/forgot-password', forgotPassword);
+router.post('/forgot-password', resetLimiter, forgotPassword);
 
 // PUT /api/auth/reset-password/:token
 // Anyone with a valid reset token can set a new password

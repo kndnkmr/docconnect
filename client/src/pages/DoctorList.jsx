@@ -36,6 +36,8 @@ function DoctorList() {
   // Search/filter state
   const [searchName, setSearchName] = useState('');
   const [searchSpecialization, setSearchSpecialization] = useState(urlSpecialization);
+  const [maxFee, setMaxFee] = useState('');
+  const [availableToday, setAvailableToday] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // List of common specializations (for smart suggestions)
@@ -94,6 +96,8 @@ function DoctorList() {
 
       if (searchName) params.name = searchName;
       if (searchSpecialization) params.specialization = searchSpecialization;
+      if (maxFee) params.maxFee = maxFee;
+      if (availableToday) params.availableToday = 'true';
 
       const response = await doctorAPI.getAll(params);
       // This calls GET /api/doctors?page=1&limit=9&name=...&specialization=...
@@ -142,8 +146,8 @@ function DoctorList() {
 
       {/* ---- Search/Filter Bar ---- */}
       <form onSubmit={handleSearch} className="bg-white rounded-xl shadow-md p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Search by specialization (FIRST) with smart suggestions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Search by specialization with smart suggestions */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Specialization
@@ -160,7 +164,6 @@ function DoctorList() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               autoComplete="off"
             />
-            {/* Smart suggestions dropdown */}
             {showSuggestions && searchSpecialization.length >= 2 && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                 {getSmartSuggestions(searchSpecialization).map((suggestion, idx) => (
@@ -197,8 +200,32 @@ function DoctorList() {
             />
           </div>
 
-          {/* Search button */}
-          <div className="flex items-end">
+          {/* Max fee filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Max Fee (₹)
+            </label>
+            <input
+              type="number"
+              value={maxFee}
+              onChange={(e) => setMaxFee(e.target.value)}
+              placeholder="e.g., 500"
+              min="0"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            />
+          </div>
+
+          {/* Search button + Available today toggle */}
+          <div className="flex flex-col justify-end gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={availableToday}
+                onChange={(e) => setAvailableToday(e.target.checked)}
+                className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
+              />
+              <span className="text-sm text-gray-700">Available Today</span>
+            </label>
             <button
               type="submit"
               className="w-full bg-primary-600 text-white py-2 px-6 rounded-lg hover:bg-primary-700 transition-colors font-medium"

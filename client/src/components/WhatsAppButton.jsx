@@ -6,8 +6,7 @@
 // Patients can contact directly without registering.
 
 function WhatsAppButton() {
-  const phoneNumber = '919599150825';
-  // WhatsApp number without + sign (international format)
+  const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919599150825';
 
   const message = encodeURIComponent(
     'Hi, I need to consult with a doctor. Can you help me?'
