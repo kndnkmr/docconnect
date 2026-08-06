@@ -127,22 +127,28 @@ function Home() {
             )}
           </div>
 
-          {/* Top 6 symptom cards */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 max-w-3xl mx-auto">
+          {/* Symptom cards — all 12 back with larger icons */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-4xl mx-auto">
             {[
               { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
-              { symptom: 'Pregnancy / IVF', icon: '🤰', specialization: 'Gynaecologist' },
+              { symptom: 'Headache', icon: '🤕', specialization: 'Neurologist' },
+              { symptom: 'Pregnancy', icon: '🤰', specialization: 'Gynaecologist' },
               { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist' },
               { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist' },
+              { symptom: 'Bone / Joint', icon: '🦴', specialization: 'Orthopedic' },
               { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician' },
+              { symptom: 'Dental', icon: '🦷', specialization: 'Dentist' },
+              { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
               { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
+              { symptom: 'Ear / Nose', icon: '👂', specialization: 'ENT Specialist' },
+              { symptom: 'Stomach', icon: '🫁', specialization: 'Gastroenterologist' },
             ].map((item, idx) => (
               <Link
                 key={idx}
                 to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                className="bg-gray-50 p-3 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
+                className="bg-gray-50 p-4 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
               >
-                <div className="text-3xl mb-1">{item.icon}</div>
+                <div className="text-4xl mb-2">{item.icon}</div>
                 <p className="text-xs font-medium text-gray-700 leading-tight">{item.symptom}</p>
               </Link>
             ))}
