@@ -11,11 +11,15 @@
 // - Debounce-like behavior: search on submit (not every keystroke)
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function DoctorList() {
+  // Read specialization from URL query params (from Consult Now section)
+  const [searchParams] = useSearchParams();
+  const urlSpecialization = searchParams.get('specialization') || '';
+
   // ---- State ----
   const [doctors, setDoctors] = useState([]);
   // Array of doctor objects from the API
@@ -31,7 +35,7 @@ function DoctorList() {
 
   // Search/filter state
   const [searchName, setSearchName] = useState('');
-  const [searchSpecialization, setSearchSpecialization] = useState('');
+  const [searchSpecialization, setSearchSpecialization] = useState(urlSpecialization);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // List of common specializations (for smart suggestions)
@@ -105,10 +109,10 @@ function DoctorList() {
     }
   };
 
-  // ---- useEffect: Fetch on first load ----
+  // ---- useEffect: Fetch on first load (or when URL param changes) ----
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [urlSpecialization]);
   // Empty dependency array [] = run ONCE when component mounts (loads)
   // Without [], it would run on every re-render (infinite loop!)
 

@@ -106,6 +106,45 @@ function Home() {
         </div>
       </section>
 
+      {/* ---- Consult Now Section (Symptom-based search) ---- */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+            Consult Now
+          </h2>
+          <p className="text-center text-gray-600 mb-8">
+            Select your symptom or concern — we'll connect you with the right specialist
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
+              { symptom: 'Headache / Migraine', icon: '🤕', specialization: 'Neurologist' },
+              { symptom: 'Pregnancy / IVF', icon: '🤰', specialization: 'Gynaecologist' },
+              { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist' },
+              { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist' },
+              { symptom: 'Bone / Joint Pain', icon: '🦴', specialization: 'Orthopedic' },
+              { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician' },
+              { symptom: 'Dental / Teeth', icon: '🦷', specialization: 'Dentist' },
+              { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
+              { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
+              { symptom: 'Ear / Nose / Throat', icon: '👂', specialization: 'ENT Specialist' },
+              { symptom: 'Stomach / Digestion', icon: '🫁', specialization: 'Gastroenterologist' },
+            ].map((item, idx) => (
+              <Link
+                key={idx}
+                to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200"
+              >
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <p className="text-sm font-medium text-gray-800">{item.symptom}</p>
+                <p className="text-xs text-primary-600 mt-1">{item.specialization}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ---- Stats Section ---- */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
