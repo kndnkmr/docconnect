@@ -127,8 +127,8 @@ function Home() {
             )}
           </div>
 
-          {/* Symptom cards — all 12 back with larger icons */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-4xl mx-auto">
+          {/* Symptom cards — all specializations with correct icons */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 max-w-4xl mx-auto">
             {[
               { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
               { symptom: 'Headache', icon: '🤕', specialization: 'Neurologist' },
@@ -141,7 +141,10 @@ function Home() {
               { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
               { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
               { symptom: 'Ear / Nose', icon: '👂', specialization: 'ENT Specialist' },
-              { symptom: 'Stomach', icon: '🫁', specialization: 'Gastroenterologist' },
+              { symptom: 'Stomach', icon: '🤢', specialization: 'Gastroenterologist' },
+              { symptom: 'Lungs / Breathing', icon: '🫁', specialization: 'Pulmonologist' },
+              { symptom: 'Kidney / Urine', icon: '💧', specialization: 'Urologist' },
+              { symptom: 'Diabetes / Thyroid', icon: '💉', specialization: 'Endocrinologist' },
             ].map((item, idx) => (
               <Link
                 key={idx}
