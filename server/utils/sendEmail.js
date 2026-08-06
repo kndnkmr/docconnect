@@ -9,7 +9,8 @@
 const { Resend } = require('resend');
 
 // Initialize Resend with API key from environment variable
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Only create the client if the key exists (prevents crash on servers without it)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Sender email — Resend free tier only allows sending from onboarding@resend.dev
 // OR from a verified domain. We'll use their default for now.
