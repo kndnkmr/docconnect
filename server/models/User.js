@@ -158,6 +158,38 @@ const userSchema = new mongoose.Schema({
     // Doctor can change this to 15, 45, 60, etc.
   },
 
+  // --- Family Members ---
+  // Patients can add family members and book appointments on their behalf.
+  // Each family member is an embedded subdocument (stored within the user document).
+  familyMembers: {
+    type: [{
+      name: {
+        type: String,
+        required: [true, 'Family member name is required'],
+        trim: true
+      },
+      relationship: {
+        type: String,
+        enum: ['spouse', 'child', 'parent', 'sibling', 'other'],
+        required: [true, 'Relationship is required']
+      },
+      age: {
+        type: Number,
+        default: null
+      },
+      gender: {
+        type: String,
+        enum: ['male', 'female', 'other'],
+        default: 'other'
+      },
+      phone: {
+        type: String,
+        default: ''
+      }
+    }],
+    default: []
+  },
+
   // --- Password Reset Fields ---
   // These are used ONLY during the "forgot password" flow.
   // They're empty most of the time — only filled when a reset is requested.

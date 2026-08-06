@@ -54,6 +54,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Admin panel: view stats, manage users, view all appointments, handle complaints, handle complaints
 - Account settings: users can update email/phone or delete their account
 - Account deletion verified server-side before confirming (handles slow backend)
+- Family members: patients can add family members and book appointments on their behalf
+- Repeat booking: patients can rebook a past appointment with same doctor/details (one-click "Book Again")
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Available Today" badge on doctor cards
@@ -122,6 +124,7 @@ docconnect/
 │   │   ├── doctorController.js  ← Profile CRUD, doctor search
 │   │   ├── appointmentController.js ← Booking management + meeting links + payment
 │   │   ├── availabilityController.js ← Schedule + free slot calculation
+│   │   ├── familyMemberController.js ← Patient family member CRUD
 │   │   ├── prescriptionController.js ← Doctor writes prescriptions
 │   │   ├── reportController.js  ← Patient uploads test reports
 │   │   ├── complaintController.js ← Patient complaints
@@ -132,6 +135,7 @@ docconnect/
 │   │   ├── doctor.js
 │   │   ├── appointment.js
 │   │   ├── availability.js
+│   │   ├── familyMember.js
 │   │   ├── prescription.js
 │   │   ├── report.js
 │   │   ├── complaint.js
@@ -344,12 +348,20 @@ You should see the DocConnect landing page!
 ### Appointments
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | /api/appointments | Patient only | Book appointment |
+| POST | /api/appointments | Patient only | Book appointment (supports family member + repeat) |
 | GET | /api/appointments/my | Protected | View my appointments |
 | GET | /api/appointments/:id | Protected | View single appointment |
 | PUT | /api/appointments/:id/status | Doctor only | Confirm/complete (with meeting link) |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
 | PUT | /api/appointments/:id/payment | Doctor only | Mark payment received |
+
+### Family Members
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/family-members | Patient only | List my family members |
+| POST | /api/family-members | Patient only | Add a family member |
+| PUT | /api/family-members/:id | Patient only | Update a family member |
+| DELETE | /api/family-members/:id | Patient only | Remove a family member |
 
 ### Availability
 | Method | Endpoint | Access | Description |

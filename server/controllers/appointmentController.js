@@ -27,12 +27,19 @@ const { sendAppointmentNotification, sendAppointmentConfirmation } = require('..
 
 const bookAppointment = async (req, res) => {
   try {
-    const { doctorId, date, timeSlot, reason, consultationType } = req.body;
+    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId } = req.body;
 
     // Step 1: Validate required fields
     if (!doctorId || !date || !timeSlot || !reason) {
       return res.status(400).json({
         message: 'Please provide doctorId, date, timeSlot, and reason'
+      });
+    }
+
+    // Step 1b: If booking for family member, validate family member name
+    if (bookedFor === 'family' && !familyMemberName) {
+      return res.status(400).json({
+        message: 'Please provide the family member name when booking for a family member'
       });
     }
 
@@ -45,14 +52,11 @@ const bookAppointment = async (req, res) => {
     }
 
     // Step 3: Check if the time slot is already taken
-    // We don't want two patients booking the same doctor at the same time!
     const existingAppointment = await Appointment.findOne({
       doctor: doctorId,
       date: new Date(date),
       timeSlot: timeSlot,
       status: { $nin: ['cancelled'] }
-      // $nin = "not in" — we ignore cancelled appointments
-      // A cancelled slot should be available again
     });
 
     if (existingAppointment) {
@@ -69,17 +73,24 @@ const bookAppointment = async (req, res) => {
     }
 
     // Step 5: Create the appointment
-    const appointment = await Appointment.create({
+    const appointmentData = {
       patient: req.user._id,
-      // ^ The logged-in patient's ID (from auth middleware)
       doctor: doctorId,
       date: new Date(date),
       timeSlot,
       reason,
       consultationType: consultationType || 'in-person',
-      status: 'pending'
-      // Starts as pending — doctor must confirm
-    });
+      status: 'pending',
+      bookedFor: bookedFor || 'self',
+      familyMemberName: bookedFor === 'family' ? familyMemberName : ''
+    };
+
+    // If this is a repeat booking, link to original appointment
+    if (originalAppointmentId) {
+      appointmentData.originalAppointment = originalAppointmentId;
+    }
+
+    const appointment = await Appointment.create(appointmentData);
 
     // Step 6: Populate doctor info before sending response
     // So the frontend gets the doctor's name, not just their ID

@@ -12,13 +12,14 @@
 // - Date formatting: display dates in human-readable format
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI, prescriptionAPI, reportAPI, reviewAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, availabilityAPI, authAPI, complaintAPI, prescriptionAPI, reportAPI, reviewAPI, familyMemberAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function Dashboard() {
   const { user, isDoctor, isPatient } = useAuth();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('appointments');
@@ -280,6 +281,16 @@ function Dashboard() {
         {isPatient && (
           <>
             <button
+              onClick={() => setActiveTab('familyMembers')}
+              className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === 'familyMembers'
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Family Members
+            </button>
+            <button
               onClick={() => setActiveTab('prescriptions')}
               className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === 'prescriptions'
@@ -384,6 +395,11 @@ function Dashboard() {
                     <p className="text-gray-500 text-sm mt-1">
                       Reason: {apt.reason}
                     </p>
+                    {apt.bookedFor === 'family' && apt.familyMemberName && (
+                      <p className="text-purple-600 text-sm mt-1 font-medium">
+                        Booked for: {apt.familyMemberName} (family member)
+                      </p>
+                    )}
                     {apt.notes && (
                       <p className="text-gray-500 text-sm mt-1 italic">
                         Notes: {apt.notes}
@@ -482,12 +498,29 @@ function Dashboard() {
                       </button>
                     )}
                     {isPatient && apt.status === 'completed' && (
-                      <button
-                        onClick={() => handleRateDoctor(apt._id)}
-                        className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      >
-                        ⭐ Rate Doctor
-                      </button>
+                      <>
+                        <button
+                          onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, {
+                            state: {
+                              repeatBooking: true,
+                              originalAppointmentId: apt._id,
+                              reason: apt.reason,
+                              consultationType: apt.consultationType,
+                              bookedFor: apt.bookedFor || 'self',
+                              familyMemberName: apt.familyMemberName || ''
+                            }
+                          })}
+                          className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600"
+                        >
+                          Book Again
+                        </button>
+                        <button
+                          onClick={() => handleRateDoctor(apt._id)}
+                          className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                        >
+                          ⭐ Rate Doctor
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -613,6 +646,11 @@ function Dashboard() {
       {/* === PATIENT REPORTS TAB (Doctor only) === */}
       {activeTab === 'patientReports' && isDoctor && (
         <DoctorPatientReports />
+      )}
+
+      {/* === FAMILY MEMBERS TAB (Patient only) === */}
+      {activeTab === 'familyMembers' && isPatient && (
+        <PatientFamilyMembers />
       )}
 
       {/* === PRESCRIPTIONS TAB (Patient only) === */}
@@ -1232,6 +1270,241 @@ function PatientComplaints() {
                   <p className="text-sm text-green-700 mt-1">{complaint.response}</p>
                 </div>
               )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Patient Family Members Sub-component ----
+// Lets patients manage family members they can book appointments for
+
+function PatientFamilyMembers() {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    relationship: '',
+    age: '',
+    gender: 'other',
+    phone: ''
+  });
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      const response = await familyMemberAPI.getAll();
+      setMembers(response.data.familyMembers);
+    } catch (error) {
+      console.error('Fetch family members error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({ name: '', relationship: '', age: '', gender: 'other', phone: '' });
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.relationship) {
+      toast.error('Please provide name and relationship');
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      age: formData.age ? Number(formData.age) : null
+    };
+
+    try {
+      if (editingId) {
+        await familyMemberAPI.update(editingId, payload);
+        toast.success('Family member updated');
+      } else {
+        await familyMemberAPI.add(payload);
+        toast.success('Family member added');
+      }
+      resetForm();
+      fetchMembers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save family member');
+    }
+  };
+
+  const handleEdit = (member) => {
+    setFormData({
+      name: member.name,
+      relationship: member.relationship,
+      age: member.age || '',
+      gender: member.gender || 'other',
+      phone: member.phone || ''
+    });
+    setEditingId(member._id);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Remove this family member?')) return;
+    try {
+      await familyMemberAPI.remove(id);
+      toast.success('Family member removed');
+      fetchMembers();
+    } catch (error) {
+      toast.error('Failed to remove family member');
+    }
+  };
+
+  const getRelationshipLabel = (rel) => {
+    const labels = { spouse: 'Spouse', child: 'Child', parent: 'Parent', sibling: 'Sibling', other: 'Other' };
+    return labels[rel] || rel;
+  };
+
+  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+
+  return (
+    <div className="max-w-3xl">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">Family Members</h2>
+          <p className="text-sm text-gray-500 mt-1">Add family members to book appointments on their behalf</p>
+        </div>
+        <button
+          onClick={() => { showForm ? resetForm() : setShowForm(true); }}
+          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          {showForm ? 'Cancel' : '+ Add Member'}
+        </button>
+      </div>
+
+      {/* Add/Edit form */}
+      {showForm && (
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h3 className="font-medium text-gray-800 mb-4">
+            {editingId ? 'Edit Family Member' : 'Add Family Member'}
+          </h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full name"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Relationship *</label>
+                <select
+                  value={formData.relationship}
+                  onChange={(e) => setFormData(prev => ({ ...prev, relationship: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  required
+                >
+                  <option value="">Select...</option>
+                  <option value="spouse">Spouse</option>
+                  <option value="child">Child</option>
+                  <option value="parent">Parent</option>
+                  <option value="sibling">Sibling</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <input
+                  type="number"
+                  value={formData.age}
+                  onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
+                  placeholder="Age"
+                  min="0"
+                  max="120"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="+91 9876543210"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              {editingId ? 'Update Member' : 'Add Member'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Members list */}
+      {members.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-md">
+          <div className="text-5xl mb-4">👨‍👩‍👧‍👦</div>
+          <h3 className="text-xl font-medium text-gray-700">No family members added</h3>
+          <p className="text-gray-500 mt-2">Add family members to book appointments on their behalf.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {members.map((member) => (
+            <div key={member._id} className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-xl">
+                  {member.gender === 'male' ? '👨' : member.gender === 'female' ? '👩' : '🧑'}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">{member.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {getRelationshipLabel(member.relationship)}
+                    {member.age ? ` • ${member.age} yrs` : ''}
+                    {member.phone ? ` • ${member.phone}` : ''}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(member)}
+                  className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(member._id)}
+                  className="px-3 py-1 text-sm border border-red-200 rounded-lg hover:bg-red-50 text-red-600"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
         </div>

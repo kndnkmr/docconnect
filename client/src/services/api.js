@@ -153,6 +153,25 @@ export const appointmentAPI = {
 };
 
 // ============================================
+// FAMILY MEMBER API calls
+// ============================================
+
+export const familyMemberAPI = {
+  // Get my family members
+  getAll: () => API.get('/family-members'),
+
+  // Add a family member
+  add: (data) => API.post('/family-members', data),
+  // data = { name, relationship, age, gender, phone }
+
+  // Update a family member
+  update: (id, data) => API.put(`/family-members/${id}`, data),
+
+  // Remove a family member
+  remove: (id) => API.delete(`/family-members/${id}`),
+};
+
+// ============================================
 // AVAILABILITY API calls
 // ============================================
 

@@ -282,8 +282,8 @@ function Home() {
             Are You a Doctor?
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join DocConnect to reach more patients, share your research, 
-            and manage appointments efficiently.
+            Join DocConnect to reach more patients, manage your schedule, 
+            and grow your practice effortlessly.
           </p>
           {!isAuthenticated && (
             <Link

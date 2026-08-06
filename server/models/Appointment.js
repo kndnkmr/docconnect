@@ -62,6 +62,27 @@ const appointmentSchema = new mongoose.Schema({
     default: 'pending'
   },
 
+  // ---- WHO is this appointment for? ----
+  // "self" = the patient themselves, "family" = a family member
+  bookedFor: {
+    type: String,
+    enum: ['self', 'family'],
+    default: 'self'
+  },
+
+  // If booked for a family member, store their name for display
+  familyMemberName: {
+    type: String,
+    default: ''
+  },
+
+  // If this is a repeat booking, reference the original appointment
+  originalAppointment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Appointment',
+    default: null
+  },
+
   // ---- WHY is the patient visiting? ----
   reason: {
     type: String,

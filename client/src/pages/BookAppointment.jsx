@@ -16,30 +16,38 @@
 // 4. Patient sees only available times and picks one
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { doctorAPI, appointmentAPI, availabilityAPI } from '../services/api';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function BookAppointment() {
   const { doctorId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if this is a repeat booking (prefilled data from Dashboard)
+  const repeatData = location.state || {};
 
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Family members state
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [bookedFor, setBookedFor] = useState(repeatData.bookedFor || 'self');
+  const [selectedFamilyMember, setSelectedFamilyMember] = useState(repeatData.familyMemberName || '');
+
   // Slot-related state
   const [availableSlots, setAvailableSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsMessage, setSlotsMessage] = useState('');
-  // slotsMessage = info like "Doctor is not available on Sundays"
 
   // Form state
   const [formData, setFormData] = useState({
     date: '',
     timeSlot: '',
-    reason: '',
-    consultationType: 'in-person'
+    reason: repeatData.reason || '',
+    consultationType: repeatData.consultationType || 'in-person'
   });
 
   // Fetch doctor info on load
@@ -56,6 +64,18 @@ function BookAppointment() {
       }
     };
     fetchDoctor();
+
+    // Fetch family members for the dropdown
+    const fetchFamilyMembers = async () => {
+      try {
+        const response = await familyMemberAPI.getAll();
+        setFamilyMembers(response.data.familyMembers);
+      } catch (error) {
+        // Non-critical — patient just can't select family member
+        console.error('Fetch family members error:', error);
+      }
+    };
+    fetchFamilyMembers();
   }, [doctorId, navigate]);
 
   // ---- Fetch free slots when date changes ----
@@ -128,7 +148,10 @@ function BookAppointment() {
         date: formData.date,
         timeSlot: formData.timeSlot,
         reason: formData.reason,
-        consultationType: formData.consultationType
+        consultationType: formData.consultationType,
+        bookedFor,
+        familyMemberName: bookedFor === 'family' ? selectedFamilyMember : '',
+        originalAppointmentId: repeatData.originalAppointmentId || undefined
       });
 
       toast.success('Appointment booked! Waiting for doctor confirmation.');
@@ -194,6 +217,16 @@ function BookAppointment() {
         {/* Booking form */}
         <div className="bg-white rounded-xl shadow-md p-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Book Appointment</h1>
+
+          {/* Repeat booking indicator */}
+          {repeatData.repeatBooking && (
+            <div className="mb-5 p-3 bg-primary-50 border border-primary-200 rounded-lg flex items-center gap-2">
+              <span className="text-lg">🔄</span>
+              <p className="text-sm text-primary-700">
+                Rebooking from a previous appointment. Reason and consultation type have been pre-filled.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Date picker */}
@@ -262,6 +295,60 @@ function BookAppointment() {
               )}
             </div>
 
+            {/* Who is this booking for? */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Booking For
+              </label>
+              <select
+                value={bookedFor}
+                onChange={(e) => {
+                  setBookedFor(e.target.value);
+                  if (e.target.value === 'self') setSelectedFamilyMember('');
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              >
+                <option value="self">Myself</option>
+                <option value="family">A Family Member</option>
+              </select>
+            </div>
+
+            {/* Family member selection (only when booking for family) */}
+            {bookedFor === 'family' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Family Member *
+                </label>
+                {familyMembers.length === 0 ? (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-700">
+                      You haven't added any family members yet.
+                    </p>
+                    <Link
+                      to="/dashboard"
+                      className="text-sm text-primary-600 hover:underline mt-1 inline-block"
+                    >
+                      Go to Dashboard → Family Members tab to add them
+                    </Link>
+                  </div>
+                ) : (
+                  <select
+                    value={selectedFamilyMember}
+                    onChange={(e) => setSelectedFamilyMember(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                    required
+                  >
+                    <option value="">Choose family member...</option>
+                    {familyMembers.map((member) => (
+                      <option key={member._id} value={member.name}>
+                        {member.name} ({member.relationship}{member.age ? `, ${member.age} yrs` : ''})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )}
+
             {/* Consultation type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -296,7 +383,7 @@ function BookAppointment() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting || !formData.timeSlot}
+              disabled={isSubmitting || !formData.timeSlot || (bookedFor === 'family' && !selectedFamilyMember)}
               className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Booking...' : 'Confirm Booking'}

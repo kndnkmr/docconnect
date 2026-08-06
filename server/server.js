@@ -145,6 +145,10 @@ app.use('/api/prescriptions', prescriptionRoutes);
 const reportRoutes = require('./routes/report');
 app.use('/api/reports', reportRoutes);
 
+// Family member routes — patient manages family members for booking
+const familyMemberRoutes = require('./routes/familyMember');
+app.use('/api/family-members', familyMemberRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!
