@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
@@ -38,6 +38,7 @@ function Dashboard() {
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState({});
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
@@ -48,7 +49,11 @@ function Dashboard() {
 
   useEffect(() => {
     fetchAppointments();
+    fetchUnreadCounts();
     if (isDoctor) fetchProfile();
+    // Refresh unread counts every 30 seconds
+    const interval = setInterval(fetchUnreadCounts, 30000);
+    return () => clearInterval(interval);
   }, [page]);
 
   const fetchProfile = async () => {
@@ -72,6 +77,13 @@ function Dashboard() {
       setPagination(response.data.pagination);
     } catch (error) { console.error('Fetch appointments error:', error); }
     finally { setLoading(false); }
+  };
+
+  const fetchUnreadCounts = async () => {
+    try {
+      const response = await messageAPI.getUnreadCount();
+      setUnreadMessages(response.data);
+    } catch (error) { /* silent */ }
   };
 
   // ---- Doctor: Update appointment status ----
@@ -335,7 +347,12 @@ function Dashboard() {
                       )}
                       {/* Chat button — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
-                        <button onClick={() => setChatAppointmentId(apt._id)} className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">💬 Chat</button>
+                        <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
+                          💬 Chat
+                          {unreadMessages.unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{unreadMessages.unreadCount}</span>
+                          )}
+                        </button>
                       )}
                       {apt.paymentScreenshot && (
                         <button
