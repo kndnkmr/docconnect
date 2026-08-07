@@ -77,6 +77,13 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Booking confirmation page with full summary
 - Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
 - Patients can replace/update uploaded report files anytime
+- In-app video calling (Jitsi Meet) — doctor and patient join video call directly from appointment
+- In-app chat messaging per appointment (with unread badge, auto-refresh)
+- UPI QR code payment — doctor uploads QR, patient scans and pays
+- "I Have Paid" quick confirmation + optional receipt upload
+- Payment screenshot stored permanently in MongoDB (base64)
+- Medical reports stored permanently in MongoDB (no file loss on redeploy)
+- Block patient feature for doctors (prevents messaging from abusive patients)
 - Responsive design (mobile + desktop)
 
 ---
@@ -181,6 +188,8 @@ docconnect/
         ├── components/
         │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)
         │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal
+        │   ├── ChatBox.jsx      ← In-app messaging per appointment
+        │   ├── VideoCall.jsx    ← Jitsi Meet video calling integration
         │   ├── SEO.jsx          ← Per-page title, description, Open Graph tags
         │   ├── StructuredData.jsx ← Schema.org JSON-LD markup
         │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
