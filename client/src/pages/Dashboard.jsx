@@ -256,35 +256,51 @@ function Dashboard() {
                       {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">Booked for: {apt.familyMemberName} (family member)</p>}
                       {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
-                      {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
+                      {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm font-medium text-orange-800 mb-2">Pay ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
                           {apt.doctor?.upiQrCode ? (
                             <div className="text-center">
                               <img src={getUploadUrl(apt.doctor.upiQrCode)} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
                               <a href={getUploadUrl(apt.doctor.upiQrCode)} download="payment-qr.png" className="inline-block text-xs text-primary-600 hover:underline mb-3">Download QR Code</a>
-                              <p className="text-xs text-orange-600 mb-2">Scan or download QR → Pay → Upload screenshot below</p>
+                              <p className="text-xs text-orange-600 mb-2">Scan or download QR → Pay → Click below</p>
                             </div>
                           ) : (
                             <p className="text-sm text-orange-700">Contact doctor for payment details.</p>
                           )}
-                          <label className="block w-full text-center px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 cursor-pointer">
-                            📎 Upload Payment Screenshot
-                            <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                              const file = e.target.files[0];
-                              if (!file) return;
-                              const data = new FormData();
-                              data.append('screenshot', file);
-                              try {
-                                await appointmentAPI.uploadScreenshot(apt._id, data);
-                                toast.success('Payment screenshot uploaded!');
-                                fetchAppointments();
-                              } catch (err) { toast.error('Failed to upload screenshot'); }
-                            }} />
-                          </label>
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await appointmentAPI.notifyPayment(apt._id);
+                                  toast.success('Doctor has been notified of your payment!');
+                                  fetchAppointments();
+                                } catch (err) { toast.error('Failed to notify'); }
+                              }}
+                              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600"
+                            >
+                              ✓ I Have Paid
+                            </button>
+                            <label className="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer border border-gray-200">
+                              📎 Upload Proof
+                              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                const data = new FormData();
+                                data.append('screenshot', file);
+                                try {
+                                  await appointmentAPI.uploadScreenshot(apt._id, data);
+                                  toast.success('Payment proof uploaded!');
+                                  fetchAppointments();
+                                } catch (err) { toast.error('Failed to upload'); }
+                              }} />
+                            </label>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2">Doctor will verify and confirm your payment.</p>
                         </div>
                       )}
-                      {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Received</span>}
+                      {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
+                      {apt.paymentStatus === 'patient_claimed' && <span className="inline-block mt-2 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">⏳ Patient says paid — verify in your UPI app</span>}
                     </div>
 
                     {/* Action buttons */}

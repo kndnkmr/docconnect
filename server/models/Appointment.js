@@ -110,9 +110,8 @@ const appointmentSchema = new mongoose.Schema({
   // ---- Payment status ----
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid'],
+    enum: ['pending', 'patient_claimed', 'paid'],
     default: 'pending'
-    // Admin/doctor marks as paid after receiving UPI payment
   },
 
   // ---- Amount actually collected ----

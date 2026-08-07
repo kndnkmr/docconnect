@@ -165,6 +165,9 @@ export const appointmentAPI = {
   uploadScreenshot: (id, data) => API.put(`/appointments/${id}/payment-screenshot`, data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+
+  // Notify doctor that patient has paid (patient only)
+  notifyPayment: (id) => API.put(`/appointments/${id}/notify-payment`),
 };
 
 // ============================================

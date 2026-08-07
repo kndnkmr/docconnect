@@ -424,6 +424,27 @@ const uploadPaymentScreenshot = async (req, res) => {
   }
 };
 
+// ============================================
+// NOTIFY PAYMENT - Patient says they paid
+// ============================================
+const notifyPayment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    if (appointment.patient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    appointment.paymentStatus = 'patient_claimed';
+    await appointment.save();
+
+    res.json({ message: 'Doctor notified', paymentStatus: 'patient_claimed' });
+  } catch (error) {
+    console.error('Notify payment error:', error.message);
+    res.status(500).json({ message: 'Error notifying payment' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
@@ -432,5 +453,6 @@ module.exports = {
   updateAppointmentStatus,
   cancelAppointment,
   markPayment,
-  uploadPaymentScreenshot
+  uploadPaymentScreenshot,
+  notifyPayment
 };

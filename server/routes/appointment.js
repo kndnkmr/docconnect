@@ -24,7 +24,8 @@ const {
   updateAppointmentStatus,
   cancelAppointment,
   markPayment,
-  uploadPaymentScreenshot
+  uploadPaymentScreenshot,
+  notifyPayment
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -70,6 +71,9 @@ router.put('/:id/payment', authorize('doctor'), markPayment);
 // ---- PATIENT: Upload payment screenshot ----
 const { upload } = require('../middleware/upload');
 router.put('/:id/payment-screenshot', authorize('patient'), upload.single('screenshot'), uploadPaymentScreenshot);
+
+// ---- PATIENT: Notify doctor of payment ----
+router.put('/:id/notify-payment', authorize('patient'), notifyPayment);
 
 module.exports = router;
 
