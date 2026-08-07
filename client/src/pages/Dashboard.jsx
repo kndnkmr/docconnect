@@ -312,7 +312,18 @@ function Dashboard() {
                         <button onClick={() => setChatAppointmentId(apt._id)} className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">💬 Chat</button>
                       )}
                       {apt.paymentScreenshot && (
-                        <a href={getUploadUrl(apt.paymentScreenshot)} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">View Receipt</a>
+                        <button
+                          onClick={() => {
+                            const modal = document.createElement('div');
+                            modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:1rem;';
+                            modal.onclick = () => modal.remove();
+                            modal.innerHTML = `<img src="${apt.paymentScreenshot}" style="max-width:90%;max-height:90%;border-radius:8px;" />`;
+                            document.body.appendChild(modal);
+                          }}
+                          className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
+                        >
+                          View Receipt
+                        </button>
                       )}
                       {/* Block patient — doctor only */}
                       {isDoctor && apt.patient && (
