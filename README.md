@@ -69,6 +69,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Google Analytics integration for visitor tracking
 - Google Search Console with sitemap (14 indexed pages)
 - robots.txt configured (blocks private pages from indexing)
+- Email verification for doctors (must verify email to appear in patient search)
+- Dashboard verification banner with "Resend Email" button for unverified doctors
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Available Today" badge on doctor cards
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
@@ -366,6 +368,8 @@ You should see the DocConnect landing page!
 | PUT | /api/auth/reset-password/:token | Public | Set new password |
 | PUT | /api/auth/update-account | Protected | Change email/phone |
 | DELETE | /api/auth/delete-account | Protected | Delete own account |
+| GET | /api/auth/verify-email/:token | Public | Verify doctor email via link |
+| POST | /api/auth/resend-verification | Protected | Resend verification email |
 
 ### Doctors
 | Method | Endpoint | Access | Description |
