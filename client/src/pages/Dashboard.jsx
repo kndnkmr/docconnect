@@ -11,6 +11,7 @@ import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, message
 import { getUploadUrl } from '../services/api';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
+import VideoCall from '../components/VideoCall';
 import toast from 'react-hot-toast';
 
 // Extracted sub-components
@@ -39,6 +40,7 @@ function Dashboard() {
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
   const [unreadMessages, setUnreadMessages] = useState({});
+  const [videoCallAppointmentId, setVideoCallAppointmentId] = useState(null);
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
@@ -347,12 +349,17 @@ function Dashboard() {
                       )}
                       {/* Chat button — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
-                        <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
-                          💬 Chat
-                          {unreadMessages.unreadCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{unreadMessages.unreadCount}</span>
+                        <>
+                          {apt.consultationType !== 'in-person' && apt.status === 'confirmed' && (
+                            <button onClick={() => setVideoCallAppointmentId(apt._id)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">📹 Join Call</button>
                           )}
-                        </button>
+                          <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
+                            💬 Chat
+                            {unreadMessages.unreadCount > 0 && (
+                              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{unreadMessages.unreadCount}</span>
+                            )}
+                          </button>
+                        </>
                       )}
                       {apt.paymentScreenshot && (
                         <button
@@ -513,6 +520,15 @@ function Dashboard() {
             <button onClick={() => setReceiptImage(null)} className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-gray-800 font-bold">&times;</button>
           </div>
         </div>
+      )}
+
+      {/* Video Call */}
+      {videoCallAppointmentId && (
+        <VideoCall
+          appointmentId={videoCallAppointmentId}
+          userName={user?.name}
+          onClose={() => setVideoCallAppointmentId(null)}
+        />
       )}
     </div>
   );
