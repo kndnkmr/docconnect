@@ -152,13 +152,15 @@ const getDoctorById = async (req, res) => {
 
 const updateDoctorProfile = async (req, res) => {
   try {
-    // Validate required fields
-    const requiredFields = ['specialization', 'qualification', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
-    const missing = requiredFields.filter(f => !req.body[f]);
-    if (missing.length > 0) {
-      return res.status(400).json({
-        message: `Please fill all required fields: ${missing.join(', ')}`
-      });
+    // Validate required fields (skip if this is just a file upload like QR code)
+    if (!req.file) {
+      const requiredFields = ['specialization', 'qualification', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
+      const missing = requiredFields.filter(f => !req.body[f]);
+      if (missing.length > 0) {
+        return res.status(400).json({
+          message: `Please fill all required fields: ${missing.join(', ')}`
+        });
+      }
     }
 
     // These are the fields a doctor is ALLOWED to update
