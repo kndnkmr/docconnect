@@ -260,8 +260,11 @@ function Dashboard() {
                           {apt.doctor?.upiId && (
                             <>
                               <div className="mt-2 p-2 bg-white border border-orange-200 rounded-lg text-center">
-                                <p className="text-xs text-orange-600 mb-1">Pay to this UPI ID:</p>
+                                <p className="text-xs text-orange-600 mb-1">Pay to UPI ID:</p>
                                 <p className="text-lg font-mono font-bold text-orange-900 select-all">{apt.doctor.upiId}</p>
+                                {apt.doctor?.phone && (
+                                  <p className="text-xs text-orange-600 mt-2">Or pay to mobile number: <span className="font-mono font-bold text-orange-900">{apt.doctor.phone}</span></p>
+                                )}
                               </div>
                               <div className="flex gap-2 mt-2">
                                 <a
@@ -277,7 +280,7 @@ function Dashboard() {
                                   Copy ID
                                 </button>
                               </div>
-                              <p className="text-xs text-orange-600 mt-2">If "Open UPI App" doesn't work, manually enter the UPI ID shown above in your GPay/PhonePe/Paytm.</p>
+                              <p className="text-xs text-orange-600 mt-2">If "Open UPI App" doesn't work, enter the UPI ID or mobile number above in your GPay/PhonePe/Paytm.</p>
                             </>
                           )}
                         </div>
