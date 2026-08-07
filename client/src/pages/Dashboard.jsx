@@ -143,7 +143,6 @@ function Dashboard() {
       { key: 'clinicAddress', label: 'Clinic Address' },
       { key: 'phone', label: 'Phone Number' },
       { key: 'whatsappNumber', label: 'WhatsApp Number' },
-      { key: 'upiId', label: 'UPI ID' },
     ];
     const missing = requiredFields.filter(f => !profileData[f.key]);
     if (missing.length > 0) {
@@ -259,32 +258,28 @@ function Dashboard() {
                       {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm font-medium text-orange-800">Payment Required — ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
-                          {apt.doctor?.upiId && (
-                            <>
-                              <div className="mt-2 p-2 bg-white border border-orange-200 rounded-lg text-center">
-                                <p className="text-xs text-orange-600 mb-1">Pay to UPI ID:</p>
-                                <p className="text-lg font-mono font-bold text-orange-900 select-all">{apt.doctor.upiId}</p>
-                                {apt.doctor?.phone && (
-                                  <p className="text-xs text-orange-600 mt-2">Or pay to mobile number: <span className="font-mono font-bold text-orange-900">{apt.doctor.phone}</span></p>
-                                )}
-                              </div>
-                              <div className="flex gap-2 mt-2">
-                                <a
-                                  href={`upi://pay?pa=${apt.doctor.upiId}&pn=${encodeURIComponent(apt.doctor.name || 'Doctor')}&cu=INR&tn=Consultation fee`}
-                                  className="flex-1 text-center px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
-                                >
-                                  Open UPI App to Pay
-                                </a>
-                                <button
-                                  onClick={() => { navigator.clipboard.writeText(apt.doctor.upiId); toast.success('UPI ID copied!'); }}
-                                  className="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100"
-                                >
-                                  Copy ID
-                                </button>
-                              </div>
-                              <p className="text-xs text-orange-600 mt-2">If "Open UPI App" doesn't work, enter the UPI ID or mobile number above in your GPay/PhonePe/Paytm.</p>
-                            </>
-                          )}
+                          <div className="mt-2 p-2 bg-white border border-orange-200 rounded-lg text-center">
+                            <p className="text-xs text-orange-600 mb-1">Pay to mobile number:</p>
+                            <p className="text-lg font-mono font-bold text-orange-900 select-all">{apt.doctor?.phone || 'Contact doctor'}</p>
+                            {apt.doctor?.upiId && (
+                              <p className="text-xs text-orange-600 mt-2">Or UPI ID: <span className="font-mono font-bold text-orange-900">{apt.doctor.upiId}</span></p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 mt-2">
+                            <a
+                              href={`upi://pay?pa=${apt.doctor?.upiId || apt.doctor?.phone}&pn=${encodeURIComponent(apt.doctor?.name || 'Doctor')}&cu=INR&tn=Consultation fee`}
+                              className="flex-1 text-center px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
+                            >
+                              Open UPI App to Pay
+                            </a>
+                            <button
+                              onClick={() => { navigator.clipboard.writeText(apt.doctor?.phone || ''); toast.success('Phone number copied!'); }}
+                              className="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100"
+                            >
+                              Copy Number
+                            </button>
+                          </div>
+                          <p className="text-xs text-orange-600 mt-2">Open GPay/PhonePe/Paytm → Pay to the number above → Upload receipt below.</p>
                         </div>
                       )}
                       {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Received</span>}
@@ -369,7 +364,7 @@ function Dashboard() {
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'upiId', label: 'UPI ID (for payments) *', placeholder: 'e.g., doctor@upi' },
+              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., doctor@upi — leave blank to use phone number' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
