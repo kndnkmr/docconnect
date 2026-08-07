@@ -14,7 +14,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 // Sender email — Resend free tier only allows sending from onboarding@resend.dev
 // OR from a verified domain. We'll use their default for now.
-const FROM_EMAIL = process.env.FROM_EMAIL || 'ProMedicoz <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'ProMedicoz <noreply@promedicoz.in>';
 
 // ============================================
 // Send email function
