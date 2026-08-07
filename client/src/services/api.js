@@ -92,7 +92,9 @@ export const authAPI = {
 
   // Update email/phone
   updateAccount: (data) => API.put('/auth/update-account', data),
-  // data = { email, phone }
+
+  // Resend email verification (for unverified doctors)
+  resendVerification: () => API.post('/auth/resend-verification'),
 
   // Delete own account
   deleteAccount: () => API.delete('/auth/delete-account'),

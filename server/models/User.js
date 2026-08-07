@@ -190,6 +190,24 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Email Verification ---
+  isVerified: {
+    type: Boolean,
+    default: false
+    // Doctors must verify email before appearing in search
+    // Patients are auto-verified (they may not have email)
+  },
+
+  verificationToken: {
+    type: String,
+    default: undefined
+  },
+
+  verificationTokenExpire: {
+    type: Date,
+    default: undefined
+  },
+
   // --- Password Reset Fields ---
   // These are used ONLY during the "forgot password" flow.
   // They're empty most of the time — only filled when a reset is requested.

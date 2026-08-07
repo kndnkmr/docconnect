@@ -144,6 +144,25 @@ function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Email Verification Banner for unverified doctors */}
+      {isDoctor && user && !user.isVerified && (
+        <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📧</span>
+            <div>
+              <p className="font-semibold text-orange-800">Verify your email to go live</p>
+              <p className="text-sm text-orange-700">Your profile won't appear in patient search until you verify your email.</p>
+            </div>
+          </div>
+          <button
+            onClick={async () => { try { await authAPI.resendVerification(); toast.success('Verification email sent! Check your inbox.'); } catch(e) { toast.error(e.response?.data?.message || 'Failed to send'); } }}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 whitespace-nowrap"
+          >
+            Resend Email
+          </button>
+        </div>
+      )}
+
       {/* Notification Banner */}
       {isDoctor && appointments.filter(a => a.status === 'pending').length > 0 && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-3">

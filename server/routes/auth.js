@@ -37,7 +37,7 @@ const resetLimiter = rateLimit({
 });
 
 // Import our controller functions (the actual logic)
-const { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount } = require('../controllers/authController');
+const { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount, verifyEmail, resendVerification } = require('../controllers/authController');
 
 // Import our auth middleware (the security guard)
 const { protect } = require('../middleware/auth');
@@ -64,6 +64,14 @@ router.get('/me', protect, getMe);
 // Sends: { email }
 // Returns: success message + logs reset link to server console
 router.post('/forgot-password', resetLimiter, forgotPassword);
+
+// GET /api/auth/verify-email/:token
+// Public — anyone with the link can verify (token proves ownership)
+router.get('/verify-email/:token', verifyEmail);
+
+// POST /api/auth/resend-verification
+// Protected — logged-in unverified doctors can request a new link
+router.post('/resend-verification', protect, resendVerification);
 
 // PUT /api/auth/reset-password/:token
 // Anyone with a valid reset token can set a new password

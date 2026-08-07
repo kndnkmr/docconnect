@@ -13,6 +13,7 @@ const crypto = require('crypto');
 // We use it to create secure, unguessable reset tokens
 const User = require('../models/User');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
+const { sendEmail } = require('../utils/sendEmail');
 
 // ---- Helper: Generate JWT Token ----
 // We'll call this after successful register or login.
@@ -95,30 +96,63 @@ const register = async (req, res) => {
     }
 
     // Step 5: Create the user in the database
-    // The password will be automatically hashed by our pre-save hook in User.js!
     const user = await User.create({
       name,
       email,
-      password,  // Plain text here → hashed automatically before saving
+      password,
       role,
-      phone: formattedPhone
+      phone: formattedPhone,
+      isVerified: role === 'patient' // Patients auto-verified, doctors must verify email
     });
 
-    // Step 6: Generate a token for the new user (log them in immediately)
-    const token = generateToken(user._id);
-    // user._id is the unique ID that MongoDB assigns to every document
+    // Step 6: If doctor, send verification email
+    if (role === 'doctor' && email) {
+      const verifyToken = crypto.randomBytes(32).toString('hex');
+      const hashedToken = crypto.createHash('sha256').update(verifyToken).digest('hex');
 
-    // Step 7: Send back the response
+      user.verificationToken = hashedToken;
+      user.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+      await user.save({ validateBeforeSave: false });
+
+      const verifyUrl = `https://www.promedicoz.in/verify-email/${verifyToken}`;
+
+      await sendEmail({
+        to: email,
+        subject: 'Verify Your ProMedicoz Account',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+              <h2 style="color: #1f2937;">Verify Your Email</h2>
+              <p style="color: #4b5563;">Hi Dr. ${name},</p>
+              <p style="color: #4b5563;">Thank you for registering on ProMedicoz. Please verify your email to activate your account and appear in patient search results.</p>
+              <a href="${verifyUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+                Verify My Email
+              </a>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 24 hours. If you didn't register, ignore this email.</p>
+            </div>
+          </div>
+        `
+      });
+    }
+
+    // Step 7: Generate a token for the new user
+    const token = generateToken(user._id);
+
+    // Step 8: Send back the response
     res.status(201).json({
-      // 201 = Created (a new resource was successfully created)
-      message: 'Registration successful!',
+      message: role === 'doctor'
+        ? 'Registration successful! Please check your email to verify your account.'
+        : 'Registration successful!',
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
-        // Notice we DON'T send back the password!
+        role: user.role,
+        isVerified: user.isVerified
       }
     });
 
@@ -189,7 +223,8 @@ const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        profilePhoto: user.profilePhoto
+        profilePhoto: user.profilePhoto,
+        isVerified: user.isVerified
       }
     });
 
@@ -487,5 +522,102 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// ============================================
+// VERIFY EMAIL - Doctor clicks link from email
+// ============================================
+// Endpoint: GET /api/auth/verify-email/:token
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      verificationToken: hashedToken,
+      verificationTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: 'Invalid or expired verification link. Please register again or contact support.'
+      });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    res.json({
+      message: 'Email verified successfully! Your profile is now visible to patients.',
+      verified: true
+    });
+
+  } catch (error) {
+    console.error('Verify email error:', error.message);
+    res.status(500).json({ message: 'Error verifying email' });
+  }
+};
+
+// ============================================
+// RESEND VERIFICATION - Doctor requests a new link
+// ============================================
+// Endpoint: POST /api/auth/resend-verification
+
+const resendVerification = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Email is already verified' });
+    }
+
+    if (!user.email) {
+      return res.status(400).json({ message: 'No email address on file' });
+    }
+
+    const verifyToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(verifyToken).digest('hex');
+
+    user.verificationToken = hashedToken;
+    user.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    const verifyUrl = `https://www.promedicoz.in/verify-email/${verifyToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: 'Verify Your ProMedicoz Account',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+          </div>
+          <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937;">Verify Your Email</h2>
+            <p style="color: #4b5563;">Hi Dr. ${user.name},</p>
+            <p style="color: #4b5563;">Click below to verify your email and activate your account.</p>
+            <a href="${verifyUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+              Verify My Email
+            </a>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 24 hours.</p>
+          </div>
+        </div>
+      `
+    });
+
+    res.json({ message: 'Verification email sent! Check your inbox.' });
+
+  } catch (error) {
+    console.error('Resend verification error:', error.message);
+    res.status(500).json({ message: 'Error sending verification email' });
+  }
+};
+
 // ---- Export all controller functions ----
-module.exports = { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount };
+module.exports = { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount, verifyEmail, resendVerification };
