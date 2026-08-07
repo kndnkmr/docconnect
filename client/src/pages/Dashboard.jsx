@@ -362,9 +362,9 @@ function Dashboard() {
               { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
               { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
-              { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
+              { key: 'phone', label: 'Phone Number (UPI Payment) *', placeholder: 'Number linked to your GPay/PhonePe for receiving payments', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., doctor@upi — leave blank to use phone number' },
+              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'Only if different from phone number, e.g., doctor@okicici' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
