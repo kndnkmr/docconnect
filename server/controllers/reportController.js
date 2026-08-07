@@ -26,6 +26,9 @@ const uploadReport = async (req, res) => {
       });
     }
 
+    // Convert file to base64 for permanent storage in MongoDB
+    const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
     const report = await MedicalReport.create({
       patient: req.user._id,
       doctor: doctorId,
@@ -33,7 +36,7 @@ const uploadReport = async (req, res) => {
       prescription: prescriptionId || null,
       title,
       description: description || '',
-      filePath: `/uploads/${req.file.filename}`
+      filePath: base64File
     });
 
     res.status(201).json({
@@ -136,7 +139,8 @@ const updateReport = async (req, res) => {
 
     // Replace file if new one uploaded
     if (req.file) {
-      report.filePath = `/uploads/${req.file.filename}`;
+      const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      report.filePath = base64File;
       // Reset review status since file changed
       report.isReviewed = false;
       report.doctorComment = '';

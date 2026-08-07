@@ -68,14 +68,27 @@ function DoctorPatientReports() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <a
-                    href={report.filePath}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => {
+                      if (report.filePath.startsWith('data:application/pdf')) {
+                        const win = window.open();
+                        win.document.write(`<iframe src="${report.filePath}" style="width:100%;height:100%;border:none;"></iframe>`);
+                      } else {
+                        const modal = document.createElement('div');
+                        modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:1rem;cursor:pointer;';
+                        modal.onclick = () => modal.remove();
+                        const img = document.createElement('img');
+                        img.src = report.filePath.startsWith('data:') ? report.filePath : '';
+                        img.style.cssText = 'max-width:90%;max-height:90%;border-radius:8px;';
+                        img.onerror = () => { modal.remove(); alert('File unavailable'); };
+                        modal.appendChild(img);
+                        document.body.appendChild(modal);
+                      }
+                    }}
                     className="px-3 py-1 bg-primary-100 text-primary-700 rounded-lg text-sm hover:bg-primary-200"
                   >
                     View File
-                  </a>
+                  </button>
                   {!report.isReviewed && (
                     <button
                       onClick={() => setReviewModal({ open: true, reportId: report._id })}

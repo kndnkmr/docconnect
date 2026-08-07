@@ -173,9 +173,27 @@ function PatientReports() {
                   }`}>
                     {report.isReviewed ? 'Reviewed' : 'Pending Review'}
                   </span>
-                  <a href={report.filePath} target="_blank" rel="noopener noreferrer" className="text-primary-600 text-sm hover:underline">
+                  <button
+                    onClick={() => {
+                      if (report.filePath.startsWith('data:application/pdf')) {
+                        const win = window.open();
+                        win.document.write(`<iframe src="${report.filePath}" style="width:100%;height:100%;border:none;"></iframe>`);
+                      } else if (report.filePath.startsWith('data:')) {
+                        const modal = document.createElement('div');
+                        modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:1rem;cursor:pointer;';
+                        modal.onclick = () => modal.remove();
+                        const img = document.createElement('img');
+                        img.src = report.filePath;
+                        img.style.cssText = 'max-width:90%;max-height:90%;border-radius:8px;';
+                        img.onerror = () => { modal.remove(); };
+                        modal.appendChild(img);
+                        document.body.appendChild(modal);
+                      }
+                    }}
+                    className="text-primary-600 text-sm hover:underline"
+                  >
                     View File
-                  </a>
+                  </button>
                   <label className="cursor-pointer px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200 transition-colors">
                     Replace File
                     <input
