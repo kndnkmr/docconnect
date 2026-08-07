@@ -5,15 +5,13 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect);
 
-// Messages for an appointment
-router.get('/:appointmentId', getMessages);
-router.post('/:appointmentId', sendMessage);
-
-// Unread count
+// Static routes FIRST (before :appointmentId parameter route)
 router.get('/unread/count', getUnreadCount);
-
-// Block/unblock patient (doctor only)
 router.post('/block/:patientId', authorize('doctor'), blockPatient);
 router.post('/unblock/:patientId', authorize('doctor'), unblockPatient);
+
+// Dynamic routes AFTER
+router.get('/:appointmentId', getMessages);
+router.post('/:appointmentId', sendMessage);
 
 module.exports = router;
