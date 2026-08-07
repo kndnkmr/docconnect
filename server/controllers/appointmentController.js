@@ -65,8 +65,13 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    // Step 4: Check the appointment date is in the future
-    if (new Date(date) < new Date()) {
+    // Step 4: Check the appointment date is not in the past (IST timezone)
+    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const todayIST = nowInIST.getFullYear() + '-' +
+      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowInIST.getDate()).padStart(2, '0');
+
+    if (date < todayIST) {
       return res.status(400).json({
         message: 'Cannot book appointments in the past'
       });
