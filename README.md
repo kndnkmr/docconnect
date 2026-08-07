@@ -1,8 +1,8 @@
-# DocConnect — Doctor Consultation Platform
+# ProMedicoz — Doctor Consultation Platform
 
 A full-stack web application where doctors register profiles, patients browse and book consultations, and doctors can be reached directly via WhatsApp for emergencies.
 
-**Live Website:** https://promedicoz.in (custom domain) | https://docconnect-mocha.vercel.app (backup)
+**Live Website:** https://www.promedicoz.in (custom domain) | https://docconnect-mocha.vercel.app (backup)
 
 Built as a learning project covering: authentication, CRUD operations, file uploads, role-based access, relational data, and responsive UI.
 

@@ -1,5 +1,5 @@
 // ============================================
-// DocConnect - Main Server File
+// ProMedicoz - Main Server File
 // ============================================
 // This file is the ENTRY POINT of our backend.
 // When you run "node server.js", this is what executes.
