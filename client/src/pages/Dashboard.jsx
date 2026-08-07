@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI } from '../services/api';
 import { ConfirmModal, PromptModal } from '../components/Modal';
+import ChatBox from '../components/ChatBox';
 import toast from 'react-hot-toast';
 
 // Extracted sub-components
@@ -34,6 +35,7 @@ function Dashboard() {
   const [rateModal, setRateModal] = useState({ open: false, id: null });
   const [meetingLinkModal, setMeetingLinkModal] = useState({ open: false, id: null });
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
+  const [chatAppointmentId, setChatAppointmentId] = useState(null);
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
@@ -308,6 +310,34 @@ function Dashboard() {
                           <button onClick={() => setRateModal({ open: true, id: apt._id })} className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">⭐ Rate</button>
                         </>
                       )}
+                      {/* Chat button — for confirmed/completed appointments */}
+                      {['confirmed', 'completed'].includes(apt.status) && (
+                        <button onClick={() => setChatAppointmentId(apt._id)} className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">💬 Chat</button>
+                      )}
+                      {/* Payment screenshot upload — patient only, confirmed appointments */}
+                      {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
+                        <label className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 cursor-pointer">
+                          📎 Upload Receipt
+                          <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const data = new FormData();
+                            data.append('screenshot', file);
+                            try {
+                              await appointmentAPI.uploadScreenshot(apt._id, data);
+                              toast.success('Payment screenshot uploaded!');
+                              fetchAppointments();
+                            } catch (err) { toast.error('Failed to upload screenshot'); }
+                          }} />
+                        </label>
+                      )}
+                      {apt.paymentScreenshot && (
+                        <a href={apt.paymentScreenshot} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">View Receipt</a>
+                      )}
+                      {/* Block patient — doctor only */}
+                      {isDoctor && apt.patient && (
+                        <button onClick={async () => { try { await (await import('../services/api')).messageAPI.blockPatient(apt.patient._id || apt.patient); toast.success('Patient blocked'); } catch(e) { toast.error('Failed to block'); } }} className="px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs hover:bg-red-50">Block</button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -418,6 +448,11 @@ function Dashboard() {
         onSubmit={handleWritePrescription}
         onCancel={() => setPrescriptionModal({ open: false, id: null })}
       />
+
+      {/* Chat Modal */}
+      {chatAppointmentId && (
+        <ChatBox appointmentId={chatAppointmentId} onClose={() => setChatAppointmentId(null)} />
+      )}
     </div>
   );
 }
