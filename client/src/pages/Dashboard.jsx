@@ -382,7 +382,7 @@ function Dashboard() {
                     const response = await doctorAPI.updateProfile(data);
                     setProfileData(prev => ({ ...prev, upiQrCode: response.data.doctor.upiQrCode }));
                     toast.success('QR code uploaded!');
-                  } catch (err) { toast.error('Failed to upload QR code'); }
+                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to upload QR code'); }
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               />

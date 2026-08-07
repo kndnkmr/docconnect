@@ -202,6 +202,11 @@ const updateDoctorProfile = async (req, res) => {
       }
     }
 
+    // If no updates at all, return error
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No updates provided' });
+    }
+
     // Find the doctor and update their profile
     const doctor = await User.findByIdAndUpdate(
       req.user._id,
@@ -228,7 +233,8 @@ const updateDoctorProfile = async (req, res) => {
   } catch (error) {
     console.error('Update doctor profile error:', error.message);
     res.status(500).json({
-      message: 'Error updating profile'
+      message: 'Error updating profile',
+      error: process.env.NODE_ENV !== 'production' ? error.message : undefined
     });
   }
 };
