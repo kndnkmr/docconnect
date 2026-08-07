@@ -79,7 +79,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Home route — quick check that the server is alive
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to DocConnect API!',
+    message: 'Welcome to ProMedicoz API!',
     status: 'Server is running',
     version: '1.0.0',
     endpoints: {
@@ -177,7 +177,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`
   ==========================================
-  DocConnect Server is running!
+  ProMedicoz Server is running!
   ==========================================
   URL:          http://localhost:${PORT}
   Health Check: http://localhost:${PORT}/api/health

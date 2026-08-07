@@ -181,7 +181,7 @@ function Home() {
       {/* ---- How It Works ---- */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">How DocConnect Works</h2>
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">How ProMedicoz Works</h2>
           <p className="text-center text-gray-500 mb-10 text-sm">Book a consultation in 4 simple steps</p>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
@@ -250,7 +250,7 @@ function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-3">Are You a Doctor?</h2>
           <p className="text-primary-100 mb-6 max-w-xl mx-auto">
-            Join DocConnect to reach more patients, manage your schedule, and grow your practice effortlessly.
+            Join ProMedicoz to reach more patients, manage your schedule, and grow your practice effortlessly.
           </p>
           {!isAuthenticated && (
             <Link to="/register" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">

@@ -95,7 +95,7 @@ function Register() {
       // Auto-login after registration
       login(token, user);
 
-      toast.success('Account created successfully! Welcome to DocConnect.');
+      toast.success('Account created successfully! Welcome to ProMedicoz.');
       navigate('/dashboard');
 
     } catch (error) {
@@ -113,7 +113,7 @@ function Register() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join DocConnect today</p>
+          <p className="text-gray-600 mt-2">Join ProMedicoz today</p>
         </div>
 
         {/* Form Card */}

@@ -42,7 +42,7 @@ function Navbar() {
     installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
     if (outcome === 'accepted') {
-      toast.success('DocConnect installed!');
+      toast.success('ProMedicoz installed!');
       setInstallPrompt(null);
       setIsInstalled(true);
     }
@@ -73,7 +73,7 @@ function Navbar() {
           <Link to="/" className="flex items-center space-x-2">
             {/* space-x-2 = gap between children */}
             <span className="text-2xl">🏥</span>
-            <span className="text-xl font-bold text-primary-600">DocConnect</span>
+            <span className="text-xl font-bold text-primary-600">ProMedicoz</span>
           </Link>
 
           {/* ---- Desktop Navigation Links ---- */}

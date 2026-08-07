@@ -14,7 +14,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 // Sender email — Resend free tier only allows sending from onboarding@resend.dev
 // OR from a verified domain. We'll use their default for now.
-const FROM_EMAIL = process.env.FROM_EMAIL || 'DocConnect <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'ProMedicoz <onboarding@resend.dev>';
 
 // ============================================
 // Send email function
@@ -49,12 +49,12 @@ const sendEmail = async ({ to, subject, html }) => {
 // ============================================
 
 const sendAppointmentNotification = async (doctor, patient, appointment) => {
-  const subject = `New Appointment Request — DocConnect`;
+  const subject = `New Appointment Request — ProMedicoz`;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-        <h1 style="margin: 0; font-size: 20px;">🏥 DocConnect</h1>
+        <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
       </div>
       <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
         <h2 style="color: #1f2937; margin-top: 0;">New Appointment Request</h2>
@@ -72,12 +72,12 @@ const sendAppointmentNotification = async (doctor, patient, appointment) => {
 
         <p style="color: #4b5563;">Please log in to your dashboard to <strong>confirm</strong> or <strong>reject</strong> this appointment.</p>
         
-        <a href="https://docconnect-mocha.vercel.app/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+        <a href="https://www.promedicoz.in/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
           Go to Dashboard
         </a>
 
         <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-          This is an automated notification from DocConnect. Do not reply to this email.
+          This is an automated notification from ProMedicoz. Do not reply to this email.
         </p>
       </div>
     </div>
@@ -115,12 +115,12 @@ const sendAppointmentConfirmation = async (patient, doctor, appointment) => {
 
         <p style="color: #4b5563;">Please log in to your dashboard to make the payment and view details.</p>
         
-        <a href="https://docconnect-mocha.vercel.app/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+        <a href="https://www.promedicoz.in/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
           Go to Dashboard
         </a>
 
         <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-          This is an automated notification from DocConnect.
+          This is an automated notification from ProMedicoz.
         </p>
       </div>
     </div>

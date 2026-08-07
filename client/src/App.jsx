@@ -164,7 +164,7 @@ function App() {
       <footer className="bg-gray-800 text-white py-6 mt-auto">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-400">
-            &copy; 2024 DocConnect. Built for learning web development.
+            &copy; 2024 ProMedicoz. Your health, our priority.
           </p>
         </div>
       </footer>

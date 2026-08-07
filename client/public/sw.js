@@ -1,10 +1,10 @@
 // ============================================
-// DocConnect Service Worker
+// ProMedicoz Service Worker
 // ============================================
 // Enables PWA functionality: offline support, caching
 // This file runs in the background, separate from the main app
 
-const CACHE_NAME = 'docconnect-v1';
+const CACHE_NAME = 'promedicoz-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
