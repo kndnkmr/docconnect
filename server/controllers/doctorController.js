@@ -153,7 +153,7 @@ const getDoctorById = async (req, res) => {
 const updateDoctorProfile = async (req, res) => {
   try {
     // Validate required fields
-    const requiredFields = ['specialization', 'qualification', 'experience', 'consultationFee', 'clinicAddress', 'phone', 'whatsappNumber'];
+    const requiredFields = ['specialization', 'qualification', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
     const missing = requiredFields.filter(f => !req.body[f]);
     if (missing.length > 0) {
       return res.status(400).json({

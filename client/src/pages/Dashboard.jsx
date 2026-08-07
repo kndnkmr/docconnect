@@ -143,7 +143,6 @@ function Dashboard() {
       { key: 'consultationFee', label: 'Consultation Fee' },
       { key: 'clinicAddress', label: 'Clinic Address' },
       { key: 'phone', label: 'Phone Number' },
-      { key: 'whatsappNumber', label: 'WhatsApp Number' },
     ];
     const missing = requiredFields.filter(f => !profileData[f.key]);
     if (missing.length > 0) {
@@ -351,7 +350,6 @@ function Dashboard() {
               { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '+91 9876543210', type: 'tel' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
