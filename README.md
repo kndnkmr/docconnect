@@ -54,13 +54,21 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
 - Doctor rating & review system via modal (1-5 stars + text, shown on doctor profile)
-- Auto-scrolling patient testimonials on homepage (builds trust)
+- Auto-scrolling patient testimonials on homepage (with placeholders when no reviews yet)
 - Admin panel: view stats, manage users, view all appointments, handle complaints
 - Account settings: users can update email/phone or delete their account (with confirmation modal)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Styled modal dialogs replace all browser prompts/confirms (modern UX)
 - Paginated appointment history in Dashboard (Previous/Next navigation)
 - Modular Dashboard architecture: each tab is a separate component for maintainability
+- PWA support: installable on phone, offline caching, custom app icon
+- SEO optimized: unique page titles, meta descriptions, Open Graph tags per page
+- Structured data (Schema.org): MedicalBusiness, Physician, FAQPage schemas
+- 10 dedicated specialization landing pages with FAQs (targets long-tail keywords)
+- Homepage FAQ section with expandable questions and structured data
+- Google Analytics integration for visitor tracking
+- Google Search Console with sitemap (14 indexed pages)
+- robots.txt configured (blocks private pages from indexing)
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Available Today" badge on doctor cards
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
@@ -169,30 +177,33 @@ docconnect/
         │   └── api.js           ← All API call functions
         │
         ├── components/
-        │   ├── Navbar.jsx       ← Navigation bar
+        │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)
         │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal
+        │   ├── SEO.jsx          ← Per-page title, description, Open Graph tags
+        │   ├── StructuredData.jsx ← Schema.org JSON-LD markup
         │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
         │
         └── pages/
-            ├── Home.jsx         ← Landing page
+            ├── Home.jsx         ← Landing page (FAQs + structured data)
             ├── Login.jsx        ← Login form
             ├── Register.jsx     ← Registration form (with phone number)
             ├── ForgotPassword.jsx ← Request password reset
             ├── ResetPassword.jsx  ← Set new password
             ├── DoctorList.jsx   ← Browse/search doctors (with filters)
-            ├── DoctorProfile.jsx ← View single doctor + WhatsApp contact
-            ├── BookAppointment.jsx ← Book with real-time slot selection + family member
+            ├── DoctorProfile.jsx ← View single doctor + Schema.org
+            ├── SpecializationPage.jsx ← SEO landing pages per specialty
+            ├── BookAppointment.jsx ← Book with slot selection + family member
             ├── BookingConfirmation.jsx ← Post-booking summary
             ├── Dashboard.jsx    ← Main dashboard layout + appointments tab
-            ├── dashboard/       ← Dashboard sub-components (split for maintainability)
-            │   ├── DoctorAvailability.jsx  ← Weekly schedule management
-            │   ├── DoctorPatientReports.jsx ← Doctor reviews patient reports
-            │   ├── PatientFamilyMembers.jsx ← Manage family members
-            │   ├── PatientPrescriptions.jsx ← View prescriptions
-            │   ├── PatientReports.jsx ← Upload/view medical reports
-            │   ├── PatientComplaints.jsx ← File/view complaints
-            │   └── AccountSettings.jsx ← Update email/phone, delete account
-            └── AdminDashboard.jsx ← Admin panel (stats, users, appointments)
+            ├── dashboard/       ← Dashboard sub-components
+            │   ├── DoctorAvailability.jsx
+            │   ├── DoctorPatientReports.jsx
+            │   ├── PatientFamilyMembers.jsx
+            │   ├── PatientPrescriptions.jsx
+            │   ├── PatientReports.jsx
+            │   ├── PatientComplaints.jsx
+            │   └── AccountSettings.jsx
+            └── AdminDashboard.jsx ← Admin panel
 ```
 
 ---
