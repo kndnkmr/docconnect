@@ -152,6 +152,11 @@ export const appointmentAPI = {
 
   // Mark payment received (doctor only)
   markPayment: (id) => API.put(`/appointments/${id}/payment`, { paymentStatus: 'paid' }),
+
+  // Upload payment screenshot (patient only)
+  uploadScreenshot: (id, data) => API.put(`/appointments/${id}/payment-screenshot`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };
 
 // ============================================
@@ -171,6 +176,25 @@ export const familyMemberAPI = {
 
   // Remove a family member
   remove: (id) => API.delete(`/family-members/${id}`),
+};
+
+// ============================================
+// MESSAGE API calls (in-app chat)
+// ============================================
+
+export const messageAPI = {
+  // Get messages for an appointment
+  getMessages: (appointmentId) => API.get(`/messages/${appointmentId}`),
+
+  // Send a message
+  send: (appointmentId, text) => API.post(`/messages/${appointmentId}`, { text }),
+
+  // Get unread count
+  getUnreadCount: () => API.get('/messages/unread/count'),
+
+  // Block/unblock patient (doctor)
+  blockPatient: (patientId) => API.post(`/messages/block/${patientId}`),
+  unblockPatient: (patientId) => API.post(`/messages/unblock/${patientId}`),
 };
 
 // ============================================

@@ -198,6 +198,12 @@ const userSchema = new mongoose.Schema({
     // New doctor registrations explicitly set this to false until they verify
   },
 
+  // --- Blocked Patients (Doctor/Admin can block abusive patients) ---
+  blockedPatients: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    default: []
+  },
+
   verificationToken: {
     type: String,
     default: undefined

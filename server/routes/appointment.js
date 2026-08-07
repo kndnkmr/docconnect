@@ -23,7 +23,8 @@ const {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
-  markPayment
+  markPayment,
+  uploadPaymentScreenshot
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -64,8 +65,11 @@ router.put('/:id/status', authorize('doctor'), updateAppointmentStatus);
 router.put('/:id/cancel', authorize('patient'), cancelAppointment);
 
 // ---- DOCTOR: Mark payment received ----
-// PUT /api/appointments/:id/payment
 router.put('/:id/payment', authorize('doctor'), markPayment);
+
+// ---- PATIENT: Upload payment screenshot ----
+const upload = require('../middleware/upload');
+router.put('/:id/payment-screenshot', authorize('patient'), upload.single('screenshot'), uploadPaymentScreenshot);
 
 module.exports = router;
 

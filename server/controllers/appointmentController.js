@@ -401,6 +401,28 @@ const markPayment = async (req, res) => {
   }
 };
 
+// ============================================
+// UPLOAD PAYMENT SCREENSHOT - Patient uploads proof
+// ============================================
+const uploadPaymentScreenshot = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    if (appointment.patient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    if (!req.file) return res.status(400).json({ message: 'Please upload a screenshot' });
+
+    appointment.paymentScreenshot = `/uploads/${req.file.filename}`;
+    await appointment.save();
+
+    res.json({ message: 'Payment screenshot uploaded', paymentScreenshot: appointment.paymentScreenshot });
+  } catch (error) {
+    console.error('Upload payment screenshot error:', error.message);
+    res.status(500).json({ message: 'Error uploading screenshot' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
@@ -408,5 +430,6 @@ module.exports = {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
-  markPayment
+  markPayment,
+  uploadPaymentScreenshot
 };

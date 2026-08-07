@@ -142,6 +142,12 @@ const appointmentSchema = new mongoose.Schema({
   cancellationReason: {
     type: String,
     default: ''
+  },
+
+  // ---- Payment screenshot (uploaded by patient as proof) ----
+  paymentScreenshot: {
+    type: String,
+    default: ''
   }
 
 }, {
