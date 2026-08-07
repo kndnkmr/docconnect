@@ -75,7 +75,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - "Available Today" badge on doctor cards
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
 - Booking confirmation page with full summary
-- Past time slots hidden when booking for today (IST timezone — works on any server)
+- Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
 - Patients can replace/update uploaded report files anytime
 - Responsive design (mobile + desktop)
 
