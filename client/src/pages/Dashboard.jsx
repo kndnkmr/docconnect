@@ -340,10 +340,14 @@ function Dashboard() {
                         <button
                           onClick={() => {
                             const imgSrc = getUploadUrl(apt.paymentScreenshot);
+                            if (!imgSrc || (!imgSrc.startsWith('data:') && !imgSrc.startsWith('http'))) {
+                              toast.error('Receipt not available. Patient may need to re-upload.');
+                              return;
+                            }
                             const modal = document.createElement('div');
                             modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:1rem;';
                             modal.onclick = () => modal.remove();
-                            modal.innerHTML = `<img src="${imgSrc}" style="max-width:90%;max-height:90%;border-radius:8px;" />`;
+                            modal.innerHTML = `<img src="${imgSrc}" style="max-width:90%;max-height:90%;border-radius:8px;" onerror="this.parentElement.innerHTML='<p style=color:white;font-size:14px>Receipt unavailable. Ask patient to re-upload.</p>'" />`;
                             document.body.appendChild(modal);
                           }}
                           className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
