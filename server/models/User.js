@@ -86,6 +86,14 @@ const userSchema = new mongoose.Schema({
     // e.g., "Dr.poojasingh410@okicici"
   },
 
+  // --- UPI QR Code (Doctor uploads payment QR image) ---
+  upiQrCode: {
+    type: String,
+    default: ''
+    // Path to uploaded QR code image
+    // Patients scan this to pay
+  },
+
   // --- Doctor-specific fields ---
   // These only matter if role === 'doctor', but we keep them here for simplicity
   specialization: {

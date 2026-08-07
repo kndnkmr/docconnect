@@ -173,7 +173,8 @@ const updateDoctorProfile = async (req, res) => {
       'profilePhoto',
       'phone',
       'whatsappNumber',
-      'upiId'
+      'upiId',
+      'upiQrCode'
     ];
 
     // Build an object with only the allowed fields that were actually sent
@@ -190,10 +191,13 @@ const updateDoctorProfile = async (req, res) => {
     });
     // This prevents someone from sending { role: "admin" } and changing their role!
 
-    // If a file was uploaded (profile photo), add the file path
+    // If a file was uploaded, determine if it's a profile photo or QR code
     if (req.file) {
-      updates.profilePhoto = `/uploads/${req.file.filename}`;
-      // req.file is set by the multer middleware (we'll create that next)
+      if (req.body.fieldName === 'upiQrCode') {
+        updates.upiQrCode = `/uploads/${req.file.filename}`;
+      } else {
+        updates.profilePhoto = `/uploads/${req.file.filename}`;
+      }
     }
 
     // Find the doctor and update their profile

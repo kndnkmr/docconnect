@@ -41,7 +41,7 @@ function Dashboard() {
   const [profileData, setProfileData] = useState({
     specialization: '', experience: '', qualification: '',
     clinicAddress: '', consultationFee: '', bio: '',
-    phone: '', whatsappNumber: '', upiId: ''
+    phone: '', whatsappNumber: '', upiId: '', upiQrCode: ''
   });
 
   useEffect(() => {
@@ -57,7 +57,8 @@ function Dashboard() {
         specialization: d.specialization || '', experience: d.experience || '',
         qualification: d.qualification || '', clinicAddress: d.clinicAddress || '',
         consultationFee: d.consultationFee || '', bio: d.bio || '',
-        phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || ''
+        phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
+        upiQrCode: d.upiQrCode || ''
       });
     } catch (error) { console.error('Fetch profile error:', error); }
   };
@@ -258,28 +259,15 @@ function Dashboard() {
                       {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm font-medium text-orange-800">Payment Required — ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
-                          <div className="mt-2 p-2 bg-white border border-orange-200 rounded-lg text-center">
-                            <p className="text-xs text-orange-600 mb-1">Pay to mobile number:</p>
-                            <p className="text-lg font-mono font-bold text-orange-900 select-all">{apt.doctor?.phone || 'Contact doctor'}</p>
-                            {apt.doctor?.upiId && (
-                              <p className="text-xs text-orange-600 mt-2">Or UPI ID: <span className="font-mono font-bold text-orange-900">{apt.doctor.upiId}</span></p>
-                            )}
-                          </div>
-                          <div className="flex gap-2 mt-2">
-                            <a
-                              href={`upi://pay?pa=${apt.doctor?.upiId || apt.doctor?.phone}&pn=${encodeURIComponent(apt.doctor?.name || 'Doctor')}&cu=INR&tn=Consultation fee`}
-                              className="flex-1 text-center px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
-                            >
-                              Open UPI App to Pay
-                            </a>
-                            <button
-                              onClick={() => { navigator.clipboard.writeText(apt.doctor?.phone || ''); toast.success('Phone number copied!'); }}
-                              className="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100"
-                            >
-                              Copy Number
-                            </button>
-                          </div>
-                          <p className="text-xs text-orange-600 mt-2">Open GPay/PhonePe/Paytm → Pay to the number above → Upload receipt below.</p>
+                          {apt.doctor?.upiQrCode ? (
+                            <div className="mt-2 text-center">
+                              <p className="text-xs text-orange-600 mb-2">Scan this QR code with any UPI app to pay:</p>
+                              <img src={apt.doctor.upiQrCode} alt="UPI QR Code" className="mx-auto max-w-[200px] rounded-lg border border-orange-200" />
+                              <p className="text-xs text-orange-600 mt-2">GPay / PhonePe / Paytm — scan and pay ₹{apt.doctor?.consultationFee || ''}</p>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-orange-700 mt-2">Contact doctor for payment details.</p>
+                          )}
                         </div>
                       )}
                       {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Received</span>}
@@ -362,9 +350,8 @@ function Dashboard() {
               { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
               { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
-              { key: 'phone', label: 'Phone Number (UPI Payment) *', placeholder: 'Number linked to your GPay/PhonePe for receiving payments', type: 'tel' },
+              { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'Only if different from phone number, e.g., doctor@okicici' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
@@ -380,6 +367,30 @@ function Dashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio / About</label>
               <textarea value={profileData.bio} onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))} placeholder="Tell patients about yourself..." rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">UPI QR Code (for receiving payments) *</label>
+              <p className="text-xs text-gray-500 mb-2">Upload a screenshot of your GPay/PhonePe/Paytm QR code. Patients will scan this to pay you.</p>
+              {profileData.upiQrCode && (
+                <img src={profileData.upiQrCode} alt="Current QR" className="w-32 h-32 object-contain border rounded-lg mb-2" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const data = new FormData();
+                  data.append('profilePhoto', file);
+                  data.append('fieldName', 'upiQrCode');
+                  try {
+                    const response = await doctorAPI.updateProfile(data);
+                    setProfileData(prev => ({ ...prev, upiQrCode: response.data.doctor.upiQrCode }));
+                    toast.success('QR code uploaded!');
+                  } catch (err) { toast.error('Failed to upload QR code'); }
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
             </div>
             <button type="submit" className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">Save Profile</button>
           </form>
