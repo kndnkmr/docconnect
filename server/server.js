@@ -33,6 +33,9 @@ dotenv.config();
 // ---- STEP 3: Create the Express app ----
 const app = express();
 
+// Trust proxy (needed for rate limiting behind Render's proxy)
+app.set('trust proxy', 1);
+
 // ---- STEP 4: Set up middleware ----
 // Middleware = functions that run on EVERY request before reaching routes
 
@@ -44,8 +47,8 @@ app.use(cors({
 }));
 // Allow requests from our frontend (different port/domain)
 
-app.use(express.json());
-// Parse JSON request bodies (so we can read data sent from the frontend)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve uploaded files as static assets
 // This means: if someone requests /uploads/photo.jpg,
