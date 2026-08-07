@@ -193,12 +193,13 @@ const updateDoctorProfile = async (req, res) => {
     });
     // This prevents someone from sending { role: "admin" } and changing their role!
 
-    // If a file was uploaded, determine if it's a profile photo or QR code
+    // If a file was uploaded, convert to base64 and store in MongoDB
     if (req.file) {
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
       if (req.body.fieldName === 'upiQrCode') {
-        updates.upiQrCode = `/uploads/${req.file.filename}`;
+        updates.upiQrCode = base64Image;
       } else {
-        updates.profilePhoto = `/uploads/${req.file.filename}`;
+        updates.profilePhoto = base64Image;
       }
     }
 

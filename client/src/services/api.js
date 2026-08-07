@@ -66,10 +66,10 @@ API.interceptors.response.use(
   }
 );
 
-// Helper to get full URL for uploaded files (images stored on backend server)
+// Helper to get full URL for uploaded files
 const getUploadUrl = (path) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path;
+  if (path.startsWith('data:') || path.startsWith('http')) return path;
   const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
   return `${backendUrl}${path}`;
 };

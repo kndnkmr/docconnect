@@ -413,7 +413,8 @@ const uploadPaymentScreenshot = async (req, res) => {
     }
     if (!req.file) return res.status(400).json({ message: 'Please upload a screenshot' });
 
-    appointment.paymentScreenshot = `/uploads/${req.file.filename}`;
+    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    appointment.paymentScreenshot = base64Image;
     await appointment.save();
 
     res.json({ message: 'Payment screenshot uploaded', paymentScreenshot: appointment.paymentScreenshot });

@@ -18,34 +18,22 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
+// Ensure uploads directory exists (for legacy/report uploads)
 const uploadsDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// ---- Configure WHERE and HOW files are saved ----
-// "diskStorage" = save files to the hard drive (as opposed to memory)
+// ---- Memory storage for base64 conversion (profile photos, QR codes) ----
+const memoryStorage = multer.memoryStorage();
 
-const storage = multer.diskStorage({
-
-  // WHERE to save the file
+// ---- Disk storage for larger files (reports, documents) ----
+const diskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadsDir);
   },
-
-  // WHAT to name the file
   filename: function (req, file, cb) {
-    // We create a unique filename to avoid overwriting existing files.
-    // Format: userId-timestamp.extension
-    // Example: 65a1b2c3-1705312000000.jpg
-
     const uniqueName = `${req.user._id}-${Date.now()}${path.extname(file.originalname)}`;
-    // req.user._id = the logged-in user's ID (set by auth middleware)
-    // Date.now() = current timestamp in milliseconds (always unique)
-    // path.extname() = extracts the file extension (.jpg, .png, etc.)
-    // file.originalname = the original filename the user uploaded
-
     cb(null, uniqueName);
   }
 });
@@ -71,45 +59,20 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// ---- Create the multer instance with our configuration ----
+// ---- Create multer instances ----
+
+// For profile photos and QR codes (stored as base64 in MongoDB)
 const upload = multer({
-  storage: storage,
-  // ^ Use our custom storage config (where & how to save)
-
+  storage: memoryStorage,
   fileFilter: fileFilter,
-  // ^ Use our custom filter (only allow images)
-
-  limits: {
-    fileSize: 10 * 1024 * 1024
-    // ^ Maximum file size: 10MB
-    // Calculation: 10 MB × 1024 KB/MB × 1024 bytes/KB = 10,485,760 bytes
-    // Increased from 5MB to support larger document uploads
-    // This prevents someone from uploading a 2GB file and crashing your server
-  }
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB max for images
 });
 
-// ---- Export ----
-module.exports = { upload };
+// For documents/reports (stored on disk — will migrate to cloud later)
+const uploadDisk = multer({
+  storage: diskStorage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB max for documents
+});
 
-// ============================================
-// HOW THIS IS USED (in routes/doctor.js):
-// ============================================
-//
-// router.put('/profile', protect, authorize('doctor'), upload.single('profilePhoto'), controller)
-//
-// upload.single('profilePhoto') means:
-// - Expect ONE file
-// - The form field name should be "profilePhoto"
-// - After processing, the file info is available at req.file:
-//   {
-//     fieldname: 'profilePhoto',
-//     originalname: 'my-photo.jpg',
-//     filename: '65a1b2c3-1705312000000.jpg',
-//     path: 'uploads/65a1b2c3-1705312000000.jpg',
-//     size: 234567
-//   }
-//
-// Other multer methods:
-// upload.array('photos', 5)  → accept up to 5 files
-// upload.none()              → no files expected (form data only)
-// ============================================
+module.exports = { upload, uploadDisk };
