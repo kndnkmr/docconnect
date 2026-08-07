@@ -193,9 +193,9 @@ const userSchema = new mongoose.Schema({
   // --- Email Verification ---
   isVerified: {
     type: Boolean,
-    default: false
-    // Doctors must verify email before appearing in search
-    // Patients are auto-verified (they may not have email)
+    default: true
+    // Default true so existing doctors (before this feature) remain visible
+    // New doctor registrations explicitly set this to false until they verify
   },
 
   verificationToken: {

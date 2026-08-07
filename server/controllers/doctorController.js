@@ -24,7 +24,7 @@ const { formatIndianPhone } = require('../utils/formatPhone');
 const getAllDoctors = async (req, res) => {
   try {
     // ---- Build a filter object ----
-    // We start with role: 'doctor' and verified only
+    // Only show verified doctors in search
     const filter = { role: 'doctor', isVerified: true };
 
     // If the user added ?specialization=something in the URL, filter by it
