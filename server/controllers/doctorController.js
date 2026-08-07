@@ -195,11 +195,16 @@ const updateDoctorProfile = async (req, res) => {
 
     // If a file was uploaded, convert to base64 and store in MongoDB
     if (req.file) {
-      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-      if (req.body.fieldName === 'upiQrCode') {
-        updates.upiQrCode = base64Image;
-      } else {
-        updates.profilePhoto = base64Image;
+      try {
+        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+        if (req.body.fieldName === 'upiQrCode') {
+          updates.upiQrCode = base64Image;
+        } else {
+          updates.profilePhoto = base64Image;
+        }
+      } catch (fileErr) {
+        console.error('File processing error:', fileErr.message, 'file keys:', Object.keys(req.file));
+        return res.status(500).json({ message: 'Error processing uploaded file' });
       }
     }
 
@@ -209,22 +214,17 @@ const updateDoctorProfile = async (req, res) => {
     }
 
     // Find the doctor and update their profile
-    const doctor = await User.findByIdAndUpdate(
-      req.user._id,
-      // ^ The logged-in user's ID (from auth middleware)
-      updates,
-      // ^ The fields to update
-      { new: true, runValidators: true }
-      // ^ Options:
-      //   new: true = return the UPDATED document (not the old one)
-      //   runValidators: true = still check schema rules (like minlength)
-    ).select('-password');
+    const doctor = await User.findById(req.user._id).select('-password');
 
     if (!doctor) {
-      return res.status(404).json({
-        message: 'Doctor not found'
-      });
+      return res.status(404).json({ message: 'Doctor not found' });
     }
+
+    // Apply updates
+    Object.keys(updates).forEach(key => {
+      doctor[key] = updates[key];
+    });
+    await doctor.save({ validateBeforeSave: false });
 
     res.json({
       message: 'Profile updated successfully!',
