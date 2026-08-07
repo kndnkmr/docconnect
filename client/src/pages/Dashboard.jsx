@@ -131,6 +131,24 @@ function Dashboard() {
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
+
+    // Validate all fields are filled
+    const requiredFields = [
+      { key: 'specialization', label: 'Specialization' },
+      { key: 'qualification', label: 'Qualification' },
+      { key: 'experience', label: 'Years of Experience' },
+      { key: 'consultationFee', label: 'Consultation Fee' },
+      { key: 'clinicAddress', label: 'Clinic Address' },
+      { key: 'phone', label: 'Phone Number' },
+      { key: 'whatsappNumber', label: 'WhatsApp Number' },
+      { key: 'upiId', label: 'UPI ID' },
+    ];
+    const missing = requiredFields.filter(f => !profileData[f.key]);
+    if (missing.length > 0) {
+      toast.error(`Please fill: ${missing.map(f => f.label).join(', ')}`);
+      return;
+    }
+
     try {
       await doctorAPI.updateProfile(profileData);
       toast.success('Profile updated!');
@@ -291,14 +309,14 @@ function Dashboard() {
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Update Your Profile</h2>
           <form onSubmit={handleProfileSave} className="space-y-4">
             {[
-              { key: 'specialization', label: 'Specialization', placeholder: 'e.g., Cardiologist, Dentist' },
-              { key: 'qualification', label: 'Qualification', placeholder: 'e.g., MBBS, MD - Cardiology' },
-              { key: 'experience', label: 'Years of Experience', placeholder: 'e.g., 10', type: 'number' },
-              { key: 'consultationFee', label: 'Consultation Fee (₹)', placeholder: 'e.g., 500', type: 'number' },
-              { key: 'clinicAddress', label: 'Clinic Address', placeholder: 'e.g., 123 Health Street' },
-              { key: 'phone', label: 'Phone Number', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'whatsappNumber', label: 'WhatsApp Number', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'upiId', label: 'UPI ID (for payments)', placeholder: 'e.g., doctor@upi' },
+              { key: 'specialization', label: 'Specialization *', placeholder: 'e.g., Cardiologist, Dentist' },
+              { key: 'qualification', label: 'Qualification *', placeholder: 'e.g., MBBS, MD - Cardiology' },
+              { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
+              { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
+              { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
+              { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
+              { key: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '+91 9876543210', type: 'tel' },
+              { key: 'upiId', label: 'UPI ID (for payments) *', placeholder: 'e.g., doctor@upi' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
