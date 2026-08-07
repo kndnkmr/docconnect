@@ -188,7 +188,13 @@ const login = async (req, res) => {
     if (email) {
       user = await User.findOne({ email });
     } else if (phone) {
-      user = await User.findOne({ phone });
+      // Format phone to match how it was stored during registration
+      const formattedPhone = formatIndianPhone(phone);
+      user = await User.findOne({ phone: formattedPhone });
+      // Also try raw input in case formatting doesn't match
+      if (!user) {
+        user = await User.findOne({ phone });
+      }
     }
 
     if (!user) {
