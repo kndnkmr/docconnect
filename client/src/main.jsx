@@ -15,6 +15,7 @@ import ReactDOM from 'react-dom/client';
 // (DOM = Document Object Model = the HTML structure on the page)
 
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 // BrowserRouter = enables page navigation in our app
 // It watches the URL and renders the matching page component
 // Wrapping our app in BrowserRouter means ANY component inside can use routing
@@ -35,19 +36,13 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* 
-      StrictMode = a development helper that:
-      - Warns about potential problems
-      - Runs certain checks twice to catch bugs
-      - Has NO effect in production (it's stripped out)
-    */}
-    <BrowserRouter>
-      {/* BrowserRouter must wrap everything that uses navigation */}
-      <AuthProvider>
-        {/* AuthProvider must wrap everything that needs auth info */}
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>
 );
 

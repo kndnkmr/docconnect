@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { reviewAPI } from '../services/api';
+import SEO from '../components/SEO';
+import { WebsiteSchema } from '../components/StructuredData';
 
 function Home() {
   const { isAuthenticated } = useAuth();
@@ -49,6 +51,12 @@ function Home() {
 
   return (
     <div>
+      <SEO
+        title="Find & Book Doctors Online in India"
+        description="ProMedicoz - Book doctor appointments online. Find gynaecologists, cardiologists, dermatologists and 20+ specialists. Video, phone or in-person consultations."
+        path="/"
+      />
+      <WebsiteSchema />
       {/* ---- Hero Section with inline stats ---- */}
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">

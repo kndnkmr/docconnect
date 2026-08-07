@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
 function Login() {
@@ -83,7 +84,7 @@ function Login() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      {/* min-h-[80vh] = at least 80% of viewport height (centers the form nicely) */}
+      <SEO title="Login" description="Sign in to your ProMedicoz account. Manage appointments, view prescriptions, and book doctors." path="/login" />
 
       <div className="w-full max-w-md">
         {/* max-w-md = max width ~448px (keeps form from being too wide) */}

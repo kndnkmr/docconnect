@@ -11,10 +11,10 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-// useParams = hook to access URL parameters (the :id part)
-
 import { doctorAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import SEO from '../components/SEO';
+import { DoctorSchema } from '../components/StructuredData';
 import toast from 'react-hot-toast';
 
 function DoctorProfile() {
@@ -84,6 +84,13 @@ function DoctorProfile() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO
+        title={doctor ? `Dr. ${doctor.name} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
+        description={doctor ? `Book appointment with Dr. ${doctor.name} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: ₹${doctor.consultationFee || 'N/A'}.` : ''}
+        path={`/doctors/${id}`}
+        type="profile"
+      />
+      {doctor && <DoctorSchema doctor={doctor} />}
       {/* Back link */}
       <Link to="/doctors" className="text-primary-600 hover:underline mb-6 inline-block">
         ← Back to all doctors

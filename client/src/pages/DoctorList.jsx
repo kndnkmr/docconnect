@@ -13,6 +13,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI } from '../services/api';
+import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
 function DoctorList() {
@@ -136,6 +137,11 @@ function DoctorList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO
+        title={searchSpecialization ? `${searchSpecialization} Doctors` : 'Find Doctors'}
+        description={`Find and book ${searchSpecialization || ''} doctors online. Browse profiles, check availability, read reviews, and book appointments instantly on ProMedicoz.`}
+        path="/doctors"
+      />
       {/* ---- Page Title ---- */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Find a Doctor</h1>
