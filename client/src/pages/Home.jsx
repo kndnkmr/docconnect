@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { reviewAPI } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
+import { Helmet } from 'react-helmet-async';
 
 function Home() {
   const { isAuthenticated } = useAuth();
@@ -57,6 +58,18 @@ function Home() {
         path="/"
       />
       <WebsiteSchema />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            { '@type': 'Question', name: 'How do I book a doctor on ProMedicoz?', acceptedAnswer: { '@type': 'Answer', text: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking.' } },
+            { '@type': 'Question', name: 'Is ProMedicoz free to use?', acceptedAnswer: { '@type': 'Answer', text: 'Signing up and browsing doctors is free. You only pay the consultation fee directly to the doctor.' } },
+            { '@type': 'Question', name: 'Can I consult a doctor online through video call?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, ProMedicoz supports video, phone, and in-person consultations.' } },
+            { '@type': 'Question', name: 'Can I book an appointment for a family member?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, you can add family members to your account and book appointments on their behalf.' } },
+          ]
+        })}</script>
+      </Helmet>
       {/* ---- Hero Section with inline stats ---- */}
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">
@@ -138,17 +151,17 @@ function Home() {
           {/* Symptom cards — all departments */}
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-5xl mx-auto">
             {[
-              { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician' },
-              { symptom: 'Headache', icon: '🤕', specialization: 'Neurologist' },
-              { symptom: 'Pregnancy', icon: '🤰', specialization: 'Gynaecologist' },
-              { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist' },
-              { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist' },
-              { symptom: 'Bone / Joint', icon: '🦴', specialization: 'Orthopedic' },
-              { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician' },
-              { symptom: 'Dental', icon: '🦷', specialization: 'Dentist' },
+              { symptom: 'Fever / Cold', icon: '🤒', specialization: 'General Physician', slug: 'general-physician' },
+              { symptom: 'Headache', icon: '🤕', specialization: 'Neurologist', slug: 'neurologist' },
+              { symptom: 'Pregnancy', icon: '🤰', specialization: 'Gynaecologist', slug: 'gynaecologist' },
+              { symptom: 'Skin / Hair', icon: '🧴', specialization: 'Dermatologist', slug: 'dermatologist' },
+              { symptom: 'Heart / BP', icon: '❤️', specialization: 'Cardiologist', slug: 'cardiologist' },
+              { symptom: 'Bone / Joint', icon: '🦴', specialization: 'Orthopedic', slug: 'orthopedic' },
+              { symptom: 'Child Health', icon: '👶', specialization: 'Pediatrician', slug: 'pediatrician' },
+              { symptom: 'Dental', icon: '🦷', specialization: 'Dentist', slug: 'dentist' },
               { symptom: 'Eye / Vision', icon: '👁️', specialization: 'Ophthalmologist' },
-              { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist' },
-              { symptom: 'Ear / Nose', icon: '👂', specialization: 'ENT Specialist' },
+              { symptom: 'Mental Health', icon: '🧠', specialization: 'Psychiatrist', slug: 'psychiatrist' },
+              { symptom: 'Ear / Nose', icon: '👂', specialization: 'ENT Specialist', slug: 'ent-specialist' },
               { symptom: 'Stomach', icon: '🤢', specialization: 'Gastroenterologist' },
               { symptom: 'Lungs', icon: '🫁', specialization: 'Pulmonologist' },
               { symptom: 'Kidney / Urine', icon: '💧', specialization: 'Urologist' },
@@ -165,7 +178,7 @@ function Home() {
             ].map((item, idx) => (
               <Link
                 key={idx}
-                to={`/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
                 className="bg-gray-50 p-3 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
               >
                 <div className="text-3xl mb-1">{item.icon}</div>
@@ -251,6 +264,31 @@ function Home() {
             </div>
           </div>
         )}
+      </section>
+
+      {/* ---- FAQs for Google "People Also Ask" ---- */}
+      <section className="py-10 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {[
+              { q: 'How do I book a doctor on ProMedicoz?', a: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking. The doctor confirms within hours.' },
+              { q: 'Is ProMedicoz free to use?', a: 'Signing up and browsing doctors is free. You only pay the consultation fee directly to the doctor via UPI when your appointment is confirmed.' },
+              { q: 'Can I consult a doctor online through video call?', a: 'Yes, ProMedicoz supports video, phone, and in-person consultations. Choose your preferred mode while booking.' },
+              { q: 'How do I know if a doctor is good?', a: 'Each doctor profile shows their qualification, years of experience, consultation fee, and patient reviews with star ratings.' },
+              { q: 'Can I book an appointment for a family member?', a: 'Yes, you can add family members to your account and book appointments on their behalf.' },
+              { q: 'What if I need to cancel my appointment?', a: 'You can cancel from your dashboard at any time before the appointment. There are no cancellation charges.' },
+            ].map((faq, idx) => (
+              <details key={idx} className="bg-white border border-gray-200 rounded-xl p-4 group">
+                <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                  {faq.q}
+                  <span className="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <p className="text-gray-600 text-sm mt-3">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ---- CTA ---- */}
