@@ -66,6 +66,14 @@ API.interceptors.response.use(
   }
 );
 
+// Helper to get full URL for uploaded files (images stored on backend server)
+const getUploadUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
+  return `${backendUrl}${path}`;
+};
+
 // ============================================
 // AUTH API calls
 // ============================================
@@ -307,4 +315,5 @@ export const reviewAPI = {
   getTopReviews: () => API.get('/reviews/top'),
 };
 
+export { getUploadUrl };
 export default API;

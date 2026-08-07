@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI } from '../services/api';
+import { getUploadUrl } from '../services/api';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
 import toast from 'react-hot-toast';
@@ -260,8 +261,8 @@ function Dashboard() {
                           <p className="text-sm font-medium text-orange-800 mb-2">Pay ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
                           {apt.doctor?.upiQrCode ? (
                             <div className="text-center">
-                              <img src={apt.doctor.upiQrCode} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
-                              <a href={apt.doctor.upiQrCode} download="payment-qr.png" className="inline-block text-xs text-primary-600 hover:underline mb-3">Download QR Code</a>
+                              <img src={getUploadUrl(apt.doctor.upiQrCode)} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
+                              <a href={getUploadUrl(apt.doctor.upiQrCode)} download="payment-qr.png" className="inline-block text-xs text-primary-600 hover:underline mb-3">Download QR Code</a>
                               <p className="text-xs text-orange-600 mb-2">Scan or download QR → Pay → Upload screenshot below</p>
                             </div>
                           ) : (
@@ -311,7 +312,7 @@ function Dashboard() {
                         <button onClick={() => setChatAppointmentId(apt._id)} className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">💬 Chat</button>
                       )}
                       {apt.paymentScreenshot && (
-                        <a href={apt.paymentScreenshot} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">View Receipt</a>
+                        <a href={getUploadUrl(apt.paymentScreenshot)} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">View Receipt</a>
                       )}
                       {/* Block patient — doctor only */}
                       {isDoctor && apt.patient && (
@@ -367,7 +368,7 @@ function Dashboard() {
               <label className="block text-sm font-medium text-gray-700 mb-1">UPI QR Code (for receiving payments) *</label>
               <p className="text-xs text-gray-500 mb-2">Upload a screenshot of your GPay/PhonePe/Paytm QR code. Patients will scan this to pay you.</p>
               {profileData.upiQrCode && (
-                <img src={profileData.upiQrCode} alt="Current QR" className="w-32 h-32 object-contain border rounded-lg mb-2" />
+                <img src={getUploadUrl(profileData.upiQrCode)} alt="Current QR" className="w-32 h-32 object-contain border rounded-lg mb-2" />
               )}
               <input
                 type="file"
