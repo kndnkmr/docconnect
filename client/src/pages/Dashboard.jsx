@@ -330,10 +330,11 @@ function Dashboard() {
                       {apt.paymentScreenshot && (
                         <button
                           onClick={() => {
+                            const imgSrc = getUploadUrl(apt.paymentScreenshot);
                             const modal = document.createElement('div');
                             modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:1rem;';
                             modal.onclick = () => modal.remove();
-                            modal.innerHTML = `<img src="${apt.paymentScreenshot}" style="max-width:90%;max-height:90%;border-radius:8px;" />`;
+                            modal.innerHTML = `<img src="${imgSrc}" style="max-width:90%;max-height:90%;border-radius:8px;" />`;
                             document.body.appendChild(modal);
                           }}
                           className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
