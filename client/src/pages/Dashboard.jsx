@@ -259,7 +259,7 @@ function Dashboard() {
                           <p className="text-sm font-medium text-orange-800">Payment Required</p>
                           <p className="text-sm text-orange-700 mt-1">Pay ₹{apt.doctor?.consultationFee || 'as discussed'} via UPI</p>
                           <p className="text-sm font-mono text-orange-900 mt-1 font-semibold">UPI: {apt.doctor?.upiId || 'Contact doctor'}</p>
-                          {apt.doctor?.upiId && <a href={`upi://pay?pa=${apt.doctor.upiId}&pn=${encodeURIComponent(apt.doctor.name || 'Doctor')}&am=${apt.doctor.consultationFee || ''}&cu=INR&tn=Consultation fee`} className="inline-block mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600">Pay via UPI App</a>}
+                          {apt.doctor?.upiId && <a href={`upi://pay?pa=${apt.doctor.upiId}&pn=${encodeURIComponent(apt.doctor.name || 'Doctor')}&cu=INR&tn=Consultation fee for appointment`} className="inline-block mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600">Pay via UPI App</a>}
                         </div>
                       )}
                       {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Received</span>}
