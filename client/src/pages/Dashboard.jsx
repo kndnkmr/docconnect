@@ -256,20 +256,28 @@ function Dashboard() {
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
                       {isPatient && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                          <p className="text-sm font-medium text-orange-800">Payment Required</p>
-                          <p className="text-sm text-orange-700 mt-1">Pay ₹{apt.doctor?.consultationFee || 'as discussed'} via UPI</p>
+                          <p className="text-sm font-medium text-orange-800">Payment Required — ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
                           {apt.doctor?.upiId && (
                             <>
-                              <div className="flex items-center gap-2 mt-2">
-                                <p className="text-sm font-mono text-orange-900 font-semibold bg-orange-100 px-3 py-1 rounded">{apt.doctor.upiId}</p>
-                                <button
-                                  onClick={() => { navigator.clipboard.writeText(apt.doctor.upiId); toast.success('UPI ID copied! Open your UPI app to pay.'); }}
-                                  className="px-3 py-1 bg-orange-500 text-white rounded text-xs font-medium hover:bg-orange-600"
+                              <div className="mt-2 p-2 bg-white border border-orange-200 rounded-lg text-center">
+                                <p className="text-xs text-orange-600 mb-1">Pay to this UPI ID:</p>
+                                <p className="text-lg font-mono font-bold text-orange-900 select-all">{apt.doctor.upiId}</p>
+                              </div>
+                              <div className="flex gap-2 mt-2">
+                                <a
+                                  href={`upi://pay?pa=${apt.doctor.upiId}&pn=${encodeURIComponent(apt.doctor.name || 'Doctor')}&cu=INR&tn=Consultation fee`}
+                                  className="flex-1 text-center px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600"
                                 >
-                                  Copy UPI ID
+                                  Open UPI App to Pay
+                                </a>
+                                <button
+                                  onClick={() => { navigator.clipboard.writeText(apt.doctor.upiId); toast.success('UPI ID copied!'); }}
+                                  className="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-100"
+                                >
+                                  Copy ID
                                 </button>
                               </div>
-                              <p className="text-xs text-orange-600 mt-2">Copy this UPI ID → Open GPay/PhonePe/Paytm → Pay ₹{apt.doctor.consultationFee || ''} to this ID</p>
+                              <p className="text-xs text-orange-600 mt-2">If "Open UPI App" doesn't work, manually enter the UPI ID shown above in your GPay/PhonePe/Paytm.</p>
                             </>
                           )}
                         </div>
