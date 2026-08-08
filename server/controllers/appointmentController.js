@@ -289,7 +289,6 @@ const updateAppointmentStatus = async (req, res) => {
     }
 
     await appointment.save();
-    // .save() triggers any pre-save hooks and validates the data
 
     // Populate before sending back
     await appointment.populate('doctor', 'name specialization consultationFee');

@@ -277,7 +277,7 @@ function Dashboard() {
                       {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">Booked for: {apt.familyMemberName} (family member)</p>}
                       {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
-                      {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && (
+                      {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <p className="text-sm font-medium text-orange-800 mb-2">Pay ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
                           {apt.doctor?.upiQrCode ? (
@@ -336,7 +336,7 @@ function Dashboard() {
                       <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg">
                         <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
-                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
+                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '⏳ Payment under verification. Doctor will confirm soon.'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
@@ -348,7 +348,7 @@ function Dashboard() {
                           {isPatient && apt.status === 'completed' && '✅ Consultation done. Check the Prescriptions tab for your prescription.'}
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
-                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '⏳ Waiting for patient to make payment.'}
+                          {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '💳 Patient says paid. Verify in your UPI app and click "Mark Paid".'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
