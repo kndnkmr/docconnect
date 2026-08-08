@@ -5,8 +5,14 @@
 // Clicking it opens WhatsApp with a pre-filled message.
 // Patients can contact directly without registering.
 
+import { useLocation } from 'react-router-dom';
+
 function WhatsAppButton() {
+  const location = useLocation();
   const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919599150825';
+
+  // Hide on dashboard (logged-in users have in-app chat)
+  if (location.pathname === '/dashboard') return null;
 
   const message = encodeURIComponent(
     'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'
