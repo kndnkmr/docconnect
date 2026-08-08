@@ -9,10 +9,8 @@ function WhatsAppButton() {
   const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919599150825';
 
   const message = encodeURIComponent(
-    'Hi, I need to consult with a doctor. Can you help me?'
+    'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'
   );
-  // Pre-filled message when they open WhatsApp
-  // encodeURIComponent makes it URL-safe (spaces → %20, etc.)
 
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
   // wa.me = WhatsApp's official link format
@@ -38,7 +36,7 @@ function WhatsAppButton() {
 
       {/* Tooltip on hover */}
       <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-        Chat with us
+        Need help? Chat with us
       </span>
     </a>
   );
