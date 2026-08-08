@@ -323,12 +323,19 @@ function Dashboard() {
                       {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
                       {apt.paymentStatus === 'patient_claimed' && (
                         <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          <span className="text-xs font-medium text-yellow-800">⏳ Patient says paid</span>
-                          <p className="text-xs text-yellow-700 mt-1">
-                            {apt.paymentScreenshot
-                              ? 'Receipt uploaded — click "View Receipt" to verify.'
-                              : 'No receipt uploaded. Please check your UPI app to verify payment.'}
-                          </p>
+                          {isPatient && (
+                            <span className="text-xs font-medium text-yellow-800">⏳ Payment under verification. Doctor will confirm soon.</span>
+                          )}
+                          {isDoctor && (
+                            <>
+                              <span className="text-xs font-medium text-yellow-800">⏳ Patient says paid</span>
+                              <p className="text-xs text-yellow-700 mt-1">
+                                {apt.paymentScreenshot
+                                  ? 'Receipt uploaded — click "View Receipt" to verify.'
+                                  : 'No receipt uploaded. Please check your UPI app to verify payment.'}
+                              </p>
+                            </>
+                          )}
                         </div>
                       )}
 
