@@ -332,14 +332,14 @@ function Dashboard() {
                           {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '⏳ Payment under verification. Doctor will confirm soon.'}
-                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && '✅ Payment confirmed! Click "📹 Join Call" at your appointment time.'}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
                           {isPatient && apt.status === 'completed' && '✅ Consultation done. Check the Prescriptions tab for your prescription.'}
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '⏳ Waiting for patient to make payment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '💳 Patient says paid. Verify in your UPI app and click "Mark Paid".'}
-                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && '✅ Ready! Click "📹 Join Call" at appointment time. After consultation, click "Mark Complete".'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
                           {isDoctor && apt.status === 'completed' && '✅ Completed. Write a prescription for the patient.'}
                           {isDoctor && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
@@ -357,7 +357,9 @@ function Dashboard() {
                       )}
                       {isDoctor && apt.status === 'confirmed' && <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>}
                       {isDoctor && apt.status === 'confirmed' && apt.consultationType !== 'in-person' && (
-                        <button onClick={() => setVideoCallAppointmentId(apt._id)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">📹 Join Call</button>
+                        <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                          {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
+                        </button>
                       )}
                       {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">Write Prescription</button>}
                       {isDoctor && apt.paymentStatus !== 'paid' && ['confirmed', 'completed'].includes(apt.status) && (
@@ -374,7 +376,9 @@ function Dashboard() {
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
                           {apt.consultationType !== 'in-person' && apt.status === 'confirmed' && (isDoctor || apt.paymentStatus === 'paid') && (
-                            <button onClick={() => setVideoCallAppointmentId(apt._id)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">📹 Join Call</button>
+                            <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                              {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
+                            </button>
                           )}
                           <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
                             💬 Chat

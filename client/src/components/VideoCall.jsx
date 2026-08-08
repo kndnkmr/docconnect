@@ -5,8 +5,15 @@ function VideoCall({ appointmentId, userName, onClose }) {
   const jitsiContainerRef = useRef(null);
   const apiRef = useRef(null);
 
+  // Parse appointmentId and consultationType (passed as "id|type")
+  const [aptId, consultationType] = appointmentId.includes('|')
+    ? appointmentId.split('|')
+    : [appointmentId, 'video'];
+
+  const isAudioOnly = consultationType === 'phone';
+
   // Create a unique room name per appointment
-  const roomName = `promedicoz-${appointmentId}`;
+  const roomName = `promedicoz-${aptId}`;
 
   useEffect(() => {
     // Load Jitsi external API script
@@ -36,7 +43,7 @@ function VideoCall({ appointmentId, userName, onClose }) {
       },
       configOverwrite: {
         startWithAudioMuted: false,
-        startWithVideoMuted: false,
+        startWithVideoMuted: isAudioOnly,
         disableDeepLinking: true,
         prejoinPageEnabled: false,
       },
@@ -62,7 +69,7 @@ function VideoCall({ appointmentId, userName, onClose }) {
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-900">
-        <span className="text-white text-sm font-medium">ProMedicoz Video Consultation</span>
+        <span className="text-white text-sm font-medium">ProMedicoz {isAudioOnly ? 'Audio' : 'Video'} Consultation</span>
         <button
           onClick={onClose}
           className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
