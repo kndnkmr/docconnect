@@ -78,12 +78,20 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
 - Patients can replace/update uploaded report files anytime
 - In-app video calling (Jitsi Meet) — doctor and patient join video call directly from appointment
+- In-app audio calling for phone consultations (camera off by default)
 - In-app chat messaging per appointment (with unread badge, auto-refresh)
 - UPI QR code payment — doctor uploads QR, patient scans and pays
 - "I Have Paid" quick confirmation + optional receipt upload
 - Payment screenshot stored permanently in MongoDB (base64)
 - Medical reports stored permanently in MongoDB (no file loss on redeploy)
 - Block patient feature for doctors (prevents messaging from abusive patients)
+- Free follow-up booking — doctor sets period (7/15/30 days), patient books without payment
+- Sequential doctor workflow (Confirm → Mark Paid → Join Call → Mark Complete → Prescription)
+- Step-by-step guidance messages for both patient and doctor on every appointment
+- City and consultation mode (in-person/video/phone) filters on doctor search
+- Google Maps "Get Directions" for in-person appointments
+- Doctor name displayed with "Dr." prefix across the platform
+- Bottom navigation bar for mobile (Home, Doctors, My Appts, Blog)
 - Responsive design (mobile + desktop)
 
 ---
