@@ -279,7 +279,7 @@ const updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    // Update the appointment
+    // Update ONLY the fields that should change — protect timeSlot and date
     appointment.status = status;
     if (notes) {
       appointment.notes = notes;
@@ -288,7 +288,9 @@ const updateAppointmentStatus = async (req, res) => {
       appointment.meetingLink = meetingLink;
     }
 
-    await appointment.save();
+    // Mark only modified paths to prevent Mongoose from touching other fields
+    appointment.markModified('status');
+    await appointment.save({ validateModifiedOnly: true });
 
     // Populate before sending back
     await appointment.populate('doctor', 'name specialization consultationFee');
