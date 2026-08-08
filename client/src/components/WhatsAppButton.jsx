@@ -23,7 +23,7 @@ function WhatsAppButton() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-2.5 shadow-md hover:shadow-lg transition-all group"
+      className="fixed bottom-20 md:bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-2.5 shadow-md hover:shadow-lg transition-all group"
       aria-label="Contact us on WhatsApp"
     >
       {/* WhatsApp icon (SVG) */}
