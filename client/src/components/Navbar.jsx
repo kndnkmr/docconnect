@@ -83,6 +83,10 @@ function Navbar() {
               Find Doctors
             </Link>
 
+            <Link to="/blog" className="text-gray-600 hover:text-primary-600 transition-colors">
+              Blog
+            </Link>
+
             {isAuthenticated ? (
               <>
                 <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 transition-colors">
@@ -173,6 +177,9 @@ function Navbar() {
 
               <Link to="/doctors" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                 Find Doctors
+              </Link>
+              <Link to="/blog" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                Blog
               </Link>
 
               {isAuthenticated ? (

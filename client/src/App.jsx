@@ -32,6 +32,8 @@ import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import SpecializationPage from './pages/SpecializationPage';
 import VerifyEmail from './pages/VerifyEmail';
+import BlogList from './pages/blog/BlogList';
+import BlogArticle from './pages/blog/BlogArticle';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -101,6 +103,8 @@ function App() {
           <Route path="/doctors/:id" element={<DoctorProfile />} />
           <Route path="/specialization/:slug" element={<SpecializationPage />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<BlogArticle />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
