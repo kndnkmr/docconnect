@@ -361,7 +361,7 @@ function DoctorCard({ doctor }) {
       {/* Doctor Info */}
       <div className="p-5">
         <div className="flex justify-between items-start">
-          <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">Dr. {doctor.name}</h3>
           {availableToday && (
             <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
               Available Today
