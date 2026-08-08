@@ -27,7 +27,7 @@ const { sendAppointmentNotification, sendAppointmentConfirmation } = require('..
 
 const bookAppointment = async (req, res) => {
   try {
-    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId } = req.body;
+    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp } = req.body;
 
     // Step 1: Validate required fields
     if (!doctorId || !date || !timeSlot || !reason) {
@@ -77,7 +77,17 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    // Step 5: Create the appointment
+    // Step 5: Validate follow-up eligibility
+    if (isFollowUp && originalAppointmentId) {
+      const originalApt = await Appointment.findById(originalAppointmentId);
+      if (!originalApt || !originalApt.followUpDeadline || new Date() > new Date(originalApt.followUpDeadline)) {
+        return res.status(400).json({
+          message: 'Free follow-up period has expired. Please book a regular appointment.'
+        });
+      }
+    }
+
+    // Step 6: Create the appointment
     const appointmentData = {
       patient: req.user._id,
       doctor: doctorId,
@@ -87,7 +97,9 @@ const bookAppointment = async (req, res) => {
       consultationType: consultationType || 'in-person',
       status: 'pending',
       bookedFor: bookedFor || 'self',
-      familyMemberName: bookedFor === 'family' ? familyMemberName : ''
+      familyMemberName: bookedFor === 'family' ? familyMemberName : '',
+      isFollowUp: isFollowUp || false,
+      paymentStatus: isFollowUp ? 'paid' : 'pending'  // Follow-ups skip payment
     };
 
     // If this is a repeat booking, link to original appointment

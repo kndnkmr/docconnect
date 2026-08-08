@@ -147,6 +147,20 @@ const appointmentSchema = new mongoose.Schema({
   paymentScreenshot: {
     type: String,
     default: ''
+  },
+
+  // ---- Free follow-up deadline ----
+  // Set by doctor when writing prescription
+  // Patient can book a free follow-up before this date
+  followUpDeadline: {
+    type: Date,
+    default: null
+  },
+
+  // ---- Is this a follow-up appointment (free, no payment needed) ----
+  isFollowUp: {
+    type: Boolean,
+    default: false
   }
 
 }, {

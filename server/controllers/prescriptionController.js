@@ -13,7 +13,7 @@ const Appointment = require('../models/Appointment');
 
 const createPrescription = async (req, res) => {
   try {
-    const { appointmentId, diagnosis, medicines, testsRecommended, notes, followUpDate } = req.body;
+    const { appointmentId, diagnosis, medicines, testsRecommended, notes, followUpDate, followUpDays } = req.body;
 
     if (!appointmentId || !diagnosis) {
       return res.status(400).json({
@@ -49,6 +49,14 @@ const createPrescription = async (req, res) => {
       notes: notes || '',
       followUpDate: followUpDate || null
     });
+
+    // Set follow-up deadline on the appointment if doctor specified days
+    if (followUpDays && followUpDays > 0) {
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + followUpDays);
+      appointment.followUpDeadline = deadline;
+      await appointment.save({ validateModifiedOnly: true });
+    }
 
     res.status(201).json({
       message: 'Prescription created successfully',

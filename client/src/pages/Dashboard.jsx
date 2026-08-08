@@ -142,10 +142,12 @@ function Dashboard() {
     try {
       await prescriptionAPI.create({
         appointmentId: prescriptionModal.id, diagnosis: values.diagnosis,
-        medicines, testsRecommended, notes: values.notes || ''
+        medicines, testsRecommended, notes: values.notes || '',
+        followUpDays: values.followUpDays ? parseInt(values.followUpDays) : 0
       });
       toast.success('Prescription created!');
       setPrescriptionModal({ open: false, id: null });
+      fetchAppointments();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create prescription');
     }
@@ -391,6 +393,9 @@ function Dashboard() {
                       {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
+                          {apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
+                            <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, isFollowUp: true, originalAppointmentId: apt._id, reason: 'Follow-up: ' + apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Free Follow-up</button>
+                          )}
                           <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, originalAppointmentId: apt._id, reason: apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600">Book Again</button>
                           <button onClick={() => setRateModal({ open: true, id: apt._id })} className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">⭐ Rate</button>
                         </>
@@ -575,7 +580,13 @@ function Dashboard() {
           { name: 'diagnosis', label: 'Diagnosis', type: 'text', required: true, placeholder: 'e.g., Upper respiratory infection' },
           { name: 'medicines', label: 'Medicines (comma separated)', type: 'textarea', placeholder: 'Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days' },
           { name: 'tests', label: 'Recommended Tests (comma separated)', type: 'text', placeholder: 'Complete Blood Count, Thyroid Profile' },
-          { name: 'notes', label: 'Additional Notes', type: 'textarea', placeholder: 'Rest, drink fluids...' }
+          { name: 'notes', label: 'Additional Notes', type: 'textarea', placeholder: 'Rest, drink fluids...' },
+          { name: 'followUpDays', label: 'Free Follow-up Period (days)', type: 'select', placeholder: 'Select...', options: [
+            { value: '0', label: 'No follow-up needed' },
+            { value: '7', label: '7 days' },
+            { value: '15', label: '15 days' },
+            { value: '30', label: '30 days' },
+          ]}
         ]}
         submitText="Create Prescription"
         onSubmit={handleWritePrescription}
