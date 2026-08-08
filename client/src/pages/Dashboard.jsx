@@ -350,10 +350,10 @@ function Dashboard() {
                           <button onClick={() => setRateModal({ open: true, id: apt._id })} className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">⭐ Rate</button>
                         </>
                       )}
-                      {/* Chat button — for confirmed/completed appointments */}
+                      {/* Chat and Video — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
-                          {apt.consultationType !== 'in-person' && apt.status === 'confirmed' && (
+                          {apt.consultationType !== 'in-person' && apt.status === 'confirmed' && (isDoctor || apt.paymentStatus === 'paid') && (
                             <button onClick={() => setVideoCallAppointmentId(apt._id)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">📹 Join Call</button>
                           )}
                           <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
