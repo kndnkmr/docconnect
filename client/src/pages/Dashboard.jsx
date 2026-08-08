@@ -367,17 +367,27 @@ function Dashboard() {
 
                     {/* Action buttons */}
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                      {/* Doctor actions — sequential: Confirm → Mark Paid → Join Call + Mark Complete → Prescription */}
                       {isDoctor && apt.status === 'pending' && (
                         <>
                           <button onClick={() => setMeetingLinkModal({ open: true, id: apt._id })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Confirm</button>
                           <button onClick={() => handleStatusUpdate(apt._id, 'cancelled')} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Reject</button>
                         </>
                       )}
-                      {isDoctor && apt.status === 'confirmed' && <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>}
-                      {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">Write Prescription</button>}
-                      {isDoctor && apt.paymentStatus !== 'paid' && ['confirmed', 'completed'].includes(apt.status) && (
+                      {isDoctor && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <button onClick={async () => { await appointmentAPI.markPayment(apt._id); toast.success('Payment marked as received'); fetchAppointments(); }} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600">Mark Paid</button>
                       )}
+                      {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
+                        <>
+                          {apt.consultationType !== 'in-person' && (
+                            <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                              {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
+                            </button>
+                          )}
+                          <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>
+                        </>
+                      )}
+                      {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">Write Prescription</button>}
                       {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
@@ -388,7 +398,7 @@ function Dashboard() {
                       {/* Chat and Video — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
-                          {apt.consultationType !== 'in-person' && apt.status === 'confirmed' && (isDoctor || apt.paymentStatus === 'paid') && (
+                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
                             <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
