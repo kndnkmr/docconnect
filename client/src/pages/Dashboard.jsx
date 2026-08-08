@@ -261,7 +261,10 @@ function Dashboard() {
           ) : (
             <>
               <div className="space-y-4">
-                {appointments.map((apt) => (
+                {[...appointments].sort((a, b) => {
+                  const order = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
+                  return (order[a.status] ?? 4) - (order[b.status] ?? 4);
+                }).map((apt) => (
                   <div key={apt._id} className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-grow">
                       <div className="flex items-center gap-3 mb-2">
