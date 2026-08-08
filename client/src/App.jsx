@@ -25,6 +25,7 @@ import { useAuth } from './context/AuthContext';
 // ---- Import Page Components ----
 import Navbar from './components/Navbar';
 import WhatsAppButton from './components/WhatsAppButton';
+import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -87,7 +88,7 @@ function App() {
       <Navbar />
 
       {/* Main content area — grows to fill available space */}
-      <main className="flex-grow">
+      <main className="flex-grow pb-16 md:pb-0">
         {/*
           Routes = "Look at the current URL and render the matching component"
           Each Route maps a path to a page component
@@ -179,6 +180,9 @@ function App() {
 
       {/* Floating WhatsApp button — visible on all pages */}
       <WhatsAppButton />
+
+      {/* Bottom navigation — mobile only */}
+      <BottomNav />
 
       {/* Toast notification container */}
       <Toaster
