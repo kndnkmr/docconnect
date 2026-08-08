@@ -31,11 +31,27 @@ const createPrescription = async (req, res) => {
       return res.status(403).json({ message: 'You can only write prescriptions for your own appointments' });
     }
 
-    // Check if prescription already exists for this appointment
+    // If prescription already exists for this appointment, update it instead
     const existing = await Prescription.findOne({ appointment: appointmentId });
     if (existing) {
-      return res.status(400).json({
-        message: 'A prescription already exists for this appointment. Use update instead.'
+      existing.diagnosis = diagnosis || existing.diagnosis;
+      existing.medicines = medicines || existing.medicines;
+      existing.testsRecommended = testsRecommended || existing.testsRecommended;
+      existing.notes = notes || existing.notes;
+      if (followUpDate) existing.followUpDate = followUpDate;
+      await existing.save();
+
+      // Update follow-up deadline if specified
+      if (followUpDays && followUpDays > 0) {
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + followUpDays);
+        appointment.followUpDeadline = deadline;
+        await appointment.save({ validateModifiedOnly: true });
+      }
+
+      return res.json({
+        message: 'Prescription updated successfully',
+        prescription: existing
       });
     }
 
