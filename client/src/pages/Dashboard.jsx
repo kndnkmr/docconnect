@@ -326,7 +326,14 @@ function Dashboard() {
                       {apt.paymentStatus === 'patient_claimed' && (
                         <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
                           {isPatient && (
-                            <span className="text-xs font-medium text-yellow-800">⏳ Payment under verification. Doctor will confirm soon.</span>
+                            <>
+                              {!apt.paymentScreenshot && (
+                                <p className="text-xs font-medium text-yellow-800">No receipt uploaded. Waiting for doctor's confirmation on payment.</p>
+                              )}
+                              {apt.paymentScreenshot && (
+                                <p className="text-xs font-medium text-yellow-800">⏳ Receipt uploaded. Waiting for doctor's confirmation on payment.</p>
+                              )}
+                            </>
                           )}
                           {isDoctor && (
                             <>
@@ -346,7 +353,6 @@ function Dashboard() {
                         <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
                           {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
-                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '⏳ Payment under verification. Doctor will confirm soon.'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
                         </p>
