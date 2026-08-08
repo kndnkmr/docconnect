@@ -165,7 +165,7 @@ function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
 
-              {/* Install App — only show when Chrome is ready to install (beforeinstallprompt fired) */}
+              {/* Install App — only show when Chrome is ready to install */}
               {installPrompt && !isInstalled && (
                 <button
                   onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }}
@@ -175,18 +175,8 @@ function Navbar() {
                 </button>
               )}
 
-              <Link to="/doctors" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                Find Doctors
-              </Link>
-              <Link to="/blog" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                Blog
-              </Link>
-
               {isAuthenticated ? (
                 <>
-                  <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    Dashboard
-                  </Link>
                   <div className="px-2 py-1 text-sm text-gray-500">
                     Signed in as {user.name} ({user.role})
                   </div>
