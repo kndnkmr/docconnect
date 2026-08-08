@@ -52,6 +52,7 @@ function VideoCall({ appointmentId, userName, onClose }) {
         lobbyModeEnabled: false,
         enableLobbyChat: false,
         hideLobbyButton: true,
+        defaultLanguage: 'en',
       },
       interfaceConfigOverwrite: {
         TOOLBAR_BUTTONS: [
