@@ -24,9 +24,11 @@ function ChatBox({ appointmentId, onClose }) {
 
   useEffect(() => {
     fetchMessages();
+    // Prevent body scroll when chat is open
+    document.body.style.overflow = 'hidden';
     // Poll for new messages every 10 seconds
     const interval = setInterval(fetchMessages, 10000);
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); document.body.style.overflow = ''; };
   }, [appointmentId]);
 
   useEffect(() => {
@@ -56,9 +58,9 @@ function ChatBox({ appointmentId, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md h-[70vh] flex flex-col">
+      <div className="relative bg-white w-full sm:rounded-xl shadow-2xl sm:max-w-md h-full sm:h-[70vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold text-gray-800">Messages</h3>
