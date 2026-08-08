@@ -45,8 +45,15 @@ const getAllDoctors = async (req, res) => {
       filter.consultationFee = { $lte: Number(req.query.maxFee) };
     }
 
-    // Filter by consultation type availability (doctors who offer video/phone)
-    // This is implicit — all doctors can offer any type, but we can filter by fee range
+    // Filter by city
+    if (req.query.city) {
+      filter.city = new RegExp(req.query.city, 'i');
+    }
+
+    // Filter by consultation mode
+    if (req.query.consultationMode) {
+      filter.consultationModes = req.query.consultationMode;
+    }
 
     // Filter by "available today"
     if (req.query.availableToday === 'true') {
@@ -170,6 +177,9 @@ const updateDoctorProfile = async (req, res) => {
       'experience',
       'qualification',
       'clinicAddress',
+      'city',
+      'googleMapsLink',
+      'consultationModes',
       'consultationFee',
       'bio',
       'profilePhoto',

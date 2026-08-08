@@ -39,6 +39,8 @@ function DoctorList() {
   const [searchSpecialization, setSearchSpecialization] = useState(urlSpecialization);
   const [maxFee, setMaxFee] = useState('');
   const [availableToday, setAvailableToday] = useState(false);
+  const [city, setCity] = useState('');
+  const [consultationMode, setConsultationMode] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // List of common specializations (for smart suggestions)
@@ -99,6 +101,8 @@ function DoctorList() {
       if (searchSpecialization) params.specialization = searchSpecialization;
       if (maxFee) params.maxFee = maxFee;
       if (availableToday) params.availableToday = 'true';
+      if (city) params.city = city;
+      if (consultationMode) params.consultationMode = consultationMode;
 
       const response = await doctorAPI.getAll(params);
       // This calls GET /api/doctors?page=1&limit=9&name=...&specialization=...
@@ -208,17 +212,25 @@ function DoctorList() {
 
           {/* Max fee filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Max Fee (₹)
-            </label>
-            <input
-              type="number"
-              value={maxFee}
-              onChange={(e) => setMaxFee(e.target.value)}
-              placeholder="e.g., 500"
-              min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Max Fee (₹)</label>
+            <input type="number" value={maxFee} onChange={(e) => setMaxFee(e.target.value)} placeholder="e.g., 500" min="0" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
+          </div>
+
+          {/* City filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+            <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g., Delhi, Mumbai" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
+          </div>
+
+          {/* Consultation mode filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Consultation</label>
+            <select value={consultationMode} onChange={(e) => setConsultationMode(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
+              <option value="">All Types</option>
+              <option value="in-person">🏥 In-Person</option>
+              <option value="video">📹 Video Call</option>
+              <option value="phone">📞 Phone Call</option>
+            </select>
           </div>
 
           {/* Search button + Available today toggle */}
@@ -373,6 +385,20 @@ function DoctorCard({ doctor }) {
           <p className="text-gray-700 font-medium mt-2">
             Consultation: ₹{doctor.consultationFee}
           </p>
+        )}
+
+        {/* City */}
+        {doctor.city && (
+          <p className="text-gray-500 text-sm mt-1">📍 {doctor.city}</p>
+        )}
+
+        {/* Consultation mode badges */}
+        {doctor.consultationModes && doctor.consultationModes.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {doctor.consultationModes.includes('in-person') && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">🏥 In-Person</span>}
+            {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">📹 Video</span>}
+            {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">📞 Phone</span>}
+          </div>
         )}
 
         {/* View Profile button */}

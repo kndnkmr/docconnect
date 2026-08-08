@@ -46,7 +46,8 @@ function Dashboard() {
   const [profileData, setProfileData] = useState({
     specialization: '', experience: '', qualification: '',
     clinicAddress: '', consultationFee: '', bio: '',
-    phone: '', whatsappNumber: '', upiId: '', upiQrCode: ''
+    phone: '', whatsappNumber: '', upiId: '', upiQrCode: '',
+    city: '', googleMapsLink: '', consultationModes: ['in-person']
   });
 
   useEffect(() => {
@@ -67,7 +68,9 @@ function Dashboard() {
         qualification: d.qualification || '', clinicAddress: d.clinicAddress || '',
         consultationFee: d.consultationFee || '', bio: d.bio || '',
         phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
-        upiQrCode: d.upiQrCode || ''
+        upiQrCode: d.upiQrCode || '',
+        city: d.city || '', googleMapsLink: d.googleMapsLink || '',
+        consultationModes: d.consultationModes || ['in-person']
       });
     } catch (error) { console.error('Fetch profile error:', error); }
   };
@@ -334,6 +337,11 @@ function Dashboard() {
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '⏳ Payment under verification. Doctor will confirm soon.'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
+                        </p>
+                        {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && (
+                          <a href={apt.doctor?.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(apt.doctor?.clinicAddress || apt.doctor?.city || '')}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-xs text-primary-600 hover:underline font-medium">📍 Get Directions</a>
+                        )}
+                        <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'completed' && '✅ Consultation done. Check the Prescriptions tab for your prescription.'}
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
@@ -429,6 +437,8 @@ function Dashboard() {
               { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
               { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
+              { key: 'city', label: 'City *', placeholder: 'e.g., Delhi, Mumbai, Rishikesh' },
+              { key: 'googleMapsLink', label: 'Google Maps Link (optional)', placeholder: 'Paste your clinic Google Maps URL' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
             ].map(field => (
               <div key={field.key}>
@@ -442,6 +452,30 @@ function Dashboard() {
                 />
               </div>
             ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Modes *</label>
+              <div className="flex flex-wrap gap-3">
+                {['in-person', 'video', 'phone'].map(mode => (
+                  <label key={mode} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={profileData.consultationModes?.includes(mode)}
+                      onChange={(e) => {
+                        const modes = profileData.consultationModes || [];
+                        if (e.target.checked) {
+                          setProfileData(prev => ({ ...prev, consultationModes: [...modes, mode] }));
+                        } else {
+                          setProfileData(prev => ({ ...prev, consultationModes: modes.filter(m => m !== mode) }));
+                        }
+                      }}
+                      className="w-4 h-4 text-primary-600 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{mode === 'in-person' ? '🏥 In-Person' : mode === 'video' ? '📹 Video Call' : '📞 Phone Call'}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Select all consultation types you offer</p>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio / About</label>
               <textarea value={profileData.bio} onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))} placeholder="Tell patients about yourself..." rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none" />

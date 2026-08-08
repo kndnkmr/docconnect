@@ -118,6 +118,25 @@ const userSchema = new mongoose.Schema({
     default: ''
   },
 
+  city: {
+    type: String,
+    default: ''
+    // e.g., "Delhi", "Mumbai", "Rishikesh"
+  },
+
+  googleMapsLink: {
+    type: String,
+    default: ''
+    // Doctor pastes their Google Maps location URL
+  },
+
+  consultationModes: {
+    type: [String],
+    enum: ['in-person', 'video', 'phone'],
+    default: ['in-person']
+    // What consultation types this doctor offers
+  },
+
   consultationFee: {
     type: Number,          // Fee in your currency
     default: 0
