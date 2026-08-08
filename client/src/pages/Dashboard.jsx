@@ -325,6 +325,26 @@ function Dashboard() {
                           </p>
                         </div>
                       )}
+
+                      {/* Next step guidance */}
+                      <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg">
+                        <p className="text-xs text-blue-700 font-medium">
+                          {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '⏳ Payment under verification. Doctor will confirm soon.'}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && '✅ Payment confirmed! Click "📹 Join Call" at your appointment time.'}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
+                          {isPatient && apt.status === 'completed' && '✅ Consultation done. Check the Prescriptions tab for your prescription.'}
+                          {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
+                          {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'pending' && '⏳ Waiting for patient to make payment.'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '💳 Patient says paid. Verify in your UPI app and click "Mark Paid".'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && '✅ Ready! Click "📹 Join Call" at appointment time. After consultation, click "Mark Complete".'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
+                          {isDoctor && apt.status === 'completed' && '✅ Completed. Write a prescription for the patient.'}
+                          {isDoctor && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Action buttons */}
