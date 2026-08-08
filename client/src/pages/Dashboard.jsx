@@ -367,11 +367,6 @@ function Dashboard() {
                         </>
                       )}
                       {isDoctor && apt.status === 'confirmed' && <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>}
-                      {isDoctor && apt.status === 'confirmed' && apt.consultationType !== 'in-person' && (
-                        <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
-                          {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
-                        </button>
-                      )}
                       {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">Write Prescription</button>}
                       {isDoctor && apt.paymentStatus !== 'paid' && ['confirmed', 'completed'].includes(apt.status) && (
                         <button onClick={async () => { await appointmentAPI.markPayment(apt._id); toast.success('Payment marked as received'); fetchAppointments(); }} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600">Mark Paid</button>
