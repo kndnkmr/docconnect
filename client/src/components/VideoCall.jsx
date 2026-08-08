@@ -16,6 +16,9 @@ function VideoCall({ appointmentId, userName, onClose }) {
   const roomName = `promedicoz-${aptId}`;
 
   useEffect(() => {
+    // Hide all overlays and prevent scroll during video call
+    document.body.style.overflow = 'hidden';
+
     // Load Jitsi external API script
     const script = document.createElement('script');
     script.src = 'https://meet.jit.si/external_api.js';
@@ -24,7 +27,7 @@ function VideoCall({ appointmentId, userName, onClose }) {
     document.body.appendChild(script);
 
     return () => {
-      // Cleanup on unmount
+      document.body.style.overflow = '';
       if (apiRef.current) {
         apiRef.current.dispose();
       }
@@ -46,6 +49,9 @@ function VideoCall({ appointmentId, userName, onClose }) {
         startWithVideoMuted: isAudioOnly,
         disableDeepLinking: true,
         prejoinPageEnabled: false,
+        lobbyModeEnabled: false,
+        enableLobbyChat: false,
+        hideLobbyButton: true,
       },
       interfaceConfigOverwrite: {
         TOOLBAR_BUTTONS: [
@@ -66,7 +72,7 @@ function VideoCall({ appointmentId, userName, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-900">
         <span className="text-white text-sm font-medium">ProMedicoz {isAudioOnly ? 'Audio' : 'Video'} Consultation</span>
