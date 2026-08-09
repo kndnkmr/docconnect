@@ -223,6 +223,23 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Last Login Info (for security/audit) ---
+  lastLoginAt: {
+    type: Date,
+    default: null
+  },
+
+  lastLoginIP: {
+    type: String,
+    default: ''
+  },
+
+  consentAcceptedAt: {
+    type: Date,
+    default: null
+    // When user first agreed to T&C (stored during registration)
+  },
+
   // --- Email Verification ---
   isVerified: {
     type: Boolean,

@@ -102,7 +102,9 @@ const register = async (req, res) => {
       password,
       role,
       phone: formattedPhone,
-      isVerified: role === 'patient' // Patients auto-verified, doctors must verify email
+      isVerified: role === 'patient',
+      consentAcceptedAt: new Date(),
+      lastLoginIP: req.headers['x-forwarded-for'] || req.ip || ''
     });
 
     // Step 6: If doctor, send verification email
@@ -219,6 +221,11 @@ const login = async (req, res) => {
 
     // Step 4: Password matches! Generate a token
     const token = generateToken(user._id);
+
+    // Save login info for audit
+    user.lastLoginAt = new Date();
+    user.lastLoginIP = req.headers['x-forwarded-for'] || req.ip || '';
+    await user.save({ validateModifiedOnly: true });
 
     // Step 5: Send back user data + token
     res.json({
