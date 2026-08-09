@@ -92,6 +92,11 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Google Maps "Get Directions" for in-person appointments
 - Doctor name displayed with "Dr." prefix across the platform
 - Bottom navigation bar for mobile (Home, Doctors, My Appts, Blog)
+- Terms & Conditions and Privacy Policy pages (legal compliance)
+- Medical Registration Number field for doctor verification
+- Consent checkbox before booking (teleconsultation agreement)
+- IP address logging and consent timestamp for audit/legal protection
+- Soft-delete accounts (data retained for legal, user can re-register fresh)
 - Responsive design (mobile + desktop)
 
 ---
