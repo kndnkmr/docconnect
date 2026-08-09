@@ -65,18 +65,30 @@ const register = async (req, res) => {
     if (email) {
       const existingByEmail = await User.findOne({ email });
       if (existingByEmail) {
-        return res.status(400).json({
-          message: 'An account with this email already exists'
-        });
+        if (existingByEmail.isDeleted) {
+          // Disassociate email from deleted account (keep record for legal) and allow re-registration
+          existingByEmail.email = `deleted_${Date.now()}_${existingByEmail.email}`;
+          await existingByEmail.save({ validateModifiedOnly: true });
+        } else {
+          return res.status(400).json({
+            message: 'An account with this email already exists'
+          });
+        }
       }
     }
 
     if (phone) {
       const existingByPhone = await User.findOne({ phone });
       if (existingByPhone) {
-        return res.status(400).json({
-          message: 'An account with this phone number already exists'
-        });
+        if (existingByPhone.isDeleted) {
+          // Disassociate phone from deleted account and allow re-registration
+          existingByPhone.phone = `deleted_${Date.now()}_${existingByPhone.phone}`;
+          await existingByPhone.save({ validateModifiedOnly: true });
+        } else {
+          return res.status(400).json({
+            message: 'An account with this phone number already exists'
+          });
+        }
       }
     }
 
