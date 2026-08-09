@@ -35,6 +35,8 @@ import SpecializationPage from './pages/SpecializationPage';
 import VerifyEmail from './pages/VerifyEmail';
 import BlogList from './pages/blog/BlogList';
 import BlogArticle from './pages/blog/BlogArticle';
+import TermsAndConditions from './pages/TermsAndConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -106,6 +108,8 @@ function App() {
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
@@ -175,6 +179,10 @@ function App() {
           <p className="text-gray-400">
             &copy; 2024 ProMedicoz. Your health, our priority.
           </p>
+          <div className="flex justify-center gap-4 mt-2">
+            <a href="/terms" className="text-gray-500 text-xs hover:text-gray-300">Terms & Conditions</a>
+            <a href="/privacy" className="text-gray-500 text-xs hover:text-gray-300">Privacy Policy</a>
+          </div>
         </div>
       </footer>
 

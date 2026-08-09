@@ -176,6 +176,7 @@ const updateDoctorProfile = async (req, res) => {
       'specialization',
       'experience',
       'qualification',
+      'medicalRegistrationNo',
       'clinicAddress',
       'city',
       'googleMapsLink',

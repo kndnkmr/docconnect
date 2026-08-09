@@ -113,6 +113,12 @@ const userSchema = new mongoose.Schema({
     // e.g., "MBBS, MD - Cardiology"
   },
 
+  medicalRegistrationNo: {
+    type: String,
+    default: ''
+    // NMC or State Medical Council registration number
+  },
+
   clinicAddress: {
     type: String,
     default: ''

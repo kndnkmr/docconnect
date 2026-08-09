@@ -381,6 +381,19 @@ function BookAppointment() {
               />
             </div>
 
+            {/* Consent checkbox */}
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                id="consent"
+                required
+                className="w-4 h-4 mt-0.5 text-primary-600 rounded focus:ring-primary-500"
+              />
+              <span className="text-xs text-gray-600">
+                I agree to the <a href="/terms" target="_blank" className="text-primary-600 underline">Terms & Conditions</a> and consent to teleconsultation. I understand this is not an emergency service.
+              </span>
+            </label>
+
             {/* Submit */}
             <button
               type="submit"
