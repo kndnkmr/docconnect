@@ -223,6 +223,17 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Soft Delete ---
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+
+  deletedAt: {
+    type: Date,
+    default: null
+  },
+
   // --- Last Login Info (for security/audit) ---
   lastLoginAt: {
     type: Date,

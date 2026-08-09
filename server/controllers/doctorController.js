@@ -25,7 +25,7 @@ const getAllDoctors = async (req, res) => {
   try {
     // ---- Build a filter object ----
     // Show verified doctors and legacy doctors (who don't have isVerified field yet)
-    const filter = { role: 'doctor', isVerified: { $ne: false } };
+    const filter = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true } };
 
     // If the user added ?specialization=something in the URL, filter by it
     // Example: /api/doctors?specialization=Cardiologist

@@ -203,9 +203,13 @@ const login = async (req, res) => {
       return res.status(401).json({
         message: 'Invalid email or password'
       });
-      // 401 = Unauthorized
-      // SECURITY TIP: We say "invalid email or password" instead of
-      // "email not found" — this prevents attackers from knowing which emails exist
+    }
+
+    // Block deleted accounts from logging in
+    if (user.isDeleted) {
+      return res.status(401).json({
+        message: 'This account has been deleted. Contact support@promedicoz.in if you need assistance.'
+      });
     }
 
     // Step 3: Compare the provided password with the stored hash
@@ -507,26 +511,21 @@ const deleteAccount = async (req, res) => {
   try {
     const user = req.user;
 
-    // Don't allow admins to delete themselves (use MongoDB Atlas for that)
+    // Don't allow admins to delete themselves
     if (user.role === 'admin') {
       return res.status(400).json({
         message: 'Admin accounts cannot be self-deleted. Use the database directly.'
       });
     }
 
-    // Delete associated appointments
-    const Appointment = require('../models/Appointment');
-    if (user.role === 'patient') {
-      await Appointment.deleteMany({ patient: user._id });
-    } else if (user.role === 'doctor') {
-      await Appointment.deleteMany({ doctor: user._id });
-    }
-
-    // Delete the user
-    await User.findByIdAndDelete(user._id);
+    // Soft-delete: mark as deleted but keep data for 90 days (legal protection)
+    await User.findByIdAndUpdate(user._id, {
+      isDeleted: true,
+      deletedAt: new Date()
+    });
 
     res.json({
-      message: 'Your account has been deleted successfully. We\'re sorry to see you go.'
+      message: 'Your account has been deleted successfully. Data will be retained for 90 days as per our privacy policy.'
     });
 
   } catch (error) {
