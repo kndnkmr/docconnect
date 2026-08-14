@@ -52,7 +52,7 @@ function Dashboard() {
   const [profileData, setProfileData] = useState({
     specialization: '', experience: '', qualification: '',
     clinicAddress: '', consultationFee: '', bio: '',
-    phone: '', whatsappNumber: '', upiId: '', upiQrCode: '',
+    phone: '', whatsappNumber: '', upiId: '', upiQrCode: '', profilePhoto: '',
     city: '', googleMapsLink: '', consultationModes: ['in-person']
   });
 
@@ -81,7 +81,7 @@ function Dashboard() {
         qualification: d.qualification || '', clinicAddress: d.clinicAddress || '',
         consultationFee: d.consultationFee || '', bio: d.bio || '',
         phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
-        upiQrCode: d.upiQrCode || '',
+        upiQrCode: d.upiQrCode || '', profilePhoto: d.profilePhoto || '',
         city: d.city || '', googleMapsLink: d.googleMapsLink || '',
         consultationModes: d.consultationModes || ['in-person']
       });
@@ -692,6 +692,30 @@ function Dashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio / About</label>
               <textarea value={profileData.bio} onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))} placeholder="Tell patients about yourself..." rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo (recommended)</label>
+              <p className="text-xs text-gray-500 mb-2">A clear, professional photo of your face builds patient trust and is shown on your profile and in search results.</p>
+              {profileData.profilePhoto && (
+                <img src={getUploadUrl(profileData.profilePhoto)} alt="Current profile" className="w-24 h-24 object-cover rounded-full border mb-2" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const data = new FormData();
+                  data.append('profilePhoto', file);
+                  data.append('fieldName', 'profilePhoto');
+                  try {
+                    const response = await doctorAPI.updateProfile(data);
+                    setProfileData(prev => ({ ...prev, profilePhoto: response.data.doctor.profilePhoto }));
+                    toast.success('Profile photo uploaded!');
+                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to upload photo'); }
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">UPI QR Code (for receiving payments) *</label>
