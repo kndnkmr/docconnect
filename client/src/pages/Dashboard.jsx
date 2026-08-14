@@ -298,6 +298,14 @@ function Dashboard() {
   };
 
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+  // True only if the appointment date is TODAY (compared in IST, matching booking logic).
+  // Used to show the "Join Call" button only on the day of the appointment.
+  const isAppointmentToday = (dateString) => {
+    if (!dateString) return false;
+    const fmt = (d) => d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
+    return fmt(new Date(dateString)) === fmt(new Date());
+  };
   const getStatusColor = (status) => ({ pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-green-100 text-green-800', completed: 'bg-blue-100 text-blue-800', cancelled: 'bg-red-100 text-red-800' }[status] || 'bg-gray-100 text-gray-800');
 
   return (
@@ -505,7 +513,7 @@ function Dashboard() {
                       )}
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
                         <>
-                          {apt.consultationType !== 'in-person' && (
+                          {apt.consultationType !== 'in-person' && isAppointmentToday(apt.date) && (
                             <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
@@ -527,7 +535,7 @@ function Dashboard() {
                       {/* Chat and Video — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
-                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
+                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isAppointmentToday(apt.date) && (
                             <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
