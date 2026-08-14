@@ -20,6 +20,9 @@ import { HelmetProvider } from 'react-helmet-async';
 // It watches the URL and renders the matching page component
 // Wrapping our app in BrowserRouter means ANY component inside can use routing
 
+import toast from 'react-hot-toast';
+// For a brief "updating" message when a new version is picked up
+
 import App from './App.jsx';
 // Our main App component (we'll create this next)
 
@@ -59,13 +62,17 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
       })
       .catch((err) => console.log('Service Worker registration failed:', err));
 
-    // When a new service worker takes control (new deploy), reload ONCE so the
-    // user immediately gets the latest app — no manual cache clearing needed.
+    // When a new service worker takes control (new deploy), show a brief message
+    // and reload ONCE so the user immediately gets the latest app — no manual
+    // cache clearing needed.
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (refreshing) return;
       refreshing = true;
-      window.location.reload();
+      try {
+        toast.loading('Updating to the latest version…', { duration: 1500 });
+      } catch (e) { /* toast not critical */ }
+      setTimeout(() => window.location.reload(), 1200);
     });
   });
 }
