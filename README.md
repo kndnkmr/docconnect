@@ -6,6 +6,8 @@ A full-stack web application where doctors register profiles, patients browse an
 
 Built as a learning project covering: authentication, CRUD operations, file uploads, role-based access, relational data, and responsive UI.
 
+**Related docs:** [SCALING.md](./SCALING.md) — the ordered scale-up plan (Render → WebSockets → Atlas) and upgrade triggers for when real traffic arrives.
+
 ---
 
 ## Table of Contents
@@ -86,8 +88,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - In-app chat messaging per appointment (unread badge, ~3s refresh, optimistic instant-send)
 - UPI QR code payment — doctor uploads QR, patient scans and pays
 - "I Have Paid" quick confirmation + optional receipt upload
-- Payment screenshot stored permanently in MongoDB (base64)
-- Medical reports stored permanently in MongoDB (no file loss on redeploy)
+- Image/file storage on Cloudinary (QR codes, payment screenshots, medical reports, profile photos) — keeps the database small; automatic base64 fallback if Cloudinary isn't configured, so existing data keeps working
+- One-time migration script (`server/scripts/migrateImagesToCloudinary.js`) to move any legacy base64 images to Cloudinary
 - Block patient feature for doctors (prevents messaging from abusive patients)
 - Free follow-up booking — doctor sets period (7/15/30 days), patient books without payment
 - Sequential doctor workflow (Confirm → Mark Paid → Join Call → Mark Complete → Prescription)
@@ -402,6 +404,9 @@ You should see the DocConnect landing page!
 | ADMIN_NAME | No | Display name for an auto-created admin account | Administrator |
 | DAILY_API_KEY | No | Daily.co API key (enables in-app video/audio calls) | (secret, server only) |
 | DAILY_DOMAIN | No | Your Daily.co subdomain | promedicoz.daily.co |
+| CLOUDINARY_CLOUD_NAME | No | Cloudinary cloud name (enables hosted image storage) | your-cloud-name |
+| CLOUDINARY_API_KEY | No | Cloudinary API key | 123456789012345 |
+| CLOUDINARY_API_SECRET | No | Cloudinary API secret (server only) | (secret) |
 | VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919997019900 |
 | VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
 
