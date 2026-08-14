@@ -29,7 +29,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 - Doctor and patient registration with role-based access
 - Smart specialization search with fuzzy matching (handles misspellings)
-- Advanced doctor search filters: specialization, name, max fee, "Available Today"
+- Advanced doctor search filters: specialization, name, max fee, "Available Today" (honest — only doctors with a real free slot left today)
 - Phone number auto-formatting with +91 validation for Indian numbers
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
@@ -74,7 +74,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Email verification for doctors (must verify email to appear in patient search)
 - Dashboard verification banner with "Resend Email" button for unverified doctors
 - Consultation fees displayed in ₹ (Indian Rupees)
-- "Available Today" badge on doctor cards
+- "Next available" slot shown on each doctor card (e.g. "Available today · next at 3:30 PM", "Next available: Tomorrow, 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
 - Booking confirmation page with full summary
 - Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
