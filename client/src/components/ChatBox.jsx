@@ -9,7 +9,8 @@ function ChatBox({ appointmentId, onClose }) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const prevCountRef = useRef(0);
 
   const fetchMessages = async () => {
     try {
@@ -31,8 +32,15 @@ function ChatBox({ appointmentId, onClose }) {
     return () => { clearInterval(interval); document.body.style.overflow = ''; };
   }, [appointmentId]);
 
+  // Only auto-scroll when the message COUNT grows (a new message arrived or was
+  // sent) — not on every 3s poll refresh. And scroll only the message list, not
+  // the page, so typing doesn't get yanked around (especially on mobile).
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > prevCountRef.current) {
+      const c = messagesContainerRef.current;
+      if (c) c.scrollTop = c.scrollHeight;
+    }
+    prevCountRef.current = messages.length;
   }, [messages]);
 
   const handleSend = async (e) => {
@@ -84,7 +92,7 @@ function ChatBox({ appointmentId, onClose }) {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
           {loading ? (
             <p className="text-center text-gray-500 text-sm">Loading...</p>
           ) : messages.length === 0 ? (
@@ -104,7 +112,6 @@ function ChatBox({ appointmentId, onClose }) {
               );
             })
           )}
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}
