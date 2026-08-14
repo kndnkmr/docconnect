@@ -2,6 +2,26 @@ import { useEffect, useRef, useState } from 'react';
 import DailyIframe from '@daily-co/daily-js';
 import { appointmentAPI } from '../services/api';
 
+// Turn a raw error into ONE clear, user-friendly message (no confusing stacking).
+function friendlyError(raw) {
+  const msg = (raw || '').toString().toLowerCase();
+  if (msg.includes('permission') || msg.includes('camera') || msg.includes('microphone') || msg.includes('notallowed')) {
+    return 'Camera/microphone access is blocked. Please allow it from the icon in your browser address bar, then try again.';
+  }
+  if (msg.includes('payment')) {
+    return 'The video service is temporarily unavailable. Please contact support.';
+  }
+  if (msg.includes('time slot') || msg.includes('booked time')) {
+    return raw; // already a clear message from our backend (slot window)
+  }
+  if (msg.includes('network') || msg.includes('connection')) {
+    return 'Network problem — please check your internet connection and try again.';
+  }
+  // Fall back to the backend message if it looks human-readable, else a generic line.
+  if (raw && raw.length > 0 && raw.length < 160) return raw;
+  return 'Could not start the call. Please try again in a moment.';
+}
+
 // Daily.co - embedded video/audio call, no login/sign-in for doctor or patient.
 // The backend issues a private room URL + join token, so clicking "Join Call"
 // drops the user straight into the call.
@@ -58,7 +78,7 @@ function VideoCall({ appointmentId, onClose }) {
           console.error('Daily call error:', ev);
           if (!cancelled) {
             setStatus('error');
-            setErrorMsg((ev && ev.errorMsg) || 'The call ran into a problem. Please try again.');
+            setErrorMsg(friendlyError(ev && ev.errorMsg));
           }
         });
 
@@ -68,11 +88,7 @@ function VideoCall({ appointmentId, onClose }) {
         console.error('Start call failed:', e);
         if (!cancelled) {
           setStatus('error');
-          setErrorMsg(
-            e?.response?.data?.message ||
-              e?.message ||
-              'Could not start the call. Please check your camera/microphone permissions and try again.'
-          );
+          setErrorMsg(friendlyError(e?.response?.data?.message || e?.message));
         }
       }
     };
@@ -122,8 +138,8 @@ function VideoCall({ appointmentId, onClose }) {
         </div>
       )}
 
-      {/* Daily call container */}
-      <div ref={containerRef} className="flex-1" />
+      {/* Daily call container (hidden while showing our own error, to avoid stacked messages) */}
+      <div ref={containerRef} className={`flex-1 ${status === 'error' ? 'hidden' : ''}`} />
     </div>
   );
 }
