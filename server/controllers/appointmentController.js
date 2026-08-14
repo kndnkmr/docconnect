@@ -181,8 +181,8 @@ const getMyAppointments = async (req, res) => {
       // ^ Fill in doctor details (instead of just showing their ID)
       .populate('patient', 'name email phone')
       // ^ Fill in patient details
-      .sort({ date: -1 })
-      // ^ Newest appointments first
+      .sort({ date: 1, createdAt: 1 })
+      // ^ Earliest appointments first (chronological order); createdAt breaks ties
       .skip(skip)
       .limit(limit);
 
