@@ -65,7 +65,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: memoryStorage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB max for images
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB max for images (phone photos can be large)
 });
 
 // For documents/reports (stored on disk — will migrate to cloud later)

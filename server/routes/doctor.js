@@ -30,6 +30,20 @@ const { protect, authorize } = require('../middleware/auth');
 // Import upload middleware (for profile photo uploads)
 const { upload } = require('../middleware/upload');
 
+// Wrap multer so upload errors (e.g. file too large / wrong type) return a
+// clear message instead of bubbling up as a generic 500.
+const handleUpload = (req, res, next) => {
+  upload.single('profilePhoto')(req, res, (err) => {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'Image is too large. Please upload an image under 10MB.' });
+      }
+      return res.status(400).json({ message: err.message || 'File upload failed. Please try a different image.' });
+    }
+    next();
+  });
+};
+
 // ---- PUBLIC ROUTES ----
 
 // GET /api/doctors
@@ -57,9 +71,8 @@ router.put(
   '/profile',
   protect,
   authorize('doctor'),
-  upload.single('profilePhoto'),
-  // ^ 'profilePhoto' = the field name the frontend uses when sending the file
-  // .single() means "expect ONE file" (not multiple)
+  handleUpload,
+  // ^ handles the 'profilePhoto' file and returns clear errors (size/type)
   updateDoctorProfile
 );
 
