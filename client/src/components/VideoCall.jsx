@@ -8,6 +8,7 @@ import { appointmentAPI } from '../services/api';
 function VideoCall({ appointmentId, onClose }) {
   const containerRef = useRef(null);
   const callFrameRef = useRef(null);
+  const joinedRef = useRef(false); // becomes true only after we actually join
   const [status, setStatus] = useState('connecting'); // connecting | joined | error
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -23,37 +24,54 @@ function VideoCall({ appointmentId, onClose }) {
 
     const start = async () => {
       try {
-        // 1. Ask our backend for the room URL + join token
+        // 1. Get the room URL + join token from our backend
         const res = await appointmentAPI.getVideoToken(aptId);
         const { roomUrl, token } = res.data;
         if (cancelled || !containerRef.current) return;
 
-        // 2. Build the Daily call UI inside our container
+        // 2. Destroy any leftover Daily instance (prevents "duplicate instance"
+        //    errors when a previous call wasn't fully cleaned up).
+        const existing = DailyIframe.getCallInstance();
+        if (existing) {
+          try { await existing.destroy(); } catch (_) { /* ignore */ }
+        }
+        if (cancelled || !containerRef.current) return;
+
+        // 3. Build the Daily call UI inside our container
         const frame = DailyIframe.createFrame(containerRef.current, {
           showLeaveButton: true,
-          iframeStyle: {
-            width: '100%',
-            height: '100%',
-            border: '0'
-          }
+          iframeStyle: { width: '100%', height: '100%', border: '0' }
         });
         callFrameRef.current = frame;
 
-        // When the user leaves the call, close the overlay
-        frame.on('left-meeting', () => onClose());
-        frame.on('error', () => {
-          setStatus('error');
-          setErrorMsg('The call ran into a problem. Please try again.');
+        // Only close the overlay when the user leaves AFTER having joined.
+        // (Daily can emit 'left-meeting' on a failed join — we don't want to
+        // silently close in that case; we show an error instead.)
+        frame.on('left-meeting', () => {
+          if (joinedRef.current) onClose();
+        });
+        frame.on('joined-meeting', () => {
+          joinedRef.current = true;
+          if (!cancelled) setStatus('joined');
+        });
+        frame.on('error', (ev) => {
+          console.error('Daily call error:', ev);
+          if (!cancelled) {
+            setStatus('error');
+            setErrorMsg((ev && ev.errorMsg) || 'The call ran into a problem. Please try again.');
+          }
         });
 
-        // 3. Join (camera off for phone/audio consultations)
+        // 4. Join (camera off for phone/audio consultations)
         await frame.join({ url: roomUrl, token, startVideoOff: isAudioOnly });
-        if (!cancelled) setStatus('joined');
       } catch (e) {
+        console.error('Start call failed:', e);
         if (!cancelled) {
           setStatus('error');
           setErrorMsg(
-            e.response?.data?.message || 'Could not start the call. Please try again.'
+            e?.response?.data?.message ||
+              e?.message ||
+              'Could not start the call. Please check your camera/microphone permissions and try again.'
           );
         }
       }
@@ -91,7 +109,17 @@ function VideoCall({ appointmentId, onClose }) {
         <div className="text-white text-center py-4 text-sm">Connecting to the call…</div>
       )}
       {status === 'error' && (
-        <div className="text-red-300 text-center py-4 text-sm">{errorMsg}</div>
+        <div className="text-red-300 text-center py-4 text-sm px-4">
+          {errorMsg}
+          <div className="mt-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-700 text-white rounded text-sm hover:bg-gray-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Daily call container */}
