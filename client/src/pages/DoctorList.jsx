@@ -332,23 +332,29 @@ function DoctorList() {
 function DoctorCard({ doctor }) {
   // { doctor } = destructuring props (the data passed from parent)
 
-  // "Available Today" must mean there's still time LEFT today — not just that the
-  // doctor has a session on this weekday. Otherwise the badge shows even when all
-  // of today's slots are already in the past, which misleads patients.
-  // We compute the weekday and current time in IST (matches the booking logic).
-  const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const today = dayNames[istNow.getDay()];
-  const nowMinutes = istNow.getHours() * 60 + istNow.getMinutes();
-  const toMinutes = (t) => {
-    const [h, m] = (t || '').split(':').map(Number);
-    let mins = (h || 0) * 60 + (m || 0);
-    if (mins === 0) mins = 24 * 60; // treat 00:00 end as end-of-day (midnight)
-    return mins;
-  };
-  const availableToday = doctor.availability && doctor.availability.some(
-    (slot) => slot.day === today && toMinutes(slot.endTime) > nowMinutes
-  );
+  // Real next-available slot comes from the backend (accounts for past + booked
+  // slots), so the card never misleads patients.
+  const na = doctor.nextAvailable;
+  const availableToday = !!(na && na.isToday);
+
+  // Build a friendly availability label from the next-available slot.
+  let availabilityLabel;
+  if (na) {
+    const startTime = (na.timeSlot || '').split(' - ')[0]; // e.g. "03:30 PM"
+    // Is the next slot tomorrow (IST)?
+    const tomorrow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+    if (na.isToday) {
+      availabilityLabel = `Available today · next at ${startTime}`;
+    } else if (na.date === tomorrowStr) {
+      availabilityLabel = `Next available: Tomorrow, ${startTime}`;
+    } else {
+      availabilityLabel = `Next available: ${na.dayName}, ${startTime}`;
+    }
+  } else {
+    availabilityLabel = 'No upcoming availability';
+  }
 
   return (
     <Link
@@ -376,11 +382,16 @@ function DoctorCard({ doctor }) {
         <div className="flex justify-between items-start">
           <h3 className="text-lg font-semibold text-gray-800">Dr. {doctor.name}</h3>
           {availableToday && (
-            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
               Available Today
             </span>
           )}
         </div>
+
+        {/* Honest availability signal (next free slot) */}
+        <p className={`text-sm mt-1 font-medium ${availableToday ? 'text-green-600' : na ? 'text-gray-600' : 'text-gray-400'}`}>
+          {availabilityLabel}
+        </p>
 
         {doctor.specialization && (
           <p className="text-primary-600 text-sm font-medium mt-1">

@@ -11,7 +11,71 @@
 // Here we focus on Read and Update.
 
 const User = require('../models/User');
+const Appointment = require('../models/Appointment');
 const { formatIndianPhone } = require('../utils/formatPhone');
+
+// ============================================
+// Next-available-slot helpers (all in IST)
+// ============================================
+const _dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Convert minutes-since-midnight to a display label like "09:00 AM" / "12:00 AM".
+function _minutesToLabel(minutes) {
+  let h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  h = h % 24; // 24:00 (midnight end) → 12:00 AM
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
+}
+
+// Generate a day's slots as { startMin, label } (label matches booked timeSlot strings).
+function _genDaySlots(startTime, endTime, duration) {
+  const [sh, sm] = (startTime || '').split(':').map(Number);
+  const [eh, em] = (endTime || '').split(':').map(Number);
+  let cur = (sh || 0) * 60 + (sm || 0);
+  let end = (eh || 0) * 60 + (em || 0);
+  if (end === 0) end = 24 * 60; // midnight end
+  const out = [];
+  while (cur + duration <= end) {
+    out.push({ startMin: cur, label: `${_minutesToLabel(cur)} - ${_minutesToLabel(cur + duration)}` });
+    cur += duration;
+  }
+  return out;
+}
+
+// Find the earliest free, future, unbooked slot for a doctor (searches up to 14 days).
+// bookedByDate: { 'YYYY-MM-DD': Set(timeSlotLabels) } for this doctor.
+function computeNextAvailable(doctor, bookedByDate) {
+  const availability = doctor.availability || [];
+  if (availability.length === 0) return null;
+  const duration = doctor.slotDuration || 30;
+
+  const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  const nowMinutes = istNow.getHours() * 60 + istNow.getMinutes();
+
+  for (let offset = 0; offset < 14; offset++) {
+    const d = new Date(istNow);
+    d.setDate(d.getDate() + offset);
+    const dayName = _dayNames[d.getDay()];
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+    const sessions = availability.filter((a) => a.day === dayName);
+    if (sessions.length === 0) continue;
+
+    let daySlots = [];
+    for (const s of sessions) daySlots = daySlots.concat(_genDaySlots(s.startTime, s.endTime, duration));
+    daySlots.sort((a, b) => a.startMin - b.startMin);
+
+    const bookedSet = (bookedByDate && bookedByDate[dateStr]) || null;
+    for (const slot of daySlots) {
+      if (offset === 0 && slot.startMin <= nowMinutes) continue; // past today
+      if (bookedSet && bookedSet.has(slot.label)) continue; // already booked
+      return { date: dateStr, dayName, timeSlot: slot.label, isToday: offset === 0 };
+    }
+  }
+  return null;
+}
 
 // ============================================
 // GET ALL DOCTORS - Public (anyone can browse)
@@ -90,9 +154,36 @@ const getAllDoctors = async (req, res) => {
     // Get total count (for frontend to know how many pages exist)
     const total = await User.countDocuments(filter);
 
+    // ---- Compute each doctor's next available slot ----
+    // One booked-appointments query for all doctors on this page (efficient).
+    const docIds = doctors.map((d) => d._id);
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
+    const bookedByDoctor = {};
+    if (docIds.length > 0) {
+      const appts = await Appointment.find({
+        doctor: { $in: docIds },
+        status: { $nin: ['cancelled'] },
+        date: { $gte: new Date(todayIST) }
+      }).select('doctor date timeSlot');
+
+      for (const a of appts) {
+        const dId = a.doctor.toString();
+        const dStr = new Date(a.date).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+        bookedByDoctor[dId] = bookedByDoctor[dId] || {};
+        bookedByDoctor[dId][dStr] = bookedByDoctor[dId][dStr] || new Set();
+        bookedByDoctor[dId][dStr].add(a.timeSlot);
+      }
+    }
+
+    const doctorsWithAvailability = doctors.map((d) => {
+      const obj = d.toObject();
+      obj.nextAvailable = computeNextAvailable(obj, bookedByDoctor[d._id.toString()]);
+      return obj;
+    });
+
     // ---- Send response ----
     res.json({
-      doctors,
+      doctors: doctorsWithAvailability,
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
