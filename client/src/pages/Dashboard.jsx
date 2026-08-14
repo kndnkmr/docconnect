@@ -55,6 +55,22 @@ function Dashboard() {
     phone: '', whatsappNumber: '', upiId: '', upiQrCode: '', profilePhoto: '',
     city: '', googleMapsLink: '', consultationModes: ['in-person']
   });
+  const photoInputRef = useRef(null); // hidden file input for one-click photo upload
+
+  // Upload a doctor profile photo (used by both the nudge banner and the Edit Profile form)
+  const uploadProfilePhoto = async (file) => {
+    if (!file) return;
+    const data = new FormData();
+    data.append('profilePhoto', file);
+    data.append('fieldName', 'profilePhoto');
+    try {
+      const response = await doctorAPI.updateProfile(data);
+      setProfileData(prev => ({ ...prev, profilePhoto: response.data.doctor.profilePhoto }));
+      toast.success('Profile photo uploaded!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to upload photo');
+    }
+  };
 
   useEffect(() => {
     fetchAppointments();
@@ -394,11 +410,18 @@ function Dashboard() {
             </div>
           </div>
           <button
-            onClick={() => setActiveTab('profile')}
+            onClick={() => photoInputRef.current?.click()}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 whitespace-nowrap"
           >
             Add Photo
           </button>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => uploadProfilePhoto(e.target.files[0])}
+          />
         </div>
       )}
 
@@ -721,18 +744,7 @@ function Dashboard() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-                  const data = new FormData();
-                  data.append('profilePhoto', file);
-                  data.append('fieldName', 'profilePhoto');
-                  try {
-                    const response = await doctorAPI.updateProfile(data);
-                    setProfileData(prev => ({ ...prev, profilePhoto: response.data.doctor.profilePhoto }));
-                    toast.success('Profile photo uploaded!');
-                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to upload photo'); }
-                }}
+                onChange={(e) => uploadProfilePhoto(e.target.files[0])}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               />
             </div>
