@@ -33,7 +33,12 @@ function DoctorAvailability() {
 
   const handleAddSlots = () => {
     if (selectedDays.length === 0) { toast.error('Please select at least one day'); return; }
-    if (startTime >= endTime) { toast.error('Start time must be before end time'); return; }
+    // Treat an end time of "00:00" (12 AM) as end-of-day (midnight), so 23:00 -> 00:00 is valid.
+    const toMinutes = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+    const startM = toMinutes(startTime);
+    let endM = toMinutes(endTime);
+    if (endM === 0) endM = 24 * 60;
+    if (startM >= endM) { toast.error('Start time must be before end time (for midnight, choose 00:00 as "To")'); return; }
     const newSlots = selectedDays.map(day => ({ day, startTime, endTime }));
     const filteredNewSlots = newSlots.filter(newSlot =>
       !schedule.some(existing => existing.day === newSlot.day && existing.startTime === newSlot.startTime && existing.endTime === newSlot.endTime)
