@@ -50,6 +50,9 @@ function BookAppointment() {
     consultationType: repeatData.consultationType || 'in-person'
   });
 
+  // Consent state (controlled so we can reliably enforce it before booking)
+  const [consentGiven, setConsentGiven] = useState(false);
+
   // Fetch doctor info on load
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -127,6 +130,12 @@ function BookAppointment() {
 
     if (!formData.date || !formData.timeSlot || !formData.reason) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // Enforce consent explicitly (not just via native checkbox validation)
+    if (!consentGiven) {
+      toast.error('Please agree to the consent terms before booking / बुकिंग से पहले सहमति दें');
       return;
     }
 
@@ -381,23 +390,29 @@ function BookAppointment() {
               />
             </div>
 
-            {/* Consent checkbox */}
-            <label className="flex items-start gap-2 cursor-pointer">
+            {/* Consent checkbox (bilingual: English + Hindi) */}
+            <label className="flex items-start gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-lg p-3">
               <input
                 type="checkbox"
                 id="consent"
-                required
+                checked={consentGiven}
+                onChange={(e) => setConsentGiven(e.target.checked)}
                 className="w-4 h-4 mt-0.5 text-primary-600 rounded focus:ring-primary-500"
               />
-              <span className="text-xs text-gray-600">
-                I agree to the <a href="/terms" target="_blank" className="text-primary-600 underline">Terms & Conditions</a> and consent to teleconsultation. I understand this is not an emergency service.
+              <span className="text-xs text-gray-600 space-y-1">
+                <span className="block">
+                  I agree to the <a href="/terms" target="_blank" className="text-primary-600 underline">Terms &amp; Conditions</a> and consent to teleconsultation. I understand this is not an emergency service.
+                </span>
+                <span className="block text-gray-500">
+                  मैं <a href="/terms" target="_blank" className="text-primary-600 underline">नियम और शर्तों</a> से सहमत हूँ और टेलीकंसल्टेशन के लिए अपनी सहमति देता/देती हूँ। मैं समझता/समझती हूँ कि यह आपातकालीन सेवा नहीं है।
+                </span>
               </span>
             </label>
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting || !formData.timeSlot || (bookedFor === 'family' && !selectedFamilyMember)}
+              disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
               className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Booking...' : 'Confirm Booking'}
