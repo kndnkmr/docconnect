@@ -82,9 +82,17 @@ mongoose.connect(process.env.MONGODB_URI)
   });
 
 // ---- Admin bootstrap ----
-// Promotes the account matching ADMIN_EMAIL to the "admin" role on startup.
-// This removes the need to edit the database manually to create the first admin.
-// The user must have already registered normally with this email.
+// Ensures a dedicated admin account exists on startup, using env variables:
+//   ADMIN_EMAIL     (required) - the admin login email
+//   ADMIN_PASSWORD  (optional) - password used ONLY when creating a new admin
+//   ADMIN_NAME      (optional) - display name for a newly created admin
+//
+// Behaviour:
+//   - If a user with ADMIN_EMAIL already exists → promote to admin (if not already).
+//   - If no such user exists AND ADMIN_PASSWORD is set → create a fresh admin account.
+//   - This removes the need to edit the database manually. It is an admin-only
+//     account: admins are never listed publicly (only doctors are), so it stays hidden.
+// Safe to run on every startup (idempotent).
 async function ensureAdmin() {
   try {
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -93,21 +101,34 @@ async function ensureAdmin() {
     const User = require('./models/User');
     const normalizedEmail = adminEmail.trim().toLowerCase();
 
-    const user = await User.findOne({ email: normalizedEmail });
+    const existing = await User.findOne({ email: normalizedEmail });
 
-    if (!user) {
-      console.log(`[admin-bootstrap] No user found for ADMIN_EMAIL (${normalizedEmail}). Register that account first, then restart.`);
+    if (existing) {
+      if (existing.role === 'admin') {
+        console.log(`[admin-bootstrap] ${normalizedEmail} is already an admin.`);
+        return;
+      }
+      existing.role = 'admin';
+      await existing.save({ validateModifiedOnly: true });
+      console.log(`[admin-bootstrap] Promoted existing account ${normalizedEmail} to admin.`);
       return;
     }
 
-    if (user.role === 'admin') {
-      console.log(`[admin-bootstrap] ${normalizedEmail} is already an admin.`);
+    // No account exists yet — create one if a password was provided.
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      console.log(`[admin-bootstrap] No account found for ${normalizedEmail} and ADMIN_PASSWORD is not set. Set ADMIN_PASSWORD to auto-create the admin account.`);
       return;
     }
 
-    user.role = 'admin';
-    await user.save({ validateModifiedOnly: true });
-    console.log(`[admin-bootstrap] Promoted ${normalizedEmail} to admin.`);
+    await User.create({
+      name: process.env.ADMIN_NAME || 'Administrator',
+      email: normalizedEmail,
+      password: adminPassword, // hashed automatically by the User model pre-save hook
+      role: 'admin',
+      isVerified: true
+    });
+    console.log(`[admin-bootstrap] Created new admin account for ${normalizedEmail}.`);
   } catch (error) {
     console.error('[admin-bootstrap] Error while ensuring admin:', error.message);
   }
