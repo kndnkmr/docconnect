@@ -175,16 +175,40 @@ const getMyAppointments = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Fetch appointments with populated references
-    const appointments = await Appointment.find(filter)
+    // ---- Ordering ----
+    // Upcoming (pending/confirmed) first, EARLIEST date first (soonest at top).
+    // Then past (completed/cancelled), NEWEST date first (most recent at top).
+    // We compute this order with a small aggregation that returns the ordered
+    // ids for this page, then fetch those with the usual populate (so nothing
+    // downstream changes).
+    const ordered = await Appointment.aggregate([
+      { $match: filter },
+      { $addFields: {
+          _grp: { $cond: [{ $in: ['$status', ['pending', 'confirmed']] }, 0, 1] },
+          _ts: { $toLong: '$date' }
+      } },
+      { $addFields: {
+          // Upcoming: sort ascending by date. Past: ascending by -date = newest first.
+          _key: { $cond: [{ $eq: ['$_grp', 0] }, '$_ts', { $multiply: ['$_ts', -1] }] }
+      } },
+      { $sort: { _grp: 1, _key: 1, createdAt: 1 } },
+      { $skip: skip },
+      { $limit: limit },
+      { $project: { _id: 1 } }
+    ]);
+
+    const orderedIds = ordered.map((o) => o._id);
+
+    // Fetch the page's appointments with the usual populate, then restore order.
+    const docs = await Appointment.find({ _id: { $in: orderedIds } })
       .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink consultationModes')
-      // ^ Fill in doctor details (instead of just showing their ID)
-      .populate('patient', 'name email phone')
-      // ^ Fill in patient details
-      .sort({ date: 1, createdAt: 1 })
-      // ^ Earliest appointments first (chronological order); createdAt breaks ties
-      .skip(skip)
-      .limit(limit);
+      .populate('patient', 'name email phone');
+
+    const byId = {};
+    docs.forEach((d) => { byId[d._id.toString()] = d; });
+    const appointments = orderedIds
+      .map((id) => byId[id.toString()])
+      .filter(Boolean);
 
     const total = await Appointment.countDocuments(filter);
 
