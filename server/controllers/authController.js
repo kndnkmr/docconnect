@@ -224,6 +224,13 @@ const login = async (req, res) => {
       });
     }
 
+    // Block suspended accounts from logging in
+    if (user.isSuspended) {
+      return res.status(401).json({
+        message: 'This account has been suspended. Contact support@promedicoz.in if you believe this is a mistake.'
+      });
+    }
+
     // Step 3: Compare the provided password with the stored hash
     const isPasswordMatch = await user.comparePassword(password);
     // This calls the method we defined in User.js

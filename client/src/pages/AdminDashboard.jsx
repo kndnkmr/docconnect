@@ -74,7 +74,7 @@ function AdminDashboard() {
   }, [activeTab, userRoleFilter, appointmentStatusFilter]);
 
   const handleDeleteUser = async (id, name) => {
-    if (!window.confirm(`Delete user "${name}"? This will also delete their appointments.`)) return;
+    if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone.\n\nTip: use "Deactivate" instead if you only want to hide them while keeping records.`)) return;
     try {
       await adminAPI.deleteUser(id);
       toast.success(`User "${name}" deleted`);
@@ -82,6 +82,30 @@ function AdminDashboard() {
       fetchStats();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete user');
+    }
+  };
+
+  const handleToggleSuspension = async (user) => {
+    const suspend = !user.isSuspended;
+    if (suspend) {
+      const reason = window.prompt(`Deactivate "${user.name}"?\n\nThey will be hidden from patients and blocked from logging in, but all their records are kept.\n\nOptional reason (for your records):`, '');
+      if (reason === null) return; // Cancelled
+      try {
+        await adminAPI.setSuspension(user._id, true, reason);
+        toast.success(`"${user.name}" deactivated`);
+        fetchUsers();
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to deactivate user');
+      }
+    } else {
+      if (!window.confirm(`Reactivate "${user.name}"? They will be visible and able to log in again.`)) return;
+      try {
+        await adminAPI.setSuspension(user._id, false);
+        toast.success(`"${user.name}" reactivated`);
+        fetchUsers();
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Failed to reactivate user');
+      }
     }
   };
 
@@ -243,6 +267,7 @@ function AdminDashboard() {
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Email</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Phone</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Role</th>
+                    <th className="px-4 py-3 text-sm font-medium text-gray-600">Status</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Joined</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Actions</th>
                   </tr>
@@ -262,15 +287,38 @@ function AdminDashboard() {
                           {user.role}
                         </span>
                       </td>
+                      <td className="px-4 py-3">
+                        {user.isSuspended ? (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                            Deactivated
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            Active
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(user.createdAt)}</td>
                       <td className="px-4 py-3">
                         {user.role !== 'admin' && (
-                          <button
-                            onClick={() => handleDeleteUser(user._id, user.name)}
-                            className="text-red-500 hover:text-red-700 text-sm font-medium"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleToggleSuspension(user)}
+                              className={`text-sm font-medium ${
+                                user.isSuspended
+                                  ? 'text-green-600 hover:text-green-800'
+                                  : 'text-orange-500 hover:text-orange-700'
+                              }`}
+                            >
+                              {user.isSuspended ? 'Reactivate' : 'Deactivate'}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user._id, user.name)}
+                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>

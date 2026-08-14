@@ -169,6 +169,55 @@ const deleteUser = async (req, res) => {
 };
 
 // ============================================
+// SET USER SUSPENSION - Deactivate / Reactivate
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/suspension
+// Body: { suspend: true|false, reason?: string }
+//
+// Unlike delete, this keeps ALL records intact. A suspended doctor is:
+//   - Hidden from patients (removed from listings and profile pages)
+//   - Blocked from logging in
+// Reactivating restores full access.
+
+const setUserSuspension = async (req, res) => {
+  try {
+    const { suspend, reason } = req.body;
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Don't allow suspending admin accounts
+    if (user.role === 'admin') {
+      return res.status(400).json({ message: 'Cannot suspend admin accounts' });
+    }
+
+    user.isSuspended = !!suspend;
+    user.suspendedAt = suspend ? new Date() : null;
+    user.suspendedReason = suspend ? (reason || '') : '';
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: suspend
+        ? `"${user.name}" has been deactivated. Their records are preserved.`
+        : `"${user.name}" has been reactivated.`,
+      user: {
+        _id: user._id,
+        name: user.name,
+        isSuspended: user.isSuspended,
+        suspendedAt: user.suspendedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Set user suspension error:', error.message);
+    res.status(500).json({ message: 'Error updating account status' });
+  }
+};
+
+// ============================================
 // GET ANALYTICS - Revenue and consultation insights
 // ============================================
 // Endpoint: GET /api/admin/analytics
@@ -234,4 +283,4 @@ const getAnalytics = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, getAnalytics };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics };

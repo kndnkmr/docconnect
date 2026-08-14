@@ -239,8 +239,12 @@ export const adminAPI = {
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
 
-  // Delete a user
+  // Delete a user (permanent)
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
+
+  // Deactivate/reactivate a user (keeps records)
+  setSuspension: (id, suspend, reason) =>
+    API.put(`/admin/users/${id}/suspension`, { suspend, reason }),
 
   // Get analytics (revenue, consultation types, top doctors)
   getAnalytics: () => API.get('/admin/analytics'),

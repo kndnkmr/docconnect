@@ -234,6 +234,24 @@ const userSchema = new mongoose.Schema({
     default: null
   },
 
+  // --- Admin Suspension (Deactivate) ---
+  // Set by an admin to hide a doctor from patients and block their login,
+  // while keeping all their records intact (for legal/audit purposes).
+  isSuspended: {
+    type: Boolean,
+    default: false
+  },
+
+  suspendedAt: {
+    type: Date,
+    default: null
+  },
+
+  suspendedReason: {
+    type: String,
+    default: ''
+  },
+
   // --- Last Login Info (for security/audit) ---
   lastLoginAt: {
     type: Date,

@@ -25,7 +25,7 @@ const getAllDoctors = async (req, res) => {
   try {
     // ---- Build a filter object ----
     // Show verified doctors and legacy doctors (who don't have isVerified field yet)
-    const filter = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true } };
+    const filter = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true }, isSuspended: { $ne: true } };
 
     // If the user added ?specialization=something in the URL, filter by it
     // Example: /api/doctors?specialization=Cardiologist
@@ -128,6 +128,13 @@ const getDoctorById = async (req, res) => {
     }).select('-password');
 
     if (!doctor) {
+      return res.status(404).json({
+        message: 'Doctor not found'
+      });
+    }
+
+    // Hide deleted or suspended doctors from public view
+    if (doctor.isDeleted || doctor.isSuspended) {
       return res.status(404).json({
         message: 'Doctor not found'
       });
