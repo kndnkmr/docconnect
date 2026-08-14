@@ -46,15 +46,20 @@ const fileFilter = (req, file, cb) => {
   // Someone could rename "virus.exe" to "virus.jpg" — MIME type catches this
   const allowedTypes = [
     'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+    'image/heic', 'image/heif', // iPhone photos (Cloudinary converts to web format on delivery)
     'application/pdf'
     // PDF added for document uploads
   ];
 
-  if (allowedTypes.includes(file.mimetype)) {
+  // Some devices report HEIC as a generic/empty type, so also accept by extension.
+  const name = (file.originalname || '').toLowerCase();
+  const isHeicByExt = name.endsWith('.heic') || name.endsWith('.heif');
+
+  if (allowedTypes.includes(file.mimetype) || isHeicByExt) {
     cb(null, true);
     // null = no error, true = accept the file
   } else {
-    cb(new Error('Only image files (jpeg, jpg, png, gif, webp) and PDF files are allowed'), false);
+    cb(new Error('Only image files (jpeg, jpg, png, gif, webp, heic) and PDF files are allowed'), false);
     // Error message, false = reject the file
   }
 };
