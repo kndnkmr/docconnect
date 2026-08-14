@@ -629,8 +629,9 @@ function isWithinSlotWindow(date, timeSlot) {
   if (istDateStr(date) !== today) return false;
   const parts = (timeSlot || '').split('-').map((s) => s.trim());
   const start = parseSlotMinutes(parts[0]);
-  const end = parseSlotMinutes(parts[1]);
+  let end = parseSlotMinutes(parts[1]);
   if (start == null || end == null) return true; // can't parse → don't block
+  if (end <= start) end += 24 * 60; // slot ends at/after midnight (e.g., 11:30 PM - 12:00 AM)
   const now = istNowMinutes();
   return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
 }

@@ -350,9 +350,10 @@ function Dashboard() {
     if (!isAppointmentToday(apt.date)) return false;
     const parts = (apt.timeSlot || '').split('-').map((s) => s.trim());
     const start = parseSlotTime(parts[0]);
-    const end = parseSlotTime(parts[1]);
+    let end = parseSlotTime(parts[1]);
     // If we can't parse the slot, fall back to allowing it on the day (safe default).
     if (start == null || end == null) return true;
+    if (end <= start) end += 24 * 60; // slot ends at/after midnight (e.g., 11:30 PM - 12:00 AM)
     const now = getISTNowMinutes();
     return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
   };

@@ -65,8 +65,17 @@ const setAvailability = async (req, res) => {
           message: `Invalid time format. Use 24-hour format like "09:00" or "14:30"`
         });
       }
-      // Check startTime < endTime
-      if (slot.startTime >= slot.endTime) {
+      // Check startTime < endTime.
+      // Treat an end time of "00:00" (12 AM) as end-of-day (midnight), so a slot
+      // like 23:30 -> 00:00 is valid.
+      const toMinutes = (t) => {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+      };
+      const startM = toMinutes(slot.startTime);
+      let endM = toMinutes(slot.endTime);
+      if (endM === 0) endM = 24 * 60; // midnight = end of day
+      if (startM >= endM) {
         return res.status(400).json({
           message: `Start time (${slot.startTime}) must be before end time (${slot.endTime})`
         });
@@ -278,7 +287,9 @@ function generateTimeSlots(startTime, endTime, durationMinutes) {
   let [endHour, endMin] = endTime.split(':').map(Number);
 
   let currentMinutes = startHour * 60 + startMin;
-  const endMinutes = endHour * 60 + endMin;
+  let endMinutes = endHour * 60 + endMin;
+  // Treat "00:00" end time as end-of-day (midnight) so 23:30 -> 00:00 works
+  if (endMinutes === 0) endMinutes = 24 * 60;
 
   while (currentMinutes + durationMinutes <= endMinutes) {
     const slotStart = minutesToTimeString(currentMinutes);
@@ -293,8 +304,9 @@ function generateTimeSlots(startTime, endTime, durationMinutes) {
 // Convert minutes since midnight to "HH:MM AM/PM" format
 // 540 → "09:00 AM", 810 → "01:30 PM"
 function minutesToTimeString(minutes) {
-  const hours24 = Math.floor(minutes / 60);
+  let hours24 = Math.floor(minutes / 60);
   const mins = minutes % 60;
+  hours24 = hours24 % 24; // 24:00 (midnight end of day) → 0 → shows as 12 AM
 
   // Convert 24-hour to 12-hour
   const period = hours24 >= 12 ? 'PM' : 'AM';
