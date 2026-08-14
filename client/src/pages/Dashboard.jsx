@@ -12,6 +12,7 @@ import { getUploadUrl } from '../services/api';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
 import VideoCall from '../components/VideoCall';
+import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
 
 // Extracted sub-components
@@ -359,6 +360,9 @@ function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Admin announcements (fee notices, policy updates, etc.) */}
+      <AnnouncementBanner />
+
       {/* Email Verification Banner for unverified doctors */}
       {isDoctor && user && !user.isVerified && (
         <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl flex items-center justify-between gap-3">

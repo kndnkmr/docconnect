@@ -217,6 +217,10 @@ app.use('/api/family-members', familyMemberRoutes);
 const messageRoutes = require('./routes/message');
 app.use('/api/messages', messageRoutes);
 
+// Announcement routes — admin broadcast banners to doctors/patients
+const announcementRoutes = require('./routes/announcement');
+app.use('/api/announcements', announcementRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!

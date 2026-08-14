@@ -3,7 +3,7 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
-import { adminAPI } from '../services/api';
+import { adminAPI, announcementAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function AdminDashboard() {
@@ -18,6 +18,10 @@ function AdminDashboard() {
   const [userSearch, setUserSearch] = useState('');
   const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('');
   const [analytics, setAnalytics] = useState(null);
+
+  // Announcements state
+  const [announcements, setAnnouncements] = useState([]);
+  const [announcementForm, setAnnouncementForm] = useState({ title: '', message: '', audience: 'doctors' });
 
   // Fetch stats on load
   useEffect(() => {
@@ -64,6 +68,51 @@ function AdminDashboard() {
       setAnalytics(response.data);
     } catch (error) {
       toast.error('Failed to load analytics');
+    }
+  };
+
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await announcementAPI.getAll();
+      setAnnouncements(response.data.announcements || []);
+    } catch (error) {
+      toast.error('Failed to load announcements');
+    }
+  };
+
+  const handleCreateAnnouncement = async (e) => {
+    e.preventDefault();
+    if (!announcementForm.title.trim() || !announcementForm.message.trim()) {
+      toast.error('Please enter a title and message');
+      return;
+    }
+    try {
+      await announcementAPI.create(announcementForm);
+      toast.success('Announcement posted');
+      setAnnouncementForm({ title: '', message: '', audience: 'doctors' });
+      fetchAnnouncements();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to post announcement');
+    }
+  };
+
+  const handleToggleAnnouncement = async (a) => {
+    try {
+      await announcementAPI.update(a._id, { active: !a.active });
+      fetchAnnouncements();
+    } catch (error) {
+      toast.error('Failed to update announcement');
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id) => {
+    if (!window.confirm('Delete this announcement?')) return;
+    try {
+      await announcementAPI.remove(id);
+      toast.success('Announcement deleted');
+      fetchAnnouncements();
+    } catch (error) {
+      toast.error('Failed to delete announcement');
     }
   };
 
@@ -179,6 +228,14 @@ function AdminDashboard() {
           }`}
         >
           Revenue & Analytics
+        </button>
+        <button
+          onClick={() => { setActiveTab('announcements'); fetchAnnouncements(); }}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'announcements' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Announcements
         </button>
       </div>
 
@@ -555,6 +612,93 @@ function AdminDashboard() {
                     <div className="text-right">
                       <p className="font-semibold text-green-600">₹{payment.amountCollected}</p>
                       <p className="text-xs text-gray-400">{payment.paidAt ? formatDate(payment.paidAt) : ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* === ANNOUNCEMENTS TAB === */}
+      {activeTab === 'announcements' && (
+        <div>
+          {/* Create form */}
+          <div className="bg-white rounded-xl shadow-md p-6 mb-6 max-w-2xl">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Post an Announcement</h3>
+            <form onSubmit={handleCreateAnnouncement} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  value={announcementForm.title}
+                  onChange={(e) => setAnnouncementForm((p) => ({ ...p, title: e.target.value }))}
+                  placeholder="e.g., Platform update"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                <textarea
+                  value={announcementForm.message}
+                  onChange={(e) => setAnnouncementForm((p) => ({ ...p, message: e.target.value }))}
+                  placeholder="Write your message to show as a banner..."
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Audience</label>
+                <select
+                  value={announcementForm.audience}
+                  onChange={(e) => setAnnouncementForm((p) => ({ ...p, audience: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                >
+                  <option value="doctors">Doctors only</option>
+                  <option value="patients">Patients only</option>
+                  <option value="all">Everyone</option>
+                </select>
+              </div>
+              <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+                Post Announcement
+              </button>
+            </form>
+          </div>
+
+          {/* Existing announcements */}
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Announcements</h3>
+            {announcements.length === 0 ? (
+              <p className="text-gray-500">No announcements yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {announcements.map((a) => (
+                  <div key={a._id} className="border border-gray-200 rounded-lg p-4 flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-800">{a.title}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${a.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          {a.active ? 'Active' : 'Hidden'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 capitalize">{a.audience}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">{a.message}</p>
+                      <p className="text-xs text-gray-400 mt-1">{formatDate(a.createdAt)}</p>
+                    </div>
+                    <div className="flex flex-col gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => handleToggleAnnouncement(a)}
+                        className={`text-sm font-medium ${a.active ? 'text-orange-500 hover:text-orange-700' : 'text-green-600 hover:text-green-800'}`}
+                      >
+                        {a.active ? 'Hide' : 'Show'}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAnnouncement(a._id)}
+                        className="text-red-500 hover:text-red-700 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))}

@@ -206,6 +206,16 @@ export const familyMemberAPI = {
 // MESSAGE API calls (in-app chat)
 // ============================================
 
+export const announcementAPI = {
+  // Active announcements for the current user's role (banner)
+  getMine: () => API.get('/announcements'),
+  // Admin management
+  getAll: () => API.get('/announcements/all'),
+  create: (data) => API.post('/announcements', data),
+  update: (id, data) => API.put(`/announcements/${id}`, data),
+  remove: (id) => API.delete(`/announcements/${id}`),
+};
+
 export const messageAPI = {
   // Get messages for an appointment
   getMessages: (appointmentId) => API.get(`/messages/${appointmentId}`),
