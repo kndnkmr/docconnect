@@ -1,82 +1,83 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import DailyIframe from '@daily-co/daily-js';
+import { appointmentAPI } from '../services/api';
 
-// Jitsi Meet - free, no API key, video call embedded in your site
-function VideoCall({ appointmentId, userName, onClose }) {
-  const jitsiContainerRef = useRef(null);
-  const apiRef = useRef(null);
+// Daily.co - embedded video/audio call, no login/sign-in for doctor or patient.
+// The backend issues a private room URL + join token, so clicking "Join Call"
+// drops the user straight into the call.
+function VideoCall({ appointmentId, onClose }) {
+  const containerRef = useRef(null);
+  const callFrameRef = useRef(null);
+  const [status, setStatus] = useState('connecting'); // connecting | joined | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  // Parse appointmentId and consultationType (passed as "id|type")
+  // appointmentId is passed as "id|type" (type = video or phone)
   const [aptId, consultationType] = appointmentId.includes('|')
     ? appointmentId.split('|')
     : [appointmentId, 'video'];
-
   const isAudioOnly = consultationType === 'phone';
 
-  // Create a unique room name per appointment
-  const roomName = `promedicoz-${aptId}`;
-
   useEffect(() => {
-    // Hide all overlays and prevent scroll during video call
     document.body.style.overflow = 'hidden';
+    let cancelled = false;
 
-    // Load Jitsi external API script
-    const script = document.createElement('script');
-    script.src = 'https://meet.jit.si/external_api.js';
-    script.async = true;
-    script.onload = () => initJitsi();
-    document.body.appendChild(script);
+    const start = async () => {
+      try {
+        // 1. Ask our backend for the room URL + join token
+        const res = await appointmentAPI.getVideoToken(aptId);
+        const { roomUrl, token } = res.data;
+        if (cancelled || !containerRef.current) return;
+
+        // 2. Build the Daily call UI inside our container
+        const frame = DailyIframe.createFrame(containerRef.current, {
+          showLeaveButton: true,
+          iframeStyle: {
+            width: '100%',
+            height: '100%',
+            border: '0'
+          }
+        });
+        callFrameRef.current = frame;
+
+        // When the user leaves the call, close the overlay
+        frame.on('left-meeting', () => onClose());
+        frame.on('error', () => {
+          setStatus('error');
+          setErrorMsg('The call ran into a problem. Please try again.');
+        });
+
+        // 3. Join (camera off for phone/audio consultations)
+        await frame.join({ url: roomUrl, token, startVideoOff: isAudioOnly });
+        if (!cancelled) setStatus('joined');
+      } catch (e) {
+        if (!cancelled) {
+          setStatus('error');
+          setErrorMsg(
+            e.response?.data?.message || 'Could not start the call. Please try again.'
+          );
+        }
+      }
+    };
+
+    start();
 
     return () => {
+      cancelled = true;
       document.body.style.overflow = '';
-      if (apiRef.current) {
-        apiRef.current.dispose();
+      if (callFrameRef.current) {
+        try { callFrameRef.current.destroy(); } catch (_) { /* ignore */ }
+        callFrameRef.current = null;
       }
-      document.body.removeChild(script);
     };
   }, []);
-
-  const initJitsi = () => {
-    if (!window.JitsiMeetExternalAPI) return;
-
-    const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
-      roomName: roomName,
-      parentNode: jitsiContainerRef.current,
-      userInfo: {
-        displayName: userName || 'User'
-      },
-      configOverwrite: {
-        startWithAudioMuted: false,
-        startWithVideoMuted: isAudioOnly,
-        disableDeepLinking: true,
-        prejoinPageEnabled: false,
-        lobbyModeEnabled: false,
-        enableLobbyChat: false,
-        hideLobbyButton: true,
-        defaultLanguage: 'en',
-      },
-      interfaceConfigOverwrite: {
-        TOOLBAR_BUTTONS: [
-          'microphone', 'camera', 'desktop', 'chat',
-          'raisehand', 'hangup', 'fullscreen'
-        ],
-        SHOW_JITSI_WATERMARK: false,
-        SHOW_WATERMARK_FOR_GUESTS: false,
-        DEFAULT_BACKGROUND: '#1e40af',
-      }
-    });
-
-    api.addEventListener('readyToClose', () => {
-      onClose();
-    });
-
-    apiRef.current = api;
-  };
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-900">
-        <span className="text-white text-sm font-medium">ProMedicoz {isAudioOnly ? 'Audio' : 'Video'} Consultation</span>
+        <span className="text-white text-sm font-medium">
+          ProMedicoz {isAudioOnly ? 'Audio' : 'Video'} Consultation
+        </span>
         <button
           onClick={onClose}
           className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
@@ -85,8 +86,16 @@ function VideoCall({ appointmentId, userName, onClose }) {
         </button>
       </div>
 
-      {/* Jitsi container */}
-      <div ref={jitsiContainerRef} className="flex-1" />
+      {/* Status messages */}
+      {status === 'connecting' && (
+        <div className="text-white text-center py-4 text-sm">Connecting to the call…</div>
+      )}
+      {status === 'error' && (
+        <div className="text-red-300 text-center py-4 text-sm">{errorMsg}</div>
+      )}
+
+      {/* Daily call container */}
+      <div ref={containerRef} className="flex-1" />
     </div>
   );
 }

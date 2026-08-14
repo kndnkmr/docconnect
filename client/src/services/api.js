@@ -174,6 +174,9 @@ export const appointmentAPI = {
 
   // Poll for incoming calls started by the other participant
   getIncomingCalls: () => API.get('/appointments/incoming-calls'),
+
+  // Get a Daily.co room URL + join token for a call
+  getVideoToken: (id) => API.get(`/appointments/${id}/video-token`),
 };
 
 // ============================================

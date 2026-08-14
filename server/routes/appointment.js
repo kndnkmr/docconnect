@@ -27,7 +27,8 @@ const {
   uploadPaymentScreenshot,
   notifyPayment,
   setCallStatus,
-  getIncomingCalls
+  getIncomingCalls,
+  getVideoToken
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -65,6 +66,10 @@ router.get('/:id', getAppointmentById);
 // ---- BOTH: Set call active/inactive (ringing signal) ----
 // PUT /api/appointments/:id/call
 router.put('/:id/call', setCallStatus);
+
+// ---- BOTH: Get a Daily.co room URL + join token ----
+// GET /api/appointments/:id/video-token
+router.get('/:id/video-token', getVideoToken);
 
 // ---- DOCTOR: Update appointment status ----
 // PUT /api/appointments/:id/status

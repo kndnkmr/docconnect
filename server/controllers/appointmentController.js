@@ -552,6 +552,62 @@ const getIncomingCalls = async (req, res) => {
   }
 };
 
+// ============================================
+// GET VIDEO TOKEN - Join a Daily.co call (no login needed)
+// ============================================
+// Endpoint: GET /api/appointments/:id/video-token
+//
+// Verifies the caller is the doctor or patient on the appointment, ensures a
+// private Daily room exists for it, and returns a room URL + a short-lived
+// meeting token so the user joins directly (doctor = moderator/owner).
+
+const { ensureRoom, createMeetingToken } = require('../utils/daily');
+
+const getVideoToken = async (req, res) => {
+  try {
+    if (!process.env.DAILY_API_KEY || !process.env.DAILY_DOMAIN) {
+      return res.status(500).json({ message: 'Video service is not configured' });
+    }
+
+    const appointment = await Appointment.findById(req.params.id)
+      .populate('doctor', 'name')
+      .populate('patient', 'name');
+
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    const uid = req.user._id.toString();
+    const isDoctor = appointment.doctor._id.toString() === uid;
+    const isPatient = appointment.patient._id.toString() === uid;
+
+    if (!isDoctor && !isPatient) {
+      return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+
+    const roomName = `promedicoz-${appointment._id}`;
+    await ensureRoom(roomName);
+
+    const userName = isDoctor
+      ? `Dr. ${appointment.doctor.name}`
+      : (appointment.patient.name || 'Patient');
+    const startVideoOff = appointment.consultationType === 'phone';
+
+    const token = await createMeetingToken({
+      roomName,
+      userName,
+      isOwner: isDoctor, // doctor is the moderator
+      startVideoOff
+    });
+
+    const roomUrl = `https://${process.env.DAILY_DOMAIN}/${roomName}`;
+    res.json({ roomUrl, token });
+  } catch (error) {
+    console.error('Get video token error:', error.message);
+    res.status(500).json({ message: 'Error starting the call. Please try again.' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
@@ -563,5 +619,6 @@ module.exports = {
   uploadPaymentScreenshot,
   notifyPayment,
   setCallStatus,
-  getIncomingCalls
+  getIncomingCalls,
+  getVideoToken
 };
