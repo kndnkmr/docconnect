@@ -168,6 +168,12 @@ export const appointmentAPI = {
 
   // Notify doctor that patient has paid (patient only)
   notifyPayment: (id) => API.put(`/appointments/${id}/notify-payment`),
+
+  // Call signaling (ringing): mark a call active/inactive
+  setCall: (id, active) => API.put(`/appointments/${id}/call`, { active }),
+
+  // Poll for incoming calls started by the other participant
+  getIncomingCalls: () => API.get('/appointments/incoming-calls'),
 };
 
 // ============================================

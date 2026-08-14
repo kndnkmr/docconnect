@@ -468,6 +468,90 @@ const notifyPayment = async (req, res) => {
   }
 };
 
+// ============================================
+// SET CALL STATUS - Signal that a call is active (ringing)
+// ============================================
+// Endpoint: PUT /api/appointments/:id/call
+// Body: { active: true|false }
+//
+// When a participant joins a video/audio call, this marks the appointment
+// as "call active" so the OTHER participant's dashboard can show an
+// incoming-call banner with a ringtone. Either the doctor or the patient
+// on the appointment may set it.
+
+const setCallStatus = async (req, res) => {
+  try {
+    const { active } = req.body;
+
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    const uid = req.user._id.toString();
+    const isParticipant =
+      appointment.patient.toString() === uid || appointment.doctor.toString() === uid;
+
+    if (!isParticipant) {
+      return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+
+    appointment.callActive = !!active;
+    appointment.callStartedAt = active ? new Date() : null;
+    appointment.callStartedBy = active ? req.user._id : null;
+    await appointment.save({ validateModifiedOnly: true });
+
+    res.json({ message: 'Call status updated', callActive: appointment.callActive });
+  } catch (error) {
+    console.error('Set call status error:', error.message);
+    res.status(500).json({ message: 'Error updating call status' });
+  }
+};
+
+// ============================================
+// GET INCOMING CALLS - Poll for calls started by the other party
+// ============================================
+// Endpoint: GET /api/appointments/incoming-calls
+//
+// Returns calls that are active, were started by the OTHER participant,
+// and started within the last 2 minutes (so stale flags don't ring forever).
+
+const getIncomingCalls = async (req, res) => {
+  try {
+    const uid = req.user._id;
+    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+
+    const calls = await Appointment.find({
+      $or: [{ patient: uid }, { doctor: uid }],
+      callActive: true,
+      callStartedBy: { $ne: uid },
+      callStartedAt: { $gte: twoMinutesAgo }
+    })
+      .populate('doctor', 'name')
+      .populate('patient', 'name')
+      .select('consultationType callStartedAt callStartedBy doctor patient')
+      .limit(5);
+
+    const incomingCalls = calls.map((c) => {
+      const startedByDoctor =
+        c.callStartedBy && c.doctor && c.callStartedBy.toString() === c.doctor._id.toString();
+      const fromName = startedByDoctor
+        ? `Dr. ${c.doctor?.name || 'Doctor'}`
+        : (c.patient?.name || 'Patient');
+      return {
+        appointmentId: c._id,
+        consultationType: c.consultationType,
+        fromName
+      };
+    });
+
+    res.json({ incomingCalls });
+  } catch (error) {
+    console.error('Get incoming calls error:', error.message);
+    res.status(500).json({ message: 'Error fetching incoming calls' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
@@ -477,5 +561,7 @@ module.exports = {
   cancelAppointment,
   markPayment,
   uploadPaymentScreenshot,
-  notifyPayment
+  notifyPayment,
+  setCallStatus,
+  getIncomingCalls
 };

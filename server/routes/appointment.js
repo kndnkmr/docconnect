@@ -25,7 +25,9 @@ const {
   cancelAppointment,
   markPayment,
   uploadPaymentScreenshot,
-  notifyPayment
+  notifyPayment,
+  setCallStatus,
+  getIncomingCalls
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -50,10 +52,19 @@ router.post('/', authorize('patient'), bookAppointment);
 router.get('/my', getMyAppointments);
 // No authorize() here — both roles are allowed
 
+// ---- BOTH: Poll for incoming calls (ringing) ----
+// GET /api/appointments/incoming-calls
+// MUST be defined BEFORE '/:id' so it isn't captured as an appointment id
+router.get('/incoming-calls', getIncomingCalls);
+
 // ---- BOTH: View single appointment ----
 // GET /api/appointments/:id
 // Both can view, but controller checks they're involved in the appointment
 router.get('/:id', getAppointmentById);
+
+// ---- BOTH: Set call active/inactive (ringing signal) ----
+// PUT /api/appointments/:id/call
+router.put('/:id/call', setCallStatus);
 
 // ---- DOCTOR: Update appointment status ----
 // PUT /api/appointments/:id/status

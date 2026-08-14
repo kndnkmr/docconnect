@@ -4,7 +4,7 @@
 // Shows different content based on the user's role.
 // Sub-components are split into separate files for maintainability.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
@@ -41,6 +41,12 @@ function Dashboard() {
   const [receiptImage, setReceiptImage] = useState(null);
   const [unreadMessages, setUnreadMessages] = useState({});
   const [videoCallAppointmentId, setVideoCallAppointmentId] = useState(null);
+
+  // Incoming call ("ringing") state
+  const [incomingCall, setIncomingCall] = useState(null); // { appointmentId, consultationType, fromName }
+  const audioCtxRef = useRef(null);
+  const ringIntervalRef = useRef(null);
+  const inCallRef = useRef(false); // guards against ringing while already in a call
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
@@ -89,6 +95,117 @@ function Dashboard() {
       const response = await messageAPI.getUnreadCount();
       setUnreadMessages(response.data);
     } catch (error) { /* silent */ }
+  };
+
+  // ---- Ringtone (generated with Web Audio API — no asset needed) ----
+  const startRing = () => {
+    try {
+      if (ringIntervalRef.current) return; // already ringing
+      if (!audioCtxRef.current) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtxRef.current = new Ctx();
+      }
+      const ctx = audioCtxRef.current;
+      const beep = () => {
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 800;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      };
+      beep();
+      ringIntervalRef.current = setInterval(beep, 1300);
+      if (navigator.vibrate) navigator.vibrate([500, 300, 500, 300, 500]);
+    } catch (e) { /* audio not available — visual banner still shows */ }
+  };
+
+  const stopRing = () => {
+    if (ringIntervalRef.current) {
+      clearInterval(ringIntervalRef.current);
+      ringIntervalRef.current = null;
+    }
+    if (navigator.vibrate) navigator.vibrate(0);
+  };
+
+  // ---- Poll for incoming calls every 5 seconds ----
+  useEffect(() => {
+    const checkIncomingCalls = async () => {
+      // Don't ring if the user is already in a call
+      if (inCallRef.current) return;
+      try {
+        const res = await appointmentAPI.getIncomingCalls();
+        const call = res.data.incomingCalls?.[0];
+        if (call) {
+          setIncomingCall((prev) => {
+            // Only (re)start ring when a new call appears
+            if (!prev || prev.appointmentId !== call.appointmentId) {
+              startRing();
+              return call;
+            }
+            return prev;
+          });
+        } else {
+          // No active incoming call — clear banner and stop ring
+          setIncomingCall((prev) => {
+            if (prev) stopRing();
+            return null;
+          });
+        }
+      } catch (e) { /* silent */ }
+    };
+
+    checkIncomingCalls();
+    const interval = setInterval(checkIncomingCalls, 5000);
+    return () => {
+      clearInterval(interval);
+      stopRing();
+    };
+  }, []);
+
+  // ---- Start a call: signal the other party (ring), then open the call ----
+  const startCall = async (apt) => {
+    inCallRef.current = true;
+    try {
+      await appointmentAPI.setCall(apt._id, true);
+    } catch (e) { /* still open the call even if signaling fails */ }
+    startCall(apt);
+  };
+
+  // ---- Accept an incoming call ----
+  const acceptIncomingCall = () => {
+    if (!incomingCall) return;
+    stopRing();
+    inCallRef.current = true;
+    setVideoCallAppointmentId(incomingCall.appointmentId + '|' + incomingCall.consultationType);
+    setIncomingCall(null);
+  };
+
+  // ---- Decline / dismiss an incoming call ----
+  const declineIncomingCall = async () => {
+    const call = incomingCall;
+    stopRing();
+    setIncomingCall(null);
+    if (call) {
+      try { await appointmentAPI.setCall(call.appointmentId, false); } catch (e) { /* silent */ }
+    }
+  };
+
+  // ---- Close the call: clear the active flag so ringing stops on both sides ----
+  const handleCloseCall = async () => {
+    const idPart = videoCallAppointmentId ? videoCallAppointmentId.split('|')[0] : null;
+    setVideoCallAppointmentId(null);
+    inCallRef.current = false;
+    if (idPart) {
+      try { await appointmentAPI.setCall(idPart, false); } catch (e) { /* silent */ }
+    }
   };
 
   // ---- Doctor: Update appointment status ----
@@ -389,7 +506,7 @@ function Dashboard() {
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
                         <>
                           {apt.consultationType !== 'in-person' && (
-                            <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                            <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
                           )}
@@ -411,7 +528,7 @@ function Dashboard() {
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
                           {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
-                            <button onClick={() => setVideoCallAppointmentId(apt._id + '|' + apt.consultationType)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                            <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
                           )}
@@ -617,12 +734,37 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Incoming call banner (ringing) */}
+      {incomingCall && !videoCallAppointmentId && (
+        <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+            <div className="text-5xl mb-3 animate-bounce">{incomingCall.consultationType === 'video' ? '📹' : '📞'}</div>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">Incoming {incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Call</h3>
+            <p className="text-gray-600 mb-6">{incomingCall.fromName} is calling you…</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={declineIncomingCall}
+                className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600"
+              >
+                Decline
+              </button>
+              <button
+                onClick={acceptIncomingCall}
+                className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700"
+              >
+                Accept
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Video Call */}
       {videoCallAppointmentId && (
         <VideoCall
           appointmentId={videoCallAppointmentId}
           userName={user?.name}
-          onClose={() => setVideoCallAppointmentId(null)}
+          onClose={handleCloseCall}
         />
       )}
     </div>

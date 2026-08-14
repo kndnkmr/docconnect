@@ -163,6 +163,25 @@ const appointmentSchema = new mongoose.Schema({
     default: false
   },
 
+  // ---- Live call signaling (for in-app "ringing" notification) ----
+  // When one participant joins the call, callActive is set true and the other
+  // participant's dashboard polls and shows an incoming-call banner + ringtone.
+  callActive: {
+    type: Boolean,
+    default: false
+  },
+
+  callStartedAt: {
+    type: Date,
+    default: null
+  },
+
+  callStartedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+
   // ---- Teleconsultation consent (captured at booking, for legal record) ----
   consentGiven: {
     type: Boolean,
