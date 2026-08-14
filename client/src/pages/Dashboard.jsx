@@ -399,8 +399,9 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Gentle nudge: add a profile photo (builds patient trust) */}
-      {isDoctor && !(user?.profilePhoto || profileData.profilePhoto) && (
+      {/* Gentle nudge: add a profile photo (builds patient trust).
+          Hidden on the Edit Profile tab, where the photo field is already shown. */}
+      {isDoctor && activeTab !== 'profile' && !(user?.profilePhoto || profileData.profilePhoto) && (
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="text-2xl">📸</span>
