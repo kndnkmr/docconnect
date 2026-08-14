@@ -318,6 +318,8 @@ const getAnalytics = async (req, res) => {
 // touches values still starting with "data:". Runs on the server where the
 // Cloudinary credentials already live, so no local setup is needed.
 
+const cloudinary = require('cloudinary').v2;
+
 const parseDataUri = (v) => {
   const m = /^data:([^;]+);base64,(.*)$/s.exec(v || '');
   return m ? { mimetype: m[1], buffer: Buffer.from(m[2], 'base64') } : null;
@@ -330,48 +332,71 @@ const migrateBase64Images = async (req, res) => {
       return res.status(400).json({ message: 'Cloudinary is not configured on the server.' });
     }
 
+    // Configure Cloudinary directly so upload errors surface (not swallowed)
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true
+    });
+
+    const directUpload = async (buffer, mimetype, folder) => {
+      const dataUri = `data:${mimetype};base64,${buffer.toString('base64')}`;
+      const result = await cloudinary.uploader.upload(dataUri, { folder, resource_type: 'auto' });
+      return result.secure_url;
+    };
+
     let migrated = 0;
     let failed = 0;
+    const errors = [];
+
+    const tryMigrate = async (getVal, setVal, folder) => {
+      const val = getVal();
+      if (!isBase64(val)) return;
+      const p = parseDataUri(val);
+      if (!p) { failed++; errors.push('unparseable data URI'); return; }
+      try {
+        const url = await directUpload(p.buffer, p.mimetype, folder);
+        setVal(url);
+        migrated++;
+      } catch (e) {
+        failed++;
+        errors.push(e.message || String(e));
+      }
+    };
 
     // Doctors: QR codes + profile photos
     const users = await User.find({ $or: [{ upiQrCode: /^data:/ }, { profilePhoto: /^data:/ }] });
     for (const u of users) {
-      for (const [field, folder] of [['upiQrCode', 'promedicoz/qr'], ['profilePhoto', 'promedicoz/profile']]) {
-        if (isBase64(u[field])) {
-          const p = parseDataUri(u[field]);
-          if (p) {
-            const url = await uploadFile(p.buffer, p.mimetype, folder);
-            if (url && url.startsWith('http')) { u[field] = url; migrated++; } else { failed++; }
-          }
-        }
-      }
+      await tryMigrate(() => u.upiQrCode, (url) => { u.upiQrCode = url; }, 'promedicoz/qr');
+      await tryMigrate(() => u.profilePhoto, (url) => { u.profilePhoto = url; }, 'promedicoz/profile');
       await u.save({ validateBeforeSave: false });
     }
 
     // Appointments: payment screenshots
     const appts = await Appointment.find({ paymentScreenshot: /^data:/ });
     for (const a of appts) {
-      const p = parseDataUri(a.paymentScreenshot);
-      if (p) {
-        const url = await uploadFile(p.buffer, p.mimetype, 'promedicoz/payments');
-        if (url && url.startsWith('http')) { a.paymentScreenshot = url; migrated++; await a.save(); } else { failed++; }
-      }
+      await tryMigrate(() => a.paymentScreenshot, (url) => { a.paymentScreenshot = url; }, 'promedicoz/payments');
+      await a.save();
     }
 
     // Medical reports
     const reports = await MedicalReport.find({ filePath: /^data:/ });
     for (const r of reports) {
-      const p = parseDataUri(r.filePath);
-      if (p) {
-        const url = await uploadFile(p.buffer, p.mimetype, 'promedicoz/reports');
-        if (url && url.startsWith('http')) { r.filePath = url; migrated++; await r.save(); } else { failed++; }
-      }
+      await tryMigrate(() => r.filePath, (url) => { r.filePath = url; }, 'promedicoz/reports');
+      await r.save();
     }
 
-    res.json({ message: 'Image migration complete', migrated, failed });
+    // Return the first couple of error messages so the cause is visible
+    res.json({
+      message: 'Image migration complete',
+      migrated,
+      failed,
+      errors: errors.slice(0, 3)
+    });
   } catch (error) {
     console.error('Migrate images error:', error.message);
-    res.status(500).json({ message: 'Migration failed' });
+    res.status(500).json({ message: 'Migration failed', error: error.message });
   }
 };
 

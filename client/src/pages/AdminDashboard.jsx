@@ -30,7 +30,13 @@ function AdminDashboard() {
     setMigrating(true);
     try {
       const res = await adminAPI.migrateImages();
-      toast.success(`Migrated ${res.data.migrated} image(s)${res.data.failed ? `, ${res.data.failed} failed` : ''}`);
+      const { migrated, failed, errors } = res.data;
+      if (failed && errors && errors.length) {
+        toast.error(`Migrated ${migrated}, ${failed} failed. Reason: ${errors[0]}`, { duration: 8000 });
+        console.error('Migration errors:', errors);
+      } else {
+        toast.success(`Migrated ${migrated} image(s)${failed ? `, ${failed} failed` : ''}`);
+      }
     } catch (e) {
       toast.error(e.response?.data?.message || 'Migration failed');
     } finally {
