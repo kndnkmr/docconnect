@@ -35,7 +35,6 @@ function Dashboard() {
   // Modal state
   const [cancelModal, setCancelModal] = useState({ open: false, id: null });
   const [rateModal, setRateModal] = useState({ open: false, id: null });
-  const [meetingLinkModal, setMeetingLinkModal] = useState({ open: false, id: null });
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
@@ -504,7 +503,7 @@ function Dashboard() {
                       {/* Doctor actions — sequential: Confirm → Mark Paid → Join Call + Mark Complete → Prescription */}
                       {isDoctor && apt.status === 'pending' && (
                         <>
-                          <button onClick={() => setMeetingLinkModal({ open: true, id: apt._id })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Confirm</button>
+                          <button onClick={() => handleStatusUpdate(apt._id, 'confirmed')} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Confirm</button>
                           <button onClick={() => handleStatusUpdate(apt._id, 'cancelled')} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Reject</button>
                         </>
                       )}
@@ -693,16 +692,6 @@ function Dashboard() {
         submitText="Submit Review"
         onSubmit={handleRateDoctor}
         onCancel={() => setRateModal({ open: false, id: null })}
-      />
-
-      <PromptModal
-        open={meetingLinkModal.open}
-        title="Confirm Appointment"
-        description="Add a meeting link for video/phone consultations (leave empty for in-person)."
-        fields={[{ name: 'meetingLink', label: 'Meeting Link (optional)', type: 'text', placeholder: 'https://meet.google.com/...' }]}
-        submitText="Confirm"
-        onSubmit={(values) => { handleStatusUpdate(meetingLinkModal.id, 'confirmed', values.meetingLink); setMeetingLinkModal({ open: false, id: null }); }}
-        onCancel={() => setMeetingLinkModal({ open: false, id: null })}
       />
 
       <PromptModal
