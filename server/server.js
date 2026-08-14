@@ -158,11 +158,17 @@ app.get('/', (req, res) => {
 
 // Health check route
 app.get('/api/health', (req, res) => {
+  const cloudinaryConfigured = !!(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
     // readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+    cloudinary: cloudinaryConfigured ? 'configured' : 'not configured'
   });
 });
 
