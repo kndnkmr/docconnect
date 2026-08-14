@@ -66,10 +66,34 @@ API.interceptors.response.use(
   }
 );
 
-// Helper to get full URL for uploaded files
-const getUploadUrl = (path) => {
+// Helper to get full URL for uploaded files.
+// For Cloudinary images it inserts delivery optimizations so the browser gets a
+// right-sized, modern-format image (much smaller/faster):
+//   f_auto = best format (WebP/AVIF), q_auto = smart quality, w_<n> = resize width
+// Pass { width } to cap the delivered width for a given context (e.g. avatars).
+// PDFs and base64 values are returned untouched (so documents aren't altered).
+const getUploadUrl = (path, opts = {}) => {
   if (!path) return '';
-  if (path.startsWith('data:') || path.startsWith('http')) return path;
+  if (path.startsWith('data:')) return path; // base64 — can't transform
+
+  if (path.startsWith('http')) {
+    const isCloudinaryImage =
+      path.includes('res.cloudinary.com') &&
+      path.includes('/upload/') &&
+      !/\.pdf($|\?)/i.test(path); // never transform PDFs
+
+    if (isCloudinaryImage) {
+      // Don't double-insert if the URL already has a transformation
+      const alreadyOptimized = /\/upload\/[^/]*(f_auto|q_auto|w_\d)/.test(path);
+      if (!alreadyOptimized) {
+        const tx = ['f_auto', 'q_auto'];
+        if (opts.width) tx.push(`w_${opts.width}`);
+        return path.replace('/upload/', `/upload/${tx.join(',')}/`);
+      }
+    }
+    return path;
+  }
+
   const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || '';
   return `${backendUrl}${path}`;
 };

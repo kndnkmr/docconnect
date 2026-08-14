@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doctorAPI } from '../services/api';
+import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 
@@ -234,7 +234,7 @@ function SpecializationPage() {
                 <Link key={doc._id} to={`/doctors/${doc._id}`} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow block">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-xl">
-                      {doc.profilePhoto ? <img src={doc.profilePhoto} alt={doc.name} className="w-12 h-12 rounded-full object-cover" /> : '🧑‍⚕️'}
+                      {doc.profilePhoto ? <img src={getUploadUrl(doc.profilePhoto, { width: 120 })} alt={doc.name} className="w-12 h-12 rounded-full object-cover" /> : '🧑‍⚕️'}
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800">{doc.name}</h3>

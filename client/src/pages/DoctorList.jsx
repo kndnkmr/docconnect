@@ -12,7 +12,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { doctorAPI } from '../services/api';
+import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
@@ -367,7 +367,7 @@ function DoctorCard({ doctor }) {
       <div className="h-48 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
         {doctor.profilePhoto ? (
           <img
-            src={doctor.profilePhoto}
+            src={getUploadUrl(doctor.profilePhoto, { width: 500 })}
             alt={doctor.name}
             className="h-full w-full object-cover"
             // object-cover = fills the space without distortion (crops if needed)

@@ -17,7 +17,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
-import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI } from '../services/api';
+import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI, getUploadUrl } from '../services/api';
 import toast from 'react-hot-toast';
 
 function BookAppointment() {
@@ -211,7 +211,7 @@ function BookAppointment() {
         <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex items-center gap-4">
           <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
             {doctor?.profilePhoto ? (
-              <img src={doctor.profilePhoto} alt={doctor.name} className="w-16 h-16 rounded-full object-cover" />
+              <img src={getUploadUrl(doctor.profilePhoto, { width: 150 })} alt={doctor.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
               <span className="text-2xl">🧑‍⚕️</span>
             )}

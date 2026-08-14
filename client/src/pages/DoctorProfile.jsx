@@ -11,7 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doctorAPI, reviewAPI } from '../services/api';
+import { doctorAPI, reviewAPI, getUploadUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
@@ -103,7 +103,7 @@ function DoctorProfile() {
           <div className="md:w-1/3 h-64 md:h-auto bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
             {doctor.profilePhoto ? (
               <img
-                src={doctor.profilePhoto}
+                src={getUploadUrl(doctor.profilePhoto, { width: 600 })}
                 alt={doctor.name}
                 className="w-full h-full object-cover"
               />
