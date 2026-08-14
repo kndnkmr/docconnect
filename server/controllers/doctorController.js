@@ -168,7 +168,7 @@ const updateDoctorProfile = async (req, res) => {
   try {
     // Validate required fields (skip if this is just a file upload like QR code)
     if (!req.file) {
-      const requiredFields = ['specialization', 'qualification', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
+      const requiredFields = ['specialization', 'qualification', 'medicalRegistrationNo', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
       const missing = requiredFields.filter(f => !req.body[f]);
       if (missing.length > 0) {
         return res.status(400).json({

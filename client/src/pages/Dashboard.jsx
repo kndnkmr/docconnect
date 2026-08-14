@@ -160,6 +160,7 @@ function Dashboard() {
     const requiredFields = [
       { key: 'specialization', label: 'Specialization' },
       { key: 'qualification', label: 'Qualification' },
+      { key: 'medicalRegistrationNo', label: 'Medical Registration No.' },
       { key: 'experience', label: 'Years of Experience' },
       { key: 'consultationFee', label: 'Consultation Fee' },
       { key: 'clinicAddress', label: 'Clinic Address' },
@@ -460,7 +461,7 @@ function Dashboard() {
             {[
               { key: 'specialization', label: 'Specialization *', placeholder: 'e.g., Cardiologist, Dentist' },
               { key: 'qualification', label: 'Qualification *', placeholder: 'e.g., MBBS, MD - Cardiology' },
-              { key: 'medicalRegistrationNo', label: 'Medical Registration No.', placeholder: 'NMC or State Medical Council number' },
+              { key: 'medicalRegistrationNo', label: 'Medical Registration No. *', placeholder: 'NMC or State Medical Council number' },
               { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
               { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
