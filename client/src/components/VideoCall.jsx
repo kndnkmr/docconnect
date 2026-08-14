@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import DailyIframe from '@daily-co/daily-js';
 import { appointmentAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 // Turn a raw error into ONE clear, user-friendly message (no confusing stacking).
 function friendlyError(raw) {
@@ -26,11 +27,24 @@ function friendlyError(raw) {
 // The backend issues a private room URL + join token, so clicking "Join Call"
 // drops the user straight into the call.
 function VideoCall({ appointmentId, onClose }) {
+  const { isDoctor } = useAuth();
   const containerRef = useRef(null);
   const callFrameRef = useRef(null);
   const joinedRef = useRef(false); // becomes true only after we actually join
   const [status, setStatus] = useState('connecting'); // connecting | joined | error
   const [errorMsg, setErrorMsg] = useState('');
+
+  // End Call: the doctor (moderator) ends it for EVERYONE by ejecting the other
+  // participant first; the patient just leaves for themselves.
+  const handleEndCall = async () => {
+    const frame = callFrameRef.current;
+    if (frame && isDoctor) {
+      try {
+        await frame.updateParticipants({ '*': { eject: true } }); // remove the patient
+      } catch (_) { /* ignore — we still close below */ }
+    }
+    onClose();
+  };
 
   // appointmentId is passed as "id|type" (type = video or phone)
   const [aptId, consultationType] = appointmentId.includes('|')
@@ -59,7 +73,7 @@ function VideoCall({ appointmentId, onClose }) {
 
         // 3. Build the Daily call UI inside our container
         const frame = DailyIframe.createFrame(containerRef.current, {
-          showLeaveButton: true,
+          showLeaveButton: false, // use our single header "End Call" instead
           iframeStyle: { width: '100%', height: '100%', border: '0' }
         });
         callFrameRef.current = frame;
@@ -113,10 +127,10 @@ function VideoCall({ appointmentId, onClose }) {
           ProMedicoz {isAudioOnly ? 'Audio' : 'Video'} Consultation
         </span>
         <button
-          onClick={onClose}
+          onClick={handleEndCall}
           className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
         >
-          End Call
+          {isDoctor ? 'End Call for All' : 'Leave Call'}
         </button>
       </div>
 
