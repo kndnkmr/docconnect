@@ -11,7 +11,7 @@ function BottomNav() {
     ? [
         { path: '/', icon: '🏠', label: 'Home' },
         { path: '/doctors', icon: '🔍', label: 'Doctors' },
-        { path: '/dashboard', icon: '📋', label: 'My Appts' },
+        { path: '/dashboard', icon: '📋', label: 'Bookings' },
         { path: '/blog', icon: '📝', label: 'Blog' },
       ]
     : [
@@ -35,7 +35,7 @@ function BottomNav() {
             }`}
           >
             <span className="text-lg">{item.icon}</span>
-            <span className="text-[10px] mt-0.5 font-medium">{item.label}</span>
+            <span className="text-[11px] mt-0.5 font-medium whitespace-nowrap leading-tight">{item.label}</span>
           </Link>
         ))}
       </div>
