@@ -383,6 +383,25 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Gentle nudge: add a profile photo (builds patient trust) */}
+      {isDoctor && !(user?.profilePhoto || profileData.profilePhoto) && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📸</span>
+            <div>
+              <p className="font-semibold text-blue-800">Add a photo to build patient trust</p>
+              <p className="text-sm text-blue-700">Doctors with a clear photo get chosen more often. It only takes a moment.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 whitespace-nowrap"
+          >
+            Add Photo
+          </button>
+        </div>
+      )}
+
       {/* Notification Banner */}
       {isDoctor && appointments.filter(a => a.status === 'pending').length > 0 && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-3">
