@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics, migrateBase64Images } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -30,5 +30,8 @@ router.put('/users/:id/suspension', setUserSuspension);
 
 // GET /api/admin/analytics - Revenue and consultation insights
 router.get('/analytics', getAnalytics);
+
+// POST /api/admin/migrate-images - one-time base64 → Cloudinary migration
+router.post('/migrate-images', migrateBase64Images);
 
 module.exports = router;

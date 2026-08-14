@@ -171,7 +171,7 @@ const getAllDoctors = async (req, res) => {
     if (wantAvailableToday) {
       // Honest "available today": fetch all candidates, compute their next free
       // slot, and keep only those genuinely free TODAY. Paginate in memory.
-      const candidates = await User.find(filter).select('-password').sort({ createdAt: -1 });
+      const candidates = await User.find(filter).select('-password -upiQrCode').sort({ createdAt: -1 });
       const withNA = await attachNextAvailable(candidates);
       const freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday);
       total = freeToday.length;
@@ -179,7 +179,7 @@ const getAllDoctors = async (req, res) => {
     } else {
       // Normal path: DB-level pagination, then attach next-available info.
       const doctors = await User.find(filter)
-        .select('-password')
+        .select('-password -upiQrCode')
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 });

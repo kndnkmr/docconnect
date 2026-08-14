@@ -295,6 +295,9 @@ export const adminAPI = {
 
   // Get analytics (revenue, consultation types, top doctors)
   getAnalytics: () => API.get('/admin/analytics'),
+
+  // One-time: migrate legacy base64 images to Cloudinary
+  migrateImages: () => API.post('/admin/migrate-images'),
 };
 
 // ============================================

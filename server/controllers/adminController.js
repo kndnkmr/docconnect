@@ -7,6 +7,8 @@
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const CallLog = require('../models/CallLog');
+const MedicalReport = require('../models/MedicalReport');
+const { uploadFile } = require('../utils/uploadFile');
 
 // ============================================
 // GET STATS - Dashboard overview numbers
@@ -307,4 +309,70 @@ const getAnalytics = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics };
+// ============================================
+// MIGRATE BASE64 IMAGES → Cloudinary (admin, one-time)
+// ============================================
+// Endpoint: POST /api/admin/migrate-images
+// Moves any legacy base64 images (doctor QR/photo, payment screenshots, reports)
+// to Cloudinary and replaces the stored value with the URL. Idempotent: only
+// touches values still starting with "data:". Runs on the server where the
+// Cloudinary credentials already live, so no local setup is needed.
+
+const parseDataUri = (v) => {
+  const m = /^data:([^;]+);base64,(.*)$/s.exec(v || '');
+  return m ? { mimetype: m[1], buffer: Buffer.from(m[2], 'base64') } : null;
+};
+const isBase64 = (v) => typeof v === 'string' && v.startsWith('data:');
+
+const migrateBase64Images = async (req, res) => {
+  try {
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return res.status(400).json({ message: 'Cloudinary is not configured on the server.' });
+    }
+
+    let migrated = 0;
+    let failed = 0;
+
+    // Doctors: QR codes + profile photos
+    const users = await User.find({ $or: [{ upiQrCode: /^data:/ }, { profilePhoto: /^data:/ }] });
+    for (const u of users) {
+      for (const [field, folder] of [['upiQrCode', 'promedicoz/qr'], ['profilePhoto', 'promedicoz/profile']]) {
+        if (isBase64(u[field])) {
+          const p = parseDataUri(u[field]);
+          if (p) {
+            const url = await uploadFile(p.buffer, p.mimetype, folder);
+            if (url && url.startsWith('http')) { u[field] = url; migrated++; } else { failed++; }
+          }
+        }
+      }
+      await u.save({ validateBeforeSave: false });
+    }
+
+    // Appointments: payment screenshots
+    const appts = await Appointment.find({ paymentScreenshot: /^data:/ });
+    for (const a of appts) {
+      const p = parseDataUri(a.paymentScreenshot);
+      if (p) {
+        const url = await uploadFile(p.buffer, p.mimetype, 'promedicoz/payments');
+        if (url && url.startsWith('http')) { a.paymentScreenshot = url; migrated++; await a.save(); } else { failed++; }
+      }
+    }
+
+    // Medical reports
+    const reports = await MedicalReport.find({ filePath: /^data:/ });
+    for (const r of reports) {
+      const p = parseDataUri(r.filePath);
+      if (p) {
+        const url = await uploadFile(p.buffer, p.mimetype, 'promedicoz/reports');
+        if (url && url.startsWith('http')) { r.filePath = url; migrated++; await r.save(); } else { failed++; }
+      }
+    }
+
+    res.json({ message: 'Image migration complete', migrated, failed });
+  } catch (error) {
+    console.error('Migrate images error:', error.message);
+    res.status(500).json({ message: 'Migration failed' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics, migrateBase64Images };
