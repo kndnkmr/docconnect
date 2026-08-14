@@ -346,11 +346,12 @@ function DoctorCard({ doctor }) {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
     if (na.isToday) {
-      availabilityLabel = `Available today · next at ${startTime}`;
+      // The green "Available Today" pill already conveys today — don't repeat it here.
+      availabilityLabel = `Next available at ${startTime}`;
     } else if (na.date === tomorrowStr) {
-      availabilityLabel = `Next available: Tomorrow, ${startTime}`;
+      availabilityLabel = `Next available tomorrow at ${startTime}`;
     } else {
-      availabilityLabel = `Next available: ${na.dayName}, ${startTime}`;
+      availabilityLabel = `Next available ${na.dayName} at ${startTime}`;
     }
   } else {
     availabilityLabel = 'No upcoming availability';
@@ -389,7 +390,8 @@ function DoctorCard({ doctor }) {
         </div>
 
         {/* Honest availability signal (next free slot) */}
-        <p className={`text-sm mt-1 font-medium ${availableToday ? 'text-green-600' : na ? 'text-gray-600' : 'text-gray-400'}`}>
+        <p className={`text-sm mt-1 font-medium flex items-center gap-1 ${availableToday ? 'text-green-600' : na ? 'text-gray-600' : 'text-gray-400'}`}>
+          {na && <span>🕐</span>}
           {availabilityLabel}
         </p>
 
