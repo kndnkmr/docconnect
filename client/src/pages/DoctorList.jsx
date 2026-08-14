@@ -332,10 +332,23 @@ function DoctorList() {
 function DoctorCard({ doctor }) {
   // { doctor } = destructuring props (the data passed from parent)
 
-  // Check if doctor is available today
+  // "Available Today" must mean there's still time LEFT today — not just that the
+  // doctor has a session on this weekday. Otherwise the badge shows even when all
+  // of today's slots are already in the past, which misleads patients.
+  // We compute the weekday and current time in IST (matches the booking logic).
+  const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const today = dayNames[new Date().getDay()];
-  const availableToday = doctor.availability && doctor.availability.some(slot => slot.day === today);
+  const today = dayNames[istNow.getDay()];
+  const nowMinutes = istNow.getHours() * 60 + istNow.getMinutes();
+  const toMinutes = (t) => {
+    const [h, m] = (t || '').split(':').map(Number);
+    let mins = (h || 0) * 60 + (m || 0);
+    if (mins === 0) mins = 24 * 60; // treat 00:00 end as end-of-day (midnight)
+    return mins;
+  };
+  const availableToday = doctor.availability && doctor.availability.some(
+    (slot) => slot.day === today && toMinutes(slot.endTime) > nowMinutes
+  );
 
   return (
     <Link
