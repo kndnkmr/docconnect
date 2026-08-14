@@ -100,6 +100,12 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Medical Registration Number is mandatory for doctor profiles (existing profiles untouched until next edit)
 - Bilingual consent (English + Hindi) before booking (teleconsultation agreement), enforced on both frontend and backend
 - Consent recorded per appointment (timestamp + IP address) for audit/legal protection
+- Calls restricted to the booked time-slot window (5 min before to 20 min after), enforced frontend + backend, so patients can't call at random times
+- Doctor (moderator) can end the call for everyone; patient can leave for themselves
+- Call tracking: every doctor–patient in-app call is logged (start/end/duration) for analytics
+- Admin call analytics: total calls, total minutes, and per-doctor connection breakdown
+- Admin announcements: broadcast dismissible banners to doctors, patients, or everyone (fee notices, policy updates, etc.)
+- Appointments ordered upcoming-first (earliest) then completed/cancelled (newest first)
 - Backend smoke test suite (Node built-in test runner + supertest) — `npm test` verifies health, 404s, and auth-protected routes with no database needed
 - IP address logging and consent timestamp for audit/legal protection
 - Soft-delete accounts (data retained for legal, user can re-register fresh)
@@ -154,7 +160,9 @@ docconnect/
 │   │   ├── Appointment.js       ← Booking records + payment status
 │   │   ├── Prescription.js     ← Doctor prescriptions (medicines, tests)
 │   │   ├── MedicalReport.js    ← Patient uploaded test reports
-│   │   └── Complaint.js        ← Patient complaints
+│   │   ├── Complaint.js        ← Patient complaints
+│   │   ├── CallLog.js          ← In-app call tracking (start/end/duration)
+│   │   └── Announcement.js     ← Admin broadcast announcements
 │   │
 │   ├── middleware/              ← Code that runs before route handlers
 │   │   ├── auth.js              ← Token verification + role checking
@@ -169,7 +177,8 @@ docconnect/
 │   │   ├── prescriptionController.js ← Doctor writes prescriptions
 │   │   ├── reportController.js  ← Patient uploads test reports
 │   │   ├── complaintController.js ← Patient complaints
-│   │   └── adminController.js   ← Admin: stats, user management
+│   │   ├── adminController.js   ← Admin: stats, user management, analytics
+│   │   └── announcementController.js ← Admin broadcast announcements
 │   │
 │   ├── routes/                  ← URL → controller mapping
 │   │   ├── auth.js
@@ -180,7 +189,8 @@ docconnect/
 │   │   ├── prescription.js
 │   │   ├── report.js
 │   │   ├── complaint.js
-│   │   └── admin.js
+│   │   ├── admin.js
+│   │   └── announcement.js
 │   │
 │   ├── utils/                   ← Helpers
 │   │   ├── sendEmail.js         ← Email notifications (Resend)
@@ -426,7 +436,9 @@ You should see the DocConnect landing page!
 | GET | /api/appointments/my | Protected | View my appointments |
 | GET | /api/appointments/incoming-calls | Protected | Poll for an incoming call (ringing) |
 | GET | /api/appointments/:id | Protected | View single appointment |
-| GET | /api/appointments/:id/video-token | Protected | Get Daily.co room URL + join token |
+| GET | /api/appointments/:id/video-token | Protected | Get Daily.co room URL + join token (slot-window enforced) |
+| POST | /api/appointments/:id/call-log | Protected | Start a call log (doctor connection) |
+| PUT | /api/appointments/:id/call-log/:logId/end | Protected | Finalize a call log with duration |
 | PUT | /api/appointments/:id/status | Doctor only | Confirm/complete appointment |
 | PUT | /api/appointments/:id/call | Protected | Set call active/inactive (ringing signal) |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
@@ -476,8 +488,18 @@ You should see the DocConnect landing page!
 | GET | /api/admin/stats | Admin only | Dashboard stats |
 | GET | /api/admin/users | Admin only | List all users |
 | GET | /api/admin/appointments | Admin only | List all appointments |
+| GET | /api/admin/analytics | Admin only | Revenue + call analytics (calls, minutes, per-doctor) |
 | DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
 | PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
+
+### Announcements
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/announcements | Protected | Active announcements for my role (banner) |
+| GET | /api/announcements/all | Admin only | List all announcements |
+| POST | /api/announcements | Admin only | Create an announcement |
+| PUT | /api/announcements/:id | Admin only | Update / toggle active |
+| DELETE | /api/announcements/:id | Admin only | Delete an announcement |
 
 ---
 
