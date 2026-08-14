@@ -27,7 +27,7 @@ const { sendAppointmentNotification, sendAppointmentConfirmation } = require('..
 
 const bookAppointment = async (req, res) => {
   try {
-    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp } = req.body;
+    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp, consentGiven } = req.body;
 
     // Step 1: Validate required fields
     if (!doctorId || !date || !timeSlot || !reason) {
@@ -40,6 +40,13 @@ const bookAppointment = async (req, res) => {
     if (bookedFor === 'family' && !familyMemberName) {
       return res.status(400).json({
         message: 'Please provide the family member name when booking for a family member'
+      });
+    }
+
+    // Step 1c: Require teleconsultation consent (legal requirement)
+    if (!consentGiven) {
+      return res.status(400).json({
+        message: 'Consent to the teleconsultation terms is required to book an appointment'
       });
     }
 
@@ -99,7 +106,10 @@ const bookAppointment = async (req, res) => {
       bookedFor: bookedFor || 'self',
       familyMemberName: bookedFor === 'family' ? familyMemberName : '',
       isFollowUp: isFollowUp || false,
-      paymentStatus: isFollowUp ? 'paid' : 'pending'  // Follow-ups skip payment
+      paymentStatus: isFollowUp ? 'paid' : 'pending',  // Follow-ups skip payment
+      consentGiven: true,
+      consentAt: new Date(),
+      consentIP: req.headers['x-forwarded-for'] || req.ip || ''
     };
 
     // If this is a repeat booking, link to original appointment

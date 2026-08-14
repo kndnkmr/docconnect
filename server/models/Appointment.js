@@ -161,6 +161,24 @@ const appointmentSchema = new mongoose.Schema({
   isFollowUp: {
     type: Boolean,
     default: false
+  },
+
+  // ---- Teleconsultation consent (captured at booking, for legal record) ----
+  consentGiven: {
+    type: Boolean,
+    default: false
+  },
+
+  consentAt: {
+    type: Date,
+    default: null
+    // Timestamp when the patient accepted the consent terms for THIS booking
+  },
+
+  consentIP: {
+    type: String,
+    default: ''
+    // IP address at the time of consent (audit trail)
   }
 
 }, {

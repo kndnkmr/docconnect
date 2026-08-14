@@ -161,7 +161,8 @@ function BookAppointment() {
         bookedFor,
         familyMemberName: bookedFor === 'family' ? selectedFamilyMember : '',
         originalAppointmentId: repeatData.originalAppointmentId || undefined,
-        isFollowUp: repeatData.isFollowUp || false
+        isFollowUp: repeatData.isFollowUp || false,
+        consentGiven: consentGiven
       });
 
       toast.success('Appointment booked! Waiting for doctor confirmation.');
