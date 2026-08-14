@@ -338,7 +338,7 @@ const forgotPassword = async (req, res) => {
       // SECURITY: Don't reveal whether the email exists or not
       // Always return the same response regardless
       return res.json({
-        message: 'If an account with that email exists, a reset link has been generated. Check the server console.'
+        message: 'If an account with that email exists, a password reset link has been emailed to you.'
       });
     }
 
@@ -360,23 +360,40 @@ const forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
     // validateBeforeSave: false = skip validation (we're not changing password here)
 
-    // Build the reset URL
-    // In production: this would be emailed to the user
-    // For local development: we log it to the console
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    // Build the reset URL (production frontend)
+    const resetUrl = `https://www.promedicoz.in/reset-password/${resetToken}`;
 
-    console.log(`
-    ==========================================
-    PASSWORD RESET LINK (copy this to browser):
-    ==========================================
-    Email: ${user.email}
-    Link:  ${resetUrl}
-    Expires: 30 minutes
-    ==========================================
-    `);
+    // Email the reset link to the user (Resend). Non-blocking failure: we still
+    // respond success and log the link so local/dev without email still works.
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Reset Your ProMedicoz Password',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+              <h2 style="color: #1f2937;">Reset Your Password</h2>
+              <p style="color: #4b5563;">We received a request to reset your ProMedicoz password. Click the button below to set a new one.</p>
+              <a href="${resetUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+                Reset My Password
+              </a>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 30 minutes. If you didn't request this, you can safely ignore this email — your password won't change.</p>
+            </div>
+          </div>
+        `
+      });
+    } catch (mailErr) {
+      console.error('Failed to send reset email:', mailErr.message);
+    }
+
+    // Also log for local/dev troubleshooting
+    console.log(`[password-reset] link for ${user.email}: ${resetUrl} (expires 30 min)`);
 
     res.json({
-      message: 'If an account with that email exists, a reset link has been generated. Check the server console.',
+      message: 'If an account with that email exists, a password reset link has been emailed to you.',
       // In development, also return the token for easy testing:
       ...(process.env.NODE_ENV !== 'production' && { resetToken, resetUrl })
     });
