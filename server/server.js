@@ -66,6 +66,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //
 // "docconnect" at the end is the database NAME. MongoDB creates it automatically.
 
+// Only connect to the database when this file is run directly (node server.js),
+// not when it's imported by the test suite (which tests the app without a DB).
+if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully!');
@@ -80,6 +83,7 @@ mongoose.connect(process.env.MONGODB_URI)
     // The server will still start, but database operations will fail
     // This is intentional — you can still test non-database routes
   });
+}
 
 // ---- Admin bootstrap ----
 // Ensures a dedicated admin account exists on startup, using env variables:
@@ -236,10 +240,12 @@ app.use((err, req, res, next) => {
 });
 
 // ---- STEP 9: Start the server ----
+// Only listen when run directly (node server.js), not when imported by tests.
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`
   ==========================================
   ProMedicoz Server is running!
   ==========================================
@@ -252,4 +258,9 @@ app.listen(PORT, () => {
   Environment: ${process.env.NODE_ENV || 'development'}
   ==========================================
   `);
-});
+  });
+}
+
+// Export the configured Express app so the test suite can exercise it
+// without starting a live server or connecting to the database.
+module.exports = app;
