@@ -180,6 +180,14 @@ function Navbar() {
                   <div className="px-2 py-1 text-sm text-gray-500">
                     Signed in as {user.name} ({user.role})
                   </div>
+                  <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                  {user.role === 'admin' && (
+                    <Link to="/admin" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                      Admin Panel
+                    </Link>
+                  )}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
                   </button>
