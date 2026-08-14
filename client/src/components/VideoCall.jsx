@@ -31,6 +31,8 @@ function VideoCall({ appointmentId, onClose }) {
   const containerRef = useRef(null);
   const callFrameRef = useRef(null);
   const joinedRef = useRef(false); // becomes true only after we actually join
+  const callLogIdRef = useRef(null); // analytics log id (doctor side only)
+  const logEndedRef = useRef(false); // guards against finalizing the log twice
   const [status, setStatus] = useState('connecting'); // connecting | joined | error
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -51,6 +53,14 @@ function VideoCall({ appointmentId, onClose }) {
     ? appointmentId.split('|')
     : [appointmentId, 'video'];
   const isAudioOnly = consultationType === 'phone';
+
+  // Finalize the analytics call log once (only the doctor has a logId).
+  const finalizeCallLog = () => {
+    if (callLogIdRef.current && !logEndedRef.current) {
+      logEndedRef.current = true;
+      appointmentAPI.endCallLog(aptId, callLogIdRef.current).catch(() => {});
+    }
+  };
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -82,11 +92,16 @@ function VideoCall({ appointmentId, onClose }) {
         // (Daily can emit 'left-meeting' on a failed join — we don't want to
         // silently close in that case; we show an error instead.)
         frame.on('left-meeting', () => {
+          finalizeCallLog();
           if (joinedRef.current) onClose();
         });
         frame.on('joined-meeting', () => {
           joinedRef.current = true;
           if (!cancelled) setStatus('joined');
+          // Log the connection (backend returns a logId only for the doctor)
+          appointmentAPI.startCallLog(aptId)
+            .then((r) => { callLogIdRef.current = r.data.logId; })
+            .catch(() => {});
         });
         frame.on('error', (ev) => {
           console.error('Daily call error:', ev);
@@ -112,6 +127,7 @@ function VideoCall({ appointmentId, onClose }) {
     return () => {
       cancelled = true;
       document.body.style.overflow = '';
+      finalizeCallLog();
       if (callFrameRef.current) {
         try { callFrameRef.current.destroy(); } catch (_) { /* ignore */ }
         callFrameRef.current = null;

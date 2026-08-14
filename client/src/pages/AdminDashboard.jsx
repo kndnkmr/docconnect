@@ -417,6 +417,55 @@ function AdminDashboard() {
             </div>
           </div>
 
+          {/* In-app call stats */}
+          {analytics.calls && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                <div className="text-3xl font-bold text-indigo-600">{analytics.calls.totalCalls}</div>
+                <div className="text-gray-600 mt-1">In-App Calls</div>
+              </div>
+              <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                <div className="text-3xl font-bold text-teal-600">{analytics.calls.totalCallMinutes}</div>
+                <div className="text-gray-600 mt-1">Total Call Minutes</div>
+              </div>
+              <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                <div className="text-3xl font-bold text-cyan-600">
+                  {analytics.calls.totalCalls > 0 ? Math.round(analytics.calls.totalCallMinutes / analytics.calls.totalCalls) : 0}
+                </div>
+                <div className="text-gray-600 mt-1">Avg Minutes / Call</div>
+              </div>
+            </div>
+          )}
+
+          {/* Calls by doctor */}
+          {analytics.calls && analytics.calls.byDoctor && analytics.calls.byDoctor.length > 0 && (
+            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Doctor Connections (In-App Calls)</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Doctor</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Specialization</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Calls</th>
+                      <th className="px-4 py-3 text-sm font-medium text-gray-600">Minutes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {analytics.calls.byDoctor.map((doc, idx) => (
+                      <tr key={idx} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-800">{doc.doctorName}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{doc.specialization || '-'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{doc.calls}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-indigo-600">{doc.minutes}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* Consultation Type Breakdown */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white rounded-xl shadow-md p-6">

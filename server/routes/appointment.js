@@ -28,7 +28,9 @@ const {
   notifyPayment,
   setCallStatus,
   getIncomingCalls,
-  getVideoToken
+  getVideoToken,
+  startCallLog,
+  endCallLog
 } = require('../controllers/appointmentController');
 
 // Import middleware
@@ -70,6 +72,12 @@ router.put('/:id/call', setCallStatus);
 // ---- BOTH: Get a Daily.co room URL + join token ----
 // GET /api/appointments/:id/video-token
 router.get('/:id/video-token', getVideoToken);
+
+// ---- Call logging (analytics): start on join, end on leave ----
+// POST /api/appointments/:id/call-log        → start (doctor only creates a log)
+// PUT  /api/appointments/:id/call-log/:logId/end → finalize with duration
+router.post('/:id/call-log', startCallLog);
+router.put('/:id/call-log/:logId/end', endCallLog);
 
 // ---- DOCTOR: Update appointment status ----
 // PUT /api/appointments/:id/status

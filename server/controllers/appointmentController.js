@@ -562,6 +562,7 @@ const getIncomingCalls = async (req, res) => {
 // meeting token so the user joins directly (doctor = moderator/owner).
 
 const { ensureRoom, createMeetingToken } = require('../utils/daily');
+const CallLog = require('../models/CallLog');
 
 // ---- Time-slot window helpers (IST) ----
 // The call is only allowed during the booked slot (+ a small grace window),
@@ -662,6 +663,82 @@ const getVideoToken = async (req, res) => {
   }
 };
 
+// ============================================
+// START CALL LOG - Record that the doctor joined a call
+// ============================================
+// Endpoint: POST /api/appointments/:id/call-log
+// Only logs when the requester is the DOCTOR on the appointment, so calls
+// aren't double-counted when the patient also joins. Returns { logId }.
+
+const startCallLog = async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    const uid = req.user._id.toString();
+    const isDoctor = appointment.doctor.toString() === uid;
+    const isPatient = appointment.patient.toString() === uid;
+    if (!isDoctor && !isPatient) {
+      return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+
+    // Only the doctor's join creates a log (avoids double counting).
+    if (!isDoctor) {
+      return res.json({ logId: null });
+    }
+
+    const log = await CallLog.create({
+      appointment: appointment._id,
+      doctor: appointment.doctor,
+      patient: appointment.patient,
+      consultationType: appointment.consultationType,
+      startedAt: new Date()
+    });
+
+    res.json({ logId: log._id });
+  } catch (error) {
+    console.error('Start call log error:', error.message);
+    res.status(500).json({ message: 'Error logging call' });
+  }
+};
+
+// ============================================
+// END CALL LOG - Finalize a call log with duration
+// ============================================
+// Endpoint: PUT /api/appointments/:id/call-log/:logId/end
+
+const endCallLog = async (req, res) => {
+  try {
+    const log = await CallLog.findById(req.params.logId);
+    if (!log) {
+      return res.status(404).json({ message: 'Call log not found' });
+    }
+
+    // Only the doctor who owns the log can finalize it
+    if (log.doctor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    // Ignore if already ended (avoid overwriting)
+    if (log.endedAt) {
+      return res.json({ message: 'Already ended', durationSeconds: log.durationSeconds });
+    }
+
+    const endedAt = new Date();
+    const durationSeconds = Math.max(0, Math.round((endedAt - log.startedAt) / 1000));
+    log.endedAt = endedAt;
+    log.durationSeconds = durationSeconds;
+    await log.save();
+
+    res.json({ message: 'Call log finalized', durationSeconds });
+  } catch (error) {
+    console.error('End call log error:', error.message);
+    res.status(500).json({ message: 'Error finalizing call log' });
+  }
+};
+
 // ---- Export all controller functions ----
 module.exports = {
   bookAppointment,
@@ -674,5 +751,7 @@ module.exports = {
   notifyPayment,
   setCallStatus,
   getIncomingCalls,
-  getVideoToken
+  getVideoToken,
+  startCallLog,
+  endCallLog
 };

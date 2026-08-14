@@ -177,6 +177,10 @@ export const appointmentAPI = {
 
   // Get a Daily.co room URL + join token for a call
   getVideoToken: (id) => API.get(`/appointments/${id}/video-token`),
+
+  // Call logging (analytics): start on join, end on leave
+  startCallLog: (id) => API.post(`/appointments/${id}/call-log`),
+  endCallLog: (id, logId) => API.put(`/appointments/${id}/call-log/${logId}/end`),
 };
 
 // ============================================

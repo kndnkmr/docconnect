@@ -6,6 +6,7 @@
 
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
+const CallLog = require('../models/CallLog');
 
 // ============================================
 // GET STATS - Dashboard overview numbers
@@ -266,6 +267,24 @@ const getAnalytics = async (req, res) => {
       .limit(10)
       .select('doctor patient amountCollected paidAt date timeSlot consultationType');
 
+    // In-app call stats (only completed logs with a duration)
+    const callTotals = await CallLog.aggregate([
+      { $match: { endedAt: { $ne: null } } },
+      { $group: { _id: null, totalCalls: { $sum: 1 }, totalSeconds: { $sum: '$durationSeconds' } } }
+    ]);
+    const totalCalls = callTotals[0]?.totalCalls || 0;
+    const totalCallMinutes = Math.round((callTotals[0]?.totalSeconds || 0) / 60);
+
+    // Calls + minutes per doctor
+    const callsByDoctor = await CallLog.aggregate([
+      { $match: { endedAt: { $ne: null } } },
+      { $group: { _id: '$doctor', calls: { $sum: 1 }, seconds: { $sum: '$durationSeconds' } } },
+      { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'doctorInfo' } },
+      { $unwind: '$doctorInfo' },
+      { $project: { doctorName: '$doctorInfo.name', specialization: '$doctorInfo.specialization', calls: 1, minutes: { $round: [{ $divide: ['$seconds', 60] }, 0] } } },
+      { $sort: { calls: -1 } }
+    ]);
+
     res.json({
       revenue: {
         total: totalRevenue,
@@ -274,7 +293,12 @@ const getAnalytics = async (req, res) => {
       },
       consultationTypes,
       topDoctors,
-      recentPayments
+      recentPayments,
+      calls: {
+        totalCalls,
+        totalCallMinutes,
+        byDoctor: callsByDoctor
+      }
     });
 
   } catch (error) {
