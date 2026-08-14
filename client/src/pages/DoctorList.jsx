@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI } from '../services/api';
 import SEO from '../components/SEO';
+import InitialsAvatar from '../components/InitialsAvatar';
 import toast from 'react-hot-toast';
 
 function DoctorList() {
@@ -373,8 +374,8 @@ function DoctorCard({ doctor }) {
             // object-cover = fills the space without distortion (crops if needed)
           />
         ) : (
-          // Default avatar if no photo
-          <span className="text-6xl">👨‍⚕️</span>
+          // Gender-neutral initials avatar when no photo
+          <InitialsAvatar name={doctor.name} className="w-24 h-24" textClass="text-3xl" />
         )}
       </div>
 

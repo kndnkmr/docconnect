@@ -15,6 +15,7 @@ import { doctorAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
+import InitialsAvatar from '../components/InitialsAvatar';
 import toast from 'react-hot-toast';
 
 function DoctorProfile() {
@@ -108,7 +109,7 @@ function DoctorProfile() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-8xl">👨‍⚕️</span>
+              <InitialsAvatar name={doctor.name} className="w-40 h-40" textClass="text-5xl" />
             )}
           </div>
 
