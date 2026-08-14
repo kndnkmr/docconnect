@@ -77,6 +77,36 @@ function computeNextAvailable(doctor, bookedByDate) {
   return null;
 }
 
+// Attach `nextAvailable` to a set of doctor docs. Runs ONE booked-appointments
+// query for all of them (efficient), then computes each doctor's next free slot.
+// Returns plain objects (not Mongoose docs).
+async function attachNextAvailable(docs) {
+  const docIds = docs.map((d) => d._id);
+  const bookedByDoctor = {};
+  if (docIds.length > 0) {
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const appts = await Appointment.find({
+      doctor: { $in: docIds },
+      status: { $nin: ['cancelled'] },
+      date: { $gte: new Date(todayIST) }
+    }).select('doctor date timeSlot');
+
+    for (const a of appts) {
+      const dId = a.doctor.toString();
+      const dStr = new Date(a.date).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+      bookedByDoctor[dId] = bookedByDoctor[dId] || {};
+      bookedByDoctor[dId][dStr] = bookedByDoctor[dId][dStr] || new Set();
+      bookedByDoctor[dId][dStr].add(a.timeSlot);
+    }
+  }
+
+  return docs.map((d) => {
+    const obj = d.toObject();
+    obj.nextAvailable = computeNextAvailable(obj, bookedByDoctor[d._id.toString()]);
+    return obj;
+  });
+}
+
 // ============================================
 // GET ALL DOCTORS - Public (anyone can browse)
 // ============================================
@@ -119,67 +149,42 @@ const getAllDoctors = async (req, res) => {
       filter.consultationModes = req.query.consultationMode;
     }
 
-    // Filter by "available today"
-    if (req.query.availableToday === 'true') {
-      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const today = dayNames[new Date().getDay()];
+    const wantAvailableToday = req.query.availableToday === 'true';
+
+    // As a cheap pre-filter for "available today", narrow to doctors who have a
+    // session on today's weekday (in IST). We still verify a REAL free slot below.
+    if (wantAvailableToday) {
+      const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      const today = _dayNames[istNow.getDay()];
       filter['availability.day'] = today;
     }
 
     // ---- Pagination ----
-    // We don't want to return ALL doctors at once (could be thousands!)
-    // Instead, we return "pages" of results (like Google search results)
     const page = parseInt(req.query.page) || 1;
-    // parseInt converts string "2" to number 2. Default to page 1.
-
     const limit = parseInt(req.query.limit) || 10;
-    // How many doctors per page. Default 10.
-
     const skip = (page - 1) * limit;
-    // Page 1: skip 0 (show items 1-10)
-    // Page 2: skip 10 (show items 11-20)
-    // Page 3: skip 20 (show items 21-30)
 
-    // ---- Query the database ----
-    const doctors = await User.find(filter)
-      .select('-password')
-      // ^ Exclude passwords from results (security!)
-      .skip(skip)
-      // ^ Skip this many results (for pagination)
-      .limit(limit)
-      // ^ Only return this many results
-      .sort({ createdAt: -1 });
-      // ^ Sort by newest first (-1 = descending order)
+    let doctorsWithAvailability;
+    let total;
 
-    // Get total count (for frontend to know how many pages exist)
-    const total = await User.countDocuments(filter);
-
-    // ---- Compute each doctor's next available slot ----
-    // One booked-appointments query for all doctors on this page (efficient).
-    const docIds = doctors.map((d) => d._id);
-    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
-    const bookedByDoctor = {};
-    if (docIds.length > 0) {
-      const appts = await Appointment.find({
-        doctor: { $in: docIds },
-        status: { $nin: ['cancelled'] },
-        date: { $gte: new Date(todayIST) }
-      }).select('doctor date timeSlot');
-
-      for (const a of appts) {
-        const dId = a.doctor.toString();
-        const dStr = new Date(a.date).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
-        bookedByDoctor[dId] = bookedByDoctor[dId] || {};
-        bookedByDoctor[dId][dStr] = bookedByDoctor[dId][dStr] || new Set();
-        bookedByDoctor[dId][dStr].add(a.timeSlot);
-      }
+    if (wantAvailableToday) {
+      // Honest "available today": fetch all candidates, compute their next free
+      // slot, and keep only those genuinely free TODAY. Paginate in memory.
+      const candidates = await User.find(filter).select('-password').sort({ createdAt: -1 });
+      const withNA = await attachNextAvailable(candidates);
+      const freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday);
+      total = freeToday.length;
+      doctorsWithAvailability = freeToday.slice(skip, skip + limit);
+    } else {
+      // Normal path: DB-level pagination, then attach next-available info.
+      const doctors = await User.find(filter)
+        .select('-password')
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+      total = await User.countDocuments(filter);
+      doctorsWithAvailability = await attachNextAvailable(doctors);
     }
-
-    const doctorsWithAvailability = doctors.map((d) => {
-      const obj = d.toObject();
-      obj.nextAvailable = computeNextAvailable(obj, bookedByDoctor[d._id.toString()]);
-      return obj;
-    });
 
     // ---- Send response ----
     res.json({
@@ -187,7 +192,6 @@ const getAllDoctors = async (req, res) => {
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-        // Math.ceil rounds UP: 23 doctors / 10 per page = 2.3 → 3 pages
         totalDoctors: total,
         hasNextPage: page * limit < total,
         hasPrevPage: page > 1
