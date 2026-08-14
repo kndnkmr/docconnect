@@ -13,6 +13,7 @@
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const { formatIndianPhone } = require('../utils/formatPhone');
+const { uploadFile } = require('../utils/uploadFile');
 
 // ============================================
 // Next-available-slot helpers (all in IST)
@@ -306,14 +307,19 @@ const updateDoctorProfile = async (req, res) => {
     });
     // This prevents someone from sending { role: "admin" } and changing their role!
 
-    // If a file was uploaded, convert to base64 and store in MongoDB
+    // If a file was uploaded, store it (Cloudinary URL, or base64 fallback)
     if (req.file) {
       try {
-        const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-        if (req.body.fieldName === 'upiQrCode') {
-          updates.upiQrCode = base64Image;
+        const isQr = req.body.fieldName === 'upiQrCode';
+        const imageUrl = await uploadFile(
+          req.file.buffer,
+          req.file.mimetype,
+          isQr ? 'promedicoz/qr' : 'promedicoz/profile'
+        );
+        if (isQr) {
+          updates.upiQrCode = imageUrl;
         } else {
-          updates.profilePhoto = base64Image;
+          updates.profilePhoto = imageUrl;
         }
       } catch (fileErr) {
         console.error('File processing error:', fileErr.message, 'file keys:', Object.keys(req.file));

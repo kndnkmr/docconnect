@@ -3,6 +3,7 @@
 // ============================================
 
 const MedicalReport = require('../models/MedicalReport');
+const { uploadFile } = require('../utils/uploadFile');
 
 // ============================================
 // UPLOAD REPORT - Patient uploads test report
@@ -26,8 +27,8 @@ const uploadReport = async (req, res) => {
       });
     }
 
-    // Convert file to base64 for permanent storage in MongoDB
-    const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    // Store the report file (Cloudinary URL, or base64 fallback)
+    const fileUrl = await uploadFile(req.file.buffer, req.file.mimetype, 'promedicoz/reports');
 
     const report = await MedicalReport.create({
       patient: req.user._id,
@@ -36,7 +37,7 @@ const uploadReport = async (req, res) => {
       prescription: prescriptionId || null,
       title,
       description: description || '',
-      filePath: base64File
+      filePath: fileUrl
     });
 
     res.status(201).json({
@@ -139,8 +140,7 @@ const updateReport = async (req, res) => {
 
     // Replace file if new one uploaded
     if (req.file) {
-      const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-      report.filePath = base64File;
+      report.filePath = await uploadFile(req.file.buffer, req.file.mimetype, 'promedicoz/reports');
       // Reset review status since file changed
       report.isReviewed = false;
       report.doctorComment = '';

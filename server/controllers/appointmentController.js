@@ -460,8 +460,12 @@ const uploadPaymentScreenshot = async (req, res) => {
     }
     if (!req.file) return res.status(400).json({ message: 'Please upload a screenshot' });
 
-    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-    appointment.paymentScreenshot = base64Image;
+    // Store screenshot (Cloudinary URL, or base64 fallback if Cloudinary not set)
+    appointment.paymentScreenshot = await uploadFile(
+      req.file.buffer,
+      req.file.mimetype,
+      'promedicoz/payments'
+    );
     await appointment.save();
 
     res.json({ message: 'Payment screenshot uploaded', paymentScreenshot: appointment.paymentScreenshot });
@@ -586,6 +590,7 @@ const getIncomingCalls = async (req, res) => {
 // meeting token so the user joins directly (doctor = moderator/owner).
 
 const { ensureRoom, createMeetingToken } = require('../utils/daily');
+const { uploadFile } = require('../utils/uploadFile');
 const CallLog = require('../models/CallLog');
 
 // ---- Time-slot window helpers (IST) ----
