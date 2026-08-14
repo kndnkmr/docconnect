@@ -6,6 +6,7 @@ function DoctorAvailability() {
   const [schedule, setSchedule] = useState([]);
   const [slotDuration, setSlotDuration] = useState(30);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
@@ -31,6 +32,23 @@ function DoctorAvailability() {
   const selectWeekdays = () => setSelectedDays(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
   const clearDays = () => setSelectedDays([]);
 
+  // Persist the given schedule + duration to the backend immediately (auto-save).
+  // On failure, revert the on-screen schedule so it stays in sync with the server.
+  const persist = async (nextSchedule, nextDuration, successMsg) => {
+    const previous = schedule;
+    setSchedule(nextSchedule);
+    setSaving(true);
+    try {
+      await availabilityAPI.set({ availability: nextSchedule, slotDuration: nextDuration });
+      if (successMsg) toast.success(successMsg);
+    } catch (error) {
+      setSchedule(previous); // revert so UI matches what's actually saved
+      toast.error(error.response?.data?.message || 'Failed to save — please try again');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleAddSlots = () => {
     if (selectedDays.length === 0) { toast.error('Please select at least one day'); return; }
     // Treat an end time of "00:00" (12 AM) as end-of-day (midnight), so 23:00 -> 00:00 is valid.
@@ -44,20 +62,21 @@ function DoctorAvailability() {
       !schedule.some(existing => existing.day === newSlot.day && existing.startTime === newSlot.startTime && existing.endTime === newSlot.endTime)
     );
     if (filteredNewSlots.length === 0) { toast.error('These slots already exist in your schedule'); return; }
-    setSchedule(prev => [...prev, ...filteredNewSlots]);
-    toast.success(`Added ${filteredNewSlots.length} slot(s) to schedule`);
+    // Auto-save: add AND persist in one action, so nothing is lost.
+    persist([...schedule, ...filteredNewSlots], slotDuration, `Added & saved ${filteredNewSlots.length} slot(s)`);
   };
 
-  const handleRemoveSlot = (index) => setSchedule(prev => prev.filter((_, i) => i !== index));
-  const handleRemoveDay = (day) => { setSchedule(prev => prev.filter(slot => slot.day !== day)); toast.success(`Removed all ${day} slots`); };
+  const handleRemoveSlot = (index) => {
+    persist(schedule.filter((_, i) => i !== index), slotDuration, 'Slot removed');
+  };
+  const handleRemoveDay = (day) => {
+    persist(schedule.filter(slot => slot.day !== day), slotDuration, `Removed all ${day} slots`);
+  };
 
-  const handleSave = async () => {
-    try {
-      await availabilityAPI.set({ availability: schedule, slotDuration });
-      toast.success('Availability saved!');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to save availability');
-    }
+  const handleDurationChange = (value) => {
+    setSlotDuration(value);
+    // Persist the new duration with the existing schedule
+    persist(schedule, value, 'Appointment duration updated');
   };
 
   const groupedSchedule = days.reduce((acc, day) => {
@@ -74,7 +93,7 @@ function DoctorAvailability() {
 
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Appointment Duration (minutes)</label>
-        <select value={slotDuration} onChange={(e) => setSlotDuration(Number(e.target.value))} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
+        <select value={slotDuration} onChange={(e) => handleDurationChange(Number(e.target.value))} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
           <option value={15}>15 minutes</option>
           <option value={30}>30 minutes</option>
           <option value={45}>45 minutes</option>
@@ -146,9 +165,13 @@ function DoctorAvailability() {
         )}
       </div>
 
-      <button onClick={handleSave} className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
-        Save Availability
-      </button>
+      <div className="flex items-center gap-2 text-sm">
+        {saving ? (
+          <span className="text-gray-500">Saving…</span>
+        ) : (
+          <span className="text-green-600 font-medium">✓ Your schedule is saved automatically</span>
+        )}
+      </div>
     </div>
   );
 }
