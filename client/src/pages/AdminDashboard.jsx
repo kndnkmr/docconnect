@@ -23,26 +23,7 @@ function AdminDashboard() {
   const [announcements, setAnnouncements] = useState([]);
   const [announcementForm, setAnnouncementForm] = useState({ title: '', message: '', audience: 'doctors' });
 
-  // Maintenance
-  const [migrating, setMigrating] = useState(false);
-  const handleMigrateImages = async () => {
-    if (!window.confirm('Move any legacy base64 images to Cloudinary? This is safe and one-time — it speeds up profile loading.')) return;
-    setMigrating(true);
-    try {
-      const res = await adminAPI.migrateImages();
-      const { migrated, failed, errors } = res.data;
-      if (failed && errors && errors.length) {
-        toast.error(`Migrated ${migrated}, ${failed} failed. Reason: ${errors[0]}`, { duration: 8000 });
-        console.error('Migration errors:', errors);
-      } else {
-        toast.success(`Migrated ${migrated} image(s)${failed ? `, ${failed} failed` : ''}`);
-      }
-    } catch (e) {
-      toast.error(e.response?.data?.message || 'Migration failed');
-    } finally {
-      setMigrating(false);
-    }
-  };
+
 
   // Fetch stats on load
   useEffect(() => {
@@ -304,18 +285,6 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {/* Maintenance */}
-          <div className="bg-white rounded-xl shadow-md p-6 mt-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Maintenance</h3>
-            <p className="text-sm text-gray-600 mb-4">Move any legacy images that are still stored in the database over to Cloudinary. This speeds up doctor profile loading. Safe to run anytime.</p>
-            <button
-              onClick={handleMigrateImages}
-              disabled={migrating}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
-            >
-              {migrating ? 'Migrating…' : 'Migrate legacy images to Cloudinary'}
-            </button>
-          </div>
         </div>
       )}
 
