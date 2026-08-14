@@ -26,8 +26,8 @@ function ChatBox({ appointmentId, onClose }) {
     fetchMessages();
     // Prevent body scroll when chat is open
     document.body.style.overflow = 'hidden';
-    // Poll for new messages every 10 seconds
-    const interval = setInterval(fetchMessages, 10000);
+    // Poll for new messages every 3 seconds (snappier delivery of the other person's replies)
+    const interval = setInterval(fetchMessages, 3000);
     return () => { clearInterval(interval); document.body.style.overflow = ''; };
   }, [appointmentId]);
 
@@ -37,14 +37,30 @@ function ChatBox({ appointmentId, onClose }) {
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!text.trim()) return;
+    const trimmed = text.trim();
+    if (!trimmed) return;
 
+    // Optimistic: show the message instantly with a temporary id
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = {
+      _id: tempId,
+      sender: user?._id || user?.id,
+      text: trimmed,
+      createdAt: new Date().toISOString(),
+      pending: true
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+    setText('');
     setSending(true);
+
     try {
-      await messageAPI.send(appointmentId, text.trim());
-      setText('');
+      await messageAPI.send(appointmentId, trimmed);
+      // Reconcile with the server (replaces the temp message with the real one)
       fetchMessages();
     } catch (error) {
+      // Roll back the optimistic message on failure and restore the text
+      setMessages((prev) => prev.filter((m) => m._id !== tempId));
+      setText(trimmed);
       toast.error(error.response?.data?.message || 'Failed to send message');
     } finally {
       setSending(false);
@@ -81,7 +97,7 @@ function ChatBox({ appointmentId, onClose }) {
                   <div className={`max-w-[75%] rounded-lg px-3 py-2 ${isMine ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
                     <p className="text-sm">{msg.text}</p>
                     <p className={`text-xs mt-1 ${isMine ? 'text-primary-200' : 'text-gray-400'}`}>
-                      {formatTime(msg.createdAt)}
+                      {msg.pending ? 'Sending…' : formatTime(msg.createdAt)}
                     </p>
                   </div>
                 </div>
