@@ -69,6 +69,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully!');
+    // Promote the configured admin email to admin role (one-time bootstrap).
+    // Set ADMIN_EMAIL in environment variables. Safe to run on every startup:
+    // it only promotes an existing user, and only if not already an admin.
+    ensureAdmin();
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
@@ -76,6 +80,38 @@ mongoose.connect(process.env.MONGODB_URI)
     // The server will still start, but database operations will fail
     // This is intentional — you can still test non-database routes
   });
+
+// ---- Admin bootstrap ----
+// Promotes the account matching ADMIN_EMAIL to the "admin" role on startup.
+// This removes the need to edit the database manually to create the first admin.
+// The user must have already registered normally with this email.
+async function ensureAdmin() {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) return; // Nothing configured, skip silently
+
+    const User = require('./models/User');
+    const normalizedEmail = adminEmail.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      console.log(`[admin-bootstrap] No user found for ADMIN_EMAIL (${normalizedEmail}). Register that account first, then restart.`);
+      return;
+    }
+
+    if (user.role === 'admin') {
+      console.log(`[admin-bootstrap] ${normalizedEmail} is already an admin.`);
+      return;
+    }
+
+    user.role = 'admin';
+    await user.save({ validateModifiedOnly: true });
+    console.log(`[admin-bootstrap] Promoted ${normalizedEmail} to admin.`);
+  } catch (error) {
+    console.error('[admin-bootstrap] Error while ensuring admin:', error.message);
+  }
+}
 
 // ---- STEP 6: Define routes ----
 
