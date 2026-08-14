@@ -66,6 +66,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Paginated appointment history in Dashboard (Previous/Next navigation)
 - Modular Dashboard architecture: each tab is a separate component for maintainability
 - PWA support: installable on phone, offline caching, custom app icon
+- Auto-update PWA: service worker serves HTML network-first and auto-refreshes to the latest version on each deploy (no manual cache clearing needed), with an "Updating to the latest version…" toast
 - SEO optimized: unique page titles, meta descriptions, Open Graph tags per page
 - Structured data (Schema.org): MedicalBusiness, Physician, FAQPage schemas
 - 10 dedicated specialization landing pages with FAQs (targets long-tail keywords)
