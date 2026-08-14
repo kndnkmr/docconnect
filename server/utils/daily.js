@@ -20,15 +20,26 @@ const authHeaders = () => ({
 });
 
 // Ensure a room exists for the given name. Returns the room object.
-// Idempotent: if it already exists, we reuse it.
+// Idempotent: if it already exists (and is configured the way we want), we reuse it.
 async function ensureRoom(roomName) {
   // 1. Does the room already exist?
   const existing = await fetch(`${DAILY_API}/rooms/${roomName}`, { headers: authHeaders() });
   if (existing.ok) {
-    return await existing.json();
+    const room = await existing.json();
+    // If the room already has the pre-join (device check) UI enabled, reuse it.
+    if (room && room.config && room.config.enable_prejoin_ui) {
+      return room;
+    }
+    // Otherwise it's an older room created without pre-join — delete it so we can
+    // recreate it with the correct settings (safe: it has no active participants
+    // since those calls were failing).
+    await fetch(`${DAILY_API}/rooms/${roomName}`, {
+      method: 'DELETE',
+      headers: authHeaders()
+    }).catch(() => { /* ignore */ });
   }
 
-  // 2. Create it — private, auto-expire in 6 hours from now.
+  // 2. Create it — private, with the pre-join device-check screen, auto-expire in 6h.
   const exp = Math.floor(Date.now() / 1000) + 6 * 60 * 60;
   const createRes = await fetch(`${DAILY_API}/rooms`, {
     method: 'POST',
@@ -38,7 +49,7 @@ async function ensureRoom(roomName) {
       privacy: 'private', // requires a meeting token to join
       properties: {
         exp,
-        enable_prejoin_ui: false,
+        enable_prejoin_ui: true, // device-check screen: grant camera/mic + preview, then Join
         enable_chat: false,
         enable_screenshare: true
       }
