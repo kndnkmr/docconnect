@@ -90,7 +90,10 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - UPI QR code payment — doctor uploads QR, patient scans and pays
 - "I Have Paid" quick confirmation + optional receipt upload
 - Image/file storage on Cloudinary (QR codes, payment screenshots, medical reports, profile photos) — keeps the database small; automatic base64 fallback if Cloudinary isn't configured, so existing data keeps working
-- One-time migration script (`server/scripts/migrateImagesToCloudinary.js`) to move any legacy base64 images to Cloudinary
+- Optimized image delivery via Cloudinary (f_auto format, q_auto quality, per-context resize) — fast loads, low bandwidth
+- Uploads accept JPEG/PNG/GIF/WebP/HEIC (iPhone photos) + PDF, up to 10MB, with clear error messages; HEIC is auto-converted to a web-friendly format on delivery
+- Doctors can upload a profile photo (one-click "Add Photo" nudge + Edit Profile field); gender-neutral doctor emoji fallback when no photo
+- One-time migration script (`server/scripts/migrateImagesToCloudinary.js`) or admin API endpoint to move any legacy base64 images to Cloudinary
 - Block patient feature for doctors (prevents messaging from abusive patients)
 - Free follow-up booking — doctor sets period (7/15/30 days), patient books without payment
 - Sequential doctor workflow (Confirm → Mark Paid → Join Call → Mark Complete → Prescription)
@@ -495,6 +498,7 @@ You should see the DocConnect landing page!
 | GET | /api/admin/users | Admin only | List all users |
 | GET | /api/admin/appointments | Admin only | List all appointments |
 | GET | /api/admin/analytics | Admin only | Revenue + call analytics (calls, minutes, per-doctor) |
+| POST | /api/admin/migrate-images | Admin only | One-time base64 → Cloudinary migration (safety net) |
 | DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
 | PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
 
