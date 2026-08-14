@@ -56,6 +56,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctor rating & review system via modal (1-5 stars + text, shown on doctor profile)
 - Auto-scrolling patient testimonials on homepage (with placeholders when no reviews yet)
 - Admin panel: view stats, manage users, view all appointments, handle complaints
+- Admin bootstrap: promote/create the first admin automatically via ADMIN_EMAIL env var (no manual database editing)
+- Admin can deactivate/reactivate a doctor (hides them from patients and blocks login while keeping all records) as a safe alternative to permanent delete
 - Account settings: users can update email/phone or delete their account (with confirmation modal)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Styled modal dialogs replace all browser prompts/confirms (modern UX)
@@ -93,8 +95,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctor name displayed with "Dr." prefix across the platform
 - Bottom navigation bar for mobile (Home, Doctors, My Appts, Blog)
 - Terms & Conditions and Privacy Policy pages (legal compliance)
-- Medical Registration Number field for doctor verification
-- Consent checkbox before booking (teleconsultation agreement)
+- Medical Registration Number is mandatory for doctor profiles (existing profiles untouched until next edit)
+- Bilingual consent (English + Hindi) before booking (teleconsultation agreement), enforced on both frontend and backend
+- Consent recorded per appointment (timestamp + IP address) for audit/legal protection
 - IP address logging and consent timestamp for audit/legal protection
 - Soft-delete accounts (data retained for legal, user can re-register fresh)
 - Responsive design (mobile + desktop)
@@ -373,6 +376,9 @@ You should see the DocConnect landing page!
 | JWT_SECRET | Yes | Secret key for token signing (any random string) | my_super_secret_key_12345 |
 | NODE_ENV | No | Environment mode | development |
 | RESEND_API_KEY | No | Resend email API key (enables email notifications) | re_xxxx... |
+| ADMIN_EMAIL | No | Email promoted to admin on startup (auto-creates the account if it doesn't exist) | admin@example.com |
+| ADMIN_PASSWORD | No | Password used only when auto-creating a new admin account | (strong password) |
+| ADMIN_NAME | No | Display name for an auto-created admin account | Administrator |
 | VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919997019900 |
 | VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
 
@@ -454,7 +460,8 @@ You should see the DocConnect landing page!
 | GET | /api/admin/stats | Admin only | Dashboard stats |
 | GET | /api/admin/users | Admin only | List all users |
 | GET | /api/admin/appointments | Admin only | List all appointments |
-| DELETE | /api/admin/users/:id | Admin only | Delete a user |
+| DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
+| PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
 
 ---
 
