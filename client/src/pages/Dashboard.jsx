@@ -64,6 +64,13 @@ function Dashboard() {
     return () => clearInterval(interval);
   }, [page]);
 
+  // Re-render every 30s so the time-based "Join Call" window opens/closes on time
+  const [, setClockTick] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setClockTick((x) => x + 1), 30000);
+    return () => clearInterval(t);
+  }, []);
+
   const fetchProfile = async () => {
     try {
       const response = await authAPI.getMe();
@@ -299,11 +306,54 @@ function Dashboard() {
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 
   // True only if the appointment date is TODAY (compared in IST, matching booking logic).
-  // Used to show the "Join Call" button only on the day of the appointment.
   const isAppointmentToday = (dateString) => {
     if (!dateString) return false;
     const fmt = (d) => d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
     return fmt(new Date(dateString)) === fmt(new Date());
+  };
+
+  // Current time in IST as minutes since midnight (works regardless of the
+  // user's device timezone — the server may be anywhere).
+  const getISTNowMinutes = () => {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false
+    }).formatToParts(new Date());
+    let h = 0, m = 0;
+    for (const p of parts) {
+      if (p.type === 'hour') h = parseInt(p.value, 10);
+      if (p.type === 'minute') m = parseInt(p.value, 10);
+    }
+    if (h === 24) h = 0; // midnight edge case
+    return h * 60 + m;
+  };
+
+  // Parse a slot time like "10:00 AM" into minutes since midnight.
+  const parseSlotTime = (str) => {
+    if (!str) return null;
+    const m = str.trim().match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const min = parseInt(m[2], 10);
+    const ap = m[3].toUpperCase();
+    if (ap === 'PM' && h !== 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+    return h * 60 + min;
+  };
+
+  // The call can only be joined during the booked time slot (with a small grace
+  // window), so patients can't call the doctor at any random time of the day.
+  // Grace: 5 minutes before the slot starts, 20 minutes after it ends.
+  const CALL_GRACE_BEFORE = 5;
+  const CALL_GRACE_AFTER = 20;
+  const isWithinCallWindow = (apt) => {
+    if (!isAppointmentToday(apt.date)) return false;
+    const parts = (apt.timeSlot || '').split('-').map((s) => s.trim());
+    const start = parseSlotTime(parts[0]);
+    const end = parseSlotTime(parts[1]);
+    // If we can't parse the slot, fall back to allowing it on the day (safe default).
+    if (start == null || end == null) return true;
+    const now = getISTNowMinutes();
+    return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
   };
   const getStatusColor = (status) => ({ pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-green-100 text-green-800', completed: 'bg-blue-100 text-blue-800', cancelled: 'bg-red-100 text-red-800' }[status] || 'bg-gray-100 text-gray-800');
 
@@ -512,10 +562,13 @@ function Dashboard() {
                       )}
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
                         <>
-                          {apt.consultationType !== 'in-person' && isAppointmentToday(apt.date) && (
+                          {apt.consultationType !== 'in-person' && isWithinCallWindow(apt) && (
                             <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
+                          )}
+                          {apt.consultationType !== 'in-person' && isAppointmentToday(apt.date) && !isWithinCallWindow(apt) && (
+                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-lg">Call opens at slot time ({apt.timeSlot})</span>
                           )}
                           <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>
                         </>
@@ -534,10 +587,13 @@ function Dashboard() {
                       {/* Chat and Video — for confirmed/completed appointments */}
                       {['confirmed', 'completed'].includes(apt.status) && (
                         <>
-                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isAppointmentToday(apt.date) && (
+                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isWithinCallWindow(apt) && (
                             <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
                               {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
                             </button>
+                          )}
+                          {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isAppointmentToday(apt.date) && !isWithinCallWindow(apt) && (
+                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-lg">Call opens at your slot time ({apt.timeSlot})</span>
                           )}
                           <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
                             💬 Chat

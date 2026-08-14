@@ -563,6 +563,53 @@ const getIncomingCalls = async (req, res) => {
 
 const { ensureRoom, createMeetingToken } = require('../utils/daily');
 
+// ---- Time-slot window helpers (IST) ----
+// The call is only allowed during the booked slot (+ a small grace window),
+// so patients can't call the doctor at any random time of the day.
+const CALL_GRACE_BEFORE = 5;  // minutes before slot start
+const CALL_GRACE_AFTER = 20;  // minutes after slot end
+
+function istNowMinutes() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false
+  }).formatToParts(new Date());
+  let h = 0, m = 0;
+  for (const p of parts) {
+    if (p.type === 'hour') h = parseInt(p.value, 10);
+    if (p.type === 'minute') m = parseInt(p.value, 10);
+  }
+  if (h === 24) h = 0;
+  return h * 60 + m;
+}
+
+function istDateStr(d) {
+  return new Date(d).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+}
+
+function parseSlotMinutes(str) {
+  if (!str) return null;
+  const m = str.trim().match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  const ap = m[3].toUpperCase();
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+function isWithinSlotWindow(date, timeSlot) {
+  // Must be the same calendar day in IST
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+  if (istDateStr(date) !== today) return false;
+  const parts = (timeSlot || '').split('-').map((s) => s.trim());
+  const start = parseSlotMinutes(parts[0]);
+  const end = parseSlotMinutes(parts[1]);
+  if (start == null || end == null) return true; // can't parse → don't block
+  const now = istNowMinutes();
+  return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
+}
+
 const getVideoToken = async (req, res) => {
   try {
     if (!process.env.DAILY_API_KEY || !process.env.DAILY_DOMAIN) {
@@ -583,6 +630,13 @@ const getVideoToken = async (req, res) => {
 
     if (!isDoctor && !isPatient) {
       return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+
+    // Strict rule: only allow joining during the booked time slot (+ grace window)
+    if (!isWithinSlotWindow(appointment.date, appointment.timeSlot)) {
+      return res.status(403).json({
+        message: `This call is only available during the booked time slot (${appointment.timeSlot}).`
+      });
     }
 
     const roomName = `promedicoz-${appointment._id}`;
