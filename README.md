@@ -79,9 +79,11 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Booking confirmation page with full summary
 - Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
 - Patients can replace/update uploaded report files anytime
-- In-app video calling (Jitsi Meet) — doctor and patient join video call directly from appointment
-- In-app audio calling for phone consultations (camera off by default)
-- In-app chat messaging per appointment (with unread badge, auto-refresh)
+- In-app video/audio calling (Daily.co) — private per-appointment rooms with server-issued join tokens; no login or sign-in for doctor/patient
+- Audio-only mode for phone consultations (camera off by default)
+- Incoming-call "ringing" notification — when one party joins, the other sees a full-screen banner + ringtone (with vibration on mobile) and can Accept/Decline
+- "Join Call" button appears only on the appointment date (hidden once the day passes)
+- In-app chat messaging per appointment (unread badge, ~3s refresh, optimistic instant-send)
 - UPI QR code payment — doctor uploads QR, patient scans and pays
 - "I Have Paid" quick confirmation + optional receipt upload
 - Payment screenshot stored permanently in MongoDB (base64)
@@ -98,6 +100,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Medical Registration Number is mandatory for doctor profiles (existing profiles untouched until next edit)
 - Bilingual consent (English + Hindi) before booking (teleconsultation agreement), enforced on both frontend and backend
 - Consent recorded per appointment (timestamp + IP address) for audit/legal protection
+- Backend smoke test suite (Node built-in test runner + supertest) — `npm test` verifies health, 404s, and auth-protected routes with no database needed
 - IP address logging and consent timestamp for audit/legal protection
 - Soft-delete accounts (data retained for legal, user can re-register fresh)
 - Responsive design (mobile + desktop)
@@ -179,6 +182,14 @@ docconnect/
 │   │   ├── complaint.js
 │   │   └── admin.js
 │   │
+│   ├── utils/                   ← Helpers
+│   │   ├── sendEmail.js         ← Email notifications (Resend)
+│   │   ├── formatPhone.js       ← Indian phone number formatting
+│   │   └── daily.js             ← Daily.co room + join-token helper
+│   │
+│   ├── tests/                   ← Backend smoke tests (npm test)
+│   │   └── api.test.js
+│   │
 │   └── uploads/                 ← Uploaded files stored here
 │       └── .gitkeep
 │
@@ -205,7 +216,7 @@ docconnect/
         │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)
         │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal
         │   ├── ChatBox.jsx      ← In-app messaging per appointment
-        │   ├── VideoCall.jsx    ← Jitsi Meet video calling integration
+        │   ├── VideoCall.jsx    ← Daily.co video/audio calling integration
         │   ├── SEO.jsx          ← Per-page title, description, Open Graph tags
         │   ├── StructuredData.jsx ← Schema.org JSON-LD markup
         │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
@@ -379,6 +390,8 @@ You should see the DocConnect landing page!
 | ADMIN_EMAIL | No | Email promoted to admin on startup (auto-creates the account if it doesn't exist) | admin@example.com |
 | ADMIN_PASSWORD | No | Password used only when auto-creating a new admin account | (strong password) |
 | ADMIN_NAME | No | Display name for an auto-created admin account | Administrator |
+| DAILY_API_KEY | No | Daily.co API key (enables in-app video/audio calls) | (secret, server only) |
+| DAILY_DOMAIN | No | Your Daily.co subdomain | promedicoz.daily.co |
 | VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919997019900 |
 | VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
 
@@ -409,10 +422,13 @@ You should see the DocConnect landing page!
 ### Appointments
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | /api/appointments | Patient only | Book appointment (supports family member + repeat) |
+| POST | /api/appointments | Patient only | Book appointment (supports family member + repeat; records consent) |
 | GET | /api/appointments/my | Protected | View my appointments |
+| GET | /api/appointments/incoming-calls | Protected | Poll for an incoming call (ringing) |
 | GET | /api/appointments/:id | Protected | View single appointment |
-| PUT | /api/appointments/:id/status | Doctor only | Confirm/complete (with meeting link) |
+| GET | /api/appointments/:id/video-token | Protected | Get Daily.co room URL + join token |
+| PUT | /api/appointments/:id/status | Doctor only | Confirm/complete appointment |
+| PUT | /api/appointments/:id/call | Protected | Set call active/inactive (ringing signal) |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
 | PUT | /api/appointments/:id/payment | Doctor only | Mark payment received |
 
