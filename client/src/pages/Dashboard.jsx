@@ -170,13 +170,13 @@ function Dashboard() {
     };
   }, []);
 
-  // ---- Start a call: signal the other party (ring), then open the call ----
-  const startCall = async (apt) => {
+  // ---- Start a call: open the call immediately, signal the other party in background ----
+  const startCall = (apt) => {
     inCallRef.current = true;
-    try {
-      await appointmentAPI.setCall(apt._id, true);
-    } catch (e) { /* still open the call even if signaling fails */ }
-    startCall(apt);
+    // Open the call window right away (don't wait on the network — backend may be cold-starting)
+    setVideoCallAppointmentId(apt._id + '|' + apt.consultationType);
+    // Fire-and-forget: ring the other participant (failure must not block the call)
+    appointmentAPI.setCall(apt._id, true).catch(() => {});
   };
 
   // ---- Accept an incoming call ----
