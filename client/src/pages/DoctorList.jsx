@@ -269,7 +269,7 @@ function DoctorList() {
           <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl inline-block">
             <p className="text-green-800 font-medium mb-2">Can't find the right doctor?</p>
             <a
-              href="https://wa.me/919599150825?text=Hi%2C%20I%20need%20help%20finding%20a%20doctor"
+              href="https://wa.me/919997019900?text=Hi%2C%20I%20need%20help%20finding%20a%20doctor"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"

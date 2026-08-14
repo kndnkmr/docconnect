@@ -557,7 +557,7 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
 
 - Green WhatsApp icon floating on the bottom-right corner of EVERY page
 - Visible to ALL users (even without login)
-- Clicking opens WhatsApp to: **+919599150825**
+- Clicking opens WhatsApp to: **+919997019900**
 - Pre-filled message: "Hi, I need to consult with a doctor. Can you help me?"
 - Purpose: patients in emergency can reach out instantly without going through registration
 - Component: `client/src/components/WhatsAppButton.jsx`

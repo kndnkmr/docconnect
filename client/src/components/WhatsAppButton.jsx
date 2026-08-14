@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 function WhatsAppButton() {
   const location = useLocation();
-  const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919599150825';
+  const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900';
 
   // Hide on dashboard (logged-in users have in-app chat)
   if (location.pathname === '/dashboard') return null;

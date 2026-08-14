@@ -373,7 +373,7 @@ You should see the DocConnect landing page!
 | JWT_SECRET | Yes | Secret key for token signing (any random string) | my_super_secret_key_12345 |
 | NODE_ENV | No | Environment mode | development |
 | RESEND_API_KEY | No | Resend email API key (enables email notifications) | re_xxxx... |
-| VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919599150825 |
+| VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919997019900 |
 | VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
 
 ---
