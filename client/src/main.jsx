@@ -52,7 +52,20 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
-      .then(() => console.log('Service Worker registered'))
+      .then((reg) => {
+        // Check for updates on load and periodically (every hour)
+        reg.update();
+        setInterval(() => reg.update(), 60 * 60 * 1000);
+      })
       .catch((err) => console.log('Service Worker registration failed:', err));
+
+    // When a new service worker takes control (new deploy), reload ONCE so the
+    // user immediately gets the latest app — no manual cache clearing needed.
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
   });
 }
