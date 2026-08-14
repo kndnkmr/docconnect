@@ -43,7 +43,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctor profile management with photo upload
 - Phone number and WhatsApp contact for doctors
 - Search and filter doctors by name or specialization
-- Real-time availability: doctors set weekly schedule (multi-day selection), patients see only free slots
+- Real-time availability: doctors set weekly schedule (multi-day selection) that auto-saves on every add/remove (no separate Save step); patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
 - Family members: patients can add/manage family members and book appointments on their behalf
 - Repeat booking: rebook a past appointment with same doctor/details (one-click "Book Again")
@@ -77,7 +77,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Email verification for doctors (must verify email to appear in patient search)
 - Dashboard verification banner with "Resend Email" button for unverified doctors
 - Consultation fees displayed in ₹ (Indian Rupees)
-- "Next available" slot shown on each doctor card (e.g. "Available today · next at 3:30 PM", "Next available: Tomorrow, 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
+- "Next available" slot shown on each doctor card (e.g. "Next available at 3:30 PM" with an "Available Today" pill, or "Next available tomorrow at 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
 - Booking confirmation page with full summary
 - Past time slots hidden when booking for today (IST timezone — works on any server regardless of hosting region)
@@ -525,7 +525,7 @@ You should see the DocConnect landing page!
 1. **Register a doctor** — click Register, choose "Doctor", fill form
 2. **Register a patient** — open incognito/another browser, register as patient
 3. **Doctor: set profile** — go to Dashboard → Edit Profile → fill details
-4. **Doctor: set availability** — Dashboard → Availability → add time slots → save
+4. **Doctor: set availability** — Dashboard → Availability → add time slots (auto-saves)
 5. **Patient: browse doctors** — click "Find Doctors"
 6. **Patient: book appointment** — click a doctor → Book → pick date (slots appear!) → confirm
 7. **Doctor: confirm appointment** — Dashboard → see pending booking → click Confirm
