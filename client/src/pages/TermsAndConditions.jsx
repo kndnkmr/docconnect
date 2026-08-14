@@ -61,8 +61,9 @@ function TermsAndConditions() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">6. Payments</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">6. Payments & Platform Fees</h2>
           <p>Consultation fees are set by individual doctors. Payments are made directly from patient to doctor via UPI. ProMedicoz does NOT handle, process, or store any payment transactions. Payment disputes should be resolved directly between patient and doctor.</p>
+          <p className="mt-2">ProMedicoz is currently free for doctors and takes no commission on consultations. ProMedicoz reserves the right to introduce a platform fee or subscription in the future to support the operation and maintenance of the platform. Any such charges will be communicated to affected users clearly and with reasonable advance notice before they take effect.</p>
         </section>
 
         <section>
