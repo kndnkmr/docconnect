@@ -93,3 +93,45 @@ So **MongoDB storage is not the near-term constraint** — Render performance is
 - **Payment gateway (e.g. Razorpay)** if you ever want verified payments / to take a commission (currently direct UPI, doctor confirms manually).
 - **Error monitoring** (e.g. Sentry) for production visibility.
 - **Deeper automated tests** (current suite is smoke-level: health, 404s, auth-protected routes).
+- **Phone + OTP login** — see cost breakdown below.
+
+---
+
+## Phone + OTP login — cost estimate (deferred)
+
+Password login already got a real UX pass (autofill support, autofocus, numeric
+keypad, SVG icons). OTP login is a genuine upgrade on top of that — common on
+Indian consumer apps — but it's a paid feature with a real setup step, so it's
+deferred until there's a concrete need.
+
+**One-time setup — DLT registration (legally required in India for any
+commercial/OTP SMS; messages are blocked without it):**
+
+| Item | Cost |
+|------|------|
+| Entity registration | ₹5,000–6,000 + GST |
+| Sender ID (header) + template registration | Often bundled or a few thousand more — several providers assist for free during onboarding |
+| **Total one-time** | **≈ ₹5,000–10,000** |
+| Approval time | A few days to ~a week (not instant) |
+
+**Ongoing — per-OTP SMS cost:**
+
+| Provider type | Cost per OTP |
+|----------------|--------------|
+| Indian providers (MSG91, Message Central, SMSCountry) | ₹0.10–0.20 |
+| International (Twilio) | ~₹0.45 (avoid for India-only traffic — 3–4x pricier) |
+
+**What that means at realistic volume:**
+
+| Logins/month | Monthly SMS cost |
+|---------------|-------------------|
+| 100 | ₹10–20 |
+| 1,000 | ₹100–200 |
+| 10,000 | ₹1,000–2,000 |
+
+**Takeaway:** the ongoing per-message cost is negligible even at real usage. The
+actual cost is the one-time ₹5,000–10,000 DLT registration plus the approval wait.
+
+**Trigger to revisit:** steady daily signups AND real users reporting forgotten
+passwords as friction. Not worth it before that — same principle as the other
+deferred items above (don't pay for infrastructure ahead of real demand).

@@ -36,7 +36,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
 - Login via phone (default) OR email (toggle switch)
-- Show/hide password toggle on login and registration pages
+- Show/hide password toggle on login and registration pages (crisp SVG icon, not emoji — renders consistently across platforms)
+- Login/Register UX polish: autocomplete attributes (password manager support), autofocus on first field, numeric keypad + 10-digit cap for phone input, ProMedicoz branding on auth cards, loading spinner on submit
 - JWT token authentication (login persists across sessions)
 - Rate limiting on auth endpoints (prevents brute force attacks)
 - Password reset with secure token (logged to console for local testing)
