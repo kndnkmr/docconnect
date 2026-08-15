@@ -102,9 +102,18 @@ function AccountSettings() {
         )}
 
         {pushStatus === 'denied' && (
-          <p className="text-sm text-orange-700">
-            Notifications are blocked for this site. Allow them from your browser's site settings (tap the lock/info icon next to the address bar), then reload this page and try again.
-          </p>
+          <div>
+            <p className="text-sm text-orange-700 mb-3">
+              Notifications are blocked for this site. This is a browser security setting we can't override from here — websites are never allowed to re-ask once you've said no, to stop sites from spamming permission popups. Allow it from your browser's site settings (tap the lock/info icon next to the address bar → Notifications → Allow), then click below.
+            </p>
+            <button
+              onClick={handleEnableNotifications}
+              disabled={enablingPush}
+              className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
+            >
+              {enablingPush ? 'Checking…' : "I've Allowed It — Try Again"}
+            </button>
+          </div>
         )}
 
         {pushStatus === 'unsupported' && (
