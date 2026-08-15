@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
 import { ConfirmModal } from '../../components/Modal';
+import { enablePushNotifications, getPushPermission, isPushSupported } from '../../services/push';
 import toast from 'react-hot-toast';
 
 function AccountSettings() {
@@ -10,6 +11,27 @@ function AccountSettings() {
   const [phone, setPhone] = useState(user?.phone || '');
   const [isSaving, setIsSaving] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+
+  // Notifications — a PERMANENT control, unlike the Dashboard's one-time
+  // dismissible nudge. If someone dismissed that banner once (or denied the
+  // browser prompt), it never shows again — this is the only way back.
+  const [pushStatus, setPushStatus] = useState(() => (isPushSupported() ? getPushPermission() : 'unsupported'));
+  const [enablingPush, setEnablingPush] = useState(false);
+
+  const handleEnableNotifications = async () => {
+    setEnablingPush(true);
+    const ok = await enablePushNotifications();
+    const newStatus = isPushSupported() ? getPushPermission() : 'unsupported';
+    setPushStatus(newStatus);
+    setEnablingPush(false);
+    if (ok) {
+      toast.success('Notifications enabled!');
+    } else if (newStatus === 'denied') {
+      toast.error('Notifications are blocked for this site — allow them from your browser\'s site settings, then try again.');
+    } else {
+      toast.error('Could not enable notifications. Please try again.');
+    }
+  };
 
   const handleUpdateAccount = async (e) => {
     e.preventDefault();
@@ -59,6 +81,37 @@ function AccountSettings() {
             {isSaving ? 'Saving...' : 'Update Account'}
           </button>
         </form>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <h3 className="font-medium text-gray-800 mb-2">Notifications</h3>
+        <p className="text-gray-600 text-sm mb-4">Get instant alerts for appointment updates, messages, and calls — even when this tab isn't open.</p>
+
+        {pushStatus === 'granted' && (
+          <p className="text-sm text-green-700 font-medium">✓ Notifications are enabled on this device.</p>
+        )}
+
+        {pushStatus === 'default' && (
+          <button
+            onClick={handleEnableNotifications}
+            disabled={enablingPush}
+            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+          >
+            {enablingPush ? 'Enabling…' : 'Enable Notifications'}
+          </button>
+        )}
+
+        {pushStatus === 'denied' && (
+          <p className="text-sm text-orange-700">
+            Notifications are blocked for this site. Allow them from your browser's site settings (tap the lock/info icon next to the address bar), then reload this page and try again.
+          </p>
+        )}
+
+        {pushStatus === 'unsupported' && (
+          <p className="text-sm text-gray-500">
+            Your browser doesn't support notifications right now. On iPhone, this usually means the site needs to be added to your Home Screen first — open this site in Safari, tap Share → "Add to Home Screen," then open it from there and try again.
+          </p>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-6 border border-red-200">
