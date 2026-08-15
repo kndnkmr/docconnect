@@ -366,11 +366,12 @@ function DoctorCard({ doctor }) {
       {/* Doctor Photo */}
       <div className="h-48 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
         {doctor.profilePhoto ? (
+          // Circular headshot (like a profile avatar), not a full-bleed crop —
+          // looks like a professional portrait instead of an awkward crop.
           <img
-            src={getUploadUrl(doctor.profilePhoto, { width: 500 })}
+            src={getUploadUrl(doctor.profilePhoto, { width: 300 })}
             alt={doctor.name}
-            className="h-full w-full object-cover"
-            // object-cover = fills the space without distortion (crops if needed)
+            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
           />
         ) : (
           // Gender-neutral doctor emoji when no photo

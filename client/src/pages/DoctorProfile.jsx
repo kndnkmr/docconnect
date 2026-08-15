@@ -102,10 +102,12 @@ function DoctorProfile() {
           {/* Photo */}
           <div className="md:w-1/3 h-64 md:h-auto bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
             {doctor.profilePhoto ? (
+              // Circular headshot (like a profile avatar), not a full-bleed crop —
+              // looks like a professional portrait instead of an awkward crop.
               <img
-                src={getUploadUrl(doctor.profilePhoto, { width: 600 })}
+                src={getUploadUrl(doctor.profilePhoto, { width: 400 })}
                 alt={doctor.name}
-                className="w-full h-full object-cover"
+                className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-md"
               />
             ) : (
               <span className="text-8xl">🧑‍⚕️</span>
