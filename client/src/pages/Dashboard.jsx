@@ -609,14 +609,30 @@ function Dashboard() {
             <h3 className="font-semibold text-gray-800 text-lg">🚀 Finish setting up your profile</h3>
             <span className="text-sm text-gray-500 whitespace-nowrap">{onboardingSteps.length - pendingOnboardingSteps.length} of {onboardingSteps.length} done</span>
           </div>
+          <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4 overflow-hidden">
+            <div
+              className="bg-primary-600 h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${((onboardingSteps.length - pendingOnboardingSteps.length) / onboardingSteps.length) * 100}%` }}
+            />
+          </div>
           <p className="text-sm text-gray-500 mb-4">Complete these so patients can actually find and book you.</p>
           <div className="space-y-2">
-            {onboardingSteps.map((step) => (
-              <div key={step.key} className={`flex items-center justify-between gap-3 p-3 rounded-lg ${step.done ? 'bg-green-50' : 'bg-gray-50'}`}>
+            {onboardingSteps.map((step, idx) => (
+              <div key={step.key} className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-colors ${step.done ? 'bg-green-50' : 'bg-gray-50'}`}>
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${step.done ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
-                    {step.done ? '✓' : ''}
-                  </span>
+                  {/* Crisp vector circle (not a plain colored <span> + text glyph) —
+                      matches the VerifiedBadge convention used elsewhere on the site.
+                      Shows the step number until complete, then a checkmark. */}
+                  {step.done ? (
+                    <svg width="28" height="28" viewBox="0 0 24 24" className="flex-shrink-0" role="img" aria-label="Completed">
+                      <circle cx="12" cy="12" r="12" fill="#22c55e" />
+                      <path d="M7 12.5L10.3 16L17 9" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    </svg>
+                  ) : (
+                    <span className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-xs font-bold text-gray-500">
+                      {idx + 1}
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className={`text-sm font-medium ${step.done ? 'text-green-800 line-through' : 'text-gray-800'}`}>{step.label}</p>
                     {!step.done && <p className="text-xs text-gray-500">{step.hint}</p>}
