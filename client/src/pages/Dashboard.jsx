@@ -5,7 +5,7 @@
 // Sub-components are split into separate files for maintainability.
 
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
@@ -24,12 +24,23 @@ import PatientReports from './dashboard/PatientReports';
 import PatientComplaints from './dashboard/PatientComplaints';
 import AccountSettings from './dashboard/AccountSettings';
 
+// Every tab key the dashboard supports. Used to validate a deep-link
+// (?tab=familyMembers) so other pages can send patients straight to the
+// right place instead of a generic "go check your dashboard" message.
+const VALID_TAB_KEYS = ['appointments', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
+
 function Dashboard() {
   const { user, isDoctor, isPatient } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('appointments');
+  // Open directly on the requested tab if a valid ?tab= is present in the URL
+  // (e.g. Link to="/dashboard?tab=familyMembers"), otherwise default as before.
+  const [activeTab, setActiveTab] = useState(() => {
+    const requested = searchParams.get('tab');
+    return VALID_TAB_KEYS.includes(requested) ? requested : 'appointments';
+  });
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
@@ -583,7 +594,18 @@ function Dashboard() {
                           <a href={apt.doctor?.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(apt.doctor?.clinicAddress || apt.doctor?.city || '')}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-xs text-primary-600 hover:underline font-medium">📍 Get Directions</a>
                         )}
                         <p className="text-xs text-blue-700 font-medium">
-                          {isPatient && apt.status === 'completed' && '✅ Consultation done. Check the Prescriptions tab for your prescription.'}
+                          {isPatient && apt.status === 'completed' && (
+                            <>
+                              ✅ Consultation done.{' '}
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveTab('prescriptions'); }}
+                                className="underline hover:text-blue-900"
+                              >
+                                View your prescription →
+                              </button>
+                            </>
+                          )}
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
                           {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
@@ -782,7 +804,7 @@ function Dashboard() {
       {activeTab === 'availability' && isDoctor && <DoctorAvailability />}
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
-      {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions />}
+      {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
       {activeTab === 'reports' && isPatient && <PatientReports />}
       {activeTab === 'complaints' && isPatient && <PatientComplaints />}
       {activeTab === 'account' && <AccountSettings />}

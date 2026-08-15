@@ -336,10 +336,10 @@ function BookAppointment() {
                       You haven't added any family members yet.
                     </p>
                     <Link
-                      to="/dashboard"
+                      to="/dashboard?tab=familyMembers"
                       className="text-sm text-primary-600 hover:underline mt-1 inline-block"
                     >
-                      Go to Dashboard → Family Members tab to add them
+                      + Add a family member →
                     </Link>
                   </div>
                 ) : (

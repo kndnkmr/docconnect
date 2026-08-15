@@ -3,7 +3,7 @@ import { prescriptionAPI } from '../../services/api';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
 import toast from 'react-hot-toast';
 
-function PatientPrescriptions() {
+function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,7 +126,18 @@ function PatientPrescriptions() {
                     ))}
                   </div>
                   <p className="text-xs text-yellow-600 mt-2">
-                    After completing these tests, upload your reports in the "My Reports" tab.
+                    After completing these tests,{' '}
+                    {onNavigateTab ? (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateTab('reports')}
+                        className="underline font-semibold hover:text-yellow-800"
+                      >
+                        upload your reports here →
+                      </button>
+                    ) : (
+                      'upload your reports in the "My Reports" tab.'
+                    )}
                   </p>
                 </div>
               )}
