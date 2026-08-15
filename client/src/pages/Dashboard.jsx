@@ -1293,11 +1293,40 @@ function Dashboard() {
           : '';
         const testsDefault = existingRx?.testsRecommended?.length ? existingRx.testsRecommended.join(', ') : '';
 
+        // A returning patient's earlier prescriptions (from OTHER appointments)
+        // — a doctor writing a new one has no way to recall what was already
+        // prescribed without digging through history themselves. Surface it
+        // right in the modal instead.
+        const currentApt = prescriptionModal.id ? appointments.find((a) => a._id === prescriptionModal.id) : null;
+        const currentPatientId = currentApt?.patient?._id || currentApt?.patient;
+        const previousRx = currentPatientId
+          ? doctorPrescriptions
+              .filter((p) => (p.patient?._id || p.patient) === currentPatientId && (p.appointment?._id || p.appointment) !== prescriptionModal.id)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          : [];
+
         return (
           <PromptModal
             open={prescriptionModal.open}
             title={existingRx ? 'Update Prescription' : 'Write Prescription'}
             description={existingRx ? 'Editing the existing prescription for this appointment — update whatever changed.' : 'Enter the prescription details for this patient.'}
+            extraContent={previousRx.length > 0 && (
+              <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg max-h-40 overflow-y-auto">
+                <p className="text-xs font-semibold text-gray-600 mb-2">
+                  📋 Previous prescriptions for {currentApt?.patient?.name || 'this patient'}:
+                </p>
+                <div className="space-y-2">
+                  {previousRx.map((p) => (
+                    <div key={p._id} className="text-xs text-gray-700 border-b border-gray-100 pb-1.5 last:border-0 last:pb-0">
+                      <span className="font-medium">{formatDate(p.appointment?.date || p.createdAt)}</span> — {p.diagnosis}
+                      {p.medicines?.length > 0 && (
+                        <div className="text-gray-500">💊 {p.medicines.map((m) => m.name).join(', ')}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             fields={[
               { name: 'diagnosis', label: 'Diagnosis', type: 'text', required: true, placeholder: 'e.g., Upper respiratory infection', defaultValue: existingRx?.diagnosis || '' },
               { name: 'medicines', label: 'Medicines (comma separated)', type: 'textarea', placeholder: 'Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days', defaultValue: medicinesDefault },

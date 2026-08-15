@@ -87,6 +87,7 @@ export function PromptModal({
   open,
   title = 'Input',
   description = '',
+  extraContent = null,
   fields = [],
   submitText = 'Submit',
   cancelText = 'Cancel',
@@ -118,6 +119,10 @@ export function PromptModal({
       <form onSubmit={handleSubmit} className="p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
         {description && <p className="text-gray-500 text-sm mb-4">{description}</p>}
+
+        {/* Optional reference/context block above the form fields — e.g.
+            a patient's previous prescriptions when writing a new one. */}
+        {extraContent}
 
         <div className="space-y-4 mb-6">
           {fields.map((field) => (
