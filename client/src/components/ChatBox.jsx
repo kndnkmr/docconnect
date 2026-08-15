@@ -113,7 +113,12 @@ function ChatBox({ appointmentId, onClose }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white w-full sm:rounded-xl shadow-2xl sm:max-w-md h-full sm:h-[70vh] flex flex-col">
+      {/* "dvh" (dynamic viewport height) instead of a fixed vh/percent height —
+          on mobile, the on-screen keyboard shrinks the visible area without
+          this container shrinking too, which is exactly what was pushing the
+          latest messages behind the keyboard. dvh tracks the real visible
+          viewport, keyboard included. */}
+      <div className="relative bg-white w-full sm:rounded-xl shadow-2xl sm:max-w-md h-[100dvh] sm:h-[70dvh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold text-gray-800">Messages</h3>
@@ -149,6 +154,15 @@ function ChatBox({ appointmentId, onClose }) {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onFocus={() => {
+              // Extra safety net alongside the dvh fix above: nudge back to the
+              // bottom once the on-screen keyboard has finished animating in,
+              // in case the browser's viewport resize timing lags slightly.
+              setTimeout(() => {
+                const c = messagesContainerRef.current;
+                if (c) c.scrollTop = c.scrollHeight;
+              }, 300);
+            }}
             placeholder="Type a message..."
             maxLength={1000}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
