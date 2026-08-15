@@ -426,7 +426,7 @@ function AdminDashboard() {
                 type="text"
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
-                placeholder="Search by name or email..."
+                placeholder="Search by name, email, phone, or Patient ID..."
                 className="flex-grow px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
               />
               <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
@@ -442,6 +442,7 @@ function AdminDashboard() {
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Name</th>
+                    <th className="px-4 py-3 text-sm font-medium text-gray-600">Patient ID</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Email</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Phone</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Role</th>
@@ -454,6 +455,7 @@ function AdminDashboard() {
                   {users.map((user) => (
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-800 font-medium">{user.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 font-mono">{user.patientId || '-'}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.phone || '-'}</td>
                       <td className="px-4 py-3">
@@ -585,7 +587,10 @@ function AdminDashboard() {
                   {appointments.map((apt) => (
                     <tr key={apt._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm">
-                        <div className="text-gray-800 font-medium">{apt.patient?.name || 'Unknown'}</div>
+                        <div className="text-gray-800 font-medium">
+                          {apt.patient?.name || 'Unknown'}
+                          {apt.patient?.patientId && <span className="text-gray-400 font-mono text-xs ml-1">({apt.patient.patientId})</span>}
+                        </div>
                         <div className="text-gray-500 text-xs">{apt.patient?.phone || apt.patient?.email}</div>
                       </td>
                       <td className="px-4 py-3 text-sm">

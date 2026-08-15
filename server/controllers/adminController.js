@@ -62,12 +62,14 @@ const getAllUsers = async (req, res) => {
       filter.role = req.query.role;
     }
 
-    // Search by name or email
+    // Search by name, email, phone, or (for patients) Patient ID
     if (req.query.search) {
       const searchRegex = safeContainsRegex(req.query.search);
       filter.$or = [
         { name: searchRegex },
-        { email: searchRegex }
+        { email: searchRegex },
+        { phone: searchRegex },
+        { patientId: searchRegex }
       ];
     }
 
@@ -114,7 +116,7 @@ const getAllAppointments = async (req, res) => {
 
     const appointments = await Appointment.find(filter)
       .populate('doctor', 'name specialization phone')
-      .populate('patient', 'name email phone')
+      .populate('patient', 'name email phone patientId')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -282,7 +284,7 @@ const findDuplicatePhones = async (req, res) => {
 
     const allIds = duplicates.flatMap((d) => d.ids);
     const users = await User.find({ _id: { $in: allIds } })
-      .select('name email phone role isDeleted isSuspended deletedAt createdAt');
+      .select('name email phone patientId role isDeleted isSuspended deletedAt createdAt');
 
     const byId = {};
     users.forEach((u) => { byId[u._id.toString()] = u; });
