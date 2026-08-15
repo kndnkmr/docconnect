@@ -14,6 +14,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
+import PasswordToggleIcon from '../components/PasswordToggleIcon';
+import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 
 function Register() {
@@ -45,9 +47,12 @@ function Register() {
     // name = the "name" attribute of the input (e.g., "email")
     // value = what the user typed
 
+    // Phone: only digits, capped at 10 (matches Indian mobile number length)
+    const cleanedValue = name === 'phone' ? value.replace(/\D/g, '').slice(0, 10) : value;
+
     setFormData(prev => ({
       ...prev,        // Keep all existing fields
-      [name]: value   // Update ONLY the field that changed
+      [name]: cleanedValue   // Update ONLY the field that changed
     }));
     // This is called "computed property names" — [name] becomes "email", "password", etc.
     // ...prev is the "spread operator" — copies all properties from the previous state
@@ -114,6 +119,10 @@ function Register() {
 
         {/* Header */}
         <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-3xl">🏥</span>
+            <span className="text-xl font-bold text-primary-600">ProMedicoz</span>
+          </div>
           <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
           <p className="text-gray-600 mt-2">Join ProMedicoz today</p>
         </div>
@@ -166,6 +175,8 @@ function Register() {
                 id="name"
                 name="name"
                 type="text"
+                autoComplete="name"
+                autoFocus
                 value={formData.name}
                 onChange={handleChange}
                 placeholder={formData.role === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
@@ -183,6 +194,7 @@ function Register() {
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
@@ -200,6 +212,9 @@ function Register() {
                 id="phone"
                 name="phone"
                 type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                maxLength={10}
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="9876543210 (10 digits, +91 added automatically)"
@@ -221,6 +236,7 @@ function Register() {
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 6 characters"
@@ -231,9 +247,10 @@ function Register() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  <PasswordToggleIcon visible={showPassword} />
                 </button>
               </div>
             </div>
@@ -248,6 +265,7 @@ function Register() {
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter your password"
@@ -261,8 +279,9 @@ function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
+              {isLoading && <Spinner />}
               {isLoading ? 'Creating Account...' : `Register as ${formData.role === 'doctor' ? 'Doctor' : 'Patient'}`}
             </button>
           </form>
