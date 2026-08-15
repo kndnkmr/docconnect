@@ -40,7 +40,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Login/Register UX polish: autocomplete attributes (password manager support), autofocus on first field, numeric keypad + 10-digit cap for phone input, ProMedicoz branding on auth cards, loading spinner on submit
 - JWT token authentication (login persists across sessions)
 - Rate limiting on auth endpoints (prevents brute force attacks)
-- Password reset with secure token (logged to console for local testing)
+- Password reset with secure token — works via email OR phone (patients can register with phone only); phone-only accounts with no email on file are guided to WhatsApp support, and admin can generate/relay a reset link manually as an account-recovery assist
 - Doctor profile management with photo upload
 - Phone number and WhatsApp contact for doctors
 - Search and filter doctors by name or specialization
@@ -61,6 +61,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Admin panel: view stats, manage users, view all appointments, handle complaints
 - Admin bootstrap: promote/create the first admin automatically via ADMIN_EMAIL env var (no manual database editing)
 - Admin can deactivate/reactivate a doctor (hides them from patients and blocks login while keeping all records) as a safe alternative to permanent delete
+- Admin can generate a password reset link for any user (emails it automatically if they have an email on file, otherwise gives a link to relay manually — e.g. via WhatsApp — for phone-only accounts)
+- Web Push notifications (VAPID, no SMS/email dependency): instant alerts for appointment confirmed/cancelled, new chat message, and incoming call — works even for patients who registered with phone only and no email; a dismissible in-app nudge asks permission once, and REST polling / email stay as fallbacks if push isn't enabled or supported
 - Account settings: users can update email/phone or delete their account (with confirmation modal)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
 - Styled modal dialogs replace all browser prompts/confirms (modern UX)
@@ -136,6 +138,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 | cors | Cross-origin requests |
 | dotenv | Environment variable management |
 | socket.io | Real-time chat delivery + call ringing (JWT-authenticated, per-appointment rooms) |
+| web-push | Browser push notifications (VAPID) — works without email/SMS, so phone-only patients get instant updates too |
 
 ### Frontend
 | Technology | Purpose |
@@ -187,8 +190,9 @@ docconnect/
 │   │   ├── prescriptionController.js ← Doctor writes prescriptions
 │   │   ├── reportController.js  ← Patient uploads test reports
 │   │   ├── complaintController.js ← Patient complaints
-│   │   ├── adminController.js   ← Admin: stats, user management, analytics
-│   │   └── announcementController.js ← Admin broadcast announcements
+│   │   ├── adminController.js   ← Admin: stats, user management, analytics, manual reset-link relay
+│   │   ├── announcementController.js ← Admin broadcast announcements
+│   │   └── pushController.js    ← Web Push subscription management (public key, subscribe, unsubscribe)
 │   │
 │   ├── routes/                  ← URL → controller mapping
 │   │   ├── auth.js
@@ -200,12 +204,14 @@ docconnect/
 │   │   ├── report.js
 │   │   ├── complaint.js
 │   │   ├── admin.js
-│   │   └── announcement.js
+│   │   ├── announcement.js
+│   │   └── push.js
 │   │
 │   ├── utils/                   ← Helpers
 │   │   ├── sendEmail.js         ← Email notifications (Resend)
 │   │   ├── formatPhone.js       ← Indian phone number formatting
-│   │   └── daily.js             ← Daily.co room + join-token helper
+│   │   ├── daily.js             ← Daily.co room + join-token helper
+│   │   └── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
 │   │
 │   ├── tests/                   ← Backend smoke tests (npm test)
 │   │   └── api.test.js
@@ -416,8 +422,17 @@ You should see the DocConnect landing page!
 | CLOUDINARY_CLOUD_NAME | No | Cloudinary cloud name (enables hosted image storage) | your-cloud-name |
 | CLOUDINARY_API_KEY | No | Cloudinary API key | 123456789012345 |
 | CLOUDINARY_API_SECRET | No | Cloudinary API secret (server only) | (secret) |
+| VAPID_PUBLIC_KEY | No | Web Push public key (enables browser push notifications) | (generate via web-push, see below) |
+| VAPID_PRIVATE_KEY | No | Web Push private key (server only) | (secret) |
+| VAPID_SUBJECT | No | Contact for push errors (mailto: or URL) | mailto:support@promedicoz.in |
 | VITE_WHATSAPP_NUMBER | No | WhatsApp number for floating button (frontend) | 919997019900 |
 | VITE_API_URL | No | Backend API URL for production frontend | https://your-backend.onrender.com/api |
+
+Generate VAPID keys once with:
+```bash
+node -e "console.log(require('web-push').generateVAPIDKeys())"
+```
+Add the same three values to your hosting provider's environment variables (e.g. Render dashboard → Environment) — without them, `/api/push/public-key` returns an empty key and push notifications silently stay disabled (everything else keeps working via polling/email/socket fallbacks).
 
 ---
 
@@ -429,7 +444,7 @@ You should see the DocConnect landing page!
 | POST | /api/auth/register | Public | Create account |
 | POST | /api/auth/login | Public | Log in, get token |
 | GET | /api/auth/me | Protected | Get own profile |
-| POST | /api/auth/forgot-password | Public | Request reset link |
+| POST | /api/auth/forgot-password | Public | Request reset link via email OR phone |
 | PUT | /api/auth/reset-password/:token | Public | Set new password |
 | PUT | /api/auth/update-account | Protected | Change email/phone |
 | DELETE | /api/auth/delete-account | Protected | Delete own account |
@@ -506,6 +521,7 @@ You should see the DocConnect landing page!
 | POST | /api/admin/migrate-images | Admin only | One-time base64 → Cloudinary migration (safety net) |
 | DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
 | PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
+| POST | /api/admin/users/:id/reset-link | Admin only | Generate/relay a password reset link (manual recovery assist for phone-only accounts) |
 
 ### Announcements
 | Method | Endpoint | Access | Description |
@@ -515,6 +531,13 @@ You should see the DocConnect landing page!
 | POST | /api/announcements | Admin only | Create an announcement |
 | PUT | /api/announcements/:id | Admin only | Update / toggle active |
 | DELETE | /api/announcements/:id | Admin only | Delete an announcement |
+
+### Push Notifications
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/push/public-key | Public | VAPID public key (needed before subscribing) |
+| POST | /api/push/subscribe | Protected | Save a browser push subscription for the logged-in user |
+| POST | /api/push/unsubscribe | Protected | Remove a browser push subscription |
 
 ---
 

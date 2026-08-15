@@ -100,6 +100,72 @@ So **MongoDB storage is not the near-term constraint** — Render performance is
 
 ---
 
+## Phone-only patient gaps ✅ Fixed
+
+Patients can register with phone only (no email required) — a real, deliberate
+choice to reduce signup friction. That surfaced two gaps that were only found
+by explicitly checking the code, not by assumption:
+
+**1. Password reset was a dead end for phone-only accounts.** `forgotPassword`
+only accepted an email and looked the user up by it — a patient with no email
+on file had no self-service way to recover their account.
+- Fixed: `forgotPassword` now accepts `phone` too. If the account has an
+  email, the link is emailed as before. If not, the patient is told to
+  reach out via WhatsApp instead of hitting a dead end.
+- Added a manual recovery assist for admins: `POST /api/admin/users/:id/reset-link`
+  generates a valid reset link (emails it automatically if the account has an
+  email, otherwise gives a link to copy and relay manually, e.g. via
+  WhatsApp) — surfaced as a "Reset Link" button in Admin → Users.
+
+**2. Appointment confirmations were silently skipped for phone-only patients.**
+`sendAppointmentConfirmation` only fired `if (patient.email)` — no email meant
+no notification at all when a doctor confirmed/rejected an appointment; the
+patient would only find out by opening the dashboard themselves.
+- Fixed by the Web Push rollout below, which doesn't depend on email or phone
+  at all — it's tied to browser permission, not an identity channel.
+
+## Web Push Notifications ✅ Done
+
+Added browser push notifications (VAPID — no third-party provider account,
+no per-message cost, no DLT registration) for appointment confirmed/cancelled,
+new chat messages, and incoming call ringing. This was the practical
+alternative to Phone+OTP/SMS reminders (deferred below for cost reasons) —
+push works for every patient regardless of whether they gave an email or
+just a phone number, since permission is granted per-browser.
+
+**What was built:**
+- `server/utils/push.js` — sends via `web-push`, using VAPID keys from env.
+  Cleans up subscriptions automatically when the browser reports them as
+  expired (404/410).
+- `server/controllers/pushController.js` + `routes/push.js` — public-key,
+  subscribe, unsubscribe endpoints.
+- `pushSubscriptions` field added to the `User` model (one entry per
+  browser/device that granted permission).
+- Wired into: appointment confirmed/cancelled (notifies patient), patient
+  cancels (notifies doctor), incoming call (notifies the other participant,
+  alongside the existing Socket.io event), new chat message (notifies the
+  recipient, alongside Socket.io).
+- Frontend: `client/src/services/push.js` (subscribe/unsubscribe helper),
+  `client/public/sw.js` handles the `push` and `notificationclick` events, a
+  dismissible nudge banner on the Dashboard asks permission once.
+- Logout unsubscribes the browser from push (and disconnects the socket) —
+  otherwise a shared device could keep showing a previous user's private
+  notifications after they've logged out.
+- All of this is additive: email, Socket.io, and REST polling remain as
+  fallbacks if push isn't enabled, supported, or the VAPID keys aren't set.
+
+**Setup required in production:** `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` /
+`VAPID_SUBJECT` need to be added to Render's environment variables (they're
+only in the local `.env` so far, since it's gitignored). Until they're added,
+`/api/push/public-key` returns an empty key and push silently stays disabled
+— nothing breaks, it just doesn't do anything yet in production.
+
+**Verified:** server test suite (10/10), client build, server boot with push
+configured (`/api/push/public-key` returns the key), production health check.
+Full end-to-end push delivery (a real device receiving a notification) still
+needs manual verification once the VAPID env vars are added to Render — that
+wasn't done as part of this change.
+
 ## Other future improvements (not urgent)
 
 - **Appointment reminders** (email before the slot) to reduce no-shows — uses existing Resend.
