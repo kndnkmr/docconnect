@@ -11,10 +11,16 @@
 // - useState: toggle mobile menu open/close
 // - Responsive design: looks different on mobile vs desktop
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+
+// Same Grievance Officer contact already published in the Terms & Conditions
+// page — surfacing it directly in the nav means a patient with a complaint
+// doesn't have to go dig through the legal pages to find it.
+const GRIEVANCE_EMAIL = 'support@promedicoz.in';
+const GRIEVANCE_MAILTO = `mailto:${GRIEVANCE_EMAIL}?subject=${encodeURIComponent('Grievance - ProMedicoz')}`;
 
 function Navbar() {
   const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
@@ -22,6 +28,25 @@ function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const navRef = useRef(null);
+
+  // Close the mobile hamburger menu on any click/tap outside the navbar —
+  // before this, the only way to close it was hitting the hamburger icon
+  // again, which felt stuck open on a normal page tap.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     // Check if already running as installed PWA
@@ -57,7 +82,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav ref={navRef} className="bg-white shadow-md sticky top-0 z-50">
       {/*
         shadow-md = subtle shadow below the navbar
         sticky top-0 = stays at the top when scrolling
@@ -107,6 +132,14 @@ function Navbar() {
                   <Link to="/admin" className="text-gray-600 hover:text-primary-600 transition-colors">
                     Admin Panel
                   </Link>
+                )}
+                {/* Grievance Officer contact — same address published in
+                    Terms & Conditions, surfaced here so a patient with a
+                    complaint doesn't have to hunt for it. */}
+                {isPatient && (
+                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 transition-colors" title={`Email ${GRIEVANCE_EMAIL}`}>
+                    ✉️ Grievance
+                  </a>
                 )}
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500">
@@ -198,6 +231,11 @@ function Navbar() {
                     <Link to="/admin" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                       Admin Panel
                     </Link>
+                  )}
+                  {isPatient && (
+                    <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                      ✉️ Grievance
+                    </a>
                   )}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
