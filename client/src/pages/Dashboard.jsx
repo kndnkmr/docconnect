@@ -47,6 +47,21 @@ function Dashboard() {
   const [pagination, setPagination] = useState(null);
   const tabSectionRef = useRef(null); // scroll target for the tab nav + its content
 
+  // React Router reuses this same Dashboard instance for same-route
+  // navigations that only change the query string (e.g. clicking a
+  // "?tab=profile" link while already on /dashboard) — the lazy useState
+  // initializer above only runs once, on mount, so it wouldn't catch that.
+  // This keeps activeTab in sync with the URL for the whole lifetime of
+  // the component, not just its first render.
+  useEffect(() => {
+    const requested = searchParams.get('tab');
+    // No tab param (e.g. a plain "/dashboard" link) means "appointments" —
+    // same default as the initial mount — not "leave whatever tab was active".
+    const next = VALID_TAB_KEYS.includes(requested) ? requested : 'appointments';
+    if (next !== activeTab) setActiveTab(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   // Switch tabs AND bring that section into view — needed because buttons that
   // jump to a tab (checklist actions, "View Requests →", guidance links) live
   // above the tab content, so just changing state alone doesn't scroll the

@@ -79,13 +79,20 @@ function Navbar() {
           {/* ---- Desktop Navigation Links ---- */}
           <div className="hidden md:flex items-center space-x-6">
 
-            <Link to="/doctors" className="text-gray-600 hover:text-primary-600 transition-colors">
-              Find Doctors
-            </Link>
+            {/* A logged-in doctor's day-to-day is appointments/profile/
+                availability/reports, not browsing other doctors or the blog -
+                those patient-facing links only show for patients and guests. */}
+            {!isDoctor && (
+              <>
+                <Link to="/doctors" className="text-gray-600 hover:text-primary-600 transition-colors">
+                  Find Doctors
+                </Link>
 
-            <Link to="/blog" className="text-gray-600 hover:text-primary-600 transition-colors">
-              Blog
-            </Link>
+                <Link to="/blog" className="text-gray-600 hover:text-primary-600 transition-colors">
+                  Blog
+                </Link>
+              </>
+            )}
 
             {isAuthenticated ? (
               <>
