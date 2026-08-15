@@ -672,6 +672,33 @@ payment-status message, prefer putting it in the blue box only (it already
 exists for every other status), rather than creating a third place for the
 same information to potentially duplicate again.
 
+### "End Call for All" doesn't actually close the other person's call view
+
+Reported twice. First time (fixed): the doctor's Daily.co meeting token was
+missing `permissions: { canAdmin: true }` (see `server/utils/daily.js` -
+`createMeetingToken`), so `frame.updateParticipants({ '*': { eject: true } })`
+in `VideoCall.jsx`'s `handleEndCall` had no real permission to eject anyone.
+
+Second time (fixed): even with that permission correct, the other party's
+call view stayed open regardless — because `Dashboard.jsx`'s `call-ended`
+socket handler only ever cleared the PRE-JOIN ringing banner
+(`incomingCall`). It never closed an *already-open* call
+(`videoCallAppointmentId`) if the other person had joined before the call
+ended. So the fix depended entirely on Daily's own eject mechanism working
+end-to-end (client → Daily's servers → the other client), an external
+dependency with no fallback.
+
+**The actual fix:** `handleCallEnded` now also closes an already-open
+`videoCallAppointmentId` directly, using our own app-level signal (the same
+`setCallStatus` → Socket.io `call-ended` event that already reliably drives
+ringing elsewhere). This doesn't replace Daily's eject — both now run
+independently, so the call reliably closes on both sides even if Daily's
+own eject has any hiccup. **If this gets reported a third time:** check
+whether a NEW way of ending a call was added somewhere that doesn't go
+through `handleCloseCall` → `setCallStatus(id, false)` — that's the one
+call that must always fire for the other party's `call-ended` handler to
+have anything to react to.
+
 ---
 
 ## How to Make Changes (Future You)
