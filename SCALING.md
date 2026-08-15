@@ -166,6 +166,22 @@ Full end-to-end push delivery (a real device receiving a notification) still
 needs manual verification once the VAPID env vars are added to Render — that
 wasn't done as part of this change.
 
+## Clock-based call-start notification ✅ Done
+
+Ringing used to only fire when one participant clicked "Join" first — if
+neither did, nobody got notified even after the appointment time passed.
+Added a second, independent trigger based purely on the clock:
+- Client: Dashboard checks every 30s whether a confirmed+paid video/phone
+  appointment's slot just started, and shows the same ringing banner/tone
+  automatically for both doctor and patient if either dashboard is open.
+- Server: `server/utils/callReminder.js` runs every minute (alongside the
+  existing daily account-cleanup job) and pushes a "starting now"
+  notification to both participants — covers the case where neither
+  dashboard is open. Dedupes via `callReminderSentAt` on the appointment.
+
+The "Join" button itself didn't change — this only decides *when* to
+actively summon someone to it, the same way a calendar reminder works.
+
 ## Other future improvements (not urgent)
 
 - **Appointment reminders** (email before the slot) to reduce no-shows — uses existing Resend.

@@ -88,6 +88,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - In-app video/audio calling (Daily.co) — private per-appointment rooms with server-issued join tokens; no login or sign-in for doctor/patient
 - Audio-only mode for phone consultations (camera off by default)
 - Incoming-call "ringing" notification — when one party joins, the other sees a full-screen banner + ringtone (with vibration on mobile) and can Accept/Decline. Delivered instantly via Socket.io, with REST polling (every 20s) kept as an automatic fallback if the socket connection drops
+- Calls also auto-notify based on the clock, not just on the other person clicking Join first — the moment a confirmed/paid video or phone appointment's slot starts, both doctor and patient see the same ringing banner automatically (if their dashboard is open), and get a push notification either way (if it isn't) — so a scheduled call is never missed just because neither side remembered to click Join
 - "Join Call" button appears only on the appointment date (hidden once the day passes)
 - In-app chat messaging per appointment (optimistic instant-send, instant delivery to the other party via Socket.io, unread badge updates instantly too). REST polling (every 15s) kept as an automatic fallback if the socket connection drops
 - UPI QR code payment — doctor uploads QR, patient scans and pays
@@ -215,6 +216,7 @@ docconnect/
 │   │   ├── daily.js             ← Daily.co room + join-token helper
 │   │   ├── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
 │   │   ├── accountCleanup.js    ← Daily job: anonymizes accounts past the 90-day deletion window
+│   │   ├── callReminder.js      ← Every-minute job: pushes "call starting" to both parties, clock-based
 │   │   └── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
 │   │
 │   ├── tests/                   ← Backend smoke tests (npm test)
