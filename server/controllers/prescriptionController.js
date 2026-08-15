@@ -93,7 +93,7 @@ const createPrescription = async (req, res) => {
 const getPrescriptionByAppointment = async (req, res) => {
   try {
     const prescription = await Prescription.findOne({ appointment: req.params.appointmentId })
-      .populate('doctor', 'name specialization qualification')
+      .populate('doctor', 'name specialization qualification medicalRegistrationNo')
       .populate('patient', 'name email phone');
 
     if (!prescription) {
@@ -132,7 +132,7 @@ const getMyPrescriptions = async (req, res) => {
     }
 
     const prescriptions = await Prescription.find(filter)
-      .populate('doctor', 'name specialization')
+      .populate('doctor', 'name specialization medicalRegistrationNo')
       .populate('patient', 'name email phone')
       .populate('appointment', 'date timeSlot')
       .sort({ createdAt: -1 });

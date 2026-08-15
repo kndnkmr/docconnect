@@ -139,6 +139,12 @@ function DoctorProfile() {
               <p className="text-gray-600 mt-1">{doctor.qualification}</p>
             )}
 
+            {doctor.medicalRegistrationNo && (
+              <p className="text-gray-500 text-sm mt-1">
+                Medical Registration No: <span className="font-medium text-gray-700">{doctor.medicalRegistrationNo}</span>
+              </p>
+            )}
+
             {/* Quick facts as compact badges — wrap cleanly instead of scattering */}
             <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
               {doctor.experience > 0 && (

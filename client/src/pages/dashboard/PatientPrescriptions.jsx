@@ -45,6 +45,9 @@ function PatientPrescriptions() {
                 <div>
                   <h3 className="font-semibold text-gray-800">Dr. {rx.doctor?.name}</h3>
                   <p className="text-sm text-gray-500">{rx.doctor?.specialization} • {formatDate(rx.createdAt)}</p>
+                  {rx.doctor?.medicalRegistrationNo && (
+                    <p className="text-xs text-gray-400 mt-0.5">Reg. No: {rx.doctor.medicalRegistrationNo}</p>
+                  )}
                 </div>
                 {rx.appointment && (
                   <span className="text-xs text-gray-400">
