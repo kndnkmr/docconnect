@@ -383,14 +383,14 @@ function DoctorCard({ doctor }) {
 
       {/* Doctor Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start gap-2">
-          <h3 className="text-lg font-semibold text-gray-800">Dr. {doctor.name}</h3>
-          {availableToday && (
-            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0">
-              Available Today
-            </span>
-          )}
-        </div>
+        {/* Name gets the full row width; the badge sits on its own line below
+            so it never squeezes the name into a narrow, wrapping column. */}
+        <h3 className="text-lg font-semibold text-gray-800 leading-snug">Dr. {doctor.name}</h3>
+        {availableToday && (
+          <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
+            Available Today
+          </span>
+        )}
 
         {doctor.specialization && (
           <p className="text-primary-600 text-sm font-medium mt-0.5">
