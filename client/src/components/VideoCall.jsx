@@ -42,8 +42,14 @@ function VideoCall({ appointmentId, onClose }) {
     const frame = callFrameRef.current;
     if (frame && isDoctor) {
       try {
-        await frame.updateParticipants({ '*': { eject: true } }); // remove the patient
-      } catch (_) { /* ignore — we still close below */ }
+        // Eject everyone else (requires the doctor's token to have canAdmin
+        // permission — granted server-side when the token is created).
+        await frame.updateParticipants({ '*': { eject: true } });
+      } catch (e) {
+        // Still close our own view below even if ejecting others failed —
+        // but log it so a permissions regression is easy to spot.
+        console.error('Failed to eject other participants:', e);
+      }
     }
     onClose();
   };

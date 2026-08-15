@@ -85,7 +85,12 @@ async function createMeetingToken({ roomName, userName, isOwner, startVideoOff }
         user_name: userName,
         is_owner: !!isOwner,
         start_video_off: !!startVideoOff,
-        exp
+        exp,
+        // Explicitly grant admin capabilities (mute/eject/permissions) to the
+        // doctor. "is_owner" alone is not documented to guarantee this — Daily's
+        // API separates ownership from admin permissions, so we set it directly
+        // to make sure "End Call for All" (ejecting the patient) actually works.
+        permissions: isOwner ? { canAdmin: true } : undefined
       }
     })
   });
