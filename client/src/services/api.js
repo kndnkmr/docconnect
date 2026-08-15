@@ -310,6 +310,11 @@ export const adminAPI = {
   // Data integrity check: find any phone number shared by more than one
   // account (read-only — never modifies anything itself)
   getDuplicatePhones: () => API.get('/admin/duplicate-phones'),
+
+  // Non-destructive duplicate resolution: renames a DELETED account's
+  // phone/email out of the way (keeps the record + all its appointment
+  // history) instead of permanently deleting it
+  freeUpContactInfo: (id) => API.post(`/admin/users/${id}/free-contact-info`),
 };
 
 // ============================================

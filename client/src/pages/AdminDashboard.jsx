@@ -54,6 +54,22 @@ function AdminDashboard() {
     } catch (error) { /* non-critical — don't block the rest of the panel */ }
   };
 
+  // Non-destructive fix for a stale deleted account blocking someone else's
+  // login: rename its phone/email out of the way, keep everything else
+  // (appointments, prescriptions, reports) intact. This is the RIGHT way to
+  // resolve a duplicate — permanent Delete cascade-deletes appointment
+  // history too, which matters for medical/legal record-keeping.
+  const handleFreeUpContactInfo = async (acc) => {
+    if (!window.confirm(`Free up "${acc.name}"'s phone/email so the other account can use it?\n\nThis keeps their record and all appointment history intact — it just renames the contact info out of the way, the same thing that happens automatically when someone re-registers.`)) return;
+    try {
+      const response = await adminAPI.freeUpContactInfo(acc._id);
+      toast.success(response.data.message);
+      fetchDuplicatePhones();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to free up contact info');
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       const params = { limit: 50 };
@@ -300,7 +316,7 @@ function AdminDashboard() {
             <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-5">
               <h3 className="font-semibold text-red-800 mb-1">⚠️ Duplicate phone numbers found</h3>
               <p className="text-sm text-red-700 mb-4">
-                These phone numbers are shared by more than one account. This can cause login to find the wrong one (e.g. an old deleted account instead of the real active one). Review each group and delete the stale/incorrect account.
+                These phone numbers are shared by more than one account. This can cause login to find the wrong one (e.g. an old deleted account instead of the real active one). For a deleted account, prefer <strong>"Free Up Contact Info"</strong> — it keeps their record and appointment history intact (medical/legal record-keeping) and just frees up the phone/email for the other account. Only use <strong>"Delete Permanently"</strong> if you're sure that account never had any real activity worth keeping.
               </p>
               <div className="space-y-4">
                 {duplicatePhones.map((group) => (
@@ -318,12 +334,24 @@ function AdminDashboard() {
                             <span className="text-gray-400 ml-2">{acc.email || 'no email'} · joined {formatDate(acc.createdAt)}</span>
                           </div>
                           {acc.role !== 'admin' && (
-                            <button
-                              onClick={() => handleDeleteUser(acc._id, acc.name)}
-                              className="text-red-500 hover:text-red-700 text-xs font-medium whitespace-nowrap"
-                            >
-                              Delete
-                            </button>
+                            <div className="flex items-center gap-3 flex-shrink-0">
+                              {acc.isDeleted && (
+                                <button
+                                  onClick={() => handleFreeUpContactInfo(acc)}
+                                  className="text-indigo-600 hover:text-indigo-800 text-xs font-medium whitespace-nowrap"
+                                  title="Keeps the record and appointment history — just frees up the phone/email"
+                                >
+                                  Free Up Contact Info
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteUser(acc._id, acc.name)}
+                                className="text-red-500 hover:text-red-700 text-xs font-medium whitespace-nowrap"
+                                title="Permanent — also deletes all their appointments"
+                              >
+                                Delete Permanently
+                              </button>
+                            </div>
                           )}
                         </div>
                       ))}

@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -43,5 +43,10 @@ router.post('/users/:id/reset-link', generateResetLink);
 
 // GET /api/admin/duplicate-phones - data integrity check (read-only)
 router.get('/duplicate-phones', findDuplicatePhones);
+
+// POST /api/admin/users/:id/free-contact-info - non-destructive duplicate
+// resolution: renames a DELETED account's phone/email out of the way
+// (keeps the record + all its history) instead of permanently deleting it
+router.post('/users/:id/free-contact-info', freeUpContactInfo);
 
 module.exports = router;

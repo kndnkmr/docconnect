@@ -299,6 +299,54 @@ const findDuplicatePhones = async (req, res) => {
 };
 
 // ============================================
+// FREE UP CONTACT INFO - Non-destructive duplicate resolution
+// ============================================
+// Endpoint: POST /api/admin/users/:id/free-contact-info
+//
+// The permanent Delete action removes the account AND cascade-deletes all
+// of their appointments - too destructive for resolving a duplicate-account
+// bug, where the stale account may have real appointment/prescription
+// history worth keeping (medical/legal record-keeping, same principle as
+// the 90-day retention job). This does the SAME thing register() already
+// does automatically when it detects a deleted account blocking a new
+// signup: rename the phone/email out of the way with a "deleted_<time>_"
+// prefix, freeing that contact info for the other (active) account to use.
+// The record itself, and all of its appointments/prescriptions/reports,
+// are left completely untouched.
+//
+// Only allowed on an ALREADY soft-deleted account (isDeleted: true) - this
+// is a cleanup tool for stale deleted accounts blocking someone else's
+// login, not a way to touch an active account's contact info.
+
+const freeUpContactInfo = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (!user.isDeleted) {
+      return res.status(400).json({ message: 'This action is only for already-deleted accounts. Use Deactivate for an active account.' });
+    }
+
+    const stamp = Date.now();
+    if (user.phone && !user.phone.startsWith('deleted_')) {
+      user.phone = `deleted_${stamp}_${user.phone}`;
+    }
+    if (user.email && !user.email.startsWith('deleted_')) {
+      user.email = `deleted_${stamp}_${user.email}`;
+    }
+    await user.save({ validateBeforeSave: false });
+
+    res.json({
+      message: `Freed up "${user.name}"'s phone/email for reuse. The account and all its history (appointments, prescriptions, reports) are untouched.`
+    });
+  } catch (error) {
+    console.error('Free up contact info error:', error.message);
+    res.status(500).json({ message: 'Error freeing up contact info' });
+  }
+};
+
+// ============================================
 // GENERATE RESET LINK - Manual account-recovery assist
 // ============================================
 // Endpoint: POST /api/admin/users/:id/reset-link
@@ -548,4 +596,4 @@ const migrateBase64Images = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo };
