@@ -7,7 +7,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI, availabilityAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
 import { getSocket } from '../services/socket';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
@@ -95,12 +95,24 @@ function Dashboard() {
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
-    specialization: '', experience: '', qualification: '',
+    specialization: '', experience: '', qualification: '', medicalRegistrationNo: '',
     clinicAddress: '', consultationFee: '', bio: '',
     phone: '', whatsappNumber: '', upiId: '', upiQrCode: '', profilePhoto: '',
     city: '', googleMapsLink: '', consultationModes: ['in-person']
   });
   const photoInputRef = useRef(null); // hidden file input for one-click photo upload
+
+  // Doctor onboarding checklist — whether they've set at least one weekly
+  // availability session yet (null = not checked yet, avoids a flash of
+  // "not done" before the fetch below completes).
+  const [hasAvailability, setHasAvailability] = useState(null);
+
+  const fetchAvailabilityStatus = async () => {
+    try {
+      const response = await availabilityAPI.getMine();
+      setHasAvailability((response.data.availability || []).length > 0);
+    } catch (error) { setHasAvailability(false); }
+  };
 
   // Upload a doctor profile photo (used by both the nudge banner and the Edit Profile form)
   const uploadProfilePhoto = async (file) => {
@@ -120,7 +132,7 @@ function Dashboard() {
   useEffect(() => {
     fetchAppointments();
     fetchUnreadCounts();
-    if (isDoctor) fetchProfile();
+    if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); }
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
@@ -139,7 +151,8 @@ function Dashboard() {
       const d = response.data.user;
       setProfileData({
         specialization: d.specialization || '', experience: d.experience || '',
-        qualification: d.qualification || '', clinicAddress: d.clinicAddress || '',
+        qualification: d.qualification || '', medicalRegistrationNo: d.medicalRegistrationNo || '',
+        clinicAddress: d.clinicAddress || '',
         consultationFee: d.consultationFee || '', bio: d.bio || '',
         phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
         upiQrCode: d.upiQrCode || '', profilePhoto: d.profilePhoto || '',
@@ -463,6 +476,37 @@ function Dashboard() {
   };
   const getStatusColor = (status) => ({ pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-green-100 text-green-800', completed: 'bg-blue-100 text-blue-800', cancelled: 'bg-red-100 text-red-800' }[status] || 'bg-gray-100 text-gray-800');
 
+  // ---- Doctor onboarding checklist ----
+  // Verifying email and adding a photo already have their own banners below.
+  // This covers the part that had NO guidance at all: what to actually fill
+  // in before a doctor's profile is genuinely ready to take bookings.
+  const profileFieldsComplete = !!(
+    profileData.specialization && profileData.qualification && profileData.medicalRegistrationNo &&
+    profileData.experience && profileData.consultationFee && profileData.clinicAddress &&
+    profileData.city && profileData.phone
+  );
+  const onboardingSteps = isDoctor ? [
+    {
+      key: 'profile', done: profileFieldsComplete,
+      label: 'Fill in your professional details',
+      hint: 'Specialization, qualification, registration number, experience, fee, clinic address, and phone',
+      actionLabel: 'Edit Profile', action: () => setActiveTab('profile')
+    },
+    {
+      key: 'availability', done: !!hasAvailability,
+      label: 'Set your weekly availability',
+      hint: 'So patients can actually see and book an open time slot with you',
+      actionLabel: 'Set Availability', action: () => setActiveTab('availability')
+    },
+    {
+      key: 'payment', done: !!profileData.upiQrCode,
+      label: 'Add your UPI QR code',
+      hint: 'So patients can pay you directly when they book',
+      actionLabel: 'Add QR Code', action: () => setActiveTab('profile')
+    }
+  ] : [];
+  const pendingOnboardingSteps = onboardingSteps.filter((s) => !s.done);
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Admin announcements (fee notices, policy updates, etc.) */}
@@ -540,6 +584,42 @@ function Dashboard() {
             className="hidden"
             onChange={(e) => uploadProfilePhoto(e.target.files[0])}
           />
+        </div>
+      )}
+
+      {/* Doctor onboarding checklist — the concrete "what do I do next"
+          guidance that was missing after email verification + photo. Hides
+          itself automatically once every step is done. */}
+      {isDoctor && pendingOnboardingSteps.length > 0 && (
+        <div className="mb-6 bg-white border-2 border-primary-200 rounded-xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-semibold text-gray-800 text-lg">🚀 Finish setting up your profile</h3>
+            <span className="text-sm text-gray-500 whitespace-nowrap">{onboardingSteps.length - pendingOnboardingSteps.length} of {onboardingSteps.length} done</span>
+          </div>
+          <p className="text-sm text-gray-500 mb-4">Complete these so patients can actually find and book you.</p>
+          <div className="space-y-2">
+            {onboardingSteps.map((step) => (
+              <div key={step.key} className={`flex items-center justify-between gap-3 p-3 rounded-lg ${step.done ? 'bg-green-50' : 'bg-gray-50'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${step.done ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                    {step.done ? '✓' : ''}
+                  </span>
+                  <div className="min-w-0">
+                    <p className={`text-sm font-medium ${step.done ? 'text-green-800 line-through' : 'text-gray-800'}`}>{step.label}</p>
+                    {!step.done && <p className="text-xs text-gray-500">{step.hint}</p>}
+                  </div>
+                </div>
+                {!step.done && (
+                  <button
+                    onClick={step.action}
+                    className="flex-shrink-0 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-medium hover:bg-primary-700 whitespace-nowrap"
+                  >
+                    {step.actionLabel}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
