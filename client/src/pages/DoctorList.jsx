@@ -338,6 +338,11 @@ function DoctorCard({ doctor }) {
   const na = doctor.nextAvailable;
   const availableToday = !!(na && na.isToday);
 
+  // "New on ProMedicoz" — a positive, honest alternative to a consultation
+  // count for doctors who joined recently (no fabricated numbers).
+  const isNewDoctor = doctor.createdAt &&
+    (Date.now() - new Date(doctor.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000;
+
   // Build a friendly availability label from the next-available slot.
   let availabilityLabel;
   if (na) {
@@ -390,11 +395,18 @@ function DoctorCard({ doctor }) {
           Dr. {doctor.name}
           {doctor.isAdminVerified && <VerifiedBadge size={16} />}
         </h3>
-        {availableToday && (
-          <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
-            Available Today
-          </span>
-        )}
+        <div className="flex flex-wrap gap-1 mt-1">
+          {availableToday && (
+            <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
+              Available Today
+            </span>
+          )}
+          {isNewDoctor && (
+            <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-medium whitespace-nowrap">
+              🆕 New on ProMedicoz
+            </span>
+          )}
+        </div>
 
         {doctor.specialization && (
           <p className="text-primary-600 text-sm font-medium mt-0.5">

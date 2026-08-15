@@ -160,9 +160,13 @@ function DoctorProfile() {
                   📍 {doctor.city}
                 </span>
               )}
-              {doctor.completedConsultations > 0 && (
+              {doctor.completedConsultations > 0 ? (
                 <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
                   ✅ {doctor.completedConsultations} consultation{doctor.completedConsultations > 1 ? 's' : ''} completed
+                </span>
+              ) : (
+                <span className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium">
+                  🆕 New on ProMedicoz
                 </span>
               )}
             </div>
