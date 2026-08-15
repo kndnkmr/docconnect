@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { prescriptionAPI } from '../../services/api';
+import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
+import toast from 'react-hot-toast';
 
 function PatientPrescriptions() {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -23,6 +25,43 @@ function PatientPrescriptions() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric', month: 'short', day: 'numeric'
     });
+  };
+
+  const handleDownload = async (rx) => {
+    try {
+      await downloadPrescriptionPdf(rx);
+    } catch (error) {
+      console.error('Generate PDF error:', error);
+      toast.error('Could not generate PDF. Please try again.');
+    }
+  };
+
+  // Share via WhatsApp: on mobile browsers that support the Web Share API with
+  // files, this opens the native share sheet with the actual PDF attached
+  // (WhatsApp shows up as a target). On desktop / unsupported browsers, we
+  // fall back to downloading the PDF and opening WhatsApp with a text message,
+  // since wa.me links cannot carry a file — the user attaches the downloaded
+  // PDF manually in that case.
+  const handleShareWhatsApp = async (rx) => {
+    try {
+      const file = await getPrescriptionPdfFile(rx);
+      const shareText = `Prescription from Dr. ${rx.doctor?.name || ''} (${formatDate(rx.createdAt)}) — via ProMedicoz`;
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Prescription', text: shareText });
+        return;
+      }
+
+      // Fallback: download the PDF, then open WhatsApp with a text message
+      await downloadPrescriptionPdf(rx);
+      toast('PDF downloaded — attach it in WhatsApp to share.', { icon: '📎', duration: 5000 });
+      window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+    } catch (error) {
+      if (error?.name !== 'AbortError') { // user cancelling the native share sheet isn't an error
+        console.error('Share prescription error:', error);
+        toast.error('Could not share. Please try downloading instead.');
+      }
+    }
   };
 
   if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
@@ -104,6 +143,22 @@ function PatientPrescriptions() {
                   Follow-up: {formatDate(rx.followUpDate)}
                 </p>
               )}
+
+              {/* Download / Share */}
+              <div className="flex gap-2 mt-4 pt-3 border-t">
+                <button
+                  onClick={() => handleDownload(rx)}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                >
+                  ⬇️ Download PDF
+                </button>
+                <button
+                  onClick={() => handleShareWhatsApp(rx)}
+                  className="px-3 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                >
+                  📤 Share via WhatsApp
+                </button>
+              </div>
             </div>
           ))}
         </div>

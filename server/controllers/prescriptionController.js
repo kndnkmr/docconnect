@@ -132,7 +132,7 @@ const getMyPrescriptions = async (req, res) => {
     }
 
     const prescriptions = await Prescription.find(filter)
-      .populate('doctor', 'name specialization medicalRegistrationNo')
+      .populate('doctor', 'name specialization qualification medicalRegistrationNo')
       .populate('patient', 'name email phone')
       .populate('appointment', 'date timeSlot')
       .sort({ createdAt: -1 });
