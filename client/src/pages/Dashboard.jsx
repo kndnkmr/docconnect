@@ -45,6 +45,19 @@ function Dashboard() {
   });
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
+  const tabSectionRef = useRef(null); // scroll target for the tab nav + its content
+
+  // Switch tabs AND bring that section into view — needed because buttons that
+  // jump to a tab (checklist actions, "View Requests →", guidance links) live
+  // above the tab content, so just changing state alone doesn't scroll the
+  // page there. Deferred one frame so the newly-active tab has rendered
+  // before we measure where to scroll.
+  const goToTab = (tabKey) => {
+    setActiveTab(tabKey);
+    requestAnimationFrame(() => {
+      tabSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
 
   // Modal state
   const [cancelModal, setCancelModal] = useState({ open: false, id: null });
@@ -490,19 +503,19 @@ function Dashboard() {
       key: 'profile', done: profileFieldsComplete,
       label: 'Fill in your professional details',
       hint: 'Specialization, qualification, registration number, experience, fee, clinic address, and phone',
-      actionLabel: 'Edit Profile', action: () => setActiveTab('profile')
+      actionLabel: 'Edit Profile', action: () => goToTab('profile')
     },
     {
       key: 'availability', done: !!hasAvailability,
       label: 'Set your weekly availability',
       hint: 'So patients can actually see and book an open time slot with you',
-      actionLabel: 'Set Availability', action: () => setActiveTab('availability')
+      actionLabel: 'Set Availability', action: () => goToTab('availability')
     },
     {
       key: 'payment', done: !!profileData.upiQrCode,
       label: 'Add your UPI QR code',
       hint: 'So patients can pay you directly when they book',
-      actionLabel: 'Add QR Code', action: () => setActiveTab('profile')
+      actionLabel: 'Add QR Code', action: () => goToTab('profile')
     }
   ] : [];
   const pendingOnboardingSteps = onboardingSteps.filter((s) => !s.done);
@@ -636,7 +649,7 @@ function Dashboard() {
           </div>
           {activeTab !== 'appointments' && (
             <button
-              onClick={() => setActiveTab('appointments')}
+              onClick={() => goToTab('appointments')}
               className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 whitespace-nowrap"
             >
               View Requests →
@@ -652,7 +665,7 @@ function Dashboard() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex border-b mb-6 overflow-x-auto">
+      <div ref={tabSectionRef} className="flex border-b mb-6 overflow-x-auto">
         {[
           { key: 'appointments', label: 'My Appointments', show: true },
           { key: 'profile', label: 'Edit Profile', show: isDoctor },
@@ -796,7 +809,7 @@ function Dashboard() {
                               ✅ Consultation done.{' '}
                               <button
                                 type="button"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveTab('prescriptions'); }}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToTab('prescriptions'); }}
                                 className="underline hover:text-blue-900"
                               >
                                 View your prescription →
