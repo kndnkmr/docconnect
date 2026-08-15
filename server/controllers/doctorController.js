@@ -263,7 +263,18 @@ const getDoctorById = async (req, res) => {
       });
     }
 
-    res.json({ doctor });
+    // Real social proof: how many consultations this doctor has completed on
+    // the platform. Only meaningful with real data, so the frontend hides it
+    // when the count is 0 rather than showing "0 consultations".
+    const completedConsultations = await Appointment.countDocuments({
+      doctor: doctor._id,
+      status: 'completed'
+    });
+
+    const doctorObj = doctor.toObject();
+    doctorObj.completedConsultations = completedConsultations;
+
+    res.json({ doctor: doctorObj });
 
   } catch (error) {
     // If the ID format is wrong (not a valid MongoDB ObjectId), this catches it
