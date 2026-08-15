@@ -58,7 +58,8 @@ function buildPrescriptionDoc(jsPDF, rx) {
   let ry = y - (credentialsLine ? 29 : 16) + 16;
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 30, 30);
-  doc.text(`Patient: ${rx.patient?.name || ''}`, rightX, ry, { align: 'right' });
+  const patientLine = rx.patient?.patientId ? `Patient: ${rx.patient?.name || ''} (${rx.patient.patientId})` : `Patient: ${rx.patient?.name || ''}`;
+  doc.text(patientLine, rightX, ry, { align: 'right' });
   ry += 13;
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(90, 90, 90);
