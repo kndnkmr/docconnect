@@ -428,7 +428,20 @@ function Dashboard() {
 
     try {
       await doctorAPI.updateProfile(profileData);
-      toast.success('Profile updated!');
+
+      // Guide the doctor straight to whatever's still pending instead of
+      // leaving them to rediscover it themselves. The onboarding checklist
+      // stays visible on every tab, so nothing is lost even if we jump away
+      // from here — availability is the one thing that needs a real tab
+      // switch (UPI QR code is already on this same page, right above Save).
+      if (hasAvailability === false) {
+        toast.success('Profile updated! Now let\'s set your availability →', { duration: 4000 });
+        goToTab('availability');
+      } else if (!profileData.upiQrCode) {
+        toast.success('Profile updated! Don\'t forget your UPI QR code above so patients can pay you.', { duration: 5000 });
+      } else {
+        toast.success('Profile updated!');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update profile');
     }
