@@ -123,6 +123,14 @@ function Navbar() {
               </>
             )}
 
+            {/* Grievance Officer contact — same address published in Terms &
+                Conditions. Visible to everyone (guests, patients, doctors,
+                admin), not just logged-in users, since anyone visiting the
+                site may need to raise a complaint. */}
+            <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 transition-colors" title={`Email ${GRIEVANCE_EMAIL}`}>
+              ✉️ Grievance
+            </a>
+
             {isAuthenticated ? (
               <>
                 <Link to="/dashboard" className="text-gray-600 hover:text-primary-600 transition-colors">
@@ -132,14 +140,6 @@ function Navbar() {
                   <Link to="/admin" className="text-gray-600 hover:text-primary-600 transition-colors">
                     Admin Panel
                   </Link>
-                )}
-                {/* Grievance Officer contact — same address published in
-                    Terms & Conditions, surfaced here so a patient with a
-                    complaint doesn't have to hunt for it. */}
-                {isPatient && (
-                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 transition-colors" title={`Email ${GRIEVANCE_EMAIL}`}>
-                    ✉️ Grievance
-                  </a>
                 )}
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500">
@@ -232,11 +232,9 @@ function Navbar() {
                       Admin Panel
                     </Link>
                   )}
-                  {isPatient && (
-                    <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                      ✉️ Grievance
-                    </a>
-                  )}
+                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                    ✉️ Grievance
+                  </a>
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
                   </button>
@@ -249,6 +247,9 @@ function Navbar() {
                   <Link to="/register" className="text-primary-600 font-medium px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Register
                   </Link>
+                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                    ✉️ Grievance
+                  </a>
                 </>
               )}
             </div>
