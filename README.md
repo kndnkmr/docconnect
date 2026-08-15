@@ -85,9 +85,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Patients can replace/update uploaded report files anytime
 - In-app video/audio calling (Daily.co) — private per-appointment rooms with server-issued join tokens; no login or sign-in for doctor/patient
 - Audio-only mode for phone consultations (camera off by default)
-- Incoming-call "ringing" notification — when one party joins, the other sees a full-screen banner + ringtone (with vibration on mobile) and can Accept/Decline
+- Incoming-call "ringing" notification — when one party joins, the other sees a full-screen banner + ringtone (with vibration on mobile) and can Accept/Decline. Delivered instantly via Socket.io, with REST polling (every 20s) kept as an automatic fallback if the socket connection drops
 - "Join Call" button appears only on the appointment date (hidden once the day passes)
-- In-app chat messaging per appointment (unread badge, ~3s refresh, optimistic instant-send)
+- In-app chat messaging per appointment (optimistic instant-send, instant delivery to the other party via Socket.io, unread badge updates instantly too). REST polling (every 15s) kept as an automatic fallback if the socket connection drops
 - UPI QR code payment — doctor uploads QR, patient scans and pays
 - "I Have Paid" quick confirmation + optional receipt upload
 - Image/file storage on Cloudinary (QR codes, payment screenshots, medical reports, profile photos) — keeps the database small; automatic base64 fallback if Cloudinary isn't configured, so existing data keeps working
@@ -135,6 +135,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 | express-rate-limit | Brute force protection |
 | cors | Cross-origin requests |
 | dotenv | Environment variable management |
+| socket.io | Real-time chat delivery + call ringing (JWT-authenticated, per-appointment rooms) |
 
 ### Frontend
 | Technology | Purpose |
@@ -145,6 +146,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 | React Router v6 | Client-side navigation |
 | Axios | HTTP client for API calls |
 | React Hot Toast | Notification popups |
+| socket.io-client | Real-time chat + call ringing (with polling fallback) |
 
 ---
 
@@ -161,6 +163,7 @@ docconnect/
 │   ├── .env                     ← Secret config (create manually after clone)
 │   ├── package.json             ← Backend dependencies
 │   ├── server.js                ← Entry point: starts server, connects DB, loads routes
+│   ├── socket.js                ← Socket.io setup: JWT auth, per-user + per-appointment rooms
 │   │
 │   ├── models/                  ← Database schemas (shape of data)
 │   │   ├── User.js              ← Doctor/patient/admin accounts
@@ -227,7 +230,8 @@ docconnect/
         │   └── AuthContext.jsx  ← Global auth state (login/logout)
         │
         ├── services/
-        │   └── api.js           ← All API call functions
+        │   ├── api.js           ← All API call functions
+        │   └── socket.js        ← Shared Socket.io client connection (chat + call ringing)
         │
         ├── components/
         │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)

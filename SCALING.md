@@ -10,7 +10,7 @@ here is needed right now — it's the roadmap for when growth justifies it.
 | Layer | Service | Tier | Notes |
 |-------|---------|------|-------|
 | Frontend | Vercel | Free | Auto-deploys `main`. Static/CDN — scales fine. |
-| Backend | Render | Free | **Sleeps after 15 min inactivity** (~50s cold start). Single small instance. |
+| Backend | Render | **Starter (~$7/mo, ~₹600/mo)** | Always-on — no cold starts (health check ~0.3-0.8s). 512 MB RAM, 0.5 CPU. |
 | Database | MongoDB Atlas (M0) | Free | 512 MB, shared CPU, 500 connection limit. Mumbai region. |
 | Images/files | Cloudinary | Free | QR codes, payment screenshots, medical reports. 25 GB storage/bandwidth. |
 | Video/Audio calls | Daily.co | Free | 10,000 participant-minutes/month. |
@@ -23,32 +23,46 @@ now stored on Cloudinary (not in the DB), so records stay small.
 
 ## What will hit limits first (in order)
 
-### 1. Render backend (the first real bottleneck) 🔴
-The free instance sleeps and is a single small box. Chat polls every 3s and call
-ringing every 5s per open dashboard, so many concurrent users create constant load.
-
-**Fix when:** you have steady daily active users, or notice slowness / the 50s
-cold-start delay hurting real users.
-
-**Action:** upgrade Render to a paid **always-on** plan (~$7/month starter).
-- Removes cold starts (no more 50s first-request delay)
+### 1. Render backend ✅ Done
+Upgraded to the Render **Starter** plan (~$7/month, ~₹600/month, paid via card
+after enabling international transactions). Confirmed fix: health check now
+responds in ~0.3-0.8s instead of the old ~50s cold-start delay.
+- Always-on — no more cold starts
 - More CPU/RAM headroom
-- Keeps WebSocket connections alive (see #2)
+- Keeps WebSocket connections alive (needed for #2 below)
 
-### 2. Polling → WebSockets 🟡
-Once on an always-on server, replace polling with **Socket.io** for instant chat
-and instant call ringing, and to cut server load.
+### 2. Polling → WebSockets ✅ Done
+Added **Socket.io** on top of the existing REST + polling APIs for instant chat
+delivery and instant call ringing, cutting server load from constant polling.
 
-**Why paired with #1:** WebSockets need an always-on server. On the free tier the
-instance sleeps and drops the connection, so there's little benefit until Render
-is upgraded. Do both together.
+**What was built:**
+- `server/socket.js` — Socket.io server attached to the same HTTP server as
+  Express. Each connecting socket is authenticated with the user's JWT (same
+  verification logic as `middleware/auth.js`).
+- Every connected user auto-joins a `user:<userId>` room (used to push
+  incoming-call/call-ended/unread-badge events to them on any page).
+- A socket joins an `appointment:<id>` room only after the client asks
+  (`join-appointment`), and only once we confirm that user is the doctor or
+  patient on that appointment — so chat events never leak to the wrong person.
+- `messageController.js` emits `new-message` to the appointment room and
+  `message-notification` to the recipient's user room on every send.
+- `appointmentController.js` emits `incoming-call` / `call-ended` to the other
+  participant's user room from `setCallStatus`.
+- Frontend (`client/src/services/socket.js`) — one shared socket connection,
+  reused by `ChatBox.jsx` and `Dashboard.jsx`.
+- **Polling kept as an automatic fallback**, just at a lower frequency now
+  that it's a safety net rather than the primary delivery path: chat polling
+  3s → 15s, incoming-call polling 5s → 20s. If the socket connection drops or
+  is blocked by a network/proxy, the UI still updates within that window.
+- At multi-instance scale, add a Redis adapter for Socket.io (far off — not
+  needed on a single Render instance).
 
-**Action (implementation outline):**
-- Add Socket.io to the backend; authenticate each socket with the user's JWT
-- One room per appointment (only the right doctor/patient receive events)
-- Frontend: chat + ringing listen for pushed events instead of polling
-- **Keep polling as a fallback** so it degrades gracefully if a socket drops
-- At multi-instance scale, add a Redis adapter for Socket.io (far off)
+**Verified:** server test suite (10/10) still passes, client build succeeds,
+production health check OK post-deploy, and the live Socket.io endpoint was
+confirmed to correctly reject an invalid JWT on the production URL. Full
+two-account realtime testing (confirming instant chat/ringing between an
+actual doctor and patient account) still needs manual verification in the
+browser — that wasn't done as part of this change.
 
 ### 3. MongoDB paid tier 🟢 (much later)
 Free M0 (512 MB, shared CPU, 500 connections) comfortably handles the first several
@@ -78,8 +92,8 @@ So **MongoDB storage is not the near-term constraint** — Render performance is
 
 ## Upgrade triggers (quick checklist)
 
-- [ ] Real users report the app feels slow to wake / respond → **upgrade Render (always-on)**
-- [ ] Chat/ringing 3–5s delay feels sluggish to real users → **WebSockets** (with Render upgrade)
+- [x] Real users report the app feels slow to wake / respond → **upgrade Render (always-on)** — done
+- [x] Chat/ringing delay feels sluggish to real users → **WebSockets** (with Render upgrade) — done
 - [ ] Daily.co usage nears 10,000 min/month → move to a Daily paid plan
 - [ ] Cloudinary nears 25 GB → paid plan (very far off)
 - [ ] MongoDB nears 512 MB or 500 connections, or queries slow → **paid Atlas tier + indexes**
