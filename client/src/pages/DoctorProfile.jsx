@@ -124,9 +124,7 @@ function DoctorProfile() {
               {doctor.isAdminVerified && <VerifiedBadge size={22} />}
             </h1>
             {doctor.isAdminVerified && (
-              <p className="text-sm text-blue-600 font-medium mt-1 flex items-center justify-center md:justify-start gap-1.5">
-                <VerifiedBadge size={14} /> Verified by ProMedicoz
-              </p>
+              <p className="text-xs text-blue-600 font-medium mt-0.5">Verified by ProMedicoz</p>
             )}
 
             {doctor.specialization && (
