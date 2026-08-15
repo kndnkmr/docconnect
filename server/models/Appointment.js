@@ -117,8 +117,9 @@ const appointmentSchema = new mongoose.Schema({
   // ---- Amount actually collected ----
   amountCollected: {
     type: Number,
-    default: 0
+    default: 0,
     // Actual fee received (may differ from doctor's listed consultationFee)
+    min: [0, 'Amount collected cannot be negative']
   },
 
   // ---- Payment date ----

@@ -104,7 +104,9 @@ const userSchema = new mongoose.Schema({
 
   experience: {
     type: Number,          // Years of experience
-    default: 0
+    default: 0,
+    min: [0, 'Experience cannot be negative'],
+    max: [70, 'Experience seems unrealistically high — please double check']
   },
 
   qualification: {
@@ -145,7 +147,9 @@ const userSchema = new mongoose.Schema({
 
   consultationFee: {
     type: Number,          // Fee in your currency
-    default: 0
+    default: 0,
+    min: [0, 'Consultation fee cannot be negative'],
+    max: [100000, 'Consultation fee seems unrealistically high — please double check']
   },
 
   bio: {
@@ -186,9 +190,11 @@ const userSchema = new mongoose.Schema({
   // Slot duration in minutes (how long each appointment lasts)
   slotDuration: {
     type: Number,
-    default: 30
+    default: 30,
     // Default 30 minutes per appointment
     // Doctor can change this to 15, 45, 60, etc.
+    min: [5, 'Slot duration must be at least 5 minutes'],
+    max: [180, 'Slot duration cannot exceed 3 hours']
   },
 
   // --- Family Members ---

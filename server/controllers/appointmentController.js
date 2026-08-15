@@ -17,6 +17,7 @@ const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { sendAppointmentNotification, sendAppointmentConfirmation } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
+const { getPagination } = require('../utils/queryHelpers');
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -172,9 +173,7 @@ const getMyAppointments = async (req, res) => {
     }
 
     // Pagination
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 10 });
 
     // ---- Ordering ----
     // Upcoming (pending/confirmed) first, EARLIEST date first (soonest at top).
@@ -458,10 +457,20 @@ const markPayment = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update payment status' });
     }
 
+    // Validate a custom amount before it ever reaches the database — a clean
+    // 400 here is much more useful than a generic 500 from the schema's own
+    // min-value check further down.
+    if (req.body.amount !== undefined && req.body.amount !== null && req.body.amount !== '') {
+      const amount = Number(req.body.amount);
+      if (Number.isNaN(amount) || amount < 0) {
+        return res.status(400).json({ message: 'Amount must be a positive number' });
+      }
+    }
+
     appointment.paymentStatus = 'paid';
     appointment.paidAt = new Date();
     // Use custom amount if provided, otherwise use doctor's consultation fee
-    appointment.amountCollected = req.body.amount || appointment.doctor.consultationFee || 0;
+    appointment.amountCollected = req.body.amount ? Number(req.body.amount) : (appointment.doctor.consultationFee || 0);
     await appointment.save();
 
     res.json({

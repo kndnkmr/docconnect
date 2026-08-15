@@ -11,6 +11,7 @@ const MedicalReport = require('../models/MedicalReport');
 const { uploadFile } = require('../utils/uploadFile');
 const crypto = require('crypto');
 const { sendEmail } = require('../utils/sendEmail');
+const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 
 // ============================================
 // GET STATS - Dashboard overview numbers
@@ -62,7 +63,7 @@ const getAllUsers = async (req, res) => {
 
     // Search by name or email
     if (req.query.search) {
-      const searchRegex = new RegExp(req.query.search, 'i');
+      const searchRegex = safeContainsRegex(req.query.search);
       filter.$or = [
         { name: searchRegex },
         { email: searchRegex }
@@ -70,9 +71,7 @@ const getAllUsers = async (req, res) => {
     }
 
     // Pagination
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
 
     const users = await User.find(filter)
       .select('-password')
@@ -110,9 +109,7 @@ const getAllAppointments = async (req, res) => {
       filter.status = req.query.status;
     }
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
 
     const appointments = await Appointment.find(filter)
       .populate('doctor', 'name specialization phone')
@@ -501,7 +498,10 @@ const migrateBase64Images = async (req, res) => {
     });
   } catch (error) {
     console.error('Migrate images error:', error.message);
-    res.status(500).json({ message: 'Migration failed', error: error.message });
+    res.status(500).json({
+      message: 'Migration failed',
+      error: process.env.NODE_ENV !== 'production' ? error.message : undefined
+    });
   }
 };
 

@@ -3,6 +3,7 @@
 // ============================================
 
 const Complaint = require('../models/Complaint');
+const { getPagination } = require('../utils/queryHelpers');
 
 // ============================================
 // CREATE COMPLAINT - Patient files a complaint
@@ -68,9 +69,7 @@ const getAllComplaints = async (req, res) => {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
 
     const complaints = await Complaint.find(filter)
       .populate('patient', 'name email phone')

@@ -13,6 +13,7 @@
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const Review = require('../models/Review');
+const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 const { formatIndianPhone } = require('../utils/formatPhone');
 const { uploadFile } = require('../utils/uploadFile');
 
@@ -149,14 +150,15 @@ const getAllDoctors = async (req, res) => {
     // If the user added ?specialization=something in the URL, filter by it
     // Example: /api/doctors?specialization=Cardiologist
     if (req.query.specialization) {
-      // "new RegExp(..., 'i')" creates a case-insensitive search
-      // So "cardio" matches "Cardiologist", "Cardiology", etc.
-      filter.specialization = new RegExp(req.query.specialization, 'i');
+      // Case-insensitive "contains" search, e.g. "cardio" matches
+      // "Cardiologist"/"Cardiology" — input is escaped so it's always
+      // treated as a literal substring, never as a regex pattern.
+      filter.specialization = safeContainsRegex(req.query.specialization);
     }
 
     // If filtering by name (search)
     if (req.query.name) {
-      filter.name = new RegExp(req.query.name, 'i');
+      filter.name = safeContainsRegex(req.query.name);
     }
 
     // Filter by max consultation fee
@@ -166,7 +168,7 @@ const getAllDoctors = async (req, res) => {
 
     // Filter by city
     if (req.query.city) {
-      filter.city = new RegExp(req.query.city, 'i');
+      filter.city = safeContainsRegex(req.query.city);
     }
 
     // Filter by consultation mode
@@ -185,9 +187,7 @@ const getAllDoctors = async (req, res) => {
     }
 
     // ---- Pagination ----
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 10 });
 
     let doctorsWithAvailability;
     let total;
