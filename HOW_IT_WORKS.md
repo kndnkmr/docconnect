@@ -638,6 +638,42 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
 
 ---
 
+## Known UI Pitfalls (read before touching appointment status messages)
+
+`client/src/pages/Dashboard.jsx` renders each appointment card with TWO
+separate status-message areas that easily end up saying the same thing
+twice if you're not careful:
+
+1. A payment-specific **yellow box**, gated on `apt.paymentStatus === 'patient_claimed'`.
+2. A generic **"Next step guidance" blue box**, gated on combinations of
+   `apt.status` + `apt.paymentStatus`, covering every appointment status —
+   not just payment.
+
+Both boxes have their own separate `isPatient`/`isDoctor` branches. Because
+they sit right next to each other and their conditions overlap, it's easy
+to add or edit a message in one without noticing the other already says
+something similar for the same role. They're different colors, so the
+duplication isn't obvious just by looking at the rendered UI — you have to
+actually read both blocks of JSX to catch it.
+
+**History — this has already happened twice:**
+- Fixed for **patients** in commit `61e2eda` ("single clear payment message
+  for patient") — removed the redundant blue-box line, kept the yellow box
+  (enhanced with the receipt-uploaded/not-uploaded detail).
+- Fixed for **doctors** later (same underlying duplicate, just never
+  applied to the doctor branch the first time) — removed the doctor branch
+  from the yellow box entirely, merged the receipt-uploaded detail into the
+  blue box's doctor message instead.
+
+**Before adding or editing any message tied to `paymentStatus` (or any
+other combined status), search BOTH boxes for the same `isPatient`/
+`isDoctor` + status combination first.** If you're adding a new
+payment-status message, prefer putting it in the blue box only (it already
+exists for every other status), rather than creating a third place for the
+same information to potentially duplicate again.
+
+---
+
 ## How to Make Changes (Future You)
 
 1. Open this project in Kiro (or any editor)

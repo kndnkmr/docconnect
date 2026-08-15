@@ -873,27 +873,17 @@ function Dashboard() {
                         </div>
                       )}
                       {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
-                      {apt.paymentStatus === 'patient_claimed' && (
+                      {/* Patient-side "payment under verification" status. The doctor's
+                          equivalent lives ONLY in the blue guidance box below now — it used
+                          to also duplicate here (see HOW_IT_WORKS.md "Known duplicate-message
+                          pattern" note for why this keeps happening and how to avoid it again). */}
+                      {apt.paymentStatus === 'patient_claimed' && isPatient && (
                         <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          {isPatient && (
-                            <>
-                              {!apt.paymentScreenshot && (
-                                <p className="text-xs font-medium text-yellow-800">No receipt uploaded. Waiting for doctor's confirmation on payment.</p>
-                              )}
-                              {apt.paymentScreenshot && (
-                                <p className="text-xs font-medium text-yellow-800">⏳ Receipt uploaded. Waiting for doctor's confirmation on payment.</p>
-                              )}
-                            </>
+                          {!apt.paymentScreenshot && (
+                            <p className="text-xs font-medium text-yellow-800">No receipt uploaded. Waiting for doctor's confirmation on payment.</p>
                           )}
-                          {isDoctor && (
-                            <>
-                              <span className="text-xs font-medium text-yellow-800">⏳ Patient says paid</span>
-                              <p className="text-xs text-yellow-700 mt-1">
-                                {apt.paymentScreenshot
-                                  ? 'Receipt uploaded — click "View Receipt" to verify.'
-                                  : 'No receipt uploaded. Please check your UPI app to verify payment.'}
-                              </p>
-                            </>
+                          {apt.paymentScreenshot && (
+                            <p className="text-xs font-medium text-yellow-800">⏳ Receipt uploaded. Waiting for doctor's confirmation on payment.</p>
                           )}
                         </div>
                       )}
@@ -925,7 +915,11 @@ function Dashboard() {
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
                           {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
-                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && '💳 Patient says paid. Verify in your UPI app and click "Mark Paid".'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && (
+                            apt.paymentScreenshot
+                              ? '💳 Patient says paid — receipt uploaded. Click "View Receipt" to verify, then "Mark Paid".'
+                              : '💳 Patient says paid — no receipt uploaded. Check your UPI app, then click "Mark Paid".'
+                          )}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
                           {isDoctor && apt.status === 'completed' && '✅ Completed. Write a prescription for the patient.'}
