@@ -62,8 +62,13 @@ const createPrescription = async (req, res) => {
     const existing = await Prescription.findOne({ appointment: appointmentId });
     if (existing) {
       existing.diagnosis = diagnosis || existing.diagnosis;
-      existing.medicines = medicines || existing.medicines;
-      existing.testsRecommended = testsRecommended || existing.testsRecommended;
+      // medicines/testsRecommended are arrays built client-side from a comma-
+      // split textarea — leaving that field blank sends `[]`, which is
+      // truthy, so a plain `|| existing...` would silently wipe an existing
+      // list the doctor never meant to touch. Only replace when something
+      // was actually provided.
+      if (Array.isArray(medicines) && medicines.length > 0) existing.medicines = medicines;
+      if (Array.isArray(testsRecommended) && testsRecommended.length > 0) existing.testsRecommended = testsRecommended;
       existing.notes = notes || existing.notes;
       if (followUpDate) existing.followUpDate = followUpDate;
       await existing.save();
