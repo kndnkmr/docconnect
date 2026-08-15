@@ -9,6 +9,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
+import { getSocket } from '../services/socket';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
 import VideoCall from '../components/VideoCall';
@@ -197,10 +198,53 @@ function Dashboard() {
     };
 
     checkIncomingCalls();
-    const interval = setInterval(checkIncomingCalls, 5000);
+    // Fallback poll — normally the 'incoming-call' socket event below fires
+    // instantly, so this interval is just a safety net if the socket drops.
+    const interval = setInterval(checkIncomingCalls, 20000);
     return () => {
       clearInterval(interval);
       stopRing();
+    };
+  }, []);
+
+  // ---- Realtime: instant call ringing + unread badge updates ----
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return; // not logged in / no token — polling above still covers it
+
+    const handleIncomingCall = (call) => {
+      if (inCallRef.current) return; // already in a call — ignore
+      setIncomingCall((prev) => {
+        if (!prev || prev.appointmentId !== call.appointmentId) {
+          startRing();
+          return call;
+        }
+        return prev;
+      });
+    };
+
+    const handleCallEnded = (payload) => {
+      setIncomingCall((prev) => {
+        if (prev && prev.appointmentId === payload.appointmentId) {
+          stopRing();
+          return null;
+        }
+        return prev;
+      });
+    };
+
+    const handleMessageNotification = () => {
+      fetchUnreadCounts();
+    };
+
+    socket.on('incoming-call', handleIncomingCall);
+    socket.on('call-ended', handleCallEnded);
+    socket.on('message-notification', handleMessageNotification);
+
+    return () => {
+      socket.off('incoming-call', handleIncomingCall);
+      socket.off('call-ended', handleCallEnded);
+      socket.off('message-notification', handleMessageNotification);
     };
   }, []);
 

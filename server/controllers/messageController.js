@@ -62,6 +62,27 @@ const sendMessage = async (req, res) => {
       text: text.trim()
     });
 
+    // Push it over the socket for instant delivery. Polling (ChatBox's
+    // fallback interval) still covers the case where the socket is down.
+    const io = req.app.get('io');
+    if (io) {
+      const payload = {
+        _id: message._id.toString(),
+        appointment: appointmentId,
+        sender: message.sender.toString(),
+        senderRole: message.senderRole,
+        text: message.text,
+        isRead: message.isRead,
+        createdAt: message.createdAt
+      };
+      io.to(`appointment:${appointmentId}`).emit('new-message', payload);
+
+      // Also nudge the recipient's unread badge even if they don't have this
+      // chat open right now.
+      const recipientId = isPatient ? appointment.doctor.toString() : appointment.patient.toString();
+      io.to(`user:${recipientId}`).emit('message-notification', { appointmentId });
+    }
+
     res.status(201).json({ message: 'Message sent', data: message });
   } catch (error) {
     console.error('Send message error:', error.message);

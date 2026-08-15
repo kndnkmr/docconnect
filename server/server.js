@@ -249,12 +249,27 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ---- STEP 9: Start the server ----
+// ---- STEP 9: Attach Socket.io (real-time chat + call ringing) ----
+// Socket.io needs a raw http.Server to attach to (not just the Express app),
+// so we wrap "app" in one here. This does NOT change how "app" behaves for
+// the test suite: supertest wraps "app" in its own temporary server and never
+// touches the "server"/"io" variables below.
+const http = require('http');
+const server = http.createServer(app);
+const { initSocket } = require('./socket');
+const io = initSocket(server);
+// Controllers reach the socket server via req.app.get('io') to push events
+// (e.g. a new chat message, an incoming call) - see messageController.js and
+// appointmentController.js. Polling stays as a fallback if this is unset
+// (e.g. during tests, where the socket layer is never exercised).
+app.set('io', io);
+
+// ---- STEP 10: Start the server ----
 // Only listen when run directly (node server.js), not when imported by tests.
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`
   ==========================================
   ProMedicoz Server is running!
@@ -264,6 +279,7 @@ if (require.main === module) {
   Auth API:     http://localhost:${PORT}/api/auth
   Doctors API:  http://localhost:${PORT}/api/doctors
   Booking API:  http://localhost:${PORT}/api/appointments
+  Realtime:     Socket.io attached (chat + call ringing)
   ==========================================
   Environment: ${process.env.NODE_ENV || 'development'}
   ==========================================

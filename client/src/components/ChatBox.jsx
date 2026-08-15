@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { messageAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { getSocket } from '../services/socket';
 import toast from 'react-hot-toast';
 
 function ChatBox({ appointmentId, onClose }) {
@@ -27,10 +28,38 @@ function ChatBox({ appointmentId, onClose }) {
     fetchMessages();
     // Prevent body scroll when chat is open
     document.body.style.overflow = 'hidden';
-    // Poll for new messages every 3 seconds (snappier delivery of the other person's replies)
-    const interval = setInterval(fetchMessages, 3000);
+    // Poll as a fallback in case the socket connection drops or is blocked -
+    // new messages normally arrive instantly via the 'new-message' socket
+    // event below, so this only needs to be a safety net now.
+    const interval = setInterval(fetchMessages, 15000);
     return () => { clearInterval(interval); document.body.style.overflow = ''; };
   }, [appointmentId]);
+
+  // ---- Realtime: join this appointment's room and listen for new messages ----
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return; // not logged in / no token — polling above still covers it
+
+    socket.emit('join-appointment', appointmentId);
+
+    const myId = user?._id || user?.id;
+    const handleNewMessage = (msg) => {
+      if (msg.appointment !== appointmentId) return;
+      // Our own sent messages are reconciled via fetchMessages() right after
+      // sending (see handleSend) — only append messages from the other side.
+      if (msg.sender === myId) return;
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === msg._id)) return prev; // already have it
+        return [...prev, msg];
+      });
+    };
+
+    socket.on('new-message', handleNewMessage);
+    return () => {
+      socket.emit('leave-appointment', appointmentId);
+      socket.off('new-message', handleNewMessage);
+    };
+  }, [appointmentId, user]);
 
   // Only auto-scroll when the message COUNT grows (a new message arrived or was
   // sent) — not on every 3s poll refresh. And scroll only the message list, not

@@ -21,6 +21,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { disconnectSocket } from '../services/socket';
 
 // Base API URL — uses environment variable in production, falls back to relative path in development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
@@ -109,6 +110,10 @@ export function AuthProvider({ children }) {
 
     // Remove from axios headers
     delete axios.defaults.headers.common['Authorization'];
+
+    // Disconnect the realtime socket so it doesn't keep delivering events
+    // for the account that just logged out
+    disconnectSocket();
 
     // Clear state
     setToken(null);

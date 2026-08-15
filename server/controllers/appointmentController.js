@@ -529,6 +529,28 @@ const setCallStatus = async (req, res) => {
     appointment.callStartedBy = active ? req.user._id : null;
     await appointment.save({ validateModifiedOnly: true });
 
+    // Push an instant update to the OTHER participant over the socket, so
+    // their ringing banner shows/clears immediately instead of waiting on
+    // the next poll (getIncomingCalls, polled every 5s, stays as a fallback).
+    const io = req.app.get('io');
+    if (io) {
+      const otherUserId =
+        appointment.doctor.toString() === uid ? appointment.patient.toString() : appointment.doctor.toString();
+
+      if (appointment.callActive) {
+        const fromName = req.user.role === 'doctor' ? `Dr. ${req.user.name}` : req.user.name;
+        io.to(`user:${otherUserId}`).emit('incoming-call', {
+          appointmentId: appointment._id.toString(),
+          consultationType: appointment.consultationType,
+          fromName
+        });
+      } else {
+        io.to(`user:${otherUserId}`).emit('call-ended', {
+          appointmentId: appointment._id.toString()
+        });
+      }
+    }
+
     res.json({ message: 'Call status updated', callActive: appointment.callActive });
   } catch (error) {
     console.error('Set call status error:', error.message);
