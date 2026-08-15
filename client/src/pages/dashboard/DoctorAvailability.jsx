@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { availabilityAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
-function DoctorAvailability() {
+function DoctorAvailability({ onScheduleChange }) {
   const [schedule, setSchedule] = useState([]);
   const [slotDuration, setSlotDuration] = useState(30);
   const [loading, setLoading] = useState(true);
@@ -17,8 +17,12 @@ function DoctorAvailability() {
     const fetchAvailability = async () => {
       try {
         const response = await availabilityAPI.getMine();
-        setSchedule(response.data.availability || []);
+        const loaded = response.data.availability || [];
+        setSchedule(loaded);
         setSlotDuration(response.data.slotDuration || 30);
+        // Let the Dashboard's onboarding checklist know the real state too,
+        // in case it hasn't fetched this yet (or its own fetch is still pending).
+        onScheduleChange?.(loaded.length > 0);
       } catch (error) {
         console.error('Fetch availability error:', error);
       } finally { setLoading(false); }
@@ -41,6 +45,10 @@ function DoctorAvailability() {
     try {
       await availabilityAPI.set({ availability: nextSchedule, slotDuration: nextDuration });
       if (successMsg) toast.success(successMsg);
+      // Tell the Dashboard immediately — otherwise its onboarding checklist
+      // (fetched once on mount) keeps showing "set your availability" as
+      // pending until a full page refresh, even though this just saved fine.
+      onScheduleChange?.(nextSchedule.length > 0);
     } catch (error) {
       setSchedule(previous); // revert so UI matches what's actually saved
       toast.error(error.response?.data?.message || 'Failed to save — please try again');

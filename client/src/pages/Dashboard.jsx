@@ -106,6 +106,13 @@ function Dashboard() {
     setShowPushNudge(false);
   };
 
+  // Doctor onboarding checklist — celebrate the moment it goes from "some
+  // steps pending" to "fully done" during THIS session, instead of the
+  // checklist card just silently vanishing. Guards against firing on a
+  // normal page load for a doctor who was already fully set up before.
+  const [showOnboardingComplete, setShowOnboardingComplete] = useState(false);
+  const wasOnboardingIncompleteRef = useRef(false);
+
   // Doctor profile state
   const [profileData, setProfileData] = useState({
     specialization: '', experience: '', qualification: '', medicalRegistrationNo: '',
@@ -533,6 +540,18 @@ function Dashboard() {
   ] : [];
   const pendingOnboardingSteps = onboardingSteps.filter((s) => !s.done);
 
+  useEffect(() => {
+    if (!isDoctor || hasAvailability === null) return; // wait until real data has loaded at least once
+    if (pendingOnboardingSteps.length > 0) {
+      wasOnboardingIncompleteRef.current = true;
+    } else if (wasOnboardingIncompleteRef.current) {
+      // Just finished the last step during this session — celebrate once.
+      setShowOnboardingComplete(true);
+      wasOnboardingIncompleteRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingOnboardingSteps.length, hasAvailability, isDoctor]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Admin announcements (fee notices, policy updates, etc.) */}
@@ -662,6 +681,27 @@ function Dashboard() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Onboarding complete — replaces the checklist once every step is
+          done, instead of it just quietly disappearing with no feedback. */}
+      {isDoctor && showOnboardingComplete && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎉</span>
+            <div>
+              <p className="font-semibold text-green-800">Welcome aboard, Dr. {user?.name}!</p>
+              <p className="text-sm text-green-700">Your profile is complete — patients can now find and book you.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowOnboardingComplete(false)}
+            className="text-green-400 hover:text-green-600 text-xl px-1 flex-shrink-0"
+            aria-label="Dismiss"
+          >
+            &times;
+          </button>
         </div>
       )}
 
@@ -1040,7 +1080,7 @@ function Dashboard() {
       )}
 
       {/* Sub-component tabs */}
-      {activeTab === 'availability' && isDoctor && <DoctorAvailability />}
+      {activeTab === 'availability' && isDoctor && <DoctorAvailability onScheduleChange={setHasAvailability} />}
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
       {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
