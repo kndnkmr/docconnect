@@ -357,38 +357,52 @@ function DoctorCard({ doctor }) {
     availabilityLabel = 'No upcoming availability';
   }
 
+  // Horizontal card layout — small circular avatar on the left, info stacked on
+  // the right. This matches how established telehealth listings (e.g. Practo)
+  // present doctor cards, rather than a full-bleed banner photo.
   return (
     <Link
       to={`/doctors/${doctor._id}`}
-      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden block"
+      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow block p-5 flex gap-4 items-start"
       // "block" makes the entire card clickable
     >
-      {/* Doctor Photo */}
-      <div className="h-48 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
+      {/* Avatar */}
+      <div className="flex-shrink-0">
         {doctor.profilePhoto ? (
-          // Circular headshot (like a profile avatar), not a full-bleed crop —
-          // looks like a professional portrait instead of an awkward crop.
           <img
-            src={getUploadUrl(doctor.profilePhoto, { width: 300 })}
+            src={getUploadUrl(doctor.profilePhoto, { width: 200 })}
             alt={doctor.name}
-            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
+            className="w-20 h-20 rounded-full object-cover border-2 border-primary-100"
           />
         ) : (
-          // Gender-neutral doctor emoji when no photo
-          <span className="text-6xl">🧑‍⚕️</span>
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-4xl">
+            🧑‍⚕️
+          </div>
         )}
       </div>
 
       {/* Doctor Info */}
-      <div className="p-5">
-        <div className="flex justify-between items-start">
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between items-start gap-2">
           <h3 className="text-lg font-semibold text-gray-800">Dr. {doctor.name}</h3>
           {availableToday && (
-            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
+            <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0">
               Available Today
             </span>
           )}
         </div>
+
+        {doctor.specialization && (
+          <p className="text-primary-600 text-sm font-medium mt-0.5">
+            {doctor.specialization}
+          </p>
+        )}
+
+        {doctor.experience > 0 && (
+          <p className="text-gray-500 text-sm mt-0.5">
+            {doctor.experience} years experience
+          </p>
+        )}
 
         {/* Honest availability signal (next free slot) */}
         <p className={`text-sm mt-1 font-medium flex items-center gap-1 ${availableToday ? 'text-green-600' : na ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -396,28 +410,14 @@ function DoctorCard({ doctor }) {
           {availabilityLabel}
         </p>
 
-        {doctor.specialization && (
-          <p className="text-primary-600 text-sm font-medium mt-1">
-            {doctor.specialization}
-          </p>
-        )}
-
-        {doctor.experience > 0 && (
-          <p className="text-gray-500 text-sm mt-1">
-            {doctor.experience} years experience
-          </p>
-        )}
-
-        {doctor.consultationFee > 0 && (
-          <p className="text-gray-700 font-medium mt-2">
-            Consultation: ₹{doctor.consultationFee}
-          </p>
-        )}
-
-        {/* City */}
-        {doctor.city && (
-          <p className="text-gray-500 text-sm mt-1">📍 {doctor.city}</p>
-        )}
+        <div className="flex flex-wrap items-center gap-3 mt-2">
+          {doctor.consultationFee > 0 && (
+            <span className="text-gray-700 font-medium text-sm">₹{doctor.consultationFee}</span>
+          )}
+          {doctor.city && (
+            <span className="text-gray-500 text-sm">📍 {doctor.city}</span>
+          )}
+        </div>
 
         {/* Consultation mode badges */}
         {doctor.consultationModes && doctor.consultationModes.length > 0 && (
@@ -428,8 +428,8 @@ function DoctorCard({ doctor }) {
           </div>
         )}
 
-        {/* View Profile button */}
-        <div className="mt-4 flex justify-between items-center">
+        {/* View Profile link */}
+        <div className="mt-3">
           <span className="text-primary-600 text-sm font-medium hover:underline">
             View Profile →
           </span>
