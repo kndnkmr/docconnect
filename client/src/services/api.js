@@ -293,6 +293,10 @@ export const adminAPI = {
   setSuspension: (id, suspend, reason) =>
     API.put(`/admin/users/${id}/suspension`, { suspend, reason }),
 
+  // Mark/unmark a doctor as "Verified by ProMedicoz"
+  setVerification: (id, verified) =>
+    API.put(`/admin/users/${id}/verify`, { verified }),
+
   // Get analytics (revenue, consultation types, top doctors)
   getAnalytics: () => API.get('/admin/analytics'),
 

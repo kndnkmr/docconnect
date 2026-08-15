@@ -118,7 +118,15 @@ function DoctorProfile() {
 
           {/* Basic Info */}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Dr. {doctor.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
+              Dr. {doctor.name}
+              {doctor.isAdminVerified && (
+                <span title="Verified by ProMedicoz" className="text-blue-500 text-xl md:text-2xl">✔️</span>
+              )}
+            </h1>
+            {doctor.isAdminVerified && (
+              <p className="text-sm text-blue-600 font-medium mt-1">✔️ Verified by ProMedicoz</p>
+            )}
 
             {doctor.specialization && (
               <p className="text-primary-600 text-lg font-medium mt-1">

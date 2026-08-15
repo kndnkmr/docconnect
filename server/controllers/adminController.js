@@ -221,6 +221,42 @@ const setUserSuspension = async (req, res) => {
 };
 
 // ============================================
+// SET DOCTOR VERIFICATION - "Verified by ProMedicoz" trust badge
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/verify
+// Body: { verified: true|false }
+//
+// Manually set by an admin after checking the doctor's credentials. This is
+// NOT automatic — the badge only shows for doctors an admin has actually
+// reviewed, so it stays honest rather than showing for everyone by default.
+
+const setDoctorVerification = async (req, res) => {
+  try {
+    const { verified } = req.body;
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'Only doctors can be verified' });
+    }
+
+    user.isAdminVerified = !!verified;
+    user.adminVerifiedAt = verified ? new Date() : null;
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: verified ? `"${user.name}" marked as verified` : `Verification removed for "${user.name}"`,
+      user: { _id: user._id, name: user.name, isAdminVerified: user.isAdminVerified }
+    });
+  } catch (error) {
+    console.error('Set doctor verification error:', error.message);
+    res.status(500).json({ message: 'Error updating verification status' });
+  }
+};
+
+// ============================================
 // GET ANALYTICS - Revenue and consultation insights
 // ============================================
 // Endpoint: GET /api/admin/analytics
@@ -400,4 +436,4 @@ const migrateBase64Images = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, getAnalytics, migrateBase64Images };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images };

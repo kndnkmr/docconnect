@@ -234,6 +234,20 @@ const userSchema = new mongoose.Schema({
     default: null
   },
 
+  // --- Admin Verification (trust badge) ---
+  // Set by an admin after manually confirming a doctor's credentials
+  // (medical registration number, qualifications, etc.). Defaults to false for
+  // everyone — the badge only appears for doctors an admin has actually checked.
+  isAdminVerified: {
+    type: Boolean,
+    default: false
+  },
+
+  adminVerifiedAt: {
+    type: Date,
+    default: null
+  },
+
   // --- Admin Suspension (Deactivate) ---
   // Set by an admin to hide a doctor from patients and block their login,
   // while keeping all their records intact (for legal/audit purposes).

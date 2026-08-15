@@ -136,6 +136,18 @@ function AdminDashboard() {
     }
   };
 
+  const handleToggleVerification = async (user) => {
+    const verify = !user.isAdminVerified;
+    if (verify && !window.confirm(`Mark "${user.name}" as Verified by ProMedicoz?\n\nOnly do this after checking their medical registration number / credentials. This shows a trust badge to patients.`)) return;
+    try {
+      await adminAPI.setVerification(user._id, verify);
+      toast.success(verify ? `"${user.name}" marked as verified` : `Verification removed for "${user.name}"`);
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update verification');
+    }
+  };
+
   const handleToggleSuspension = async (user) => {
     const suspend = !user.isSuspended;
     if (suspend) {
@@ -348,20 +360,39 @@ function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {user.isSuspended ? (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                            Deactivated
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                            Active
-                          </span>
-                        )}
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {user.isSuspended ? (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                              Deactivated
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                              Active
+                            </span>
+                          )}
+                          {user.isAdminVerified && (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                              ✓ Verified
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(user.createdAt)}</td>
                       <td className="px-4 py-3">
                         {user.role !== 'admin' && (
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {user.role === 'doctor' && (
+                              <button
+                                onClick={() => handleToggleVerification(user)}
+                                className={`text-sm font-medium ${
+                                  user.isAdminVerified
+                                    ? 'text-gray-500 hover:text-gray-700'
+                                    : 'text-blue-600 hover:text-blue-800'
+                                }`}
+                              >
+                                {user.isAdminVerified ? 'Unverify' : '✓ Verify'}
+                              </button>
+                            )}
                             <button
                               onClick={() => handleToggleSuspension(user)}
                               className={`text-sm font-medium ${

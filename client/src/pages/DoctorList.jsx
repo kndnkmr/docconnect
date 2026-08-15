@@ -383,9 +383,14 @@ function DoctorCard({ doctor }) {
 
       {/* Doctor Info */}
       <div className="flex-1 min-w-0">
-        {/* Name gets the full row width; the badge sits on its own line below
-            so it never squeezes the name into a narrow, wrapping column. */}
-        <h3 className="text-lg font-semibold text-gray-800 leading-snug">Dr. {doctor.name}</h3>
+        {/* Name gets the full row width; badges sit on their own line below
+            so they never squeeze the name into a narrow, wrapping column. */}
+        <h3 className="text-lg font-semibold text-gray-800 leading-snug flex items-center gap-1.5">
+          Dr. {doctor.name}
+          {doctor.isAdminVerified && (
+            <span title="Verified by ProMedicoz" className="text-blue-500 text-base">✔️</span>
+          )}
+        </h3>
         {availableToday && (
           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
             Available Today
