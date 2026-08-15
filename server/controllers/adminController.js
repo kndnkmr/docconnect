@@ -9,6 +9,8 @@ const Appointment = require('../models/Appointment');
 const CallLog = require('../models/CallLog');
 const MedicalReport = require('../models/MedicalReport');
 const { uploadFile } = require('../utils/uploadFile');
+const crypto = require('crypto');
+const { sendEmail } = require('../utils/sendEmail');
 
 // ============================================
 // GET STATS - Dashboard overview numbers
@@ -257,6 +259,73 @@ const setDoctorVerification = async (req, res) => {
 };
 
 // ============================================
+// GENERATE RESET LINK - Manual account-recovery assist
+// ============================================
+// Endpoint: POST /api/admin/users/:id/reset-link
+//
+// For patients who registered with phone-only (no email), the self-service
+// "forgot password" flow has no automatic way to deliver the link (no SMS
+// gateway configured). This gives an admin a way to generate a valid reset
+// link on the patient's behalf — after verifying their identity some other
+// way (e.g. a phone call) — and relay it manually (e.g. via WhatsApp).
+// If the account DOES have an email on file, we also email it automatically
+// as a convenience, so this doubles as a "resend" tool too.
+
+const generateResetLink = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `https://www.promedicoz.in/reset-password/${resetToken}`;
+
+    let emailed = false;
+    if (user.email) {
+      const result = await sendEmail({
+        to: user.email,
+        subject: 'Reset Your ProMedicoz Password',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+              <h2 style="color: #1f2937;">Reset Your Password</h2>
+              <p style="color: #4b5563;">Our support team generated a password reset link for your account. Click below to set a new password.</p>
+              <a href="${resetUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+                Reset My Password
+              </a>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 30 minutes.</p>
+            </div>
+          </div>
+        `
+      });
+      emailed = !!result.success;
+    }
+
+    res.json({
+      message: emailed
+        ? `Reset link generated and emailed to "${user.name}". You can also copy the link below to send it directly (e.g. via WhatsApp).`
+        : `Reset link generated for "${user.name}" (no email on file). Copy the link below and send it to them manually, e.g. via WhatsApp.`,
+      resetUrl,
+      emailed,
+      expiresInMinutes: 30
+    });
+  } catch (error) {
+    console.error('Generate reset link error:', error.message);
+    res.status(500).json({ message: 'Error generating reset link' });
+  }
+};
+
+// ============================================
 // GET ANALYTICS - Revenue and consultation insights
 // ============================================
 // Endpoint: GET /api/admin/analytics
@@ -436,4 +505,4 @@ const migrateBase64Images = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink };

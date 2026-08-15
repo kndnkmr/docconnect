@@ -1,5 +1,6 @@
 const Message = require('../models/Message');
 const Appointment = require('../models/Appointment');
+const { sendPushToUser } = require('../utils/push');
 
 // GET messages for an appointment
 const getMessages = async (req, res) => {
@@ -81,6 +82,15 @@ const sendMessage = async (req, res) => {
       // chat open right now.
       const recipientId = isPatient ? appointment.doctor.toString() : appointment.patient.toString();
       io.to(`user:${recipientId}`).emit('message-notification', { appointmentId });
+
+      // Push notification too — reaches the recipient even if they don't have
+      // the app open at all (socket alone only works while it's open).
+      sendPushToUser(recipientId, {
+        title: `New message from ${req.user.name}`,
+        body: text.trim().slice(0, 120),
+        url: '/dashboard',
+        tag: `chat-${appointmentId}`
+      });
     }
 
     res.status(201).json({ message: 'Message sent', data: message });

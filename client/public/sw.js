@@ -11,7 +11,7 @@
 // Bumping CACHE_NAME on each meaningful change forces old caches to be cleared,
 // so users pick up new versions without manually clearing their browser cache.
 
-const CACHE_NAME = 'promedicoz-v2';
+const CACHE_NAME = 'promedicoz-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -34,6 +34,48 @@ self.addEventListener('activate', (event) => {
         keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       )
     ).then(() => self.clients.claim())
+  );
+});
+
+// ============================================
+// Web Push - show a notification, even if the app isn't open
+// ============================================
+// The backend sends a JSON payload: { title, body, url, tag }
+// (see server/utils/push.js). "tag" groups/replaces related notifications
+// (e.g. repeated call pings for the same appointment collapse into one).
+self.addEventListener('push', (event) => {
+  let data = { title: 'ProMedicoz', body: 'You have a new update.', url: '/dashboard' };
+  try {
+    if (event.data) data = { ...data, ...event.data.json() };
+  } catch (e) { /* fall back to defaults above */ }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      tag: data.tag,
+      data: { url: data.url || '/dashboard' }
+    })
+  );
+});
+
+// Clicking the notification focuses an existing tab if one is open,
+// otherwise opens a new one at the target URL.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || '/dashboard';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsList) => {
+      for (const client of clientsList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    })
   );
 });
 

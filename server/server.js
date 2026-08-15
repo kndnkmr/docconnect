@@ -227,6 +227,10 @@ app.use('/api/messages', messageRoutes);
 const announcementRoutes = require('./routes/announcement');
 app.use('/api/announcements', announcementRoutes);
 
+// Push routes — browser push notification subscription management
+const pushRoutes = require('./routes/push');
+app.use('/api/push', pushRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!

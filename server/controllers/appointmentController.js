@@ -16,6 +16,7 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { sendAppointmentNotification, sendAppointmentConfirmation } = require('../utils/sendEmail');
+const { sendPushToUser } = require('../utils/push');
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -347,6 +348,24 @@ const updateAppointmentStatus = async (req, res) => {
       sendAppointmentConfirmation(appointment.patient, appointment.doctor, appointment);
     }
 
+    // Push notification to the patient — works even if they have no email on
+    // file (phone-only accounts), as long as they've enabled notifications.
+    if (status === 'confirmed') {
+      sendPushToUser(appointment.patient._id, {
+        title: 'Appointment confirmed',
+        body: `Dr. ${appointment.doctor.name} confirmed your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,
+        url: '/dashboard',
+        tag: `appointment-${appointment._id}`
+      });
+    } else if (status === 'cancelled') {
+      sendPushToUser(appointment.patient._id, {
+        title: 'Appointment cancelled',
+        body: `Dr. ${appointment.doctor.name} was unable to confirm your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}.`,
+        url: '/dashboard',
+        tag: `appointment-${appointment._id}`
+      });
+    }
+
     res.json({
       message: `Appointment ${status} successfully`,
       appointment
@@ -398,6 +417,14 @@ const cancelAppointment = async (req, res) => {
     appointment.cancellationReason = cancellationReason || 'Cancelled by patient';
 
     await appointment.save();
+
+    // Let the doctor know instantly, without waiting for them to check the dashboard.
+    sendPushToUser(appointment.doctor, {
+      title: 'Appointment cancelled',
+      body: `${req.user.name} cancelled their appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,
+      url: '/dashboard',
+      tag: `appointment-${appointment._id}`
+    });
 
     res.json({
       message: 'Appointment cancelled successfully',
@@ -543,6 +570,14 @@ const setCallStatus = async (req, res) => {
           appointmentId: appointment._id.toString(),
           consultationType: appointment.consultationType,
           fromName
+        });
+        // Push notification too — reaches the other participant even if the
+        // app isn't open in a foreground tab right now (socket alone can't).
+        sendPushToUser(otherUserId, {
+          title: `Incoming ${appointment.consultationType === 'video' ? 'video' : 'audio'} call`,
+          body: `${fromName} is calling you now.`,
+          url: '/dashboard',
+          tag: `call-${appointment._id}`
         });
       } else {
         io.to(`user:${otherUserId}`).emit('call-ended', {

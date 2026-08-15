@@ -148,6 +148,28 @@ function AdminDashboard() {
     }
   };
 
+  const handleGenerateResetLink = async (user) => {
+    if (!window.confirm(`Generate a password reset link for "${user.name}"?\n\nOnly do this after verifying it's really them (e.g. a phone call) — the link lets whoever has it set a new password.`)) return;
+    try {
+      const response = await adminAPI.generateResetLink(user._id);
+      const { resetUrl, emailed, message } = response.data;
+      if (emailed) {
+        toast.success(message);
+      } else {
+        // No email on file — the admin needs to relay this link manually (e.g. WhatsApp)
+        try {
+          await navigator.clipboard.writeText(resetUrl);
+          toast.success(`${message} Link copied to clipboard.`, { duration: 6000 });
+        } catch (clipboardErr) {
+          // Clipboard access can fail (permissions/older browsers) — fall back to showing it directly
+          window.prompt('Copy this reset link and send it to the patient manually:', resetUrl);
+        }
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to generate reset link');
+    }
+  };
+
   const handleToggleSuspension = async (user) => {
     const suspend = !user.isSuspended;
     if (suspend) {
@@ -402,6 +424,13 @@ function AdminDashboard() {
                               }`}
                             >
                               {user.isSuspended ? 'Reactivate' : 'Deactivate'}
+                            </button>
+                            <button
+                              onClick={() => handleGenerateResetLink(user)}
+                              className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                              title={user.email ? 'Emails a reset link to this user' : 'No email on file — copies a link for you to send manually'}
+                            >
+                              Reset Link
                             </button>
                             <button
                               onClick={() => handleDeleteUser(user._id, user.name)}

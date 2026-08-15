@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
 import { getSocket } from '../services/socket';
+import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
 import VideoCall from '../components/VideoCall';
@@ -59,6 +60,38 @@ function Dashboard() {
   const audioCtxRef = useRef(null);
   const ringIntervalRef = useRef(null);
   const inCallRef = useRef(false); // guards against ringing while already in a call
+
+  // Push notification nudge — lets patients/doctors get instant updates
+  // (appointment confirmed, new message, incoming call) even when the app
+  // isn't open. Works regardless of whether they have an email on file.
+  const [showPushNudge, setShowPushNudge] = useState(false);
+
+  useEffect(() => {
+    if (!isPushSupported()) return;
+    const permission = getPushPermission();
+    if (permission === 'granted') {
+      // Already granted (maybe from another page/session) — silently make
+      // sure this device's subscription is saved on the backend too.
+      enablePushNotifications();
+    } else if (permission === 'default' && !localStorage.getItem('pushNudgeDismissed')) {
+      setShowPushNudge(true);
+    }
+  }, []);
+
+  const handleEnablePush = async () => {
+    const ok = await enablePushNotifications();
+    setShowPushNudge(false);
+    if (ok) {
+      toast.success('Notifications enabled! You\'ll get instant updates.');
+    } else {
+      toast.error('Could not enable notifications. You can allow them from your browser\'s site settings.');
+    }
+  };
+
+  const dismissPushNudge = () => {
+    localStorage.setItem('pushNudgeDismissed', '1');
+    setShowPushNudge(false);
+  };
 
   // Doctor profile state
   const [profileData, setProfileData] = useState({
@@ -434,6 +467,35 @@ function Dashboard() {
     <div className="container mx-auto px-4 py-8">
       {/* Admin announcements (fee notices, policy updates, etc.) */}
       <AnnouncementBanner />
+
+      {/* Push notification nudge — works for everyone, including patients
+          who registered with phone only (no email on file) */}
+      {showPushNudge && (
+        <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🔔</span>
+            <div>
+              <p className="font-semibold text-indigo-800">Turn on notifications</p>
+              <p className="text-sm text-indigo-700">Get instant updates on appointments, messages, and calls — even when the app isn't open.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={handleEnablePush}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 whitespace-nowrap"
+            >
+              Enable
+            </button>
+            <button
+              onClick={dismissPushNudge}
+              className="text-indigo-400 hover:text-indigo-600 text-xl px-1"
+              aria-label="Dismiss"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Email Verification Banner for unverified doctors */}
       {isDoctor && user && !user.isVerified && (

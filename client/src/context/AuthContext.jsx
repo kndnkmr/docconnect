@@ -22,6 +22,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { disconnectSocket } from '../services/socket';
+import { disablePushNotifications } from '../services/push';
 
 // Base API URL — uses environment variable in production, falls back to relative path in development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
@@ -105,6 +106,14 @@ export function AuthProvider({ children }) {
   // Clears all auth data
 
   const logout = () => {
+    // Unsubscribe this browser from push notifications — otherwise a shared
+    // device could keep showing a previous user's private notifications
+    // (message text, appointment details) after they've logged out and
+    // someone else is using it. The unsubscribe request needs the auth
+    // token, so we pass the current one explicitly (it resolves async, by
+    // which point localStorage's copy is cleared below).
+    disablePushNotifications(token);
+
     // Remove token from storage
     localStorage.removeItem('token');
 

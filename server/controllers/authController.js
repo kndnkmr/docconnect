@@ -307,94 +307,108 @@ const getMe = async (req, res) => {
 // FORGOT PASSWORD - Request a reset link
 // ============================================
 // Endpoint: POST /api/auth/forgot-password
-// Body: { email }
+// Body: { email } OR { phone }
 //
 // HOW IT WORKS:
-// 1. User provides their email
+// 1. User provides their email OR phone (patients can register with phone only)
 // 2. We generate a random token
 // 3. Hash the token and store it in the database (with an expiry)
-// 4. Log the reset URL to the console (in production, you'd EMAIL this)
-// 5. User clicks the link → goes to reset page with the token in the URL
+// 4. If the account has an email, we email the link. If not (phone-only
+//    account, no SMS gateway configured), we can't deliver it automatically —
+//    so we tell the user to reach out via WhatsApp, and an admin can look up
+//    their account and relay a reset link manually (see adminController.js
+//    generateResetLink). This avoids leaving phone-only patients with no way
+//    to ever recover their account.
 //
 // WHY HASH THE TOKEN?
 // Same reason we hash passwords. If someone steals the database,
 // they can't use the stored hash to reset other people's passwords.
 // The plain token is only sent to the user (via console/email).
 
+const buildResetUrl = (resetToken) => `https://www.promedicoz.in/reset-password/${resetToken}`;
+
+const sendResetEmail = async (user, resetUrl) => {
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Reset Your ProMedicoz Password',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+          </div>
+          <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937;">Reset Your Password</h2>
+            <p style="color: #4b5563;">We received a request to reset your ProMedicoz password. Click the button below to set a new one.</p>
+            <a href="${resetUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+              Reset My Password
+            </a>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 30 minutes. If you didn't request this, you can safely ignore this email — your password won't change.</p>
+          </div>
+        </div>
+      `
+    });
+  } catch (mailErr) {
+    console.error('Failed to send reset email:', mailErr.message);
+  }
+};
+
 const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, phone } = req.body;
 
-    if (!email) {
+    if (!email && !phone) {
       return res.status(400).json({
-        message: 'Please provide your email address'
+        message: 'Please provide your email address or phone number'
       });
     }
 
-    // Find the user by email
-    const user = await User.findOne({ email });
+    // Find the user by email or phone
+    let user;
+    if (email) {
+      user = await User.findOne({ email });
+    } else {
+      const formattedPhone = formatIndianPhone(phone);
+      user = await User.findOne({ phone: formattedPhone }) || await User.findOne({ phone });
+    }
+
+    const genericMessage = email
+      ? 'If an account with that email exists, a password reset link has been emailed to you.'
+      : 'If an account with that phone number exists, we\'ve sent you next steps.';
 
     if (!user) {
-      // SECURITY: Don't reveal whether the email exists or not
-      // Always return the same response regardless
-      return res.json({
-        message: 'If an account with that email exists, a password reset link has been emailed to you.'
-      });
+      // SECURITY: Don't reveal whether the account exists or not
+      return res.json({ message: genericMessage });
     }
 
     // Generate a random token (32 bytes → 64 hex characters)
     const resetToken = crypto.randomBytes(32).toString('hex');
-    // Example output: "a3f7b2c4d8e9f0a1b2c3d4e5f6a7b8c9..."
-    // This is the token we send to the user (unhashed)
-
-    // Hash the token before storing in database
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    // sha256 = a one-way hash function
-    // We store the HASHED version. We compare against it later.
 
-    // Set the token and expiry on the user document
     user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
-    // 30 minutes from now (30 min × 60 sec × 1000 ms)
-
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
     await user.save({ validateBeforeSave: false });
-    // validateBeforeSave: false = skip validation (we're not changing password here)
 
-    // Build the reset URL (production frontend)
-    const resetUrl = `https://www.promedicoz.in/reset-password/${resetToken}`;
+    const resetUrl = buildResetUrl(resetToken);
 
-    // Email the reset link to the user (Resend). Non-blocking failure: we still
-    // respond success and log the link so local/dev without email still works.
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: 'Reset Your ProMedicoz Password',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
-            </div>
-            <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
-              <h2 style="color: #1f2937;">Reset Your Password</h2>
-              <p style="color: #4b5563;">We received a request to reset your ProMedicoz password. Click the button below to set a new one.</p>
-              <a href="${resetUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
-                Reset My Password
-              </a>
-              <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 30 minutes. If you didn't request this, you can safely ignore this email — your password won't change.</p>
-            </div>
-          </div>
-        `
+    if (user.email) {
+      // Normal path: email the link.
+      await sendResetEmail(user, resetUrl);
+      console.log(`[password-reset] link for ${user.email}: ${resetUrl} (expires 30 min)`);
+      return res.json({
+        message: genericMessage,
+        ...(process.env.NODE_ENV !== 'production' && { resetToken, resetUrl })
       });
-    } catch (mailErr) {
-      console.error('Failed to send reset email:', mailErr.message);
     }
 
-    // Also log for local/dev troubleshooting
-    console.log(`[password-reset] link for ${user.email}: ${resetUrl} (expires 30 min)`);
-
-    res.json({
-      message: 'If an account with that email exists, a password reset link has been emailed to you.',
-      // In development, also return the token for easy testing:
+    // Phone-only account with no email on file — we have no automatic way to
+    // deliver the link (no SMS gateway configured). Tell the patient how to
+    // get help instead of leaving them stuck, and log it so an admin can
+    // relay the link manually if the patient reaches out.
+    console.log(`[password-reset] phone-only account (${user.phone}) requested reset. No email on file — link not auto-delivered: ${resetUrl} (expires 30 min)`);
+    return res.json({
+      message: 'This account has no email on file, so we can\'t send a reset link automatically. Please contact us on WhatsApp and we\'ll help you regain access.',
+      noEmailOnFile: true,
       ...(process.env.NODE_ENV !== 'production' && { resetToken, resetUrl })
     });
 

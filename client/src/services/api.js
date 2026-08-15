@@ -116,7 +116,7 @@ export const authAPI = {
 
   // Request password reset
   forgotPassword: (data) => API.post('/auth/forgot-password', data),
-  // data = { email }
+  // data = { email } OR { phone } — patients can register with phone only
 
   // Reset password with token
   resetPassword: (token, data) => API.put(`/auth/reset-password/${token}`, data),
@@ -302,6 +302,10 @@ export const adminAPI = {
 
   // One-time: migrate legacy base64 images to Cloudinary
   migrateImages: () => API.post('/admin/migrate-images'),
+
+  // Generate/relay a password reset link for a user (manual recovery assist
+  // for phone-only patients with no email on file; also works as a "resend")
+  generateResetLink: (id) => API.post(`/admin/users/${id}/reset-link`),
 };
 
 // ============================================

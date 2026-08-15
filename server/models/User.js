@@ -297,6 +297,25 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Web Push Subscriptions ---
+  // A user can have multiple subscriptions (one per browser/device they've
+  // enabled notifications on). Each one is what the browser's Push API gives
+  // us when the user grants permission — we use it to send them a
+  // notification (appointment confirmed, new message, incoming call) even
+  // when the app isn't open. No email or phone number needed, so this works
+  // for phone-only patients too.
+  pushSubscriptions: {
+    type: [{
+      endpoint: { type: String, required: true },
+      keys: {
+        p256dh: { type: String, required: true },
+        auth: { type: String, required: true }
+      },
+      createdAt: { type: Date, default: Date.now }
+    }],
+    default: []
+  },
+
   verificationToken: {
     type: String,
     default: undefined
