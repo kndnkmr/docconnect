@@ -583,6 +583,56 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
 - The system automatically detects the role from the database after login
 - No role selection needed at login — only during registration
 
+### Patient ID
+
+- Every patient gets a short, human-readable id like `PT000123` (a MongoDB
+  ObjectId isn't practical to read over a phone call or search by) —
+  assigned automatically at registration
+- Implementation: `server/models/Counter.js` is an atomic sequence
+  generator (MongoDB has no native auto-increment), `patientId` field on
+  `User` (unique + sparse — see the pitfall below), assigned in
+  `authController.register()`
+- Shown to the patient in Dashboard → Account Settings, and to the doctor
+  on each appointment card / the Patient Reports list, so it doubles as a
+  quick identifier to search by
+- **Existing patients** (registered before this feature existed) don't
+  have one yet — an admin needs to trigger the one-time backfill ONCE:
+  `POST /api/admin/backfill-patient-ids` (admin JWT required, e.g. via
+  browser devtools console while logged into `/admin`:
+  `fetch('/api/admin/backfill-patient-ids', { method: 'POST', headers: { Authorization: 'Bearer ' + localStorage.getItem('token') } })`).
+  Idempotent — safe to run more than once.
+- **Pitfall if you touch this field:** the schema uses `default: undefined`,
+  not `default: null`. A sparse index only exempts a field that's
+  completely *absent* from the document — an explicit `null` still counts
+  as a value, so every doctor/admin (who have no Patient ID) would collide
+  on the same `null` and violate the unique constraint. This was caught by
+  testing against a real database, not just a build — see
+  `verificationToken`/`resetPasswordToken` just above `patientId` in
+  `User.js` for the same pattern already in use.
+
+### Search (Doctor's Appointments / Reports / Prescriptions)
+
+- Before this, a doctor's only way to browse their appointments was
+  10-per-page pagination with no way to jump to a specific one — as the
+  patient list grows, a specific confirmed appointment (e.g. the one you
+  need to click "Mark Complete" on) can end up several pages in with no
+  way to find it. This is also the likely explanation if "Mark Complete"
+  ever seems to have disappeared — it's still there, just possibly on
+  another page. Check the search box first before assuming it's a bug.
+- `GET /api/appointments/my?search=...` matches the OTHER party's
+  name/phone (and a patient's Patient ID), resolved to user ids BEFORE the
+  existing sort/pagination pipeline runs (`appointmentController.js`)
+- Search box appears in the Appointments tab (both roles) once there's
+  more than 5 appointments
+- Patient Reports tab (doctor) and the new Prescriptions tab (doctor) use
+  a simpler client-side filter instead, since those lists aren't paginated
+  server-side
+- The doctor's "Prescriptions" tab is new — previously there was no way
+  to browse prescriptions at all except through the per-appointment
+  Write/Update Prescription button. It reuses the same
+  `doctorPrescriptions` data already fetched for the appointment card's
+  next-step hint, so it added no new API calls.
+
 ---
 
 ## Complete File Reference

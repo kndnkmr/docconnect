@@ -468,7 +468,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | /api/appointments | Patient only | Book appointment (supports family member + repeat; records consent) |
-| GET | /api/appointments/my | Protected | View my appointments |
+| GET | /api/appointments/my | Protected | View my appointments (supports ?status=, ?search= by other party's name/phone/Patient ID, ?page=, ?limit=) |
 | GET | /api/appointments/incoming-calls | Protected | Poll for an incoming call (ringing) |
 | GET | /api/appointments/:id | Protected | View single appointment |
 | GET | /api/appointments/:id/video-token | Protected | Get Daily.co room URL + join token (slot-window enforced) |
@@ -528,6 +528,9 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
 | PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
 | POST | /api/admin/users/:id/reset-link | Admin only | Generate/relay a password reset link (manual recovery assist for phone-only accounts) |
+| GET | /api/admin/duplicate-phones | Admin only | Read-only check for accounts sharing a phone number |
+| POST | /api/admin/users/:id/free-contact-info | Admin only | Free up a DELETED account's phone/email for reuse (keeps its history, unlike Delete) |
+| POST | /api/admin/backfill-patient-ids | Admin only | One-time: assign a Patient ID to patients who registered before this field existed |
 
 ### Announcements
 | Method | Endpoint | Access | Description |
