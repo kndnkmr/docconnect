@@ -66,6 +66,19 @@ function AccountSettings() {
     <div className="max-w-2xl">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Account Settings</h2>
 
+      {/* Patient ID — a short, memorable identifier (separate from the
+          internal account id) your doctor can look you up by, e.g. over a
+          phone call, without needing your exact registered name/number. */}
+      {user?.role === 'patient' && user?.patientId && (
+        <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-primary-700 font-medium">Your Patient ID</p>
+            <p className="text-lg font-bold text-primary-800 tracking-wide">{user.patientId}</p>
+          </div>
+          <p className="text-xs text-gray-500 max-w-[45%] text-right">Share this with your doctor to help them find your records quickly.</p>
+        </div>
+      )}
+
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <h3 className="font-medium text-gray-800 mb-4">Update Contact Information</h3>
         <form onSubmit={handleUpdateAccount} className="space-y-4">

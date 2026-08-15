@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const CallLog = require('../models/CallLog');
 const MedicalReport = require('../models/MedicalReport');
+const { getNextSequence } = require('../models/Counter');
 const { uploadFile } = require('../utils/uploadFile');
 const crypto = require('crypto');
 const { sendEmail } = require('../utils/sendEmail');
@@ -596,4 +597,34 @@ const migrateBase64Images = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo };
+// ============================================
+// BACKFILL PATIENT IDS (admin, one-time)
+// ============================================
+// Endpoint: POST /api/admin/backfill-patient-ids
+// Patients who registered before the Patient ID field existed have
+// patientId: null. Assigns each of them the next sequential id, oldest
+// account first (so ids roughly track "how long they've been a patient").
+// Idempotent - only touches patients that don't have one yet, so it's safe
+// to run more than once (e.g. after new patients register without one for
+// some reason).
+
+const backfillPatientIds = async (req, res) => {
+  try {
+    const patients = await User.find({ role: 'patient', patientId: null }).sort({ createdAt: 1 });
+
+    let assigned = 0;
+    for (const p of patients) {
+      const seq = await getNextSequence('patientId');
+      p.patientId = `PT${String(seq).padStart(6, '0')}`;
+      await p.save({ validateBeforeSave: false });
+      assigned++;
+    }
+
+    res.json({ message: `Assigned Patient IDs to ${assigned} existing patient(s).`, assigned });
+  } catch (error) {
+    console.error('Backfill patient ids error:', error.message);
+    res.status(500).json({ message: 'Error backfilling patient ids' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds };

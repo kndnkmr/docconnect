@@ -12,6 +12,7 @@ const crypto = require('crypto');
 // crypto = built-in Node.js module for generating random tokens and hashing
 // We use it to create secure, unguessable reset tokens
 const User = require('../models/User');
+const { getNextSequence } = require('../models/Counter');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
 const { sendEmail } = require('../utils/sendEmail');
 
@@ -132,6 +133,15 @@ const register = async (req, res) => {
       lastLoginIP: req.headers['x-forwarded-for'] || req.ip || ''
     });
 
+    // Step 5b: Assign a human-readable Patient ID (patients only) — lets a
+    // doctor identify/search for a specific patient by something shorter
+    // and more memorable than a MongoDB id.
+    if (role === 'patient') {
+      const seq = await getNextSequence('patientId');
+      user.patientId = `PT${String(seq).padStart(6, '0')}`;
+      await user.save({ validateBeforeSave: false });
+    }
+
     // Step 6: If doctor, send verification email
     if (role === 'doctor' && email) {
       const verifyToken = crypto.randomBytes(32).toString('hex');
@@ -179,7 +189,8 @@ const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        isVerified: user.isVerified
+        isVerified: user.isVerified,
+        patientId: user.patientId
       }
     });
 
@@ -278,7 +289,8 @@ const login = async (req, res) => {
         email: user.email,
         role: user.role,
         profilePhoto: user.profilePhoto,
-        isVerified: user.isVerified
+        isVerified: user.isVerified,
+        patientId: user.patientId
       }
     });
 

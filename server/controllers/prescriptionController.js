@@ -130,7 +130,7 @@ const getPrescriptionByAppointment = async (req, res) => {
   try {
     const prescription = await Prescription.findOne({ appointment: req.params.appointmentId })
       .populate('doctor', 'name specialization qualification medicalRegistrationNo')
-      .populate('patient', 'name email phone');
+      .populate('patient', 'name email phone patientId');
 
     if (!prescription) {
       return res.status(404).json({ message: 'No prescription found for this appointment' });
@@ -169,7 +169,7 @@ const getMyPrescriptions = async (req, res) => {
 
     const prescriptions = await Prescription.find(filter)
       .populate('doctor', 'name specialization qualification medicalRegistrationNo')
-      .populate('patient', 'name email phone')
+      .populate('patient', 'name email phone patientId')
       .populate('appointment', 'date timeSlot')
       .sort({ createdAt: -1 });
 

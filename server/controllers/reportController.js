@@ -92,7 +92,7 @@ const getMyReports = async (req, res) => {
     }
 
     const reports = await MedicalReport.find(filter)
-      .populate('patient', 'name email phone')
+      .populate('patient', 'name email phone patientId')
       .populate('doctor', 'name specialization')
       .sort({ createdAt: -1 });
 

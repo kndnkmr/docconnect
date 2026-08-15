@@ -229,6 +229,26 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Patient ID ---
+  // A short, human-readable identifier for patients (e.g. "PT000123") -
+  // separate from the MongoDB ObjectId, which isn't practical to read over
+  // the phone or search by. Assigned once at registration (see
+  // authController.register) and never changes. null/absent for doctors
+  // and admins - "sparse" lets many documents share that same null value
+  // without violating the unique constraint.
+  patientId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    // IMPORTANT: default must be `undefined`, not `null`. A sparse index
+    // only exempts documents where the field is completely ABSENT — an
+    // explicit `null` still counts as a value, so every doctor/admin (and
+    // every patient before this migration runs) would collide on the same
+    // "null" and violate the unique constraint. Same reasoning as
+    // verificationToken/resetPasswordToken below.
+    default: undefined
+  },
+
   // --- Soft Delete ---
   isDeleted: {
     type: Boolean,

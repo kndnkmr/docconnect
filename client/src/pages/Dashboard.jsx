@@ -45,6 +45,13 @@ function Dashboard() {
   });
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
+  // Search the appointments list by the OTHER party's name/phone (and, for
+  // a doctor, the patient's Patient ID) — without this, once someone has
+  // more than a page's worth of appointments, finding one specific one
+  // means clicking through pages one at a time with no way to jump to it.
+  const [aptSearch, setAptSearch] = useState('');
+  const [aptSearchDebounced, setAptSearchDebounced] = useState('');
+  const [rxSearch, setRxSearch] = useState('');
   // Doctor-only: cross-referenced against each completed appointment so the
   // card itself can surface "patient uploaded a report" / "prescription
   // already sent" as an actionable next step, instead of the doctor having
@@ -190,7 +197,18 @@ function Dashboard() {
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
-  }, [page]);
+  }, [page, aptSearchDebounced]);
+
+  // Debounce the search box, and jump back to page 1 whenever the search
+  // term actually changes (otherwise you could be stuck on e.g. page 3 of
+  // an old unfiltered list while the new search only has 1 page of results).
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setAptSearchDebounced(aptSearch.trim());
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [aptSearch]);
 
   // Re-render every 30s so the time-based "Join Call" window opens/closes on time
   const [, setClockTick] = useState(0);
@@ -219,7 +237,7 @@ function Dashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await appointmentAPI.getMine({ limit: 10, page });
+      const response = await appointmentAPI.getMine({ limit: 10, page, search: aptSearchDebounced || undefined });
       setAppointments(response.data.appointments);
       setPagination(response.data.pagination);
     } catch (error) { console.error('Fetch appointments error:', error); }
@@ -876,7 +894,7 @@ function Dashboard() {
           { key: 'availability', label: 'Availability', show: isDoctor },
           { key: 'patientReports', label: 'Patient Reports', show: isDoctor },
           { key: 'familyMembers', label: 'Family Members', show: isPatient },
-          { key: 'prescriptions', label: 'Prescriptions', show: isPatient },
+          { key: 'prescriptions', label: 'Prescriptions', show: isPatient || isDoctor },
           { key: 'reports', label: 'My Reports', show: isPatient },
           { key: 'complaints', label: 'Complaints', show: isPatient },
           { key: 'account', label: 'Account Settings', show: true },
@@ -900,13 +918,31 @@ function Dashboard() {
             </div>
           )}
 
+          {/* Only worth showing once there's enough to search through -
+              avoids clutter for a brand new account with 1-2 appointments. */}
+          {(pagination?.totalAppointments > 5 || aptSearchDebounced) && (
+            <div className="mb-4">
+              <input
+                type="text"
+                value={aptSearch}
+                onChange={(e) => setAptSearch(e.target.value)}
+                placeholder={isDoctor ? '🔍 Search by patient name, phone, or Patient ID...' : '🔍 Search by doctor name or phone...'}
+                className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+              />
+            </div>
+          )}
+
           {loading ? (
             <div className="text-center py-8 text-gray-600">Loading appointments...</div>
           ) : appointments.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-md">
-              <div className="text-5xl mb-4">📋</div>
-              <h3 className="text-xl font-medium text-gray-700">No appointments yet</h3>
-              {isPatient ? (
+              <div className="text-5xl mb-4">{aptSearchDebounced ? '🔍' : '📋'}</div>
+              <h3 className="text-xl font-medium text-gray-700">{aptSearchDebounced ? `No appointments match "${aptSearchDebounced}"` : 'No appointments yet'}</h3>
+              {aptSearchDebounced ? (
+                <button onClick={() => setAptSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
+                  Clear search
+                </button>
+              ) : isPatient ? (
                 <>
                   <p className="text-gray-500 mt-2">Click "+ Book New Appointment" above to search by specialization or symptom and find the right doctor.</p>
                   <button
@@ -939,6 +975,7 @@ function Dashboard() {
                     <div className="flex-grow">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-semibold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : apt.patient?.name || 'Unknown Patient'}</h3>
+                        {isDoctor && apt.patient?.patientId && <span className="text-xs text-gray-400 font-mono">{apt.patient.patientId}</span>}
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{getStatusLabel(apt.status)}</span>
                       </div>
                       <p className="text-gray-600 text-sm">{formatDate(apt.date)} • {apt.timeSlot}</p>
@@ -1249,6 +1286,79 @@ function Dashboard() {
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
       {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
+      {activeTab === 'prescriptions' && isDoctor && (() => {
+        const q = rxSearch.trim().toLowerCase();
+        const filteredRx = q
+          ? doctorPrescriptions.filter((p) =>
+              p.patient?.name?.toLowerCase().includes(q) ||
+              p.patient?.phone?.toLowerCase().includes(q) ||
+              p.patient?.patientId?.toLowerCase().includes(q) ||
+              p.diagnosis?.toLowerCase().includes(q)
+            )
+          : doctorPrescriptions;
+        return (
+          <div className="max-w-3xl">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">Prescriptions</h2>
+            {doctorPrescriptions.length > 5 && (
+              <div className="mb-4">
+                <input
+                  type="text"
+                  value={rxSearch}
+                  onChange={(e) => setRxSearch(e.target.value)}
+                  placeholder="🔍 Search by patient name, phone, Patient ID, or diagnosis..."
+                  className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+                />
+              </div>
+            )}
+            {doctorPrescriptions.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl shadow-md">
+                <div className="text-5xl mb-4">💊</div>
+                <h3 className="text-xl font-medium text-gray-700">No prescriptions written yet</h3>
+                <p className="text-gray-500 mt-2">Prescriptions you write from a completed appointment will appear here.</p>
+              </div>
+            ) : filteredRx.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl shadow-md">
+                <div className="text-5xl mb-4">🔍</div>
+                <h3 className="text-xl font-medium text-gray-700">No prescriptions match "{rxSearch}"</h3>
+                <button onClick={() => setRxSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">Clear search</button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredRx.map((p) => (
+                  <div key={p._id} className="bg-white rounded-xl shadow-md p-6">
+                    <div className="flex justify-between items-start gap-3 flex-wrap">
+                      <div>
+                        <h3 className="font-semibold text-gray-800">
+                          {p.patient?.name || 'Unknown Patient'}
+                          {p.patient?.patientId && <span className="text-xs text-gray-400 font-mono ml-2">{p.patient.patientId}</span>}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {p.appointment?.date ? formatDate(p.appointment.date) : formatDate(p.createdAt)}
+                          {p.appointment?.timeSlot && ` • ${p.appointment.timeSlot}`}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setPrescriptionModal({ open: true, id: p.appointment?._id || p.appointment })}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm hover:bg-purple-200"
+                      >
+                        Update
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-2"><span className="font-medium">Diagnosis:</span> {p.diagnosis}</p>
+                    {p.medicines?.length > 0 && (
+                      <p className="text-sm text-gray-600 mt-1">💊 {p.medicines.map((m) => m.name).join(', ')}</p>
+                    )}
+                    {p.testsRecommended?.length > 0 && (
+                      <p className="text-sm text-gray-600 mt-1">🧪 {p.testsRecommended.join(', ')}</p>
+                    )}
+                    {p.notes && <p className="text-sm text-gray-500 mt-1 italic">{p.notes}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
       {activeTab === 'reports' && isPatient && <PatientReports />}
       {activeTab === 'complaints' && isPatient && <PatientComplaints />}
       {activeTab === 'account' && <AccountSettings />}
@@ -1297,8 +1407,13 @@ function Dashboard() {
         // — a doctor writing a new one has no way to recall what was already
         // prescribed without digging through history themselves. Surface it
         // right in the modal instead.
+        // currentApt comes from the loaded/paginated appointments list, which
+        // won't always contain this appointment (e.g. opened via "Update"
+        // from the Prescriptions tab's full, unpaginated list instead) — fall
+        // back to the patient info already sitting on existingRx in that case.
         const currentApt = prescriptionModal.id ? appointments.find((a) => a._id === prescriptionModal.id) : null;
-        const currentPatientId = currentApt?.patient?._id || currentApt?.patient;
+        const currentPatient = currentApt?.patient || existingRx?.patient;
+        const currentPatientId = currentPatient?._id || currentPatient;
         const previousRx = currentPatientId
           ? doctorPrescriptions
               .filter((p) => (p.patient?._id || p.patient) === currentPatientId && (p.appointment?._id || p.appointment) !== prescriptionModal.id)
@@ -1313,7 +1428,7 @@ function Dashboard() {
             extraContent={previousRx.length > 0 && (
               <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg max-h-40 overflow-y-auto">
                 <p className="text-xs font-semibold text-gray-600 mb-2">
-                  📋 Previous prescriptions for {currentApt?.patient?.name || 'this patient'}:
+                  📋 Previous prescriptions for {currentPatient?.name || 'this patient'}:
                 </p>
                 <div className="space-y-2">
                   {previousRx.map((p) => (

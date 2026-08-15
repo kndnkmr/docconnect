@@ -17,7 +17,7 @@ const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { sendAppointmentNotification, sendAppointmentConfirmation } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
-const { getPagination } = require('../utils/queryHelpers');
+const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -172,6 +172,24 @@ const getMyAppointments = async (req, res) => {
       // Example: ?status=pending → only show pending appointments
     }
 
+    // Optional search — lets a doctor with many appointments find a specific
+    // one without paging through everything. Matches the OTHER party's name,
+    // phone, or (for patients) their Patient ID. We resolve matching user ids
+    // first, then fold that into the existing filter, so the rest of the
+    // query/sort/pagination pipeline below is unchanged.
+    if (req.query.search && req.query.search.trim()) {
+      const re = safeContainsRegex(req.query.search.trim());
+      const otherPartyRole = req.user.role === 'doctor' ? 'patient' : 'doctor';
+      const matches = await User.find({
+        role: otherPartyRole,
+        $or: [{ name: re }, { phone: re }, { patientId: re }]
+      }).select('_id');
+      const matchedIds = matches.map((m) => m._id);
+      // No matches at all → force an empty result instead of accidentally
+      // matching everything (an empty $in matches nothing, which is correct).
+      filter[otherPartyRole] = { $in: matchedIds };
+    }
+
     // Pagination
     const { page, limit, skip } = getPagination(req, { defaultLimit: 10 });
 
@@ -202,7 +220,7 @@ const getMyAppointments = async (req, res) => {
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
       .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink consultationModes')
-      .populate('patient', 'name email phone');
+      .populate('patient', 'name email phone patientId');
 
     const byId = {};
     docs.forEach((d) => { byId[d._id.toString()] = d; });
@@ -239,7 +257,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
       .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress')
-      .populate('patient', 'name email phone');
+      .populate('patient', 'name email phone patientId');
 
     if (!appointment) {
       return res.status(404).json({
