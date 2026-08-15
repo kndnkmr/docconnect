@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { reportAPI } from '../../services/api';
 import { PromptModal } from '../../components/Modal';
+import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 
 function DoctorPatientReports() {
@@ -8,18 +9,34 @@ function DoctorPatientReports() {
   const [loading, setLoading] = useState(true);
   const [reviewModal, setReviewModal] = useState({ open: false, reportId: null });
 
+  const fetchReports = async () => {
+    try {
+      const response = await reportAPI.getMine();
+      setReports(response.data.reports);
+    } catch (error) {
+      console.error('Fetch reports error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const response = await reportAPI.getMine();
-        setReports(response.data.reports);
-      } catch (error) {
-        console.error('Fetch reports error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchReports();
+  }, []);
+
+  // Realtime: the moment a patient uploads or replaces a report, refresh this
+  // list instantly instead of the doctor needing to reload the page.
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleReportUpdate = () => {
+      fetchReports();
+      toast.success('New report from a patient!');
+    };
+
+    socket.on('report-updated', handleReportUpdate);
+    return () => socket.off('report-updated', handleReportUpdate);
   }, []);
 
   const handleReview = async (values) => {
@@ -28,8 +45,7 @@ function DoctorPatientReports() {
       await reportAPI.review(reviewModal.reportId, { doctorComment: values.comment });
       toast.success('Report reviewed');
       setReviewModal({ open: false, reportId: null });
-      const response = await reportAPI.getMine();
-      setReports(response.data.reports);
+      fetchReports();
     } catch (error) {
       toast.error('Failed to review report');
     }

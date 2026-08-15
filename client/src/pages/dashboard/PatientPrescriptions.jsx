@@ -1,24 +1,41 @@
 import { useState, useEffect } from 'react';
 import { prescriptionAPI } from '../../services/api';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
+import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 
 function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchPrescriptions = async () => {
+    try {
+      const response = await prescriptionAPI.getMine();
+      setPrescriptions(response.data.prescriptions);
+    } catch (error) {
+      console.error('Fetch prescriptions error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPrescriptions = async () => {
-      try {
-        const response = await prescriptionAPI.getMine();
-        setPrescriptions(response.data.prescriptions);
-      } catch (error) {
-        console.error('Fetch prescriptions error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPrescriptions();
+  }, []);
+
+  // Realtime: the moment a doctor writes/updates a prescription, refresh this
+  // list instantly instead of the patient needing to reload the page.
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return; // not logged in — the page will show current data on next visit either way
+
+    const handlePrescriptionUpdate = () => {
+      fetchPrescriptions();
+      toast.success('New prescription received!');
+    };
+
+    socket.on('prescription-updated', handlePrescriptionUpdate);
+    return () => socket.off('prescription-updated', handlePrescriptionUpdate);
   }, []);
 
   const formatDate = (dateString) => {

@@ -4,6 +4,33 @@
 
 const Prescription = require('../models/Prescription');
 const Appointment = require('../models/Appointment');
+const { sendPushToUser } = require('../utils/push');
+
+// Notify the patient the instant a prescription is written/updated, so it
+// "auto appears" on their already-open dashboard instead of needing a manual
+// refresh. Socket.io covers the case where they have the app open right now;
+// push notification covers it even if they don't. Never throws — this is a
+// pure enhancement on top of the REST response, which already succeeded.
+const notifyPrescriptionUpdate = (req, prescription) => {
+  try {
+    const io = req.app.get('io');
+    const patientId = prescription.patient.toString();
+    if (io) {
+      io.to(`user:${patientId}`).emit('prescription-updated', {
+        prescriptionId: prescription._id.toString(),
+        appointmentId: prescription.appointment.toString()
+      });
+    }
+    sendPushToUser(patientId, {
+      title: 'New prescription from your doctor',
+      body: `Dr. ${req.user.name} has written a prescription for you.`,
+      url: '/dashboard?tab=prescriptions',
+      tag: `prescription-${prescription._id}`
+    });
+  } catch (error) {
+    console.error('notifyPrescriptionUpdate error:', error.message);
+  }
+};
 
 // ============================================
 // CREATE PRESCRIPTION - Doctor writes after consultation
@@ -49,6 +76,8 @@ const createPrescription = async (req, res) => {
         await appointment.save({ validateModifiedOnly: true });
       }
 
+      notifyPrescriptionUpdate(req, existing);
+
       return res.json({
         message: 'Prescription updated successfully',
         prescription: existing
@@ -73,6 +102,8 @@ const createPrescription = async (req, res) => {
       appointment.followUpDeadline = deadline;
       await appointment.save({ validateModifiedOnly: true });
     }
+
+    notifyPrescriptionUpdate(req, prescription);
 
     res.status(201).json({
       message: 'Prescription created successfully',
@@ -171,6 +202,8 @@ const updatePrescription = async (req, res) => {
     if (followUpDate !== undefined) prescription.followUpDate = followUpDate;
 
     await prescription.save();
+
+    notifyPrescriptionUpdate(req, prescription);
 
     res.json({
       message: 'Prescription updated successfully',

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { reportAPI, appointmentAPI } from '../../services/api';
+import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 
 function PatientReports() {
@@ -13,6 +14,21 @@ function PatientReports() {
   useEffect(() => {
     fetchReports();
     fetchDoctors();
+  }, []);
+
+  // Realtime: the moment a doctor reviews a report, refresh instantly instead
+  // of the patient needing to reload the page.
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleReportUpdate = () => {
+      fetchReports();
+      toast.success('Your doctor reviewed your report!');
+    };
+
+    socket.on('report-updated', handleReportUpdate);
+    return () => socket.off('report-updated', handleReportUpdate);
   }, []);
 
   const fetchReports = async () => {

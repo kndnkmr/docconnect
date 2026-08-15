@@ -4,6 +4,24 @@
 
 const MedicalReport = require('../models/MedicalReport');
 const { uploadFile } = require('../utils/uploadFile');
+const { sendPushToUser } = require('../utils/push');
+
+// Notify the other party the instant a report is uploaded/reviewed/replaced,
+// so it "auto appears" for them instead of needing a manual refresh.
+// targetUserId = whoever should be notified (the party who DIDN'T just act).
+const notifyReportUpdate = (req, report, targetUserId, notification) => {
+  try {
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`user:${targetUserId}`).emit('report-updated', {
+        reportId: report._id.toString()
+      });
+    }
+    sendPushToUser(targetUserId, notification);
+  } catch (error) {
+    console.error('notifyReportUpdate error:', error.message);
+  }
+};
 
 // ============================================
 // UPLOAD REPORT - Patient uploads test report
@@ -38,6 +56,13 @@ const uploadReport = async (req, res) => {
       title,
       description: description || '',
       filePath: fileUrl
+    });
+
+    notifyReportUpdate(req, report, doctorId, {
+      title: 'New report from a patient',
+      body: `${req.user.name} shared a test report with you.`,
+      url: '/dashboard?tab=patientReports',
+      tag: `report-${report._id}`
     });
 
     res.status(201).json({
@@ -104,6 +129,13 @@ const reviewReport = async (req, res) => {
 
     await report.save();
 
+    notifyReportUpdate(req, report, report.patient.toString(), {
+      title: 'Your doctor reviewed your report',
+      body: `Dr. ${req.user.name} added a comment on your report.`,
+      url: '/dashboard?tab=reports',
+      tag: `report-${report._id}`
+    });
+
     res.json({
       message: 'Report reviewed successfully',
       report
@@ -147,6 +179,17 @@ const updateReport = async (req, res) => {
     }
 
     await report.save();
+
+    if (req.file) {
+      // Only notify the doctor if the file actually changed (isReviewed was
+      // reset above) — a plain title/description edit doesn't need a fresh look.
+      notifyReportUpdate(req, report, report.doctor.toString(), {
+        title: 'Report updated',
+        body: `${req.user.name} replaced a report file — it needs another look.`,
+        url: '/dashboard?tab=patientReports',
+        tag: `report-${report._id}`
+      });
+    }
 
     res.json({
       message: 'Report updated successfully',
