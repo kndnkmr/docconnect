@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function BottomNav() {
-  const { isAuthenticated, isDoctor } = useAuth();
+  const { isAuthenticated, isDoctor, isPatient } = useAuth();
   const location = useLocation();
 
   // Which Dashboard tab (if any) the current URL points to — used to tell
@@ -25,6 +25,20 @@ function BottomNav() {
         { path: '/dashboard?tab=availability', tab: 'availability', icon: '🕐', label: 'Availability' },
         { path: '/dashboard?tab=patientReports', tab: 'patientReports', icon: '📄', label: 'Reports' },
       ]
+    // A logged-in patient's daily needs are their own appointments,
+    // prescriptions, and reports — not browsing/searching doctors or the
+    // blog. Those still live one tap away via "+ Book New Appointment" on
+    // the Appointments tab, same as doctors losing their browse links.
+    : isPatient
+    ? [
+        { path: '/dashboard', tab: 'appointments', icon: '📋', label: 'Appointments' },
+        { path: '/dashboard?tab=prescriptions', tab: 'prescriptions', icon: '💊', label: 'Prescriptions' },
+        { path: '/dashboard?tab=reports', tab: 'reports', icon: '📄', label: 'Reports' },
+        { path: '/dashboard?tab=account', tab: 'account', icon: '👤', label: 'Account' },
+      ]
+    // Fallback for any other authenticated role (currently just admin) —
+    // keeps the original browse-oriented layout since admins aren't
+    // booking/managing their own appointments.
     : isAuthenticated
     ? [
         { path: '/', icon: '🏠', label: 'Home' },

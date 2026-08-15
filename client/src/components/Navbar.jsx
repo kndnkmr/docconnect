@@ -17,7 +17,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 function Navbar() {
-  const { user, isAuthenticated, isDoctor, logout } = useAuth();
+  const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -80,9 +80,13 @@ function Navbar() {
           <div className="hidden md:flex items-center space-x-6">
 
             {/* A logged-in doctor's day-to-day is appointments/profile/
-                availability/reports, not browsing other doctors or the blog -
-                those patient-facing links only show for patients and guests. */}
-            {!isDoctor && (
+                availability/reports, not browsing other doctors or the blog.
+                Same for a logged-in patient — their Dashboard already has
+                Appointments/Prescriptions/Reports tabs, and "+ Book New
+                Appointment" covers finding a doctor. These marketing links
+                are only useful before you've signed up, so guests (and
+                admin, who isn't booking anything) still see them. */}
+            {!isDoctor && !isPatient && (
               <>
                 <Link to="/doctors" className="text-gray-600 hover:text-primary-600 transition-colors">
                   Find Doctors
