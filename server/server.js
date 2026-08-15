@@ -68,6 +68,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Only connect to the database when this file is run directly (node server.js),
 // not when it's imported by the test suite (which tests the app without a DB).
+const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
+
 if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
@@ -76,6 +78,13 @@ mongoose.connect(process.env.MONGODB_URI)
     // Set ADMIN_EMAIL in environment variables. Safe to run on every startup:
     // it only promotes an existing user, and only if not already an admin.
     ensureAdmin();
+
+    // Enforce the "data retained for 90 days" promise shown when a user
+    // deletes their own account: anonymize any account past that window.
+    // Runs on startup, then once a day - fine at this scale, no separate
+    // cron service needed.
+    purgeExpiredDeletedAccounts();
+    setInterval(purgeExpiredDeletedAccounts, 24 * 60 * 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
