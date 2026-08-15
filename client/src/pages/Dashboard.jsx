@@ -126,6 +126,13 @@ function Dashboard() {
   // availability session yet (null = not checked yet, avoids a flash of
   // "not done" before the fetch below completes).
   const [hasAvailability, setHasAvailability] = useState(null);
+  // Whether fetchProfile() has resolved at least once since this Dashboard
+  // instance mounted. Dashboard remounts fresh every time you navigate back
+  // to it (e.g. Home -> Appointments), which resets profileData to its empty
+  // defaults for a moment — without this flag, the checklist would briefly
+  // flash as "incomplete" on every single visit, even for a fully set-up
+  // doctor, until the real data loads back in.
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const fetchAvailabilityStatus = async () => {
     try {
@@ -180,6 +187,7 @@ function Dashboard() {
         consultationModes: d.consultationModes || ['in-person']
       });
     } catch (error) { console.error('Fetch profile error:', error); }
+    finally { setProfileLoaded(true); }
   };
 
   const fetchAppointments = async () => {
@@ -540,8 +548,10 @@ function Dashboard() {
   ] : [];
   const pendingOnboardingSteps = onboardingSteps.filter((s) => !s.done);
 
+  const doctorDataReady = profileLoaded && hasAvailability !== null;
+
   useEffect(() => {
-    if (!isDoctor || hasAvailability === null) return; // wait until real data has loaded at least once
+    if (!isDoctor || !doctorDataReady) return; // wait until real data has loaded at least once
     if (pendingOnboardingSteps.length > 0) {
       wasOnboardingIncompleteRef.current = true;
     } else if (wasOnboardingIncompleteRef.current) {
@@ -550,7 +560,7 @@ function Dashboard() {
       wasOnboardingIncompleteRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingOnboardingSteps.length, hasAvailability, isDoctor]);
+  }, [pendingOnboardingSteps.length, doctorDataReady, isDoctor]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -635,7 +645,7 @@ function Dashboard() {
       {/* Doctor onboarding checklist — the concrete "what do I do next"
           guidance that was missing after email verification + photo. Hides
           itself automatically once every step is done. */}
-      {isDoctor && pendingOnboardingSteps.length > 0 && (
+      {isDoctor && doctorDataReady && pendingOnboardingSteps.length > 0 && (
         <div className="mb-6 bg-white border-2 border-primary-200 rounded-xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-semibold text-gray-800 text-lg">🚀 Finish setting up your profile</h3>
