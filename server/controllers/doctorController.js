@@ -12,6 +12,7 @@
 
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
+const Review = require('../models/Review');
 const { formatIndianPhone } = require('../utils/formatPhone');
 const { uploadFile } = require('../utils/uploadFile');
 
@@ -108,6 +109,29 @@ async function attachNextAvailable(docs) {
   });
 }
 
+// Attach { average, count } rating stats to a page of doctors. One aggregate
+// query for the whole page (not one per doctor), so it stays cheap regardless
+// of how many doctors are shown.
+async function attachRatings(docs) {
+  if (!docs || docs.length === 0) return docs;
+  const ids = docs.map((d) => d._id);
+
+  const stats = await Review.aggregate([
+    { $match: { doctor: { $in: ids } } },
+    { $group: { _id: '$doctor', average: { $avg: '$rating' }, count: { $sum: 1 } } }
+  ]);
+
+  const byId = {};
+  stats.forEach((s) => {
+    byId[s._id.toString()] = { average: Math.round(s.average * 10) / 10, count: s.count };
+  });
+
+  return docs.map((d) => {
+    d.rating = byId[d._id.toString()] || { average: 0, count: 0 };
+    return d;
+  });
+}
+
 // ============================================
 // GET ALL DOCTORS - Public (anyone can browse)
 // ============================================
@@ -186,6 +210,9 @@ const getAllDoctors = async (req, res) => {
       total = await User.countDocuments(filter);
       doctorsWithAvailability = await attachNextAvailable(doctors);
     }
+
+    // Attach average rating + review count (one query for this page)
+    doctorsWithAvailability = await attachRatings(doctorsWithAvailability);
 
     // ---- Send response ----
     res.json({

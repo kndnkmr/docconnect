@@ -408,6 +408,15 @@ function DoctorCard({ doctor }) {
           </p>
         )}
 
+        {/* Rating (only shown once the doctor has real reviews) */}
+        {doctor.rating && doctor.rating.count > 0 && (
+          <p className="text-sm mt-0.5 flex items-center gap-1">
+            <span className="text-yellow-500">⭐</span>
+            <span className="font-medium text-gray-700">{doctor.rating.average}</span>
+            <span className="text-gray-400">({doctor.rating.count} review{doctor.rating.count > 1 ? 's' : ''})</span>
+          </p>
+        )}
+
         {/* Honest availability signal (next free slot) */}
         <p className={`text-sm mt-1 font-medium flex items-center gap-1 ${availableToday ? 'text-green-600' : na ? 'text-gray-600' : 'text-gray-400'}`}>
           {na && <span>🕐</span>}
