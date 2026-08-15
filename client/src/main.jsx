@@ -56,9 +56,26 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => {
-        // Check for updates on load and periodically (every hour)
+        // Check for updates on load...
         reg.update();
-        setInterval(() => reg.update(), 60 * 60 * 1000);
+
+        // ...and periodically while the tab is actually open and active.
+        // (A plain setInterval alone is unreliable — browsers routinely pause
+        // JS timers on backgrounded/inactive tabs to save battery, especially
+        // on mobile, so a PWA left open in the background for a while may
+        // never fire the interval and can go a long time without checking.)
+        setInterval(() => reg.update(), 15 * 60 * 1000);
+
+        // ...and — most importantly — right when the user comes back to the
+        // app (switches tabs back, reopens from the home screen, unlocks
+        // their phone). This is the moment that actually matters: it means
+        // a returning user gets the latest version within a second or two of
+        // opening the app, instead of waiting on a background timer.
+        const checkOnReturn = () => {
+          if (document.visibilityState === 'visible') reg.update();
+        };
+        document.addEventListener('visibilitychange', checkOnReturn);
+        window.addEventListener('focus', checkOnReturn);
       })
       .catch((err) => console.log('Service Worker registration failed:', err));
 
