@@ -348,7 +348,7 @@ export const prescriptionAPI = {
   // data = { appointmentId, diagnosis, medicines, testsRecommended, notes, followUpDate }
 
   // Get my prescriptions (both roles)
-  getMine: () => API.get('/prescriptions/my'),
+  getMine: (params) => API.get('/prescriptions/my', { params }),
 
   // Get prescription for a specific appointment
   getByAppointment: (appointmentId) => API.get(`/prescriptions/appointment/${appointmentId}`),
@@ -366,7 +366,7 @@ export const reportAPI = {
   upload: (data) => API.post('/reports', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
-  getMine: () => API.get('/reports/my'),
+  getMine: (params) => API.get('/reports/my', { params }),
   review: (id, data) => API.put(`/reports/${id}/review`, data),
   // Patient updates/replaces report file
   update: (id, data) => API.put(`/reports/${id}`, data, {

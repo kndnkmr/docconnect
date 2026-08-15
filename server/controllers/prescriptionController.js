@@ -4,7 +4,9 @@
 
 const Prescription = require('../models/Prescription');
 const Appointment = require('../models/Appointment');
+const User = require('../models/User');
 const { sendPushToUser } = require('../utils/push');
+const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 // Notify the patient the instant a prescription is written/updated, so it
 // "auto appears" on their already-open dashboard instead of needing a manual
@@ -167,13 +169,38 @@ const getMyPrescriptions = async (req, res) => {
       filter.doctor = req.user._id;
     }
 
+    // Optional search — matches the OTHER party's name/phone (and a
+    // patient's Patient ID), same pattern as appointments search.
+    if (req.query.search && req.query.search.trim()) {
+      const re = safeContainsRegex(req.query.search.trim());
+      const otherPartyRole = req.user.role === 'doctor' ? 'patient' : 'doctor';
+      const matches = await User.find({
+        role: otherPartyRole,
+        $or: [{ name: re }, { phone: re }, { patientId: re }]
+      }).select('_id');
+      filter[otherPartyRole] = { $in: matches.map((m) => m._id) };
+    }
+
+    // Bounded + paginated, same reasoning as reports (see reportController):
+    // defaultLimit is high (100) so an unparameterized call - the patient's
+    // own list, and Dashboard.jsx's appointment-card cross-reference lookup
+    // - keeps working exactly as before for any realistic volume, while the
+    // doctor's browsable Prescriptions tab passes its own smaller page/limit.
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 100, maxLimit: 100 });
+
+    const total = await Prescription.countDocuments(filter);
     const prescriptions = await Prescription.find(filter)
       .populate('doctor', 'name specialization qualification medicalRegistrationNo')
       .populate('patient', 'name email phone patientId')
       .populate('appointment', 'date timeSlot')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res.json({ prescriptions });
+    res.json({
+      prescriptions,
+      pagination: { currentPage: page, totalPages: Math.ceil(total / limit), total }
+    });
 
   } catch (error) {
     console.error('Get my prescriptions error:', error.message);

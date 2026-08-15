@@ -51,7 +51,17 @@ function Dashboard() {
   // means clicking through pages one at a time with no way to jump to it.
   const [aptSearch, setAptSearch] = useState('');
   const [aptSearchDebounced, setAptSearchDebounced] = useState('');
+  // Doctor's browsable "Prescriptions" tab — its OWN independent, server-
+  // paginated + searched fetch. Deliberately separate from doctorPrescriptions
+  // above: that one backs the Appointments tab's "hasPrescription"/"previous
+  // prescriptions" cross-reference lookups and needs to stay a simple,
+  // always-loaded set: paginating IT would make those lookups miss anything
+  // outside the current page.
   const [rxSearch, setRxSearch] = useState('');
+  const [rxSearchDebounced, setRxSearchDebounced] = useState('');
+  const [rxListItems, setRxListItems] = useState([]);
+  const [rxListPagination, setRxListPagination] = useState(null);
+  const [rxListPage, setRxListPage] = useState(1);
   // Doctor-only: cross-referenced against each completed appointment so the
   // card itself can surface "patient uploaded a report" / "prescription
   // already sent" as an actionable next step, instead of the doctor having
@@ -210,6 +220,22 @@ function Dashboard() {
     return () => clearTimeout(t);
   }, [aptSearch]);
 
+  // Same debounce pattern for the Prescriptions tab's own search box.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setRxSearchDebounced(rxSearch.trim());
+      setRxListPage(1);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [rxSearch]);
+
+  // Only fetch the Prescriptions tab's list while it's actually the active
+  // tab — no reason to hit this endpoint on every Dashboard load otherwise.
+  useEffect(() => {
+    if (isDoctor && activeTab === 'prescriptions') fetchRxList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDoctor, activeTab, rxListPage, rxSearchDebounced]);
+
   // Re-render every 30s so the time-based "Join Call" window opens/closes on time
   const [, setClockTick] = useState(0);
   useEffect(() => {
@@ -263,6 +289,16 @@ function Dashboard() {
       const response = await prescriptionAPI.getMine();
       setDoctorPrescriptions(response.data.prescriptions || []);
     } catch (error) { /* non-critical — falls back to always showing "write prescription" */ }
+  };
+
+  // Independent fetch for the browsable Prescriptions tab (see state comment
+  // above for why this is separate from fetchDoctorPrescriptions).
+  const fetchRxList = async () => {
+    try {
+      const response = await prescriptionAPI.getMine({ page: rxListPage, limit: 10, search: rxSearchDebounced || undefined });
+      setRxListItems(response.data.prescriptions || []);
+      setRxListPagination(response.data.pagination || null);
+    } catch (error) { console.error('Fetch prescriptions list error:', error); }
   };
 
   // ---- Ringtone (generated with Web Audio API — no asset needed) ----
@@ -556,6 +592,7 @@ function Dashboard() {
       setPrescriptionModal({ open: false, id: null });
       fetchAppointments();
       fetchDoctorPrescriptions();
+      if (activeTab === 'prescriptions') fetchRxList();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create prescription');
     }
@@ -1286,45 +1323,34 @@ function Dashboard() {
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
       {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
-      {activeTab === 'prescriptions' && isDoctor && (() => {
-        const q = rxSearch.trim().toLowerCase();
-        const filteredRx = q
-          ? doctorPrescriptions.filter((p) =>
-              p.patient?.name?.toLowerCase().includes(q) ||
-              p.patient?.phone?.toLowerCase().includes(q) ||
-              p.patient?.patientId?.toLowerCase().includes(q) ||
-              p.diagnosis?.toLowerCase().includes(q)
-            )
-          : doctorPrescriptions;
-        return (
-          <div className="max-w-3xl">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Prescriptions</h2>
-            {doctorPrescriptions.length > 5 && (
-              <div className="mb-4">
-                <input
-                  type="text"
-                  value={rxSearch}
-                  onChange={(e) => setRxSearch(e.target.value)}
-                  placeholder="🔍 Search by patient name, phone, Patient ID, or diagnosis..."
-                  className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
-                />
-              </div>
-            )}
-            {doctorPrescriptions.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl shadow-md">
-                <div className="text-5xl mb-4">💊</div>
-                <h3 className="text-xl font-medium text-gray-700">No prescriptions written yet</h3>
-                <p className="text-gray-500 mt-2">Prescriptions you write from a completed appointment will appear here.</p>
-              </div>
-            ) : filteredRx.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl shadow-md">
-                <div className="text-5xl mb-4">🔍</div>
-                <h3 className="text-xl font-medium text-gray-700">No prescriptions match "{rxSearch}"</h3>
+      {activeTab === 'prescriptions' && isDoctor && (
+        <div className="max-w-3xl">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">Prescriptions</h2>
+          {(rxListPagination?.total > 5 || rxSearchDebounced) && (
+            <div className="mb-4">
+              <input
+                type="text"
+                value={rxSearch}
+                onChange={(e) => setRxSearch(e.target.value)}
+                placeholder="🔍 Search by patient name, phone, Patient ID, or diagnosis..."
+                className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+              />
+            </div>
+          )}
+          {rxListItems.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-xl shadow-md">
+              <div className="text-5xl mb-4">{rxSearchDebounced ? '🔍' : '💊'}</div>
+              <h3 className="text-xl font-medium text-gray-700">{rxSearchDebounced ? `No prescriptions match "${rxSearchDebounced}"` : 'No prescriptions written yet'}</h3>
+              {rxSearchDebounced ? (
                 <button onClick={() => setRxSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">Clear search</button>
-              </div>
-            ) : (
+              ) : (
+                <p className="text-gray-500 mt-2">Prescriptions you write from a completed appointment will appear here.</p>
+              )}
+            </div>
+          ) : (
+            <>
               <div className="space-y-4">
-                {filteredRx.map((p) => (
+                {rxListItems.map((p) => (
                   <div key={p._id} className="bg-white rounded-xl shadow-md p-6">
                     <div className="flex justify-between items-start gap-3 flex-wrap">
                       <div>
@@ -1338,7 +1364,7 @@ function Dashboard() {
                         </p>
                       </div>
                       <button
-                        onClick={() => setPrescriptionModal({ open: true, id: p.appointment?._id || p.appointment })}
+                        onClick={() => setPrescriptionModal({ open: true, id: p.appointment?._id || p.appointment, knownRx: p })}
                         className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm hover:bg-purple-200"
                       >
                         Update
@@ -1355,10 +1381,18 @@ function Dashboard() {
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        );
-      })()}
+
+              {rxListPagination && rxListPagination.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <button onClick={() => setRxListPage((p) => Math.max(1, p - 1))} disabled={rxListPage === 1} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">Previous</button>
+                  <span className="text-sm text-gray-600">Page {rxListPage} of {rxListPagination.totalPages}</span>
+                  <button onClick={() => setRxListPage((p) => Math.min(rxListPagination.totalPages, p + 1))} disabled={rxListPage === rxListPagination.totalPages} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">Next</button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
       {activeTab === 'reports' && isPatient && <PatientReports />}
       {activeTab === 'complaints' && isPatient && <PatientComplaints />}
       {activeTab === 'account' && <AccountSettings />}
@@ -1395,9 +1429,14 @@ function Dashboard() {
         // for any field sent as empty, EXCEPT medicines/tests, which are
         // arrays built from a comma-split string — an empty textarea sends
         // `[]`, which (being truthy) would silently wipe the existing list.
-        const existingRx = prescriptionModal.id
+        // knownRx (passed when opened from the Prescriptions tab's own list,
+        // which already has the full record) is authoritative and avoids a
+        // real edge case: doctorPrescriptions is capped at the 100 most
+        // recent prescriptions server-side, so a very established doctor's
+        // older ones wouldn't be found by the fallback lookup below.
+        const existingRx = prescriptionModal.knownRx || (prescriptionModal.id
           ? doctorPrescriptions.find((p) => (p.appointment?._id || p.appointment) === prescriptionModal.id)
-          : null;
+          : null);
         const medicinesDefault = existingRx?.medicines?.length
           ? existingRx.medicines.map((m) => [m.name, m.frequency, m.duration, m.instructions].filter(Boolean).join(' - ')).join(', ')
           : '';

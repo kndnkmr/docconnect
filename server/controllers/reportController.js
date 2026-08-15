@@ -3,8 +3,10 @@
 // ============================================
 
 const MedicalReport = require('../models/MedicalReport');
+const User = require('../models/User');
 const { uploadFile } = require('../utils/uploadFile');
 const { sendPushToUser } = require('../utils/push');
+const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 // Notify the other party the instant a report is uploaded/reviewed/replaced,
 // so it "auto appears" for them instead of needing a manual refresh.
@@ -91,12 +93,38 @@ const getMyReports = async (req, res) => {
       filter.doctor = req.user._id;
     }
 
+    // Optional search — matches the OTHER party's name/phone (and a
+    // patient's Patient ID), same pattern as appointments search.
+    if (req.query.search && req.query.search.trim()) {
+      const re = safeContainsRegex(req.query.search.trim());
+      const otherPartyRole = req.user.role === 'doctor' ? 'patient' : 'doctor';
+      const matches = await User.find({
+        role: otherPartyRole,
+        $or: [{ name: re }, { phone: re }, { patientId: re }]
+      }).select('_id');
+      filter[otherPartyRole] = { $in: matches.map((m) => m._id) };
+    }
+
+    // Bounded + paginated so this can't grow into an unbounded fetch as a
+    // busy doctor accumulates reports over time. defaultLimit is high
+    // (100) so a plain, param-less call - what the patient's own "My
+    // Reports" list still makes - keeps returning everything at once for
+    // any realistic personal history, without any client change needed.
+    // The doctor's browsable Reports tab passes its own smaller limit/page.
+    const { page, limit, skip } = getPagination(req, { defaultLimit: 100, maxLimit: 100 });
+
+    const total = await MedicalReport.countDocuments(filter);
     const reports = await MedicalReport.find(filter)
       .populate('patient', 'name email phone patientId')
       .populate('doctor', 'name specialization')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res.json({ reports });
+    res.json({
+      reports,
+      pagination: { currentPage: page, totalPages: Math.ceil(total / limit), total }
+    });
 
   } catch (error) {
     console.error('Get my reports error:', error.message);
