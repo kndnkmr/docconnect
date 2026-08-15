@@ -306,6 +306,10 @@ export const adminAPI = {
   // Generate/relay a password reset link for a user (manual recovery assist
   // for phone-only patients with no email on file; also works as a "resend")
   generateResetLink: (id) => API.post(`/admin/users/${id}/reset-link`),
+
+  // Data integrity check: find any phone number shared by more than one
+  // account (read-only — never modifies anything itself)
+  getDuplicatePhones: () => API.get('/admin/duplicate-phones'),
 };
 
 // ============================================

@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -40,5 +40,8 @@ router.post('/migrate-images', migrateBase64Images);
 // POST /api/admin/users/:id/reset-link - generate/relay a password reset link
 // (manual account-recovery assist for phone-only patients with no email on file)
 router.post('/users/:id/reset-link', generateResetLink);
+
+// GET /api/admin/duplicate-phones - data integrity check (read-only)
+router.get('/duplicate-phones', findDuplicatePhones);
 
 module.exports = router;

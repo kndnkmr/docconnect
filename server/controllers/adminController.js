@@ -256,6 +256,49 @@ const setDoctorVerification = async (req, res) => {
 };
 
 // ============================================
+// FIND DUPLICATE PHONES - Data integrity check (read-only)
+// ============================================
+// Endpoint: GET /api/admin/duplicate-phones
+//
+// `phone` has no unique index (only `email` does), and a formatting bug in
+// register() used to let two accounts end up sharing the same real phone
+// number (see authController.js register() for the fix + full explanation).
+// This surfaces any such duplicates so an admin can review and resolve each
+// one manually (e.g. via the existing Delete/Deactivate actions) - this
+// endpoint only reads data, it never modifies anything itself.
+
+const findDuplicatePhones = async (req, res) => {
+  try {
+    const duplicates = await User.aggregate([
+      { $match: { phone: { $nin: ['', null] } } },
+      { $group: { _id: '$phone', count: { $sum: 1 }, ids: { $push: '$_id' } } },
+      { $match: { count: { $gt: 1 } } }
+    ]);
+
+    if (duplicates.length === 0) {
+      return res.json({ duplicates: [] });
+    }
+
+    const allIds = duplicates.flatMap((d) => d.ids);
+    const users = await User.find({ _id: { $in: allIds } })
+      .select('name email phone role isDeleted isSuspended deletedAt createdAt');
+
+    const byId = {};
+    users.forEach((u) => { byId[u._id.toString()] = u; });
+
+    const groups = duplicates.map((d) => ({
+      phone: d._id,
+      accounts: d.ids.map((id) => byId[id.toString()]).filter(Boolean)
+    }));
+
+    res.json({ duplicates: groups });
+  } catch (error) {
+    console.error('Find duplicate phones error:', error.message);
+    res.status(500).json({ message: 'Error checking for duplicate phone numbers' });
+  }
+};
+
+// ============================================
 // GENERATE RESET LINK - Manual account-recovery assist
 // ============================================
 // Endpoint: POST /api/admin/users/:id/reset-link
@@ -505,4 +548,4 @@ const migrateBase64Images = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones };

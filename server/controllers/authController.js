@@ -62,8 +62,15 @@ const register = async (req, res) => {
     }
 
     // Step 3: Check if a user with this email or phone already exists
-    if (email) {
-      const existingByEmail = await User.findOne({ email });
+    // Normalize BEFORE comparing — email is stored lowercased/trimmed (schema
+    // default), but that transform only applies on save, not on a plain query
+    // filter. Comparing raw input against a normalized stored value is the
+    // same class of bug as the phone one just above/below: a case mismatch
+    // (very common — many keyboards auto-capitalize the first letter) would
+    // silently miss an existing account instead of catching the duplicate.
+    const normalizedEmail = email ? email.toLowerCase().trim() : '';
+    if (normalizedEmail) {
+      const existingByEmail = await User.findOne({ email: normalizedEmail });
       if (existingByEmail) {
         if (existingByEmail.isDeleted) {
           // Disassociate email from deleted account (keep record for legal) and allow re-registration
@@ -77,8 +84,22 @@ const register = async (req, res) => {
       }
     }
 
-    if (phone) {
-      const existingByPhone = await User.findOne({ phone });
+    // Validate + format the phone BEFORE using it for the duplicate check below —
+    // phone is always stored in formatted form ("+91XXXXXXXXXX"), so checking
+    // against the raw input (e.g. "9997019900") would never match an existing
+    // formatted record. That mismatch let TWO accounts end up sharing the same
+    // real phone number (no unique index on phone, unlike email) whenever
+    // someone re-registered after deleting - the old "deleted" duplicate never
+    // got renamed out of the way, since the lookup silently found nothing.
+    const formattedPhone = phone ? formatIndianPhone(phone) : '';
+    if (phone && !isValidIndianPhone(phone)) {
+      return res.status(400).json({
+        message: 'Please enter a valid 10-digit Indian mobile number'
+      });
+    }
+
+    if (formattedPhone) {
+      const existingByPhone = await User.findOne({ phone: formattedPhone });
       if (existingByPhone) {
         if (existingByPhone.isDeleted) {
           // Disassociate phone from deleted account and allow re-registration
@@ -96,14 +117,6 @@ const register = async (req, res) => {
     if (!['doctor', 'patient', 'admin'].includes(role)) {
       return res.status(400).json({
         message: 'Role must be "doctor", "patient", or "admin"'
-      });
-    }
-
-    // Validate phone number if provided
-    const formattedPhone = phone ? formatIndianPhone(phone) : '';
-    if (phone && !isValidIndianPhone(phone)) {
-      return res.status(400).json({
-        message: 'Please enter a valid 10-digit Indian mobile number'
       });
     }
 
@@ -198,9 +211,14 @@ const login = async (req, res) => {
     }
 
     // Step 2: Find the user by email OR phone
+    // Normalize email the same way it's stored (lowercase/trim) — otherwise
+    // typing an email with different capitalization than it was registered
+    // with (very common; many keyboards auto-capitalize) would silently fail
+    // to find the account at all, showing a generic "Invalid email or
+    // password" even though the password would've been correct.
     let user;
     if (email) {
-      user = await User.findOne({ email });
+      user = await User.findOne({ email: email.toLowerCase().trim() });
     } else if (phone) {
       // Format phone to match how it was stored during registration
       const formattedPhone = formatIndianPhone(phone);
@@ -363,10 +381,11 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // Find the user by email or phone
+    // Find the user by email or phone (normalize email the same way it's
+    // stored — see the same fix in login() for why this matters)
     let user;
     if (email) {
-      user = await User.findOne({ email });
+      user = await User.findOne({ email: email.toLowerCase().trim() });
     } else {
       const formattedPhone = formatIndianPhone(phone);
       user = await User.findOne({ phone: formattedPhone }) || await User.findOne({ phone });
@@ -512,9 +531,14 @@ const updateAccount = async (req, res) => {
       });
     }
 
-    // If changing email, check it's not already taken by another user
-    if (email && email !== req.user.email) {
-      const existingUser = await User.findOne({ email });
+    // If changing email, check it's not already taken by another user.
+    // Normalize both sides before comparing (stored emails are always
+    // lowercase/trimmed) — same fix as register()/login() above, for the
+    // same reason: a case mismatch would otherwise let this check silently
+    // miss an existing account and let two accounts collide on one email.
+    const normalizedNewEmail = email ? email.toLowerCase().trim() : '';
+    if (normalizedNewEmail && normalizedNewEmail !== req.user.email) {
+      const existingUser = await User.findOne({ email: normalizedNewEmail });
       if (existingUser) {
         return res.status(400).json({
           message: 'This email is already in use by another account'

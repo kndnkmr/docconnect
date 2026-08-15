@@ -23,11 +23,17 @@ function AdminDashboard() {
   const [announcements, setAnnouncements] = useState([]);
   const [announcementForm, setAnnouncementForm] = useState({ title: '', message: '', audience: 'doctors' });
 
-
+  // Data integrity: phone numbers shared by more than one account (a
+  // formatting bug used to let this happen on re-registration — see
+  // authController.js register(). Read-only check, surfaced here so it can
+  // be reviewed and resolved manually via the existing Delete/Deactivate
+  // actions below).
+  const [duplicatePhones, setDuplicatePhones] = useState([]);
 
   // Fetch stats on load
   useEffect(() => {
     fetchStats();
+    fetchDuplicatePhones();
   }, []);
 
   const fetchStats = async () => {
@@ -39,6 +45,13 @@ function AdminDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchDuplicatePhones = async () => {
+    try {
+      const response = await adminAPI.getDuplicatePhones();
+      setDuplicatePhones(response.data.duplicates || []);
+    } catch (error) { /* non-critical — don't block the rest of the panel */ }
   };
 
   const fetchUsers = async () => {
@@ -131,6 +144,7 @@ function AdminDashboard() {
       toast.success(`User "${name}" deleted`);
       fetchUsers();
       fetchStats();
+      fetchDuplicatePhones();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete user');
     }
@@ -278,6 +292,48 @@ function AdminDashboard() {
       {/* === STATS TAB === */}
       {activeTab === 'stats' && stats && (
         <div>
+          {/* Data integrity warning — a phone number shared by more than one
+              account can cause login to find the WRONG one (e.g. a deleted
+              duplicate instead of the real active account). Read-only check;
+              resolve each case with the existing Delete/Deactivate actions. */}
+          {duplicatePhones.length > 0 && (
+            <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-5">
+              <h3 className="font-semibold text-red-800 mb-1">⚠️ Duplicate phone numbers found</h3>
+              <p className="text-sm text-red-700 mb-4">
+                These phone numbers are shared by more than one account. This can cause login to find the wrong one (e.g. an old deleted account instead of the real active one). Review each group and delete the stale/incorrect account.
+              </p>
+              <div className="space-y-4">
+                {duplicatePhones.map((group) => (
+                  <div key={group.phone} className="bg-white rounded-lg border border-red-100 p-4">
+                    <p className="text-sm font-medium text-gray-800 mb-2">{group.phone}</p>
+                    <div className="space-y-2">
+                      {group.accounts.map((acc) => (
+                        <div key={acc._id} className="flex items-center justify-between gap-3 text-sm p-2 bg-gray-50 rounded">
+                          <div>
+                            <span className="font-medium text-gray-800">{acc.name}</span>{' '}
+                            <span className="text-gray-500">({acc.role})</span>{' '}
+                            {acc.isDeleted && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-600">Deleted</span>}
+                            {!acc.isDeleted && acc.isSuspended && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">Deactivated</span>}
+                            {!acc.isDeleted && !acc.isSuspended && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>}
+                            <span className="text-gray-400 ml-2">{acc.email || 'no email'} · joined {formatDate(acc.createdAt)}</span>
+                          </div>
+                          {acc.role !== 'admin' && (
+                            <button
+                              onClick={() => handleDeleteUser(acc._id, acc.name)}
+                              className="text-red-500 hover:text-red-700 text-xs font-medium whitespace-nowrap"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-xl shadow-md p-6 text-center">
               <div className="text-3xl font-bold text-primary-600">{stats.totalUsers}</div>
