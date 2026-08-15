@@ -50,8 +50,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Repeat booking: rebook a past appointment with same doctor/details (one-click "Book Again")
 - Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
 - UPI Payment: each doctor sets own fee + UPI ID, patient pays directly via UPI app
-- Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes)
-- Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments
+- Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes) — appears on the patient's dashboard instantly (Socket.io + Web Push), no manual refresh needed
+- Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments — updates appear instantly on both sides the same way
 - Patient complaints: patients file complaints, admin reviews and responds
 - Floating WhatsApp emergency button on all pages (configurable via env var)
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
@@ -117,7 +117,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Appointments ordered upcoming-first (earliest) then completed/cancelled (newest first)
 - Backend smoke test suite (Node built-in test runner + supertest) — `npm test` verifies health, 404s, and auth-protected routes with no database needed
 - IP address logging and consent timestamp for audit/legal protection
-- Soft-delete accounts (data retained for legal, user can re-register fresh)
+- Soft-delete accounts (data retained for 90 days for legal/audit purposes, user can re-register fresh immediately with the same email/phone — old and new accounts never overwrite each other). An automated daily job anonymizes personal details (name/email/phone/photo) once an account passes the 90-day window; appointments/prescriptions/reports are left untouched since those are medical/legal records
+- Admin Users table correctly distinguishes Active / Deactivated / Deleted accounts (previously showed "Active" for self-deleted accounts — fixed)
+- Server hardening: bounded numeric fields (no negative fees/experience/payment amounts), capped pagination limits, and escaped search input (prevents regex denial-of-service) across all list/search endpoints
 - Responsive design (mobile + desktop)
 
 ---
@@ -211,7 +213,9 @@ docconnect/
 │   │   ├── sendEmail.js         ← Email notifications (Resend)
 │   │   ├── formatPhone.js       ← Indian phone number formatting
 │   │   ├── daily.js             ← Daily.co room + join-token helper
-│   │   └── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
+│   │   ├── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
+│   │   ├── accountCleanup.js    ← Daily job: anonymizes accounts past the 90-day deletion window
+│   │   └── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
 │   │
 │   ├── tests/                   ← Backend smoke tests (npm test)
 │   │   └── api.test.js
