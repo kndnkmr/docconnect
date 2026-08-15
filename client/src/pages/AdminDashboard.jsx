@@ -383,7 +383,11 @@ function AdminDashboard() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 flex-wrap">
-                          {user.isSuspended ? (
+                          {user.isDeleted ? (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-600" title={user.deletedAt ? `Deleted ${formatDate(user.deletedAt)}` : 'Deleted'}>
+                              Deleted
+                            </span>
+                          ) : user.isSuspended ? (
                             <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
                               Deactivated
                             </span>
@@ -403,7 +407,11 @@ function AdminDashboard() {
                       <td className="px-4 py-3">
                         {user.role !== 'admin' && (
                           <div className="flex items-center gap-3 flex-wrap">
-                            {user.role === 'doctor' && (
+                            {/* A self-deleted account already can't log in and is hidden from
+                                patients/search — verifying, deactivating, or resetting its
+                                password no longer does anything useful. Only permanent Delete
+                                (to purge before the 90-day retention window) still applies. */}
+                            {!user.isDeleted && user.role === 'doctor' && (
                               <button
                                 onClick={() => handleToggleVerification(user)}
                                 className={`text-sm font-medium ${
@@ -415,23 +423,27 @@ function AdminDashboard() {
                                 {user.isAdminVerified ? 'Unverify' : '✓ Verify'}
                               </button>
                             )}
-                            <button
-                              onClick={() => handleToggleSuspension(user)}
-                              className={`text-sm font-medium ${
-                                user.isSuspended
-                                  ? 'text-green-600 hover:text-green-800'
-                                  : 'text-orange-500 hover:text-orange-700'
-                              }`}
-                            >
-                              {user.isSuspended ? 'Reactivate' : 'Deactivate'}
-                            </button>
-                            <button
-                              onClick={() => handleGenerateResetLink(user)}
-                              className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                              title={user.email ? 'Emails a reset link to this user' : 'No email on file — copies a link for you to send manually'}
-                            >
-                              Reset Link
-                            </button>
+                            {!user.isDeleted && (
+                              <button
+                                onClick={() => handleToggleSuspension(user)}
+                                className={`text-sm font-medium ${
+                                  user.isSuspended
+                                    ? 'text-green-600 hover:text-green-800'
+                                    : 'text-orange-500 hover:text-orange-700'
+                                }`}
+                              >
+                                {user.isSuspended ? 'Reactivate' : 'Deactivate'}
+                              </button>
+                            )}
+                            {!user.isDeleted && (
+                              <button
+                                onClick={() => handleGenerateResetLink(user)}
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                                title={user.email ? 'Emails a reset link to this user' : 'No email on file — copies a link for you to send manually'}
+                              >
+                                Reset Link
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeleteUser(user._id, user.name)}
                               className="text-red-500 hover:text-red-700 text-sm font-medium"
