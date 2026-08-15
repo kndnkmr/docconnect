@@ -319,9 +319,22 @@ function Dashboard() {
     };
 
     const handleCallEnded = (payload) => {
+      // Case 1: this was still just a ringing invitation (not joined yet) — clear it.
       setIncomingCall((prev) => {
         if (prev && prev.appointmentId === payload.appointmentId) {
           stopRing();
+          return null;
+        }
+        return prev;
+      });
+      // Case 2: I already joined this call and the OTHER party just ended it
+      // (e.g. doctor clicked "End Call for All"). Don't rely solely on Daily's
+      // own eject mechanism to close my view — it can be slow, blocked, or
+      // silently fail. This app-level signal (the same one that reliably
+      // drives ringing) closes my call view directly and independently.
+      setVideoCallAppointmentId((prev) => {
+        if (prev && prev.split('|')[0] === payload.appointmentId) {
+          inCallRef.current = false;
           return null;
         }
         return prev;
