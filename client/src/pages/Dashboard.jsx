@@ -437,14 +437,25 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Notification Banner */}
+      {/* Notification Banner — shown on every tab, so the CTA must actually
+          switch to Appointments rather than assume it's already showing */}
       {isDoctor && appointments.filter(a => a.status === 'pending').length > 0 && (
-        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-3">
-          <span className="text-2xl">🔔</span>
-          <div>
-            <p className="font-semibold text-yellow-800">You have {appointments.filter(a => a.status === 'pending').length} new appointment request{appointments.filter(a => a.status === 'pending').length > 1 ? 's' : ''}!</p>
-            <p className="text-sm text-yellow-700">Please confirm or reject them from the Appointments tab below.</p>
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🔔</span>
+            <div>
+              <p className="font-semibold text-yellow-800">You have {appointments.filter(a => a.status === 'pending').length} new appointment request{appointments.filter(a => a.status === 'pending').length > 1 ? 's' : ''}!</p>
+              <p className="text-sm text-yellow-700">Please confirm or reject them.</p>
+            </div>
           </div>
+          {activeTab !== 'appointments' && (
+            <button
+              onClick={() => setActiveTab('appointments')}
+              className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 whitespace-nowrap"
+            >
+              View Requests →
+            </button>
+          )}
         </div>
       )}
 
