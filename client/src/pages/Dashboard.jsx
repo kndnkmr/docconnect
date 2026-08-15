@@ -781,7 +781,19 @@ function Dashboard() {
             <div className="text-center py-12 bg-white rounded-xl shadow-md">
               <div className="text-5xl mb-4">📋</div>
               <h3 className="text-xl font-medium text-gray-700">No appointments yet</h3>
-              <p className="text-gray-500 mt-2">{isPatient ? 'Browse doctors and book your first appointment!' : 'Your upcoming appointments will appear here.'}</p>
+              {isPatient ? (
+                <>
+                  <p className="text-gray-500 mt-2">Click "+ Book New Appointment" above to search by specialization or symptom and find the right doctor.</p>
+                  <button
+                    onClick={() => goToTab('familyMembers')}
+                    className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block"
+                  >
+                    👨‍👩‍👧 Booking for a family member instead? Add them here →
+                  </button>
+                </>
+              ) : (
+                <p className="text-gray-500 mt-2">Your upcoming appointments will appear here.</p>
+              )}
             </div>
           ) : (
             <>
