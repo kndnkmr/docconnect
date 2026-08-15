@@ -183,6 +183,15 @@ const appointmentSchema = new mongoose.Schema({
     default: null
   },
 
+  // ---- Clock-based "your call is starting" reminder (dedupe flag) ----
+  // Set the first time the scheduled call-start reminder push has been sent
+  // for this appointment, so the once-a-minute job (server/utils/callReminder.js)
+  // never sends it twice for the same appointment.
+  callReminderSentAt: {
+    type: Date,
+    default: null
+  },
+
   // ---- Teleconsultation consent (captured at booking, for legal record) ----
   consentGiven: {
     type: Boolean,

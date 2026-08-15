@@ -88,6 +88,12 @@ function Dashboard() {
   const audioCtxRef = useRef(null);
   const ringIntervalRef = useRef(null);
   const inCallRef = useRef(false); // guards against ringing while already in a call
+  const incomingCallRef = useRef(null); // mirrors incomingCall for use inside setInterval closures (avoids stale-value bugs)
+  const autoPromptedRef = useRef(new Set()); // appointment ids already auto-prompted this session (clock-based, not the other party's action)
+
+  useEffect(() => {
+    incomingCallRef.current = incomingCall;
+  }, [incomingCall]);
 
   // Push notification nudge — lets patients/doctors get instant updates
   // (appointment confirmed, new message, incoming call) even when the app
@@ -337,6 +343,52 @@ function Dashboard() {
     };
   }, []);
 
+  // ---- Auto-detect when a scheduled call should start, purely from the
+  // clock — not from the other party clicking Join first. Before this, if
+  // neither side clicked Join, nobody got notified at all even once the
+  // appointment time arrived. This shows the same ringing banner/tone as a
+  // real incoming call, just triggered by "the slot just started" instead
+  // of "the other participant is calling". A server-side job (see
+  // server/utils/callReminder.js) covers the case where neither dashboard
+  // is even open at that moment, via push notification. ----
+  useEffect(() => {
+    const checkScheduledStart = () => {
+      if (inCallRef.current) return; // already in a call
+      if (incomingCallRef.current) return; // a banner (real or auto) is already showing
+
+      for (const apt of appointments) {
+        if (apt.status !== 'confirmed' || apt.paymentStatus !== 'paid') continue;
+        if (apt.consultationType === 'in-person') continue;
+        if (autoPromptedRef.current.has(apt._id)) continue;
+        if (!isAppointmentToday(apt.date)) continue;
+
+        const parts = (apt.timeSlot || '').split('-').map((s) => s.trim());
+        const start = parseSlotTime(parts[0]);
+        if (start == null) continue;
+
+        const now = getISTNowMinutes();
+        // Fire once, in a short window right at slot start — feels like
+        // "starting now", not a nag for the whole appointment window.
+        if (now >= start && now <= start + 3) {
+          autoPromptedRef.current.add(apt._id);
+          const otherName = isDoctor ? (apt.patient?.name || 'Patient') : `Dr. ${apt.doctor?.name || 'Doctor'}`;
+          setIncomingCall({
+            appointmentId: apt._id,
+            consultationType: apt.consultationType,
+            fromName: otherName,
+            isScheduledStart: true
+          });
+          startRing();
+          break; // one at a time
+        }
+      }
+    };
+
+    checkScheduledStart();
+    const interval = setInterval(checkScheduledStart, 30000);
+    return () => clearInterval(interval);
+  }, [appointments, isDoctor]);
+
   // ---- Start a call: open the call immediately, signal the other party in background ----
   const startCall = (apt) => {
     inCallRef.current = true;
@@ -351,8 +403,15 @@ function Dashboard() {
     if (!incomingCall) return;
     stopRing();
     inCallRef.current = true;
+    const wasScheduledStart = incomingCall.isScheduledStart;
     setVideoCallAppointmentId(incomingCall.appointmentId + '|' + incomingCall.consultationType);
     setIncomingCall(null);
+    if (wasScheduledStart) {
+      // This banner came from the clock, not from the other participant
+      // clicking Join - nobody has actually marked the call active yet, so
+      // do that now to ring them too (mirrors startCall's fire-and-forget).
+      appointmentAPI.setCall(incomingCall.appointmentId, true).catch(() => {});
+    }
   };
 
   // ---- Decline / dismiss an incoming call ----
@@ -360,7 +419,10 @@ function Dashboard() {
     const call = incomingCall;
     stopRing();
     setIncomingCall(null);
-    if (call) {
+    if (call && !call.isScheduledStart) {
+      // Only retract via the API for a REAL incoming call (the other party
+      // already marked it active). A scheduled-start prompt was purely a
+      // local, clock-based reminder — there's nothing on the server to undo.
       try { await appointmentAPI.setCall(call.appointmentId, false); } catch (e) { /* silent */ }
     }
   };
@@ -1185,20 +1247,28 @@ function Dashboard() {
         <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div className="text-5xl mb-3 animate-bounce">{incomingCall.consultationType === 'video' ? '📹' : '📞'}</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-1">Incoming {incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Call</h3>
-            <p className="text-gray-600 mb-6">{incomingCall.fromName} is calling you…</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-1">
+              {incomingCall.isScheduledStart
+                ? `Time for your ${incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Consultation`
+                : `Incoming ${incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Call`}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {incomingCall.isScheduledStart
+                ? `Your appointment with ${incomingCall.fromName} is starting now.`
+                : `${incomingCall.fromName} is calling you…`}
+            </p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={declineIncomingCall}
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600"
               >
-                Decline
+                {incomingCall.isScheduledStart ? 'Not Now' : 'Decline'}
               </button>
               <button
                 onClick={acceptIncomingCall}
                 className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700"
               >
-                Accept
+                {incomingCall.isScheduledStart ? 'Join Now' : 'Accept'}
               </button>
             </div>
           </div>

@@ -69,6 +69,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Only connect to the database when this file is run directly (node server.js),
 // not when it's imported by the test suite (which tests the app without a DB).
 const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
+const { sendCallStartReminders } = require('./utils/callReminder');
 
 if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
@@ -85,6 +86,12 @@ mongoose.connect(process.env.MONGODB_URI)
     // cron service needed.
     purgeExpiredDeletedAccounts();
     setInterval(purgeExpiredDeletedAccounts, 24 * 60 * 60 * 1000);
+
+    // Notify both doctor and patient the moment a scheduled call's slot
+    // starts, instead of relying on one of them remembering to click Join
+    // first. Runs every minute - cheap at this scale, and the job itself
+    // dedupes via callReminderSentAt so nobody gets pushed twice.
+    setInterval(sendCallStartReminders, 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
