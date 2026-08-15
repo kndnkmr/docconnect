@@ -7,7 +7,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reviewAPI, messageAPI, availabilityAPI } from '../services/api';
+import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reportAPI, reviewAPI, messageAPI, availabilityAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
 import { getSocket } from '../services/socket';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
@@ -45,6 +45,12 @@ function Dashboard() {
   });
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
+  // Doctor-only: cross-referenced against each completed appointment so the
+  // card itself can surface "patient uploaded a report" / "prescription
+  // already sent" as an actionable next step, instead of the doctor having
+  // to remember to check the separate Reports tab.
+  const [doctorReports, setDoctorReports] = useState([]);
+  const [doctorPrescriptions, setDoctorPrescriptions] = useState([]);
   const tabSectionRef = useRef(null); // scroll target for the tab nav + its content
 
   // React Router reuses this same Dashboard instance for same-route
@@ -180,7 +186,7 @@ function Dashboard() {
   useEffect(() => {
     fetchAppointments();
     fetchUnreadCounts();
-    if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); }
+    if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); fetchDoctorReports(); fetchDoctorPrescriptions(); }
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
@@ -225,6 +231,20 @@ function Dashboard() {
       const response = await messageAPI.getUnreadCount();
       setUnreadMessages(response.data);
     } catch (error) { /* silent */ }
+  };
+
+  const fetchDoctorReports = async () => {
+    try {
+      const response = await reportAPI.getMine();
+      setDoctorReports(response.data.reports || []);
+    } catch (error) { /* non-critical — appointment card just won't show the report hint */ }
+  };
+
+  const fetchDoctorPrescriptions = async () => {
+    try {
+      const response = await prescriptionAPI.getMine();
+      setDoctorPrescriptions(response.data.prescriptions || []);
+    } catch (error) { /* non-critical — falls back to always showing "write prescription" */ }
   };
 
   // ---- Ringtone (generated with Web Audio API — no asset needed) ----
@@ -345,16 +365,26 @@ function Dashboard() {
       fetchUnreadCounts();
     };
 
+    // A patient uploading/replacing a report (or a doctor reviewing one)
+    // fires this for whichever side didn't just act. Only the doctor's
+    // appointment cards use this data (the "patient uploaded a report —
+    // tap to view" next-step hint), so patients just no-op here.
+    const handleReportUpdated = () => {
+      if (isDoctor) fetchDoctorReports();
+    };
+
     socket.on('incoming-call', handleIncomingCall);
     socket.on('call-ended', handleCallEnded);
     socket.on('message-notification', handleMessageNotification);
+    socket.on('report-updated', handleReportUpdated);
 
     return () => {
       socket.off('incoming-call', handleIncomingCall);
       socket.off('call-ended', handleCallEnded);
       socket.off('message-notification', handleMessageNotification);
+      socket.off('report-updated', handleReportUpdated);
     };
-  }, []);
+  }, [isDoctor]);
 
   // ---- Auto-detect when a scheduled call should start, purely from the
   // clock — not from the other party clicking Join first. Before this, if
@@ -507,6 +537,7 @@ function Dashboard() {
       toast.success('Prescription created!');
       setPrescriptionModal({ open: false, id: null });
       fetchAppointments();
+      fetchDoctorPrescriptions();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to create prescription');
     }
@@ -606,6 +637,10 @@ function Dashboard() {
     return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
   };
   const getStatusColor = (status) => ({ pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-green-100 text-green-800', completed: 'bg-blue-100 text-blue-800', cancelled: 'bg-red-100 text-red-800' }[status] || 'bg-gray-100 text-gray-800');
+  // Raw status values ("completed") read as terse/ambiguous next to a
+  // patient's name — spell them out for the badge instead of changing the
+  // underlying status values themselves.
+  const getStatusLabel = (status) => ({ pending: 'Pending', confirmed: 'Confirmed', completed: 'Appointment Completed', cancelled: 'Cancelled' }[status] || status);
 
   // ---- Doctor onboarding checklist ----
   // Verifying email and adding a photo already have their own banners below.
@@ -891,12 +926,20 @@ function Dashboard() {
                 {[...appointments].sort((a, b) => {
                   const order = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
                   return (order[a.status] ?? 4) - (order[b.status] ?? 4);
-                }).map((apt) => (
+                }).map((apt) => {
+                  // Doctor-only "next step" context for a completed appointment —
+                  // computed once here, reused by both the hint text and the
+                  // Write/Update Prescription button below.
+                  const aptReport = isDoctor ? doctorReports.find((r) => r.appointment === apt._id) : null;
+                  const hasPrescription = isDoctor
+                    ? doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === apt._id)
+                    : false;
+                  return (
                   <div key={apt._id} className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-grow">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-semibold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : apt.patient?.name || 'Unknown Patient'}</h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{apt.status}</span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{getStatusLabel(apt.status)}</span>
                       </div>
                       <p className="text-gray-600 text-sm">{formatDate(apt.date)} • {apt.timeSlot}</p>
                       {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
@@ -997,7 +1040,22 @@ function Dashboard() {
                           )}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
-                          {isDoctor && apt.status === 'completed' && '✅ Completed. Write a prescription for the patient.'}
+                          {isDoctor && apt.status === 'completed' && (
+                            <>
+                              {aptReport && !aptReport.isReviewed && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToTab('patientReports'); }}
+                                  className="underline hover:text-blue-900 font-medium block"
+                                >
+                                  📄 {apt.patient?.name || 'Patient'} uploaded a test report — tap to view →
+                                </button>
+                              )}
+                              <span className="block">
+                                {hasPrescription ? '✅ Appointment completed. Prescription sent.' : '✅ Appointment completed. Write a prescription for the patient.'}
+                              </span>
+                            </>
+                          )}
                           {isDoctor && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                         </p>
                       </div>
@@ -1028,7 +1086,7 @@ function Dashboard() {
                           <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>
                         </>
                       )}
-                      {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">Write Prescription</button>}
+                      {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">{hasPrescription ? 'Update Prescription' : 'Write Prescription'}</button>}
                       {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
@@ -1072,7 +1130,8 @@ function Dashboard() {
                       )}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Pagination */}
@@ -1218,26 +1277,45 @@ function Dashboard() {
         onCancel={() => setRateModal({ open: false, id: null })}
       />
 
-      <PromptModal
-        open={prescriptionModal.open}
-        title="Write Prescription"
-        description="Enter the prescription details for this patient."
-        fields={[
-          { name: 'diagnosis', label: 'Diagnosis', type: 'text', required: true, placeholder: 'e.g., Upper respiratory infection' },
-          { name: 'medicines', label: 'Medicines (comma separated)', type: 'textarea', placeholder: 'Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days' },
-          { name: 'tests', label: 'Recommended Tests (comma separated)', type: 'text', placeholder: 'Complete Blood Count, Thyroid Profile' },
-          { name: 'notes', label: 'Additional Notes', type: 'textarea', placeholder: 'Rest, drink fluids...' },
-          { name: 'followUpDays', label: 'Free Follow-up Period (days)', type: 'select', placeholder: 'Select...', options: [
-            { value: '0', label: 'No follow-up needed' },
-            { value: '7', label: '7 days' },
-            { value: '15', label: '15 days' },
-            { value: '30', label: '30 days' },
-          ]}
-        ]}
-        submitText="Create Prescription"
-        onSubmit={handleWritePrescription}
-        onCancel={() => setPrescriptionModal({ open: false, id: null })}
-      />
+      {(() => {
+        // Editing an appointment that already has a prescription — pre-fill
+        // the form with its current contents instead of opening blank.
+        // Besides being the obviously better UX for "Update Prescription",
+        // this avoids a real data-loss trap: the server keeps the old value
+        // for any field sent as empty, EXCEPT medicines/tests, which are
+        // arrays built from a comma-split string — an empty textarea sends
+        // `[]`, which (being truthy) would silently wipe the existing list.
+        const existingRx = prescriptionModal.id
+          ? doctorPrescriptions.find((p) => (p.appointment?._id || p.appointment) === prescriptionModal.id)
+          : null;
+        const medicinesDefault = existingRx?.medicines?.length
+          ? existingRx.medicines.map((m) => [m.name, m.frequency, m.duration, m.instructions].filter(Boolean).join(' - ')).join(', ')
+          : '';
+        const testsDefault = existingRx?.testsRecommended?.length ? existingRx.testsRecommended.join(', ') : '';
+
+        return (
+          <PromptModal
+            open={prescriptionModal.open}
+            title={existingRx ? 'Update Prescription' : 'Write Prescription'}
+            description={existingRx ? 'Editing the existing prescription for this appointment — update whatever changed.' : 'Enter the prescription details for this patient.'}
+            fields={[
+              { name: 'diagnosis', label: 'Diagnosis', type: 'text', required: true, placeholder: 'e.g., Upper respiratory infection', defaultValue: existingRx?.diagnosis || '' },
+              { name: 'medicines', label: 'Medicines (comma separated)', type: 'textarea', placeholder: 'Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days', defaultValue: medicinesDefault },
+              { name: 'tests', label: 'Recommended Tests (comma separated)', type: 'text', placeholder: 'Complete Blood Count, Thyroid Profile', defaultValue: testsDefault },
+              { name: 'notes', label: 'Additional Notes', type: 'textarea', placeholder: 'Rest, drink fluids...', defaultValue: existingRx?.notes || '' },
+              { name: 'followUpDays', label: 'Free Follow-up Period (days)', type: 'select', placeholder: 'Select...', options: [
+                { value: '0', label: 'No follow-up needed' },
+                { value: '7', label: '7 days' },
+                { value: '15', label: '15 days' },
+                { value: '30', label: '30 days' },
+              ]}
+            ]}
+            submitText={existingRx ? 'Update Prescription' : 'Create Prescription'}
+            onSubmit={handleWritePrescription}
+            onCancel={() => setPrescriptionModal({ open: false, id: null })}
+          />
+        );
+      })()}
 
       {/* Chat Modal */}
       {chatAppointmentId && (
