@@ -15,6 +15,7 @@ import { doctorAPI, reviewAPI, getUploadUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
+import VerifiedBadge from '../components/VerifiedBadge';
 import toast from 'react-hot-toast';
 
 function DoctorProfile() {
@@ -120,12 +121,12 @@ function DoctorProfile() {
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
               Dr. {doctor.name}
-              {doctor.isAdminVerified && (
-                <span title="Verified by ProMedicoz" className="text-blue-500 text-xl md:text-2xl">✔️</span>
-              )}
+              {doctor.isAdminVerified && <VerifiedBadge size={22} />}
             </h1>
             {doctor.isAdminVerified && (
-              <p className="text-sm text-blue-600 font-medium mt-1">✔️ Verified by ProMedicoz</p>
+              <p className="text-sm text-blue-600 font-medium mt-1 flex items-center justify-center md:justify-start gap-1.5">
+                <VerifiedBadge size={14} /> Verified by ProMedicoz
+              </p>
             )}
 
             {doctor.specialization && (

@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
+import VerifiedBadge from '../components/VerifiedBadge';
 import toast from 'react-hot-toast';
 
 function DoctorList() {
@@ -387,9 +388,7 @@ function DoctorCard({ doctor }) {
             so they never squeeze the name into a narrow, wrapping column. */}
         <h3 className="text-lg font-semibold text-gray-800 leading-snug flex items-center gap-1.5">
           Dr. {doctor.name}
-          {doctor.isAdminVerified && (
-            <span title="Verified by ProMedicoz" className="text-blue-500 text-base">✔️</span>
-          )}
+          {doctor.isAdminVerified && <VerifiedBadge size={16} />}
         </h3>
         {availableToday && (
           <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
