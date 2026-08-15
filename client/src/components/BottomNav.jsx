@@ -11,7 +11,7 @@ function BottomNav() {
     ? [
         { path: '/', icon: '🏠', label: 'Home' },
         { path: '/doctors', icon: '🔍', label: 'Doctors' },
-        { path: '/dashboard', icon: '📋', label: 'Bookings' },
+        { path: '/dashboard', icon: '📋', label: 'Appointments' },
         { path: '/blog', icon: '📝', label: 'Blog' },
       ]
     : [
