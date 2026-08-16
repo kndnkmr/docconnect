@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { complaintAPI } from '../../services/api';
+import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 
 function PatientComplaints() {
@@ -9,6 +10,21 @@ function PatientComplaints() {
   const [formData, setFormData] = useState({ subject: '', description: '' });
 
   useEffect(() => { fetchComplaints(); }, []);
+
+  // Realtime: the moment admin responds/updates status, refresh this list
+  // instantly instead of the patient needing to reload the page.
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleComplaintUpdate = () => {
+      fetchComplaints();
+      toast.success('Your complaint was updated!');
+    };
+
+    socket.on('complaint-updated', handleComplaintUpdate);
+    return () => socket.off('complaint-updated', handleComplaintUpdate);
+  }, []);
 
   const fetchComplaints = async () => {
     try {

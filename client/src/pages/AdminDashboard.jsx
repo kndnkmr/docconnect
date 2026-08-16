@@ -3,7 +3,7 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
-import { adminAPI, announcementAPI } from '../services/api';
+import { adminAPI, announcementAPI, complaintAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function AdminDashboard() {
@@ -29,6 +29,10 @@ function AdminDashboard() {
   // be reviewed and resolved manually via the existing Delete/Deactivate
   // actions below).
   const [duplicatePhones, setDuplicatePhones] = useState([]);
+
+  // Complaints state
+  const [complaints, setComplaints] = useState([]);
+  const [complaintStatusFilter, setComplaintStatusFilter] = useState('');
 
   // Fetch stats on load
   useEffect(() => {
@@ -93,6 +97,50 @@ function AdminDashboard() {
     }
   };
 
+  const fetchComplaints = async () => {
+    try {
+      const params = { limit: 50 };
+      if (complaintStatusFilter) params.status = complaintStatusFilter;
+      const response = await complaintAPI.getAll(params);
+      setComplaints(response.data.complaints);
+    } catch (error) {
+      toast.error('Failed to load complaints');
+    }
+  };
+
+  // Admin's response is what the patient actually sees, so we ask for it
+  // with a real prompt rather than a silent status flip - marking something
+  // "Resolved" without telling them what was resolved isn't useful to them.
+  const handleRespondToComplaint = async (complaint) => {
+    const text = window.prompt('Response to send to the patient:', complaint.response || '');
+    if (text === null) return; // cancelled
+    if (!text.trim()) { toast.error('Response cannot be empty'); return; }
+    try {
+      await complaintAPI.update(complaint._id, { response: text.trim(), status: 'resolved' });
+      toast.success('Response sent to patient');
+      fetchComplaints();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to send response');
+    }
+  };
+
+  const handleUpdateComplaintStatus = async (complaint, status) => {
+    try {
+      await complaintAPI.update(complaint._id, { status });
+      toast.success(`Marked as "${status}"`);
+      fetchComplaints();
+    } catch (error) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  const getComplaintStatusColor = (status) => ({
+    open: 'bg-yellow-100 text-yellow-800',
+    'in-progress': 'bg-blue-100 text-blue-800',
+    resolved: 'bg-green-100 text-green-800',
+    closed: 'bg-gray-100 text-gray-600'
+  }[status] || 'bg-gray-100 text-gray-600');
+
   const fetchAnalytics = async () => {
     try {
       const response = await adminAPI.getAnalytics();
@@ -151,7 +199,8 @@ function AdminDashboard() {
   useEffect(() => {
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'appointments') fetchAppointments();
-  }, [activeTab, userRoleFilter, appointmentStatusFilter]);
+    if (activeTab === 'complaints') fetchComplaints();
+  }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter]);
 
   const handleDeleteUser = async (id, name) => {
     if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone.\n\nTip: use "Deactivate" instead if you only want to hide them while keeping records.`)) return;
@@ -302,6 +351,14 @@ function AdminDashboard() {
           }`}
         >
           Announcements
+        </button>
+        <button
+          onClick={() => setActiveTab('complaints')}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'complaints' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Complaints
         </button>
       </div>
 
@@ -869,6 +926,84 @@ function AdminDashboard() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* === COMPLAINTS TAB === */}
+      {activeTab === 'complaints' && (
+        <div>
+          <div className="mb-4">
+            <select
+              value={complaintStatusFilter}
+              onChange={(e) => setComplaintStatusFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            >
+              <option value="">All Statuses</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+
+          {complaints.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-md p-12 text-center">
+              <div className="text-5xl mb-4">📋</div>
+              <h3 className="text-xl font-medium text-gray-700">No complaints</h3>
+              <p className="text-gray-500 mt-2">Patient complaints will appear here as they're filed.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {complaints.map((c) => (
+                <div key={c._id} className="bg-white rounded-xl shadow-md p-6">
+                  <div className="flex justify-between items-start gap-3 flex-wrap">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">{c.subject}</h3>
+                      <p className="text-sm text-gray-500 mt-0.5">
+                        {c.patient?.name || 'Unknown patient'}
+                        {c.patient?.patientId && <span className="font-mono text-gray-400"> ({c.patient.patientId})</span>}
+                        {' • '}{c.patient?.phone || c.patient?.email} • {formatDate(c.createdAt)}
+                      </p>
+                      {c.doctor && (
+                        <p className="text-xs text-gray-400 mt-1">Regarding: Dr. {c.doctor.name} ({c.doctor.specialization})</p>
+                      )}
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getComplaintStatusColor(c.status)}`}>
+                      {c.status}
+                    </span>
+                  </div>
+
+                  <p className="text-gray-700 text-sm mt-3">{c.description}</p>
+
+                  {c.response && (
+                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm font-medium text-green-800">Your Response:</p>
+                      <p className="text-sm text-green-700 mt-1">{c.response}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3 mt-4 flex-wrap">
+                    <button
+                      onClick={() => handleRespondToComplaint(c)}
+                      className="px-3 py-1 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700"
+                    >
+                      {c.response ? 'Update Response' : 'Respond'}
+                    </button>
+                    {c.status !== 'in-progress' && (
+                      <button onClick={() => handleUpdateComplaintStatus(c, 'in-progress')} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200">
+                        Mark In Progress
+                      </button>
+                    )}
+                    {c.status !== 'closed' && (
+                      <button onClick={() => handleUpdateComplaintStatus(c, 'closed')} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm hover:bg-gray-200">
+                        Close
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

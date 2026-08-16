@@ -4,6 +4,30 @@
 
 const Complaint = require('../models/Complaint');
 const { getPagination } = require('../utils/queryHelpers');
+const { sendPushToUser } = require('../utils/push');
+
+// Notify the patient the instant admin responds/updates status, so it
+// "auto appears" on their already-open Complaints tab instead of needing a
+// manual refresh — same pattern used for reports/prescriptions elsewhere.
+const notifyComplaintUpdate = (req, complaint) => {
+  try {
+    const io = req.app.get('io');
+    const patientId = complaint.patient.toString();
+    if (io) {
+      io.to(`user:${patientId}`).emit('complaint-updated', {
+        complaintId: complaint._id.toString()
+      });
+    }
+    sendPushToUser(patientId, {
+      title: 'Update on your complaint',
+      body: complaint.response ? 'Support has responded to your complaint.' : `Your complaint status changed to "${complaint.status}".`,
+      url: '/dashboard?tab=complaints',
+      tag: `complaint-${complaint._id}`
+    });
+  } catch (error) {
+    console.error('notifyComplaintUpdate error:', error.message);
+  }
+};
 
 // ============================================
 // CREATE COMPLAINT - Patient files a complaint
@@ -72,7 +96,7 @@ const getAllComplaints = async (req, res) => {
     const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
 
     const complaints = await Complaint.find(filter)
-      .populate('patient', 'name email phone')
+      .populate('patient', 'name email phone patientId')
       .populate('doctor', 'name specialization')
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -114,6 +138,7 @@ const updateComplaint = async (req, res) => {
     if (response) complaint.response = response;
 
     await complaint.save();
+    notifyComplaintUpdate(req, complaint);
 
     res.json({
       message: 'Complaint updated successfully',
