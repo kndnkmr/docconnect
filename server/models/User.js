@@ -268,6 +268,18 @@ const userSchema = new mongoose.Schema({
     default: ''
   },
 
+  // --- Insurance (patients only, optional) ---
+  insuranceProvider: {
+    type: String,
+    default: ''
+    // e.g., "Star Health", "HDFC Ergo"
+  },
+
+  insurancePolicyNumber: {
+    type: String,
+    default: ''
+  },
+
   // --- Patient ID ---
   // A short, human-readable identifier for patients (e.g. "PT000123") -
   // separate from the MongoDB ObjectId, which isn't practical to read over

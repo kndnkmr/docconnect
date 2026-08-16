@@ -24,7 +24,16 @@ import toast from 'react-hot-toast';
 // Any one of the medical info fields being set is enough to consider it
 // "on file" — no need for every field to be filled in.
 const hasMedicalInfo = (u) =>
-  !!(u?.allergies || u?.currentMedications || u?.medicalHistory || u?.bloodGroup || u?.emergencyContactName);
+  !!(u?.allergies || u?.currentMedications || u?.medicalHistory || u?.bloodGroup || u?.emergencyContactName || u?.insuranceProvider);
+
+// Common symptoms for the quick-pick list — kept short and general rather
+// than exhaustive; "Other" covers everything else via the free-text reason.
+const COMMON_SYMPTOMS = [
+  'Fever', 'Cough', 'Cold', 'Headache', 'Body Ache', 'Fatigue',
+  'Nausea/Vomiting', 'Diarrhea', 'Stomach Pain', 'Chest Pain',
+  'Shortness of Breath', 'Sore Throat', 'Skin Rash', 'Dizziness',
+  'Joint Pain', 'Back Pain'
+];
 
 function BookAppointment() {
   const { doctorId } = useParams();
@@ -56,6 +65,13 @@ function BookAppointment() {
     reason: repeatData.reason || '',
     consultationType: repeatData.consultationType || 'in-person'
   });
+
+  // Structured symptom tags — a fast-glance supplement to the free-text
+  // "Reason for Visit" below, not a replacement for it.
+  const [symptoms, setSymptoms] = useState([]);
+  const toggleSymptom = (s) => {
+    setSymptoms((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+  };
 
   // Consent state (controlled so we can reliably enforce it before booking)
   const [consentGiven, setConsentGiven] = useState(false);
@@ -164,6 +180,7 @@ function BookAppointment() {
         date: formData.date,
         timeSlot: formData.timeSlot,
         reason: formData.reason,
+        symptoms,
         consultationType: formData.consultationType,
         bookedFor,
         familyMemberName: bookedFor === 'family' ? selectedFamilyMember : '',
@@ -384,6 +401,7 @@ function BookAppointment() {
                     {user.medicalHistory && <li>Medical History: {user.medicalHistory}</li>}
                     {user.bloodGroup && <li>Blood Group: {user.bloodGroup}</li>}
                     {user.emergencyContactName && <li>Emergency Contact: {user.emergencyContactName}</li>}
+                    {user.insuranceProvider && <li>Insurance: {user.insuranceProvider}</li>}
                   </ul>
                   <Link to="/dashboard?tab=account" className="text-green-700 underline text-xs mt-1 inline-block">
                     Update this if anything has changed →
@@ -413,6 +431,31 @@ function BookAppointment() {
                 <option value="video">Video Call</option>
                 <option value="phone">Phone Call</option>
               </select>
+            </div>
+
+            {/* Structured symptom tags — optional quick-pick, supplements
+                the free-text reason below rather than replacing it */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Symptoms (optional)
+              </label>
+              <p className="text-xs text-gray-500 mb-2">Select any that apply — helps your doctor at a glance.</p>
+              <div className="flex flex-wrap gap-2">
+                {COMMON_SYMPTOMS.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => toggleSymptom(s)}
+                    className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
+                      symptoms.includes(s)
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-gray-200 text-gray-600 hover:border-primary-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Reason */}

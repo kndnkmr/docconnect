@@ -29,7 +29,7 @@ const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 const bookAppointment = async (req, res) => {
   try {
-    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp, consentGiven } = req.body;
+    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp, consentGiven, symptoms } = req.body;
 
     // Step 1: Validate required fields
     if (!doctorId || !date || !timeSlot || !reason) {
@@ -96,6 +96,12 @@ const bookAppointment = async (req, res) => {
       }
     }
 
+    // Sanitize symptoms: only strings, trimmed, capped in count and length
+    // so a crafted payload can't stuff an unbounded amount of data in here.
+    const cleanSymptoms = Array.isArray(symptoms)
+      ? symptoms.filter((s) => typeof s === 'string' && s.trim()).map((s) => s.trim().slice(0, 50)).slice(0, 20)
+      : [];
+
     // Step 6: Create the appointment
     const appointmentData = {
       patient: req.user._id,
@@ -103,6 +109,7 @@ const bookAppointment = async (req, res) => {
       date: new Date(date),
       timeSlot,
       reason,
+      symptoms: cleanSymptoms,
       consultationType: consultationType || 'in-person',
       status: 'pending',
       bookedFor: bookedFor || 'self',
@@ -220,7 +227,7 @@ const getMyAppointments = async (req, res) => {
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
       .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink consultationModes')
-      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
+      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     const byId = {};
     docs.forEach((d) => { byId[d._id.toString()] = d; });
@@ -257,7 +264,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
       .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress')
-      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
+      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     if (!appointment) {
       return res.status(404).json({
@@ -358,7 +365,7 @@ const updateAppointmentStatus = async (req, res) => {
 
     // Populate before sending back
     await appointment.populate('doctor', 'name specialization consultationFee');
-    await appointment.populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
+    await appointment.populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     // Send confirmation email to patient when doctor confirms
     if (status === 'confirmed') {

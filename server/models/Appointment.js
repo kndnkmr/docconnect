@@ -91,6 +91,16 @@ const appointmentSchema = new mongoose.Schema({
     // Example: "Chest pain for the last 2 days", "Annual checkup"
   },
 
+  // ---- Structured symptom tags (optional, supplements `reason`) ----
+  // Quick-scannable for the doctor before even opening the free-text
+  // reason - picked from a fixed common-symptoms list on the booking form.
+  // Kept separate from `reason` rather than replacing it: `reason` stays
+  // the patient's own words/detail, this is just a fast-glance summary.
+  symptoms: {
+    type: [String],
+    default: []
+  },
+
   // ---- Additional notes ----
   notes: {
     type: String,

@@ -530,7 +530,7 @@ const resetPassword = async (req, res) => {
 // UPDATE MEDICAL INFO - Patient's own medical profile
 // ============================================
 // Endpoint: PUT /api/auth/medical-info
-// Body: { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone }
+// Body: { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone, insuranceProvider, insurancePolicyNumber }
 // Patient-only — this is set once and reused for every appointment they
 // book, so the doctor sees it on the appointment card without having to
 // ask each time.
@@ -541,7 +541,7 @@ const updateMedicalInfo = async (req, res) => {
       return res.status(403).json({ message: 'Only patients can update medical information' });
     }
 
-    const { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone } = req.body;
+    const { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone, insuranceProvider, insurancePolicyNumber } = req.body;
 
     const updates = {};
     if (bloodGroup !== undefined) updates.bloodGroup = bloodGroup;
@@ -552,6 +552,8 @@ const updateMedicalInfo = async (req, res) => {
     if (emergencyContactPhone !== undefined) {
       updates.emergencyContactPhone = emergencyContactPhone ? formatIndianPhone(emergencyContactPhone.trim()) : '';
     }
+    if (insuranceProvider !== undefined) updates.insuranceProvider = insuranceProvider;
+    if (insurancePolicyNumber !== undefined) updates.insurancePolicyNumber = insurancePolicyNumber;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

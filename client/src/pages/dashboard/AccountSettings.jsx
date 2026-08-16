@@ -21,7 +21,9 @@ function AccountSettings() {
     currentMedications: user?.currentMedications || '',
     medicalHistory: user?.medicalHistory || '',
     emergencyContactName: user?.emergencyContactName || '',
-    emergencyContactPhone: user?.emergencyContactPhone || ''
+    emergencyContactPhone: user?.emergencyContactPhone || '',
+    insuranceProvider: user?.insuranceProvider || '',
+    insurancePolicyNumber: user?.insurancePolicyNumber || ''
   });
   const [isSavingMedical, setIsSavingMedical] = useState(false);
 
@@ -188,6 +190,27 @@ function AccountSettings() {
                   value={medicalInfo.emergencyContactPhone}
                   onChange={(e) => setMedicalInfo((prev) => ({ ...prev, emergencyContactPhone: e.target.value }))}
                   placeholder="+91 9876543210"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Insurance Provider (optional)</label>
+                <input
+                  type="text"
+                  value={medicalInfo.insuranceProvider}
+                  onChange={(e) => setMedicalInfo((prev) => ({ ...prev, insuranceProvider: e.target.value }))}
+                  placeholder="e.g., Star Health, HDFC Ergo"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Policy Number (optional)</label>
+                <input
+                  type="text"
+                  value={medicalInfo.insurancePolicyNumber}
+                  onChange={(e) => setMedicalInfo((prev) => ({ ...prev, insurancePolicyNumber: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 />
               </div>

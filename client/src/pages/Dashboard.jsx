@@ -1018,6 +1018,13 @@ function Dashboard() {
                       <p className="text-gray-600 text-sm">{formatDate(apt.date)} • {apt.timeSlot}</p>
                       {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
                       <p className="text-gray-500 text-sm mt-1">Reason: {apt.reason}</p>
+                      {apt.symptoms?.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {apt.symptoms.map((s) => (
+                            <span key={s} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{s}</span>
+                          ))}
+                        </div>
+                      )}
                       {/* Allergies are safety-critical — always visible, not
                           tucked behind the expander below. */}
                       {isDoctor && apt.patient?.allergies && (
@@ -1025,7 +1032,7 @@ function Dashboard() {
                           ⚠️ Allergies: {apt.patient.allergies}
                         </p>
                       )}
-                      {isDoctor && (apt.patient?.currentMedications || apt.patient?.medicalHistory || apt.patient?.bloodGroup || apt.patient?.emergencyContactName) && (
+                      {isDoctor && (apt.patient?.currentMedications || apt.patient?.medicalHistory || apt.patient?.bloodGroup || apt.patient?.emergencyContactName || apt.patient?.insuranceProvider) && (
                         <details className="mt-1.5 text-sm text-gray-600">
                           <summary className="cursor-pointer text-primary-600 hover:underline select-none">More medical info</summary>
                           <div className="mt-1 pl-2 space-y-0.5">
@@ -1039,6 +1046,9 @@ function Dashboard() {
                                   <> — <a href={`tel:${apt.patient.emergencyContactPhone}`} className="text-primary-600 hover:underline">{apt.patient.emergencyContactPhone}</a></>
                                 )}
                               </p>
+                            )}
+                            {apt.patient?.insuranceProvider && (
+                              <p>Insurance: {apt.patient.insuranceProvider}{apt.patient?.insurancePolicyNumber && ` (Policy: ${apt.patient.insurancePolicyNumber})`}</p>
                             )}
                           </div>
                         </details>
