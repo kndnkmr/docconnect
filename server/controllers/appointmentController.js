@@ -179,6 +179,16 @@ const getMyAppointments = async (req, res) => {
       // Example: ?status=pending → only show pending appointments
     }
 
+    // Optional date range filter — powers the doctor's Today/Tomorrow/This
+    // Week/Next Week quick filters. Both are plain YYYY-MM-DD strings (IST
+    // calendar dates, computed client-side the same way booking already
+    // does), inclusive on both ends.
+    if (req.query.dateFrom || req.query.dateTo) {
+      filter.date = {};
+      if (req.query.dateFrom) filter.date.$gte = new Date(`${req.query.dateFrom}T00:00:00+05:30`);
+      if (req.query.dateTo) filter.date.$lte = new Date(`${req.query.dateTo}T23:59:59+05:30`);
+    }
+
     // Optional search — lets a doctor with many appointments find a specific
     // one without paging through everything. Matches the OTHER party's name,
     // phone, or (for patients) their Patient ID. We resolve matching user ids

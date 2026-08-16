@@ -82,17 +82,15 @@ function DoctorPatientReports() {
     <div className="max-w-3xl">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Patient Reports</h2>
 
-      {(pagination?.total > 5 || searchDebounced) && (
-        <div className="mb-4">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔍 Search by patient name, phone, or Patient ID..."
-            className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
-          />
-        </div>
-      )}
+      <div className="mb-4">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="🔍 Search by patient name, phone, or Patient ID..."
+          className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+        />
+      </div>
 
       {reports.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-md">

@@ -31,6 +31,52 @@ import AccountSettings from './dashboard/AccountSettings';
 // right place instead of a generic "go check your dashboard" message.
 const VALID_TAB_KEYS = ['appointments', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
 
+// "When" quick filter for the Appointments tab — Today/Tomorrow/This Week/
+// Next Week, all computed in IST (same calendar-day boundary logic as
+// isAppointmentToday elsewhere in this file), independent of the device's
+// own timezone.
+const WHEN_FILTERS = [
+  { value: '', label: 'All' },
+  { value: 'today', label: 'Today' },
+  { value: 'tomorrow', label: 'Tomorrow' },
+  { value: 'thisWeek', label: 'This Week' },
+  { value: 'nextWeek', label: 'Next Week' },
+];
+
+const getISTDateString = (d) => d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
+
+const addISTDays = (dateStr, days) => {
+  const d = new Date(`${dateStr}T00:00:00+05:30`);
+  d.setDate(d.getDate() + days);
+  return getISTDateString(d);
+};
+
+// Returns { dateFrom, dateTo } (YYYY-MM-DD, inclusive) for a WHEN_FILTERS
+// value, or {} for 'All' (no date restriction).
+const getWhenDateRange = (value) => {
+  if (!value) return {};
+  const todayStr = getISTDateString(new Date());
+  if (value === 'today') return { dateFrom: todayStr, dateTo: todayStr };
+  if (value === 'tomorrow') {
+    const t = addISTDays(todayStr, 1);
+    return { dateFrom: t, dateTo: t };
+  }
+  if (value === 'thisWeek' || value === 'nextWeek') {
+    // Calendar week = Monday-Sunday. getDay(): Sun=0, Mon=1, ..., Sat=6.
+    const dow = new Date(`${todayStr}T00:00:00+05:30`).getDay();
+    const daysSinceMonday = (dow + 6) % 7;
+    const mondayStr = addISTDays(todayStr, -daysSinceMonday);
+    if (value === 'thisWeek') {
+      // From today through this Sunday — past days of this week aren't
+      // useful in a forward-looking "what's coming up" filter.
+      return { dateFrom: todayStr, dateTo: addISTDays(mondayStr, 6) };
+    }
+    const nextMonday = addISTDays(mondayStr, 7);
+    return { dateFrom: nextMonday, dateTo: addISTDays(nextMonday, 6) };
+  }
+  return {};
+};
+
 function Dashboard() {
   const { user, isDoctor, isPatient } = useAuth();
   const navigate = useNavigate();
@@ -57,6 +103,10 @@ function Dashboard() {
   // everything. The sort already pushes pending/confirmed earlier, but at
   // 50+ appointments that's not enough on its own.
   const [aptStatusFilter, setAptStatusFilter] = useState('');
+  const [aptWhenFilter, setAptWhenFilter] = useState('');
+  // Specific date picker — for the case the Today/Tomorrow/This Week/Next
+  // Week quick buttons don't cover: any arbitrary single date.
+  const [aptSpecificDate, setAptSpecificDate] = useState('');
   // True total pending count across ALL of the doctor's appointments, not
   // just whatever's on the currently loaded page — the "new request" banner
   // below used to undercount this once a doctor had more than a page's
@@ -218,7 +268,7 @@ function Dashboard() {
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
-  }, [page, aptSearchDebounced, aptStatusFilter]);
+  }, [page, aptSearchDebounced, aptStatusFilter, aptWhenFilter, aptSpecificDate]);
 
   // The true total pending count (for the "new request" banner) is fetched
   // independently of the main list — it must stay accurate regardless of
@@ -292,7 +342,10 @@ function Dashboard() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await appointmentAPI.getMine({ limit: 10, page, search: aptSearchDebounced || undefined, status: aptStatusFilter || undefined });
+      const { dateFrom, dateTo } = aptSpecificDate
+        ? { dateFrom: aptSpecificDate, dateTo: aptSpecificDate }
+        : getWhenDateRange(aptWhenFilter);
+      const response = await appointmentAPI.getMine({ limit: 10, page, search: aptSearchDebounced || undefined, status: aptStatusFilter || undefined, dateFrom, dateTo });
       setAppointments(response.data.appointments);
       setPagination(response.data.pagination);
     } catch (error) { console.error('Fetch appointments error:', error); }
@@ -989,42 +1042,78 @@ function Dashboard() {
               ahead of completed/cancelled, but that's not enough once a
               doctor has enough appointments to span multiple pages: there
               was no way to actually isolate "what still needs my attention"
-              from "already done" other than scrolling through everything. */}
-          {(pagination?.totalAppointments > 5 || aptStatusFilter) && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {[
-                { value: '', label: 'All' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'confirmed', label: 'Confirmed' },
-                { value: 'completed', label: 'Completed' },
-                { value: 'cancelled', label: 'Cancelled' },
-              ].map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() => { setAptStatusFilter(f.value); setPage(1); }}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    aptStatusFilter === f.value
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-          )}
+              from "already done" other than scrolling through everything.
+              Always visible (no record-count threshold) — hiding it made it
+              hard to even discover the feature exists. */}
+          <div className="flex flex-wrap gap-2 mb-2">
+            {[
+              { value: '', label: 'All' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'confirmed', label: 'Confirmed' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'cancelled', label: 'Cancelled' },
+            ].map((f) => (
+              <button
+                key={f.value}
+                onClick={() => { setAptStatusFilter(f.value); setPage(1); }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  aptStatusFilter === f.value
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
 
-          {(pagination?.totalAppointments > 5 || aptSearchDebounced) && (
-            <div className="mb-4">
-              <input
-                type="text"
-                value={aptSearch}
-                onChange={(e) => setAptSearch(e.target.value)}
-                placeholder={isDoctor ? '🔍 Search by patient name, phone, or Patient ID...' : '🔍 Search by doctor name or phone...'}
-                className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
-              />
-            </div>
-          )}
+          {/* "When" quick filter — Today/Tomorrow/This Week/Next Week, IST
+              calendar dates (same day-boundary logic as booking elsewhere).
+              Separate from the status filter above: a doctor might want
+              "everything happening today" regardless of status, or "just
+              pending ones this week". Both filters combine (AND).
+              The specific-date picker alongside it covers the case these
+              quick buttons don't: "show me next Tuesday specifically" -
+              picking one clears the other, since they both just set the
+              same underlying date range. */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {WHEN_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => { setAptWhenFilter(f.value); setAptSpecificDate(''); setPage(1); }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  aptWhenFilter === f.value && !aptSpecificDate
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+            <span className="text-gray-400 text-sm">or</span>
+            <input
+              type="date"
+              value={aptSpecificDate}
+              onChange={(e) => { setAptSpecificDate(e.target.value); setAptWhenFilter(''); setPage(1); }}
+              className={`px-3 py-1.5 rounded-full text-sm border outline-none focus:ring-2 focus:ring-primary-500 ${
+                aptSpecificDate ? 'border-indigo-500 text-indigo-700 bg-indigo-50' : 'border-gray-200 text-gray-600'
+              }`}
+              title="Jump to a specific date"
+            />
+            {aptSpecificDate && (
+              <button onClick={() => { setAptSpecificDate(''); setPage(1); }} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <input
+              type="text"
+              value={aptSearch}
+              onChange={(e) => setAptSearch(e.target.value)}
+              placeholder={isDoctor ? '🔍 Search by patient name, phone, or Patient ID...' : '🔍 Search by doctor name or phone...'}
+              className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+            />
+          </div>
 
           {loading ? (
             <div className="text-center py-8 text-gray-600">Loading appointments...</div>
@@ -1034,16 +1123,16 @@ function Dashboard() {
               <h3 className="text-xl font-medium text-gray-700">
                 {aptSearchDebounced
                   ? `No appointments match "${aptSearchDebounced}"`
-                  : aptStatusFilter
-                  ? `No ${aptStatusFilter} appointments`
+                  : aptStatusFilter || aptWhenFilter || aptSpecificDate
+                  ? `No ${[aptStatusFilter, aptSpecificDate ? `on ${aptSpecificDate}` : WHEN_FILTERS.find((f) => f.value === aptWhenFilter)?.label].filter(Boolean).join(' ').toLowerCase()} appointments`
                   : 'No appointments yet'}
               </h3>
               {aptSearchDebounced ? (
                 <button onClick={() => setAptSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
                   Clear search
                 </button>
-              ) : aptStatusFilter ? (
-                <button onClick={() => { setAptStatusFilter(''); setPage(1); }} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
+              ) : (aptStatusFilter || aptWhenFilter || aptSpecificDate) ? (
+                <button onClick={() => { setAptStatusFilter(''); setAptWhenFilter(''); setAptSpecificDate(''); setPage(1); }} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
                   Show all appointments
                 </button>
               ) : isPatient ? (
@@ -1435,17 +1524,15 @@ function Dashboard() {
       {activeTab === 'prescriptions' && isDoctor && (
         <div className="max-w-3xl">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Prescriptions</h2>
-          {(rxListPagination?.total > 5 || rxSearchDebounced) && (
-            <div className="mb-4">
-              <input
-                type="text"
-                value={rxSearch}
-                onChange={(e) => setRxSearch(e.target.value)}
-                placeholder="🔍 Search by patient name, phone, Patient ID, or diagnosis..."
-                className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
-              />
-            </div>
-          )}
+          <div className="mb-4">
+            <input
+              type="text"
+              value={rxSearch}
+              onChange={(e) => setRxSearch(e.target.value)}
+              placeholder="🔍 Search by patient name, phone, Patient ID, or diagnosis..."
+              className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
+            />
+          </div>
           {rxListItems.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-md">
               <div className="text-5xl mb-4">{rxSearchDebounced ? '🔍' : '💊'}</div>
