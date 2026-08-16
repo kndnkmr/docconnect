@@ -707,6 +707,77 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
   that cross-reference data — paginating the shared data would make the
   Appointments tab's hints silently miss anything outside the loaded page
 
+### Appointments Status + Date Filtering
+
+- The Appointments tab (both roles) has status filter tabs (All/Pending/
+  Confirmed/Completed/Cancelled) and date filters — quick Today/Tomorrow/
+  This Week/Next Week buttons plus a specific-date picker for anything
+  else. Deliberately not a full custom calendar-grid widget — quick
+  relative buttons + an exact-date picker covers the real need with much
+  less UI surface area to get right
+- Server: `GET /api/appointments/my` accepts optional `dateFrom`/`dateTo`
+  (YYYY-MM-DD, inclusive both ends) alongside the existing `status`/
+  `search` params — all combine with AND, not OR
+- "This Week"/"Next Week" use Monday-Sunday calendar weeks computed in IST
+  (`getWhenDateRange` in Dashboard.jsx) — "This Week" runs from today
+  through this Sunday (not from Monday), since past days of the current
+  week aren't useful in a forward-looking filter. On a Sunday, "This Week"
+  collapses to just today — that's expected behavior of any Mon-Sun week
+  definition, not a bug, if it ever looks surprising
+- **Bug fixed in the same pass:** the search/status-filter UI across
+  Appointments, Patient Reports, and the doctor's Prescriptions tab was
+  hidden behind a "more than 5 total records" threshold. This made the
+  features effectively undiscoverable for anyone testing with a small
+  number of records - removed the threshold, all three are now always
+  visible
+- **Also fixed:** the "new appointment request" banner counted pending
+  appointments from whatever was on the currently loaded page only,
+  undercounting once a doctor had more than a page's worth. Now fetches
+  the true total via a cheap `limit=1` call that just reads
+  `pagination.totalAppointments`
+
+### Production Security Configuration (not in code, but important context)
+
+These are Atlas/Render dashboard settings, not application code, so
+there's nothing to grep for — recorded here so the reasoning isn't lost:
+
+- **Atlas org requires MFA** for anyone logging into the Atlas web console
+- **Network Access** is restricted to Render's actual outbound IP ranges
+  for this service (found via Render → service → Connect → Outbound tab)
+  plus one personal IP — previously `0.0.0.0/0` ("allow from anywhere"),
+  which meant the database credential alone was the only thing standing
+  between the internet and the data. Render's outbound ranges are shared
+  with other Render customers in the same region, not unique to this
+  workspace — a real improvement over "anyone," not as tight as a
+  dedicated IP (Render offers that as a paid add-on if ever needed)
+- **Database user is scoped to `readWrite` on the app's own database** -
+  it was previously `atlasAdmin` (full project admin rights), which is far
+  more than a web app connection should ever have. If you ever need to
+  create a new database user or change this one, scope it the same way
+  and never assign an admin-level role to an application's own connection
+  credential
+- **No backups exist** - confirmed this is Atlas's free M0 tier, which
+  has zero backup capability regardless of settings. This is a conscious,
+  deferred risk, not an oversight - revisit once there's real paying
+  usage. In the meantime, the non-destructive admin tools (Deactivate,
+  "Reset for Re-registration") cover the most likely accident scenario
+  without needing a database backup at all; they just don't help against
+  a bug in a future code change or a manual mistake made directly in
+  Atlas's Data Explorer
+
+### Privacy Policy Accuracy (maintenance reminder)
+
+Found genuinely out of sync with the actual code during a review: it said
+video calls used "Jitsi Meet" (the app switched to Daily.co a while ago)
+and that account deletion "permanently removes all data within 30 days"
+(the real policy is a 90-day grace period then anonymization only —
+appointment/prescription/report records are deliberately retained, not
+deleted). Both fixed in `client/src/pages/PrivacyPolicy.jsx`.
+**If you ever change**: the video calling provider, the account deletion/
+retention window, or add a new category of data collected from patients —
+check `PrivacyPolicy.jsx` at the same time. It's easy for this page to
+drift out of sync since nothing enforces it staying accurate.
+
 ### Login Page Clarification
 
 - Login page now shows: "Works for both Doctors and Patients — just use the email you registered with"

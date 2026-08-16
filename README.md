@@ -54,7 +54,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes) — appears on the patient's dashboard instantly (Socket.io + Web Push), no manual refresh needed; the modal shows the patient's other prescriptions as reference so the doctor isn't relying on memory of what was prescribed last time
 - Doctor has a dedicated, searchable Prescriptions tab (by patient name/phone/Patient ID) — previously the only way to see a written prescription was through the specific appointment it came from
 - Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments — updates appear instantly on both sides the same way; can optionally be linked to a specific appointment, which then surfaces as a "tap to view" prompt directly on that appointment's card so it can't be missed
-- Doctor's Appointments and Patient Reports tabs are searchable (by patient name/phone/Patient ID) and paginated server-side, so they stay fast as a doctor's patient list grows
+- Doctor's Appointments and Patient Reports tabs are searchable (by patient name/phone/Patient ID) and paginated server-side, so they stay fast as a doctor's patient list grows; search/filter controls are always visible regardless of how many records exist
+- Appointments tab has status filter tabs (All/Pending/Confirmed/Completed/Cancelled) and date filters — quick Today/Tomorrow/This Week/Next Week buttons plus a specific-date picker, all combinable with the status filter and search — so a doctor with a large patient list can isolate exactly what needs attention instead of scrolling through everything
 - Patient complaints: patients file complaints (optionally tagged to a specific doctor/visit), admin reviews and responds via a dedicated Complaints tab in the admin panel — responding notifies the patient instantly (Socket.io + Web Push)
 - Patient medical information (optional): blood group, allergies, current medications, medical history, emergency contact, and insurance details — set once in Account Settings, shown automatically to the doctor on every appointment (allergies always visible, the rest behind an expander) instead of being asked every visit; also surfaced as a reminder on the booking form itself
 - Structured symptom tags on the booking form (Fever, Cough, Headache, etc.) — an optional, fast-glance supplement to the free-text "Reason for Visit"
@@ -477,7 +478,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | /api/appointments | Patient only | Book appointment (supports family member + repeat; records consent) |
-| GET | /api/appointments/my | Protected | View my appointments (supports ?status=, ?search= by other party's name/phone/Patient ID, ?page=, ?limit=) |
+| GET | /api/appointments/my | Protected | View my appointments (supports ?status=, ?search= by other party's name/phone/Patient ID, ?dateFrom=&?dateTo= YYYY-MM-DD inclusive range, ?page=, ?limit=) |
 | GET | /api/appointments/incoming-calls | Protected | Poll for an incoming call (ringing) |
 | GET | /api/appointments/:id | Protected | View single appointment |
 | GET | /api/appointments/:id/video-token | Protected | Get Daily.co room URL + join token (slot-window enforced) |
