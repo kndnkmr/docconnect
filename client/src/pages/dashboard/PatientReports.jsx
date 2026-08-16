@@ -7,9 +7,15 @@ function PatientReports() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ title: '', description: '', doctorId: '' });
+  const [formData, setFormData] = useState({ title: '', description: '', doctorId: '', appointmentId: '' });
   const [file, setFile] = useState(null);
   const [doctors, setDoctors] = useState([]);
+  // Every appointment (not just the unique-doctor summary in `doctors`) so
+  // the form can offer "which visit is this for?" once a doctor is picked.
+  // Without this, a report never gets linked to an appointment at all -
+  // which silently breaks the doctor-side "patient uploaded a report" next-
+  // step hint on that appointment's card.
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     fetchReports();
@@ -45,6 +51,7 @@ function PatientReports() {
   const fetchDoctors = async () => {
     try {
       const response = await appointmentAPI.getMine({ limit: 50 });
+      setAppointments(response.data.appointments || []);
       const uniqueDoctors = [];
       const seen = new Set();
       response.data.appointments.forEach(apt => {
@@ -60,6 +67,15 @@ function PatientReports() {
     }
   };
 
+  const formatDateShort = (dateString) =>
+    new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+  // Appointments with the currently-selected doctor, newest first — the
+  // options for "which visit is this for?".
+  const appointmentsForSelectedDoctor = formData.doctorId
+    ? appointments.filter((apt) => apt.doctor?._id === formData.doctorId).sort((a, b) => new Date(b.date) - new Date(a.date))
+    : [];
+
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.doctorId || !file) {
@@ -71,13 +87,14 @@ function PatientReports() {
     data.append('title', formData.title);
     data.append('description', formData.description);
     data.append('doctorId', formData.doctorId);
+    if (formData.appointmentId) data.append('appointmentId', formData.appointmentId);
     data.append('reportFile', file);
 
     try {
       await reportAPI.upload(data);
       toast.success('Report uploaded! Your doctor can now view it.');
       setShowForm(false);
-      setFormData({ title: '', description: '', doctorId: '' });
+      setFormData({ title: '', description: '', doctorId: '', appointmentId: '' });
       setFile(null);
       fetchReports();
     } catch (error) {
@@ -124,7 +141,7 @@ function PatientReports() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
               <select
                 value={formData.doctorId}
-                onChange={(e) => setFormData(prev => ({ ...prev, doctorId: e.target.value }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, doctorId: e.target.value, appointmentId: '' }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 required
               >
@@ -136,6 +153,24 @@ function PatientReports() {
                 ))}
               </select>
             </div>
+            {formData.doctorId && appointmentsForSelectedDoctor.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Which visit is this for? (optional)</label>
+                <p className="text-xs text-gray-500 mb-1">Linking it helps your doctor see it right on that appointment, not just in the Reports list.</p>
+                <select
+                  value={formData.appointmentId}
+                  onChange={(e) => setFormData(prev => ({ ...prev, appointmentId: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                >
+                  <option value="">General — not tied to a specific visit</option>
+                  {appointmentsForSelectedDoctor.map(apt => (
+                    <option key={apt._id} value={apt._id}>
+                      {formatDateShort(apt.date)} • {apt.timeSlot} ({apt.status})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
               <input

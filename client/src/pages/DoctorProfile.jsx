@@ -191,6 +191,20 @@ function DoctorProfile() {
                 </Link>
               )}
 
+              {/* Direct line to the doctor, if they've set one — separate
+                  from "Share via WhatsApp" below, which shares the PROFILE
+                  LINK with someone else, not a message TO the doctor. */}
+              {doctor.whatsappNumber && (
+                <a
+                  href={`https://wa.me/${doctor.whatsappNumber.replace('+', '')}?text=${encodeURIComponent(`Hi Dr. ${doctor.name}, I would like to consult with you.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+                >
+                  <span>💬</span> Message on WhatsApp
+                </a>
+              )}
+
               <button
                 onClick={() => {
                   const shareUrl = window.location.href;

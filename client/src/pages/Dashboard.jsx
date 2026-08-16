@@ -1029,7 +1029,12 @@ function Dashboard() {
                               <img src={getUploadUrl(apt.doctor.upiQrCode)} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
                               <a href={getUploadUrl(apt.doctor.upiQrCode)} download="payment-qr.png" className="inline-block text-xs text-primary-600 hover:underline mb-3">Download QR Code</a>
                               <p className="text-xs text-orange-600 mb-2">Scan or download QR → Pay → Click below</p>
+                              {apt.doctor?.upiId && (
+                                <p className="text-xs text-gray-500 mb-2">Can't scan? Pay manually to UPI ID: <span className="font-mono font-medium text-gray-700">{apt.doctor.upiId}</span></p>
+                              )}
                             </div>
+                          ) : apt.doctor?.upiId ? (
+                            <p className="text-sm text-orange-700">Pay to UPI ID: <span className="font-mono font-medium">{apt.doctor.upiId}</span></p>
                           ) : (
                             <p className="text-sm text-orange-700">Contact doctor for payment details.</p>
                           )}
@@ -1236,6 +1241,8 @@ function Dashboard() {
               { key: 'city', label: 'City *', placeholder: 'e.g., Delhi, Mumbai, Rishikesh' },
               { key: 'googleMapsLink', label: 'Google Maps Link (optional)', placeholder: 'Paste your clinic Google Maps URL' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
+              { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210 — shows a "Message on WhatsApp" button on your profile', type: 'tel' },
+              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., drname@okicici — shown as a fallback if your QR code can\'t be scanned' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>

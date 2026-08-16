@@ -4,6 +4,7 @@
 
 const MedicalReport = require('../models/MedicalReport');
 const User = require('../models/User');
+const Appointment = require('../models/Appointment');
 const { uploadFile } = require('../utils/uploadFile');
 const { sendPushToUser } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
@@ -45,6 +46,19 @@ const uploadReport = async (req, res) => {
       return res.status(400).json({
         message: 'Please upload a file (PDF or image)'
       });
+    }
+
+    // Was previously never actually sent by the client, so this path was
+    // dormant - now that the "which visit is this for" selector on the
+    // upload form actually sends one, verify it's really this patient's own
+    // appointment with this doctor before linking it. Without this, nothing
+    // stops a crafted request from tagging a report onto someone else's
+    // appointment.
+    if (appointmentId) {
+      const appt = await Appointment.findById(appointmentId);
+      if (!appt || appt.patient.toString() !== req.user._id.toString() || appt.doctor.toString() !== doctorId) {
+        return res.status(400).json({ message: 'Invalid appointment for this report' });
+      }
     }
 
     // Store the report file (Cloudinary URL, or base64 fallback)
