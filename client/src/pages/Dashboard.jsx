@@ -51,6 +51,17 @@ function Dashboard() {
   // means clicking through pages one at a time with no way to jump to it.
   const [aptSearch, setAptSearch] = useState('');
   const [aptSearchDebounced, setAptSearchDebounced] = useState('');
+  // Status filter tabs — without this, a doctor with a busy practice has no
+  // way to isolate "what still needs my attention" (pending/confirmed) from
+  // "already handled" (completed/cancelled) other than scrolling past
+  // everything. The sort already pushes pending/confirmed earlier, but at
+  // 50+ appointments that's not enough on its own.
+  const [aptStatusFilter, setAptStatusFilter] = useState('');
+  // True total pending count across ALL of the doctor's appointments, not
+  // just whatever's on the currently loaded page — the "new request" banner
+  // below used to undercount this once a doctor had more than a page's
+  // worth of appointments.
+  const [pendingCount, setPendingCount] = useState(0);
   // Doctor's browsable "Prescriptions" tab — its OWN independent, server-
   // paginated + searched fetch. Deliberately separate from doctorPrescriptions
   // above: that one backs the Appointments tab's "hasPrescription"/"previous
@@ -207,7 +218,16 @@ function Dashboard() {
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
-  }, [page, aptSearchDebounced]);
+  }, [page, aptSearchDebounced, aptStatusFilter]);
+
+  // The true total pending count (for the "new request" banner) is fetched
+  // independently of the main list — it must stay accurate regardless of
+  // whatever page/search/status-filter the doctor currently has selected,
+  // so it can't just be derived from whatever's in `appointments` right now.
+  useEffect(() => {
+    if (isDoctor) fetchPendingCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDoctor]);
 
   // Debounce the search box, and jump back to page 1 whenever the search
   // term actually changes (otherwise you could be stuck on e.g. page 3 of
@@ -261,9 +281,18 @@ function Dashboard() {
     finally { setProfileLoaded(true); }
   };
 
+  // Lightweight — limit=1 just to read pagination.totalAppointments, not to
+  // actually fetch the records themselves.
+  const fetchPendingCount = async () => {
+    try {
+      const response = await appointmentAPI.getMine({ limit: 1, status: 'pending' });
+      setPendingCount(response.data.pagination?.totalAppointments || 0);
+    } catch (error) { /* non-critical — banner just won't show a count */ }
+  };
+
   const fetchAppointments = async () => {
     try {
-      const response = await appointmentAPI.getMine({ limit: 10, page, search: aptSearchDebounced || undefined });
+      const response = await appointmentAPI.getMine({ limit: 10, page, search: aptSearchDebounced || undefined, status: aptStatusFilter || undefined });
       setAppointments(response.data.appointments);
       setPagination(response.data.pagination);
     } catch (error) { console.error('Fetch appointments error:', error); }
@@ -542,6 +571,7 @@ function Dashboard() {
       await appointmentAPI.updateStatus(appointmentId, data);
       toast.success(`Appointment ${newStatus}`);
       fetchAppointments();
+      if (isDoctor) fetchPendingCount();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update status');
     }
@@ -897,23 +927,21 @@ function Dashboard() {
 
       {/* Notification Banner — shown on every tab, so the CTA must actually
           switch to Appointments rather than assume it's already showing */}
-      {isDoctor && appointments.filter(a => a.status === 'pending').length > 0 && (
+      {isDoctor && pendingCount > 0 && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🔔</span>
             <div>
-              <p className="font-semibold text-yellow-800">You have {appointments.filter(a => a.status === 'pending').length} new appointment request{appointments.filter(a => a.status === 'pending').length > 1 ? 's' : ''}!</p>
+              <p className="font-semibold text-yellow-800">You have {pendingCount} new appointment request{pendingCount > 1 ? 's' : ''}!</p>
               <p className="text-sm text-yellow-700">Please confirm or reject them.</p>
             </div>
           </div>
-          {activeTab !== 'appointments' && (
-            <button
-              onClick={() => goToTab('appointments')}
-              className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 whitespace-nowrap"
-            >
-              View Requests →
-            </button>
-          )}
+          <button
+            onClick={() => { goToTab('appointments'); setAptStatusFilter('pending'); setPage(1); }}
+            className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 whitespace-nowrap"
+          >
+            View Requests →
+          </button>
         </div>
       )}
 
@@ -957,6 +985,35 @@ function Dashboard() {
 
           {/* Only worth showing once there's enough to search through -
               avoids clutter for a brand new account with 1-2 appointments. */}
+          {/* Status filter tabs — the sort already puts pending/confirmed
+              ahead of completed/cancelled, but that's not enough once a
+              doctor has enough appointments to span multiple pages: there
+              was no way to actually isolate "what still needs my attention"
+              from "already done" other than scrolling through everything. */}
+          {(pagination?.totalAppointments > 5 || aptStatusFilter) && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {[
+                { value: '', label: 'All' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ].map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() => { setAptStatusFilter(f.value); setPage(1); }}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    aptStatusFilter === f.value
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           {(pagination?.totalAppointments > 5 || aptSearchDebounced) && (
             <div className="mb-4">
               <input
@@ -973,11 +1030,21 @@ function Dashboard() {
             <div className="text-center py-8 text-gray-600">Loading appointments...</div>
           ) : appointments.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-md">
-              <div className="text-5xl mb-4">{aptSearchDebounced ? '🔍' : '📋'}</div>
-              <h3 className="text-xl font-medium text-gray-700">{aptSearchDebounced ? `No appointments match "${aptSearchDebounced}"` : 'No appointments yet'}</h3>
+              <div className="text-5xl mb-4">{aptSearchDebounced || aptStatusFilter ? '🔍' : '📋'}</div>
+              <h3 className="text-xl font-medium text-gray-700">
+                {aptSearchDebounced
+                  ? `No appointments match "${aptSearchDebounced}"`
+                  : aptStatusFilter
+                  ? `No ${aptStatusFilter} appointments`
+                  : 'No appointments yet'}
+              </h3>
               {aptSearchDebounced ? (
                 <button onClick={() => setAptSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
                   Clear search
+                </button>
+              ) : aptStatusFilter ? (
+                <button onClick={() => { setAptStatusFilter(''); setPage(1); }} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
+                  Show all appointments
                 </button>
               ) : isPatient ? (
                 <>
