@@ -18,12 +18,19 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI, getUploadUrl } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+
+// Any one of the medical info fields being set is enough to consider it
+// "on file" — no need for every field to be filled in.
+const hasMedicalInfo = (u) =>
+  !!(u?.allergies || u?.currentMedications || u?.medicalHistory || u?.bloodGroup || u?.emergencyContactName);
 
 function BookAppointment() {
   const { doctorId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   // Check if this is a repeat booking (prefilled data from Dashboard)
   const repeatData = location.state || {};
@@ -358,6 +365,38 @@ function BookAppointment() {
                   </select>
                 )}
               </div>
+            )}
+
+            {/* Medical info reminder — only for a self-booking, since this is
+                the ACCOUNT HOLDER's medical info (allergies, emergency
+                contact, etc.), which has nothing to do with a family member
+                being booked for instead. Always reads live from the
+                patient's profile rather than being copied onto the
+                appointment, so the doctor always sees the current version,
+                not a possibly-stale one from whenever this was booked. */}
+            {bookedFor === 'self' && (
+              hasMedicalInfo(user) ? (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+                  <p className="font-medium mb-1">✓ Your doctor will automatically see your medical info on file:</p>
+                  <ul className="text-green-700 space-y-0.5 list-disc list-inside">
+                    {user.allergies && <li>Allergies: {user.allergies}</li>}
+                    {user.currentMedications && <li>Current Medications: {user.currentMedications}</li>}
+                    {user.medicalHistory && <li>Medical History: {user.medicalHistory}</li>}
+                    {user.bloodGroup && <li>Blood Group: {user.bloodGroup}</li>}
+                    {user.emergencyContactName && <li>Emergency Contact: {user.emergencyContactName}</li>}
+                  </ul>
+                  <Link to="/dashboard?tab=account" className="text-green-700 underline text-xs mt-1 inline-block">
+                    Update this if anything has changed →
+                  </Link>
+                </div>
+              ) : (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                  💡 Adding your allergies and emergency contact helps your doctor be prepared — takes a minute.{' '}
+                  <Link to="/dashboard?tab=account" className="underline font-medium">
+                    Add it in Account Settings →
+                  </Link>
+                </div>
+              )
             )}
 
             {/* Consultation type */}
