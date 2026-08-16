@@ -577,6 +577,136 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
 - Stored in Appointment model: `meetingLink` field
 - If doctor leaves it empty (in-person visit), no button is shown
 
+### Patient Medical Information
+
+- Optional fields on `User` (patient-only): `bloodGroup`, `allergies`,
+  `currentMedications`, `medicalHistory`, `emergencyContactName`,
+  `emergencyContactPhone`, `insuranceProvider`, `insurancePolicyNumber`
+- Set once in Dashboard → Account Settings via `PUT /api/auth/medical-info`
+  (`authController.updateMedicalInfo`, patient-role-gated), reused for
+  every appointment they book — deliberately NOT copied/snapshotted onto
+  the Appointment itself, so the doctor always sees the current version
+  rather than a possibly-stale one from whenever they booked
+- Shown to the doctor on the appointment card: allergies always visible
+  (safety-critical), the rest behind a "More medical info" `<details>`
+  expander (`Dashboard.jsx`) — requires the field to actually be included
+  in the `.populate('patient', ...)` select list wherever a doctor views
+  an appointment; if you add a new medical-info field, it needs adding to
+  ALL of appointmentController.js's doctor-facing populate calls, not just
+  one, or it'll silently not show up depending on which endpoint served
+  the page
+- Also surfaced as a reminder on `BookAppointment.jsx` itself (only for
+  booking-for-self, never for a family member — it's the account holder's
+  own info) — either a confirmation of what's on file, or a nudge to add
+  it, so a doctor isn't relying on the patient having found Account
+  Settings on their own before the first visit
+
+### Structured Symptom Tags
+
+- Optional `symptoms: [String]` field on `Appointment`, supplementing
+  (not replacing) the existing free-text `reason` field
+- Quick-pick tag buttons on the booking form from a fixed common-symptoms
+  list — sanitized server-side in `bookAppointment()` (array only, string
+  values only, capped at 20 tags / 50 chars each) since this reaches the
+  database with no prior validation
+- Shown as small tags on the appointment card, both roles
+
+### Admin Complaints View
+
+- The server (`getAllComplaints`, `updateComplaint`) and client API
+  wrapper (`complaintAPI.getAll/.update`) existed for a while before the
+  admin panel actually had a tab that called them — patients could file
+  complaints with literally no way for admin to see or act on them
+- `AdminDashboard.jsx` Complaints tab: filter by status, "Respond"
+  (prompts for a response, marks resolved), "Mark In Progress", "Close"
+- Responding notifies the patient instantly via Socket.io + Web Push
+  (`notifyComplaintUpdate` in `complaintController.js`) — patient's
+  Complaints tab (`PatientComplaints.jsx`) listens for `complaint-updated`
+- A complaint can optionally be tagged to a specific doctor/appointment
+  (selectors on `PatientComplaints.jsx`'s form) — validated server-side:
+  an `appointmentId` must actually belong to this patient, and if a
+  `doctorId` is also given it must match that appointment's doctor
+
+### Doctor WhatsApp Button + UPI ID Fallback (bug fix)
+
+- `whatsappNumber` and `upiId` had schema fields, controller support, and
+  were even documented above as built features, but had NO input in the
+  actual Edit Profile form (Dashboard.jsx) — they could never actually be
+  set. The "Message on WhatsApp" button on the public profile
+  (`DoctorProfile.jsx`) didn't exist in the code at all either
+- Fixed: both fields added to the Edit Profile form, the WhatsApp button
+  built on the public profile (uses `doctor.whatsappNumber`, separate from
+  the generic "Share via WhatsApp" button which shares the profile link,
+  not a message to the doctor), and UPI ID shown as a text fallback next
+  to the payment QR code for when a patient can't scan it
+
+### Medical Report ↔ Appointment Linking (bug fix)
+
+- The report-upload form (`PatientReports.jsx`) never sent an
+  `appointmentId`, even though `MedicalReport.appointment` exists and a
+  doctor-side "patient uploaded a report" next-step hint on the
+  appointment card depends on exactly that link — every report was always
+  unlinked, so that hint could never fire in practice
+- Fixed: added a "which visit is this for?" selector (optional — defaults
+  to a general/unlinked upload, same as before). Since this path was
+  previously dormant it had no ownership validation at all — added
+  server-side checks in `uploadReport()` that the given appointment
+  actually belongs to this patient and doctor before linking it
+
+### Reset for Re-registration (admin tool)
+
+- Recurring real need: letting someone re-register fresh with the same
+  phone/email (e.g. a doctor's profile needs to be redone from scratch)
+  had no non-destructive tool — permanent Delete was the only thing that
+  reliably freed up the contact info, but it cascade-deletes all their
+  appointments too
+- Extended the existing `freeUpContactInfo` (previously only usable on
+  already-deleted accounts, for duplicate-account cleanup — see below) to
+  also work on ACTIVE accounts: renames the phone/email out of the way
+  AND deactivates the account (`isSuspended: true`) in the same step,
+  since an active account with its contact info pulled out from under it
+  would otherwise be a confusing half-state
+- "Reset for Re-registration" button in the admin Users table, available
+  for any non-admin user, active or already-deleted
+- All appointment/prescription/report history stays completely intact —
+  the person just needs to register again as a brand new account with
+  the same real phone/email
+
+### Email Verification "Expired" Bug (bug fix)
+
+- Root cause: the verification token was cleared from the database the
+  instant it was successfully used. Many email clients and corporate
+  email security gateways (Outlook Safe Links, phishing/spam scanners)
+  automatically pre-visit links in an email to scan them BEFORE the user
+  ever sees it — that automated visit consumed the token, so the doctor's
+  real click moments later found no matching token and saw "expired",
+  even though nothing had actually timed out
+- Fixed in `verifyEmail()`: don't clear the token on success; check
+  `isVerified` before checking expiry. A repeat visit to an already-used
+  link (scanner pre-visit, double click, etc.) now returns a friendly
+  "already verified" success instead of an error. A genuinely expired,
+  never-used link still correctly shows the expired message
+
+### Reports/Prescriptions Pagination + Search
+
+- `GET /api/reports/my` and `/api/prescriptions/my` previously had no
+  pagination at all — fetched every record a doctor had ever received or
+  written, unbounded, then filtered client-side. Fine at small scale, a
+  real problem as a practice grows
+- Both now support `?page=`, `?limit=`, `?search=` (matches the other
+  party's name/phone/Patient ID) — `getPagination`/`safeContainsRegex`
+  from `queryHelpers.js`, same pattern as appointments
+- A param-less call (still what the patient's own "My Reports"/"My
+  Prescriptions" views use, and what `Dashboard.jsx`'s
+  `doctorReports`/`doctorPrescriptions` cross-reference fetch for the
+  Appointments tab's next-step hints uses) defaults to `limit=100` — so
+  nothing changes for any realistic personal history, it's just bounded
+  now instead of truly unbounded
+- The doctor's browsable Prescriptions/Patient Reports tabs use their OWN
+  independent paginated+searched fetch, deliberately kept separate from
+  that cross-reference data — paginating the shared data would make the
+  Appointments tab's hints silently miss anything outside the loaded page
+
 ### Login Page Clarification
 
 - Login page now shows: "Works for both Doctors and Patients — just use the email you registered with"

@@ -30,6 +30,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 ## Features
 
 - Doctor and patient registration with role-based access
+- Patient ID: every patient gets a short, human-readable id (e.g. `PT000123`) at registration — shown in their Account Settings, on the doctor's appointment card, Patient Reports, Prescriptions, and the downloadable prescription PDF; searchable everywhere a doctor or admin looks up a patient
 - Smart specialization search with fuzzy matching (handles misspellings)
 - Advanced doctor search filters: specialization, name, max fee, "Available Today" (honest — only doctors with a real free slot left today)
 - Phone number auto-formatting with +91 validation for Indian numbers
@@ -42,7 +43,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Rate limiting on auth endpoints (prevents brute force attacks)
 - Password reset with secure token — works via email OR phone (patients can register with phone only); phone-only accounts with no email on file are guided to WhatsApp support, and admin can generate/relay a reset link manually as an account-recovery assist
 - Doctor profile management with photo upload
-- Phone number and WhatsApp contact for doctors
+- Phone number and WhatsApp contact for doctors — a "Message on WhatsApp" button appears on the doctor's public profile once they've set a WhatsApp number in Edit Profile; UPI ID can also be set there as a text fallback next to the payment QR code, for when a patient can't scan it
 - Search and filter doctors by name or specialization
 - Real-time availability: doctors set weekly schedule (multi-day selection) that auto-saves on every add/remove (no separate Save step); patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
@@ -50,9 +51,13 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Repeat booking: rebook a past appointment with same doctor/details (one-click "Book Again")
 - Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
 - UPI Payment: each doctor sets own fee + UPI ID, patient pays directly via UPI app
-- Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes) — appears on the patient's dashboard instantly (Socket.io + Web Push), no manual refresh needed
-- Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments — updates appear instantly on both sides the same way
-- Patient complaints: patients file complaints, admin reviews and responds
+- Prescription: doctor writes prescription via styled modal (diagnosis, medicines, tests, notes) — appears on the patient's dashboard instantly (Socket.io + Web Push), no manual refresh needed; the modal shows the patient's other prescriptions as reference so the doctor isn't relying on memory of what was prescribed last time
+- Doctor has a dedicated, searchable Prescriptions tab (by patient name/phone/Patient ID) — previously the only way to see a written prescription was through the specific appointment it came from
+- Medical Reports: patient uploads test reports (PDF/image), doctor reviews and comments — updates appear instantly on both sides the same way; can optionally be linked to a specific appointment, which then surfaces as a "tap to view" prompt directly on that appointment's card so it can't be missed
+- Doctor's Appointments and Patient Reports tabs are searchable (by patient name/phone/Patient ID) and paginated server-side, so they stay fast as a doctor's patient list grows
+- Patient complaints: patients file complaints (optionally tagged to a specific doctor/visit), admin reviews and responds via a dedicated Complaints tab in the admin panel — responding notifies the patient instantly (Socket.io + Web Push)
+- Patient medical information (optional): blood group, allergies, current medications, medical history, emergency contact, and insurance details — set once in Account Settings, shown automatically to the doctor on every appointment (allergies always visible, the rest behind an expander) instead of being asked every visit; also surfaced as a reminder on the booking form itself
+- Structured symptom tags on the booking form (Fever, Cough, Headache, etc.) — an optional, fast-glance supplement to the free-text "Reason for Visit"
 - Floating WhatsApp emergency button on all pages (configurable via env var)
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
@@ -61,7 +66,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Admin panel: view stats, manage users, view all appointments, handle complaints
 - Admin bootstrap: promote/create the first admin automatically via ADMIN_EMAIL env var (no manual database editing)
 - Admin can deactivate/reactivate a doctor (hides them from patients and blocks login while keeping all records) as a safe alternative to permanent delete
+- Admin can "Reset for Re-registration" any user — deactivates the account and frees up their phone/email (renamed out of the way) so they can register fresh with the same details, without losing any existing appointment/prescription/report history. This is the safe alternative to permanent Delete for the common "let this person redo their profile" case
 - Admin can generate a password reset link for any user (emails it automatically if they have an email on file, otherwise gives a link to relay manually — e.g. via WhatsApp — for phone-only accounts)
+- Admin user search matches name, email, phone, or Patient ID; the Users and Appointments tables show each patient's Patient ID
 - Web Push notifications (VAPID, no SMS/email dependency): instant alerts for appointment confirmed/cancelled, new chat message, and incoming call — works even for patients who registered with phone only and no email; a dismissible in-app nudge asks permission once, and REST polling / email stay as fallbacks if push isn't enabled or supported
 - Account settings: users can update email/phone or delete their account (with confirmation modal)
 - Doctor profile edit pre-fills with existing data (edit only what you need)
@@ -77,7 +84,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Google Analytics integration for visitor tracking
 - Google Search Console with sitemap (14 indexed pages)
 - robots.txt configured (blocks private pages from indexing)
-- Email verification for doctors (must verify email to appear in patient search)
+- Email verification for doctors (must verify email to appear in patient search) — verification is idempotent, so an email security scanner pre-visiting the link (common with Outlook Safe Links and similar) no longer causes a false "expired" error on the doctor's real click
 - Dashboard verification banner with "Resend Email" button for unverified doctors
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Next available" slot shown on each doctor card (e.g. "Next available at 3:30 PM" with an "Available Today" pill, or "Next available tomorrow at 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
@@ -178,7 +185,8 @@ docconnect/
 │   │   ├── MedicalReport.js    ← Patient uploaded test reports
 │   │   ├── Complaint.js        ← Patient complaints
 │   │   ├── CallLog.js          ← In-app call tracking (start/end/duration)
-│   │   └── Announcement.js     ← Admin broadcast announcements
+│   │   ├── Announcement.js     ← Admin broadcast announcements
+│   │   └── Counter.js          ← Atomic sequence generator (used for Patient IDs)
 │   │
 │   ├── middleware/              ← Code that runs before route handlers
 │   │   ├── auth.js              ← Token verification + role checking
@@ -453,6 +461,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | POST | /api/auth/forgot-password | Public | Request reset link via email OR phone |
 | PUT | /api/auth/reset-password/:token | Public | Set new password |
 | PUT | /api/auth/update-account | Protected | Change email/phone |
+| PUT | /api/auth/medical-info | Patient only | Update blood group, allergies, medications, medical history, emergency contact, insurance |
 | DELETE | /api/auth/delete-account | Protected | Delete own account |
 | GET | /api/auth/verify-email/:token | Public | Verify doctor email via link |
 | POST | /api/auth/resend-verification | Protected | Resend verification email |
@@ -497,39 +506,39 @@ Add the same three values to your hosting provider's environment variables (e.g.
 ### Prescriptions
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | /api/prescriptions | Doctor only | Create prescription |
-| GET | /api/prescriptions/my | Protected | View my prescriptions |
+| POST | /api/prescriptions | Doctor only | Create prescription (updates the existing one if this appointment already has one) |
+| GET | /api/prescriptions/my | Protected | View my prescriptions (supports ?search= by patient name/phone/Patient ID, ?page=, ?limit=; defaults to everything up to 100 if no params given) |
 | GET | /api/prescriptions/appointment/:id | Protected | Get prescription for appointment |
 | PUT | /api/prescriptions/:id | Doctor only | Update prescription |
 
 ### Medical Reports
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | /api/reports | Patient only | Upload test report (with file) |
-| GET | /api/reports/my | Protected | View my reports |
+| POST | /api/reports | Patient only | Upload test report (with file); optional appointmentId links it to a specific visit (validated server-side — must actually be this patient's own appointment with that doctor) |
+| GET | /api/reports/my | Protected | View my reports (supports ?search= by patient name/phone/Patient ID, ?page=, ?limit=; defaults to everything up to 100 if no params given) |
 | PUT | /api/reports/:id/review | Doctor only | Review/comment on report |
 
 ### Complaints
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | /api/complaints | Patient only | File a complaint |
+| POST | /api/complaints | Patient only | File a complaint; optional doctorId/appointmentId to tag which doctor/visit it's about (both validated server-side) |
 | GET | /api/complaints/my | Patient only | View my complaints |
-| GET | /api/complaints | Admin only | View all complaints |
-| PUT | /api/complaints/:id | Admin only | Update status/respond |
+| GET | /api/complaints | Admin only | View all complaints (supports ?status=) |
+| PUT | /api/complaints/:id | Admin only | Update status/respond — notifies the patient instantly (Socket.io + Web Push) |
 
 ### Admin
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | GET | /api/admin/stats | Admin only | Dashboard stats |
-| GET | /api/admin/users | Admin only | List all users |
+| GET | /api/admin/users | Admin only | List all users (supports ?role=, ?search= by name/email/phone/Patient ID) |
 | GET | /api/admin/appointments | Admin only | List all appointments |
 | GET | /api/admin/analytics | Admin only | Revenue + call analytics (calls, minutes, per-doctor) |
 | POST | /api/admin/migrate-images | Admin only | One-time base64 → Cloudinary migration (safety net) |
-| DELETE | /api/admin/users/:id | Admin only | Delete a user (permanent) |
+| DELETE | /api/admin/users/:id | Admin only | Delete a user permanently (also deletes all their appointments) — no recovery from this app; prefer Deactivate or "Reset for Re-registration" below |
 | PUT | /api/admin/users/:id/suspension | Admin only | Deactivate/reactivate a user (keeps records) |
 | POST | /api/admin/users/:id/reset-link | Admin only | Generate/relay a password reset link (manual recovery assist for phone-only accounts) |
 | GET | /api/admin/duplicate-phones | Admin only | Read-only check for accounts sharing a phone number |
-| POST | /api/admin/users/:id/free-contact-info | Admin only | Free up a DELETED account's phone/email for reuse (keeps its history, unlike Delete) |
+| POST | /api/admin/users/:id/free-contact-info | Admin only | Non-destructive alternative to Delete: frees up an account's phone/email for reuse (renamed out of the way) and deactivates it if still active — for resolving duplicate accounts, or resetting someone for fresh re-registration. All history is kept intact either way |
 | POST | /api/admin/backfill-patient-ids | Admin only | One-time: assign a Patient ID to patients who registered before this field existed |
 
 ### Announcements
