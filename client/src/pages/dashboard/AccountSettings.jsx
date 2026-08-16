@@ -12,6 +12,19 @@ function AccountSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
+  // Medical info — set once, reused for every appointment the patient
+  // books. Shown to the doctor on the appointment card so they don't have
+  // to ask every time.
+  const [medicalInfo, setMedicalInfo] = useState({
+    bloodGroup: user?.bloodGroup || '',
+    allergies: user?.allergies || '',
+    currentMedications: user?.currentMedications || '',
+    medicalHistory: user?.medicalHistory || '',
+    emergencyContactName: user?.emergencyContactName || '',
+    emergencyContactPhone: user?.emergencyContactPhone || ''
+  });
+  const [isSavingMedical, setIsSavingMedical] = useState(false);
+
   // Notifications — a PERMANENT control, unlike the Dashboard's one-time
   // dismissible nudge. If someone dismissed that banner once (or denied the
   // browser prompt), it never shows again — this is the only way back.
@@ -43,6 +56,19 @@ function AccountSettings() {
       toast.error(error.response?.data?.message || 'Failed to update account');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleUpdateMedicalInfo = async (e) => {
+    e.preventDefault();
+    setIsSavingMedical(true);
+    try {
+      await authAPI.updateMedicalInfo(medicalInfo);
+      toast.success('Medical information updated!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update medical information');
+    } finally {
+      setIsSavingMedical(false);
     }
   };
 
@@ -95,6 +121,83 @@ function AccountSettings() {
           </button>
         </form>
       </div>
+
+      {user?.role === 'patient' && (
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h3 className="font-medium text-gray-800 mb-1">Medical Information</h3>
+          <p className="text-gray-500 text-sm mb-4">Optional, but sharing this once means your doctor sees it automatically on every appointment — you won't need to repeat it each visit.</p>
+          <form onSubmit={handleUpdateMedicalInfo} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+              <select
+                value={medicalInfo.bloodGroup}
+                onChange={(e) => setMedicalInfo((prev) => ({ ...prev, bloodGroup: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+              >
+                <option value="">Not specified</option>
+                {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((bg) => (
+                  <option key={bg} value={bg}>{bg}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
+              <textarea
+                value={medicalInfo.allergies}
+                onChange={(e) => setMedicalInfo((prev) => ({ ...prev, allergies: e.target.value }))}
+                placeholder="e.g., Penicillin, Peanuts"
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Current Medications</label>
+              <textarea
+                value={medicalInfo.currentMedications}
+                onChange={(e) => setMedicalInfo((prev) => ({ ...prev, currentMedications: e.target.value }))}
+                placeholder="e.g., Metformin 500mg daily"
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Medical History</label>
+              <textarea
+                value={medicalInfo.medicalHistory}
+                onChange={(e) => setMedicalInfo((prev) => ({ ...prev, medicalHistory: e.target.value }))}
+                placeholder="e.g., Type 2 diabetes, hypertension"
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Name</label>
+                <input
+                  type="text"
+                  value={medicalInfo.emergencyContactName}
+                  onChange={(e) => setMedicalInfo((prev) => ({ ...prev, emergencyContactName: e.target.value }))}
+                  placeholder="e.g., Spouse, parent, sibling"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Phone</label>
+                <input
+                  type="tel"
+                  value={medicalInfo.emergencyContactPhone}
+                  onChange={(e) => setMedicalInfo((prev) => ({ ...prev, emergencyContactPhone: e.target.value }))}
+                  placeholder="+91 9876543210"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                />
+              </div>
+            </div>
+            <button type="submit" disabled={isSavingMedical} className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50">
+              {isSavingMedical ? 'Saving...' : 'Save Medical Information'}
+            </button>
+          </form>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <h3 className="font-medium text-gray-800 mb-2">Notifications</h3>

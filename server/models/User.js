@@ -229,6 +229,45 @@ const userSchema = new mongoose.Schema({
     default: []
   },
 
+  // --- Patient Medical Information (patients only) ---
+  // Set once by the patient in Account Settings, reused for every
+  // appointment they book — shown to the doctor on the appointment card so
+  // they don't have to ask each time. Free-text fields (not structured
+  // lists) to keep this simple, matching how doctor profile fields like
+  // `bio`/`clinicAddress` already work in this schema.
+  bloodGroup: {
+    type: String,
+    enum: ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    default: ''
+  },
+
+  allergies: {
+    type: String,
+    default: ''
+    // e.g., "Penicillin, Peanuts" — free text, patient's own words
+  },
+
+  currentMedications: {
+    type: String,
+    default: ''
+  },
+
+  medicalHistory: {
+    type: String,
+    default: ''
+    // e.g., "Type 2 diabetes, hypertension"
+  },
+
+  emergencyContactName: {
+    type: String,
+    default: ''
+  },
+
+  emergencyContactPhone: {
+    type: String,
+    default: ''
+  },
+
   // --- Patient ID ---
   // A short, human-readable identifier for patients (e.g. "PT000123") -
   // separate from the MongoDB ObjectId, which isn't practical to read over

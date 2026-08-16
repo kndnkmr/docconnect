@@ -1018,6 +1018,31 @@ function Dashboard() {
                       <p className="text-gray-600 text-sm">{formatDate(apt.date)} • {apt.timeSlot}</p>
                       {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
                       <p className="text-gray-500 text-sm mt-1">Reason: {apt.reason}</p>
+                      {/* Allergies are safety-critical — always visible, not
+                          tucked behind the expander below. */}
+                      {isDoctor && apt.patient?.allergies && (
+                        <p className="text-sm mt-1.5 font-medium text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1 inline-block">
+                          ⚠️ Allergies: {apt.patient.allergies}
+                        </p>
+                      )}
+                      {isDoctor && (apt.patient?.currentMedications || apt.patient?.medicalHistory || apt.patient?.bloodGroup || apt.patient?.emergencyContactName) && (
+                        <details className="mt-1.5 text-sm text-gray-600">
+                          <summary className="cursor-pointer text-primary-600 hover:underline select-none">More medical info</summary>
+                          <div className="mt-1 pl-2 space-y-0.5">
+                            {apt.patient?.bloodGroup && <p>Blood Group: <span className="font-medium">{apt.patient.bloodGroup}</span></p>}
+                            {apt.patient?.currentMedications && <p>Current Medications: {apt.patient.currentMedications}</p>}
+                            {apt.patient?.medicalHistory && <p>Medical History: {apt.patient.medicalHistory}</p>}
+                            {apt.patient?.emergencyContactName && (
+                              <p>
+                                Emergency Contact: {apt.patient.emergencyContactName}
+                                {apt.patient?.emergencyContactPhone && (
+                                  <> — <a href={`tel:${apt.patient.emergencyContactPhone}`} className="text-primary-600 hover:underline">{apt.patient.emergencyContactPhone}</a></>
+                                )}
+                              </p>
+                            )}
+                          </div>
+                        </details>
+                      )}
                       {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">Booked for: {apt.familyMemberName} (family member)</p>}
                       {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}

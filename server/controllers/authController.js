@@ -527,6 +527,50 @@ const resetPassword = async (req, res) => {
 };
 
 // ============================================
+// UPDATE MEDICAL INFO - Patient's own medical profile
+// ============================================
+// Endpoint: PUT /api/auth/medical-info
+// Body: { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone }
+// Patient-only — this is set once and reused for every appointment they
+// book, so the doctor sees it on the appointment card without having to
+// ask each time.
+
+const updateMedicalInfo = async (req, res) => {
+  try {
+    if (req.user.role !== 'patient') {
+      return res.status(403).json({ message: 'Only patients can update medical information' });
+    }
+
+    const { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone } = req.body;
+
+    const updates = {};
+    if (bloodGroup !== undefined) updates.bloodGroup = bloodGroup;
+    if (allergies !== undefined) updates.allergies = allergies;
+    if (currentMedications !== undefined) updates.currentMedications = currentMedications;
+    if (medicalHistory !== undefined) updates.medicalHistory = medicalHistory;
+    if (emergencyContactName !== undefined) updates.emergencyContactName = emergencyContactName;
+    if (emergencyContactPhone !== undefined) {
+      updates.emergencyContactPhone = emergencyContactPhone ? formatIndianPhone(emergencyContactPhone.trim()) : '';
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.json({
+      message: 'Medical information updated',
+      user
+    });
+
+  } catch (error) {
+    console.error('Update medical info error:', error.message);
+    res.status(500).json({ message: 'Error updating medical information' });
+  }
+};
+
+// ============================================
 // UPDATE ACCOUNT - Change email or phone
 // ============================================
 // Endpoint: PUT /api/auth/update-account
@@ -718,4 +762,4 @@ const resendVerification = async (req, res) => {
 };
 
 // ---- Export all controller functions ----
-module.exports = { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount, verifyEmail, resendVerification };
+module.exports = { register, login, getMe, forgotPassword, resetPassword, updateAccount, updateMedicalInfo, deleteAccount, verifyEmail, resendVerification };

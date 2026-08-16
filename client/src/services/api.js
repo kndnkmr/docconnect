@@ -125,6 +125,9 @@ export const authAPI = {
   // Update email/phone
   updateAccount: (data) => API.put('/auth/update-account', data),
 
+  // Update patient medical info (blood group, allergies, medications, medical history, emergency contact)
+  updateMedicalInfo: (data) => API.put('/auth/medical-info', data),
+
   // Resend email verification (for unverified doctors)
   resendVerification: () => API.post('/auth/resend-verification'),
 

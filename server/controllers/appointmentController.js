@@ -220,7 +220,7 @@ const getMyAppointments = async (req, res) => {
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
       .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink consultationModes')
-      .populate('patient', 'name email phone patientId');
+      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
 
     const byId = {};
     docs.forEach((d) => { byId[d._id.toString()] = d; });
@@ -257,7 +257,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
       .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress')
-      .populate('patient', 'name email phone patientId');
+      .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
 
     if (!appointment) {
       return res.status(404).json({
@@ -358,7 +358,7 @@ const updateAppointmentStatus = async (req, res) => {
 
     // Populate before sending back
     await appointment.populate('doctor', 'name specialization consultationFee');
-    await appointment.populate('patient', 'name email phone');
+    await appointment.populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone');
 
     // Send confirmation email to patient when doctor confirms
     if (status === 'confirmed') {

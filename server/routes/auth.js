@@ -37,7 +37,7 @@ const resetLimiter = rateLimit({
 });
 
 // Import our controller functions (the actual logic)
-const { register, login, getMe, forgotPassword, resetPassword, updateAccount, deleteAccount, verifyEmail, resendVerification } = require('../controllers/authController');
+const { register, login, getMe, forgotPassword, resetPassword, updateAccount, updateMedicalInfo, deleteAccount, verifyEmail, resendVerification } = require('../controllers/authController');
 
 // Import our auth middleware (the security guard)
 const { protect } = require('../middleware/auth');
@@ -83,6 +83,11 @@ router.put('/reset-password/:token', resetPassword);
 // PUT /api/auth/update-account
 // Logged-in user can change their email or phone number
 router.put('/update-account', protect, updateAccount);
+
+// PUT /api/auth/medical-info
+// Patient-only — blood group, allergies, medications, medical history,
+// emergency contact. Reused for every appointment they book.
+router.put('/medical-info', protect, updateMedicalInfo);
 
 // DELETE /api/auth/delete-account
 // Logged-in user can delete their own account
