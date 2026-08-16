@@ -58,17 +58,25 @@ function AdminDashboard() {
     } catch (error) { /* non-critical — don't block the rest of the panel */ }
   };
 
-  // Non-destructive fix for a stale deleted account blocking someone else's
-  // login: rename its phone/email out of the way, keep everything else
-  // (appointments, prescriptions, reports) intact. This is the RIGHT way to
-  // resolve a duplicate — permanent Delete cascade-deletes appointment
-  // history too, which matters for medical/legal record-keeping.
+  // Non-destructive alternative to permanent Delete, for two cases:
+  //   - An already-deleted account blocking someone else's login (duplicate
+  //     resolution) — just renames its phone/email out of the way.
+  //   - A still-active account you want to reset so it (or someone) can
+  //     re-register fresh with the same phone/email — renames the contact
+  //     info AND deactivates the old account in the same step.
+  // Either way, the record and all its appointment/prescription/report
+  // history stay completely intact — this is the RIGHT tool for both,
+  // instead of reaching for permanent Delete.
   const handleFreeUpContactInfo = async (acc) => {
-    if (!window.confirm(`Free up "${acc.name}"'s phone/email so the other account can use it?\n\nThis keeps their record and all appointment history intact — it just renames the contact info out of the way, the same thing that happens automatically when someone re-registers.`)) return;
+    const confirmMsg = acc.isDeleted
+      ? `Free up "${acc.name}"'s phone/email so the other account can use it?\n\nThis keeps their record and all appointment history intact — it just renames the contact info out of the way, the same thing that happens automatically when someone re-registers.`
+      : `Reset "${acc.name}" for re-registration?\n\nThis deactivates the account (hidden, can't log in) and renames their phone/email out of the way so they (or someone else) can register fresh with the same details. All existing appointment/prescription/report history is kept intact — nothing is deleted.`;
+    if (!window.confirm(confirmMsg)) return;
     try {
       const response = await adminAPI.freeUpContactInfo(acc._id);
-      toast.success(response.data.message);
+      toast.success(response.data.message, { duration: 6000 });
       fetchDuplicatePhones();
+      fetchUsers();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to free up contact info');
     }
@@ -203,7 +211,7 @@ function AdminDashboard() {
   }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter]);
 
   const handleDeleteUser = async (id, name) => {
-    if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone.\n\nTip: use "Deactivate" instead if you only want to hide them while keeping records.`)) return;
+    if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone — there is no recovery from this app.\n\nTip: use "Deactivate" to just hide them, or "Reset for Re-registration" if you want them to sign up fresh with the same phone/email. Both keep all their records intact.`)) return;
     try {
       await adminAPI.deleteUser(id);
       toast.success(`User "${name}" deleted`);
@@ -587,6 +595,13 @@ function AdminDashboard() {
                                 Reset Link
                               </button>
                             )}
+                            <button
+                              onClick={() => handleFreeUpContactInfo(user)}
+                              className="text-sm font-medium text-purple-600 hover:text-purple-800"
+                              title="Deactivates (if active) and frees up their phone/email so they can register fresh with the same details — keeps all history"
+                            >
+                              Reset for Re-registration
+                            </button>
                             <button
                               onClick={() => handleDeleteUser(user._id, user.name)}
                               className="text-red-500 hover:text-red-700 text-sm font-medium"

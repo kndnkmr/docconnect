@@ -302,24 +302,29 @@ const findDuplicatePhones = async (req, res) => {
 };
 
 // ============================================
-// FREE UP CONTACT INFO - Non-destructive duplicate resolution
+// FREE UP CONTACT INFO - Non-destructive duplicate resolution / re-registration reset
 // ============================================
 // Endpoint: POST /api/admin/users/:id/free-contact-info
 //
 // The permanent Delete action removes the account AND cascade-deletes all
-// of their appointments - too destructive for resolving a duplicate-account
-// bug, where the stale account may have real appointment/prescription
-// history worth keeping (medical/legal record-keeping, same principle as
-// the 90-day retention job). This does the SAME thing register() already
-// does automatically when it detects a deleted account blocking a new
-// signup: rename the phone/email out of the way with a "deleted_<time>_"
-// prefix, freeing that contact info for the other (active) account to use.
-// The record itself, and all of its appointments/prescriptions/reports,
-// are left completely untouched.
+// of their appointments - too destructive both for resolving a duplicate-
+// account bug AND for the common "let this person re-register fresh with
+// the same phone/email" case (e.g. a doctor's profile needs to be redone
+// from scratch). This does the SAME thing register() already does
+// automatically when it detects a deleted account blocking a new signup:
+// rename the phone/email out of the way with a "deleted_<time>_" prefix,
+// freeing that contact info for a new registration to use. The record
+// itself, and all of its appointments/prescriptions/reports, are left
+// completely untouched either way.
 //
-// Only allowed on an ALREADY soft-deleted account (isDeleted: true) - this
-// is a cleanup tool for stale deleted accounts blocking someone else's
-// login, not a way to touch an active account's contact info.
+// Two cases:
+//   - Already soft-deleted (isDeleted: true): just frees the contact info
+//     (unchanged from before) - this is the duplicate-account cleanup case.
+//   - Still active: ALSO deactivates it (isSuspended: true) as part of the
+//     same action - an active account with its contact info renamed out
+//     from under it would otherwise be a confusing half-state (still
+//     "active" per the system, but unreachable and no longer really them).
+//     This is the "reset for re-registration" case.
 
 const freeUpContactInfo = async (req, res) => {
   try {
@@ -327,9 +332,11 @@ const freeUpContactInfo = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    if (!user.isDeleted) {
-      return res.status(400).json({ message: 'This action is only for already-deleted accounts. Use Deactivate for an active account.' });
+    if (user.role === 'admin') {
+      return res.status(400).json({ message: 'Cannot modify admin accounts' });
     }
+
+    const wasActive = !user.isDeleted;
 
     const stamp = Date.now();
     if (user.phone && !user.phone.startsWith('deleted_')) {
@@ -338,10 +345,19 @@ const freeUpContactInfo = async (req, res) => {
     if (user.email && !user.email.startsWith('deleted_')) {
       user.email = `deleted_${stamp}_${user.email}`;
     }
+
+    if (wasActive) {
+      user.isSuspended = true;
+      user.suspendedAt = new Date();
+      user.suspendedReason = user.suspendedReason || 'Contact info freed up for re-registration by admin';
+    }
+
     await user.save({ validateBeforeSave: false });
 
     res.json({
-      message: `Freed up "${user.name}"'s phone/email for reuse. The account and all its history (appointments, prescriptions, reports) are untouched.`
+      message: wasActive
+        ? `"${user.name}" has been deactivated and their phone/email freed up — they (or someone else) can now register fresh with the same details. All existing appointment/prescription/report history is untouched.`
+        : `Freed up "${user.name}"'s phone/email for reuse. The account and all its history (appointments, prescriptions, reports) are untouched.`
     });
   } catch (error) {
     console.error('Free up contact info error:', error.message);
