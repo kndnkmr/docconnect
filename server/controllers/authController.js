@@ -677,20 +677,38 @@ const verifyEmail = async (req, res) => {
 
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    const user = await User.findOne({
-      verificationToken: hashedToken,
-      verificationTokenExpire: { $gt: Date.now() }
-    });
+    // Look up by token WITHOUT filtering on expiry yet, and don't clear the
+    // token on success (see below) — this is what actually fixes the "says
+    // expired" bug. Many email clients/security gateways (Outlook Safe
+    // Links, corporate scanners, some spam filters) automatically pre-visit
+    // links in an email to check them BEFORE the user ever clicks - if the
+    // old code cleared the token on that first (automated) visit, the
+    // doctor's real click a moment later would find no matching token at
+    // all and show "expired", even though nothing had actually timed out.
+    const user = await User.findOne({ verificationToken: hashedToken });
 
     if (!user) {
       return res.status(400).json({
-        message: 'Invalid or expired verification link. Please register again or contact support.'
+        message: 'Invalid verification link. Please register again or contact support.'
+      });
+    }
+
+    // Already verified (by this same link, possibly visited more than once)
+    // — this is the case above, made harmless: just confirm it, don't error.
+    if (user.isVerified) {
+      return res.json({
+        message: 'Your email is already verified — you\'re all set!',
+        verified: true
+      });
+    }
+
+    if (!user.verificationTokenExpire || user.verificationTokenExpire < Date.now()) {
+      return res.status(400).json({
+        message: 'This verification link has expired. Please request a new one from the login page.'
       });
     }
 
     user.isVerified = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpire = undefined;
     await user.save({ validateBeforeSave: false });
 
     res.json({
