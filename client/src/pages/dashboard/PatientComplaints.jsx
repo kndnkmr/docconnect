@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { complaintAPI } from '../../services/api';
+import { complaintAPI, appointmentAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 
@@ -7,9 +7,45 @@ function PatientComplaints() {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ subject: '', description: '' });
+  const [formData, setFormData] = useState({ subject: '', description: '', doctorId: '', appointmentId: '' });
 
-  useEffect(() => { fetchComplaints(); }, []);
+  // For the optional "which doctor/visit is this about?" selectors — a
+  // complaint filed without either is still allowed (a general complaint),
+  // but linking one makes it far more useful for admin to act on.
+  const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    fetchComplaints();
+    fetchAppointmentsAndDoctors();
+  }, []);
+
+  const fetchAppointmentsAndDoctors = async () => {
+    try {
+      const response = await appointmentAPI.getMine({ limit: 50 });
+      const appts = response.data.appointments || [];
+      setAppointments(appts);
+      const uniqueDoctors = [];
+      const seen = new Set();
+      appts.forEach((apt) => {
+        const docId = apt.doctor?._id;
+        if (docId && !seen.has(docId)) {
+          seen.add(docId);
+          uniqueDoctors.push({ _id: docId, name: apt.doctor.name, specialization: apt.doctor.specialization });
+        }
+      });
+      setDoctors(uniqueDoctors);
+    } catch (error) {
+      console.error('Fetch appointments error:', error);
+    }
+  };
+
+  const formatDateShort = (dateString) =>
+    new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+  const appointmentsForSelectedDoctor = formData.doctorId
+    ? appointments.filter((apt) => apt.doctor?._id === formData.doctorId).sort((a, b) => new Date(b.date) - new Date(a.date))
+    : [];
 
   // Realtime: the moment admin responds/updates status, refresh this list
   // instantly instead of the patient needing to reload the page.
@@ -44,10 +80,15 @@ function PatientComplaints() {
       return;
     }
     try {
-      await complaintAPI.create(formData);
+      await complaintAPI.create({
+        subject: formData.subject,
+        description: formData.description,
+        doctorId: formData.doctorId || undefined,
+        appointmentId: formData.appointmentId || undefined
+      });
       toast.success('Complaint submitted successfully');
       setShowForm(false);
-      setFormData({ subject: '', description: '' });
+      setFormData({ subject: '', description: '', doctorId: '', appointmentId: '' });
       fetchComplaints();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to submit complaint');
@@ -111,6 +152,40 @@ function PatientComplaints() {
                 required
               />
             </div>
+            {doctors.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Which doctor is this about? (optional)</label>
+                <select
+                  value={formData.doctorId}
+                  onChange={(e) => setFormData(prev => ({ ...prev, doctorId: e.target.value, appointmentId: '' }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                >
+                  <option value="">General — not about a specific doctor</option>
+                  {doctors.map((doc) => (
+                    <option key={doc._id} value={doc._id}>
+                      Dr. {doc.name} ({doc.specialization || 'General'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {formData.doctorId && appointmentsForSelectedDoctor.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Which visit is this about? (optional)</label>
+                <select
+                  value={formData.appointmentId}
+                  onChange={(e) => setFormData(prev => ({ ...prev, appointmentId: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                >
+                  <option value="">Not tied to a specific visit</option>
+                  {appointmentsForSelectedDoctor.map((apt) => (
+                    <option key={apt._id} value={apt._id}>
+                      {formatDateShort(apt.date)} • {apt.timeSlot} ({apt.status})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <button type="submit" className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
               Submit Complaint
             </button>
@@ -138,6 +213,7 @@ function PatientComplaints() {
               {complaint.doctor && (
                 <p className="text-gray-500 text-xs mt-2">
                   Regarding: Dr. {complaint.doctor.name} ({complaint.doctor.specialization})
+                  {complaint.appointment && ` — visit on ${formatDate(complaint.appointment.date)}, ${complaint.appointment.timeSlot}`}
                 </p>
               )}
               <p className="text-gray-400 text-xs mt-2">Filed on: {formatDate(complaint.createdAt)}</p>

@@ -965,7 +965,10 @@ function AdminDashboard() {
                         {' • '}{c.patient?.phone || c.patient?.email} • {formatDate(c.createdAt)}
                       </p>
                       {c.doctor && (
-                        <p className="text-xs text-gray-400 mt-1">Regarding: Dr. {c.doctor.name} ({c.doctor.specialization})</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Regarding: Dr. {c.doctor.name} ({c.doctor.specialization})
+                          {c.appointment && ` — visit on ${formatDate(c.appointment.date)}, ${c.appointment.timeSlot}`}
+                        </p>
                       )}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getComplaintStatusColor(c.status)}`}>

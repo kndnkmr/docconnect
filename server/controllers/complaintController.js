@@ -3,6 +3,8 @@
 // ============================================
 
 const Complaint = require('../models/Complaint');
+const User = require('../models/User');
+const Appointment = require('../models/Appointment');
 const { getPagination } = require('../utils/queryHelpers');
 const { sendPushToUser } = require('../utils/push');
 
@@ -45,11 +47,33 @@ const createComplaint = async (req, res) => {
       });
     }
 
+    // Both are optional (a complaint can be general, not about a specific
+    // doctor/visit), but if given, verify they're real and actually belong
+    // to this patient - same reasoning as the report-upload link: without
+    // this, nothing stops a crafted request from referencing someone else's
+    // appointment or a non-doctor account.
+    let appointment = null;
+    if (appointmentId) {
+      appointment = await Appointment.findById(appointmentId);
+      if (!appointment || appointment.patient.toString() !== req.user._id.toString()) {
+        return res.status(400).json({ message: 'Invalid appointment' });
+      }
+      if (doctorId && appointment.doctor.toString() !== doctorId) {
+        return res.status(400).json({ message: 'That appointment is not with this doctor' });
+      }
+    }
+    if (doctorId) {
+      const doctor = await User.findOne({ _id: doctorId, role: 'doctor' });
+      if (!doctor) {
+        return res.status(400).json({ message: 'Invalid doctor' });
+      }
+    }
+
     const complaint = await Complaint.create({
       patient: req.user._id,
       subject,
       description,
-      doctor: doctorId || null,
+      doctor: doctorId || (appointment ? appointment.doctor : null),
       appointment: appointmentId || null
     });
 
@@ -73,6 +97,7 @@ const getMyComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find({ patient: req.user._id })
       .populate('doctor', 'name specialization')
+      .populate('appointment', 'date timeSlot')
       .sort({ createdAt: -1 });
 
     res.json({ complaints });
@@ -98,6 +123,7 @@ const getAllComplaints = async (req, res) => {
     const complaints = await Complaint.find(filter)
       .populate('patient', 'name email phone patientId')
       .populate('doctor', 'name specialization')
+      .populate('appointment', 'date timeSlot')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
