@@ -105,6 +105,9 @@ function App() {
           <Route path="/doctors" element={<DoctorList />} />
           <Route path="/doctors/:id" element={<DoctorProfile />} />
           <Route path="/specialization/:slug" element={<SpecializationPage />} />
+          {/* City-specific SEO landing page, e.g. /specialization/dermatologist/rishikesh
+              — "Best Dermatologists in Rishikesh". Same component, city-aware. */}
+          <Route path="/specialization/:slug/:city" element={<SpecializationPage />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />

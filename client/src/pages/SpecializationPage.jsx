@@ -4,6 +4,15 @@ import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 
+// City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
+// derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
+// from it ("new-delhi" -> "New Delhi"). The backend city filter is a
+// case-insensitive "contains" match, so minor casing differences between the
+// deslugified name and the stored value still match correctly.
+const cityToSlug = (city) => city.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+const slugToCityName = (slug) =>
+  slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
 // Data for each specialization — SEO content, FAQs, conditions
 const specializationData = {
   'gynaecologist': {
@@ -129,17 +138,24 @@ const specializationData = {
 };
 
 function SpecializationPage() {
-  const { slug } = useParams();
+  const { slug, city: citySlug } = useParams();
+  const cityName = citySlug ? slugToCityName(citySlug) : '';
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Cities that actually have doctors of this specialization — only fetched
+  // on the base (non-city) page, to build the "Find X in your city" links.
+  const [cities, setCities] = useState([]);
 
   const data = specializationData[slug];
   const specName = data?.title || slug;
 
   useEffect(() => {
     const fetchDoctors = async () => {
+      setLoading(true);
       try {
-        const response = await doctorAPI.getAll({ specialization: specName, limit: 6 });
+        const params = { specialization: specName, limit: 6 };
+        if (cityName) params.city = cityName;
+        const response = await doctorAPI.getAll(params);
         setDoctors(response.data.doctors);
       } catch (error) {
         console.error('Fetch doctors error:', error);
@@ -148,7 +164,15 @@ function SpecializationPage() {
       }
     };
     fetchDoctors();
-  }, [slug, specName]);
+  }, [slug, specName, cityName]);
+
+  useEffect(() => {
+    // Only need the city cross-links on the base specialization page.
+    if (citySlug) { setCities([]); return; }
+    doctorAPI.getCities({ specialization: specName })
+      .then((res) => setCities(res.data.cities || []))
+      .catch(() => setCities([]));
+  }, [slug, specName, citySlug]);
 
   if (!data) {
     return (
@@ -170,15 +194,32 @@ function SpecializationPage() {
     }))
   };
 
+  // Breadcrumb structured data — helps search engines understand the
+  // Home > Specialization > City hierarchy on the city pages.
+  const breadcrumbSchema = cityName ? {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.promedicoz.in/' },
+      { '@type': 'ListItem', position: 2, name: data.title, item: `https://www.promedicoz.in/specialization/${slug}` },
+      { '@type': 'ListItem', position: 3, name: `${data.title} in ${cityName}`, item: `https://www.promedicoz.in/specialization/${slug}/${citySlug}` },
+    ]
+  } : null;
+
   return (
     <div>
       <SEO
-        title={`Best ${data.title} Doctors Online - Book Appointment`}
-        description={`Consult top ${data.title.toLowerCase()} doctors online on ProMedicoz. ${data.description} Book video, phone or in-person consultation.`}
-        path={`/specialization/${slug}`}
+        title={cityName
+          ? `Best ${data.title} Doctors in ${cityName} - Book Appointment`
+          : `Best ${data.title} Doctors Online - Book Appointment`}
+        description={cityName
+          ? `Consult the best ${data.title.toLowerCase()} doctors in ${cityName} on ProMedicoz. Book video, phone or in-person appointments. ${data.description}`
+          : `Consult top ${data.title.toLowerCase()} doctors online on ProMedicoz. ${data.description} Book video, phone or in-person consultation.`}
+        path={cityName ? `/specialization/${slug}/${citySlug}` : `/specialization/${slug}`}
       />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        {breadcrumbSchema && <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>}
       </Helmet>
 
       {/* Hero section */}
@@ -187,10 +228,17 @@ function SpecializationPage() {
           <div className="flex items-center gap-4 mb-4">
             <span className="text-5xl">{data.icon}</span>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">{data.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                {cityName ? `Best ${data.title} Doctors in ${cityName}` : data.title}
+              </h1>
               <p className="text-primary-200 text-lg">{data.subtitle}</p>
             </div>
           </div>
+          {cityName && (
+            <p className="text-primary-100 text-sm mb-2">
+              <Link to={`/specialization/${slug}`} className="underline hover:text-white">← All {data.title} doctors</Link>
+            </p>
+          )}
           <p className="text-primary-100 max-w-2xl text-lg">{data.description}</p>
           <Link
             to={`/doctors?specialization=${encodeURIComponent(specName)}`}
@@ -218,12 +266,18 @@ function SpecializationPage() {
       {/* Doctors listing */}
       <section className="py-10 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Top {data.title} Doctors on ProMedicoz</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            {cityName ? `Top ${data.title} Doctors in ${cityName}` : `Top ${data.title} Doctors on ProMedicoz`}
+          </h2>
           {loading ? (
             <p className="text-gray-500">Loading doctors...</p>
           ) : doctors.length === 0 ? (
             <div className="bg-white rounded-xl p-8 text-center">
-              <p className="text-gray-600 mb-4">No {data.title.toLowerCase()} doctors registered yet.</p>
+              <p className="text-gray-600 mb-4">
+                {cityName
+                  ? `No ${data.title.toLowerCase()} doctors in ${cityName} yet.`
+                  : `No ${data.title.toLowerCase()} doctors registered yet.`}
+              </p>
               <Link to="/register?role=doctor" className="text-primary-600 font-medium hover:underline">
                 Are you a {data.title.toLowerCase()}? Register now →
               </Link>
@@ -254,6 +308,30 @@ function SpecializationPage() {
           </div>
         </div>
       </section>
+
+      {/* Find by city — only on the base page, and only cities that actually
+          have doctors of this specialization (data-driven, no empty pages).
+          These internal links are how search engines discover the city
+          landing pages. */}
+      {!citySlug && cities.length > 0 && (
+        <section className="py-10 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Find {data.title} Doctors by City</h2>
+            <div className="flex flex-wrap gap-3">
+              {cities.map((c) => (
+                <Link
+                  key={c.city}
+                  to={`/specialization/${slug}/${cityToSlug(c.city)}`}
+                  className="px-4 py-2 bg-primary-50 border border-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors"
+                >
+                  {data.title} in {c.city}
+                  <span className="text-primary-400 ml-1">({c.count})</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQs */}
       <section className="py-10 bg-white">

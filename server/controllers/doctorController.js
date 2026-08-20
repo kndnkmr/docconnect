@@ -235,6 +235,52 @@ const getAllDoctors = async (req, res) => {
 };
 
 // ============================================
+// GET DISTINCT CITIES - Public
+// ============================================
+// Endpoint: GET /api/doctors/cities?specialization=Dermatologist
+// Returns the cities that actually have active doctors (optionally within a
+// specialization), each with a count. Powers the "Find [specialization] in
+// your city" links on the specialization landing pages.
+//
+// IMPORTANT: this is intentionally data-driven, not a hardcoded city list.
+// We only ever want to link to city pages that have real doctors on them —
+// generating/linking empty city pages would create "doorway pages", which
+// search engines actively penalize.
+
+const getDoctorCities = async (req, res) => {
+  try {
+    const match = {
+      role: 'doctor',
+      isVerified: { $ne: false },
+      isDeleted: { $ne: true },
+      isSuspended: { $ne: true },
+      city: { $nin: [null, ''] }
+    };
+    if (req.query.specialization) {
+      match.specialization = safeContainsRegex(req.query.specialization);
+    }
+
+    const rows = await User.aggregate([
+      { $match: match },
+      // Group case-insensitively (so "Delhi" and "delhi" count as one), but
+      // keep an actual original spelling to display.
+      { $group: { _id: { $toLower: '$city' }, city: { $first: '$city' }, count: { $sum: 1 } } },
+      { $sort: { count: -1, _id: 1 } },
+      { $limit: 100 }
+    ]);
+
+    const cities = rows
+      .map((r) => ({ city: (r.city || '').trim(), count: r.count }))
+      .filter((r) => r.city.length > 0);
+
+    res.json({ cities });
+  } catch (error) {
+    console.error('Get doctor cities error:', error.message);
+    res.status(500).json({ message: 'Error fetching cities' });
+  }
+};
+
+// ============================================
 // GET SINGLE DOCTOR - Public (view full profile)
 // ============================================
 // Endpoint: GET /api/doctors/:id
@@ -398,4 +444,4 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 // ---- Export all controller functions ----
-module.exports = { getAllDoctors, getDoctorById, updateDoctorProfile };
+module.exports = { getAllDoctors, getDoctorCities, getDoctorById, updateDoctorProfile };

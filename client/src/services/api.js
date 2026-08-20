@@ -142,8 +142,12 @@ export const authAPI = {
 export const doctorAPI = {
   // Get all doctors (with optional filters)
   getAll: (params) => API.get('/doctors', { params }),
-  // params = { specialization, name, page, limit }
+  // params = { specialization, name, page, limit, city }
   // axios automatically converts { page: 1 } to ?page=1 in the URL
+
+  // Get distinct cities that have active doctors (optionally within a
+  // specialization) — powers the "Find [specialization] in your city" links
+  getCities: (params) => API.get('/doctors/cities', { params }),
 
   // Get single doctor by ID
   getById: (id) => API.get(`/doctors/${id}`),

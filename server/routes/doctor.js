@@ -18,6 +18,7 @@ const router = express.Router();
 // Import controller functions
 const {
   getAllDoctors,
+  getDoctorCities,
   getDoctorById,
   updateDoctorProfile
 } = require('../controllers/doctorController');
@@ -50,6 +51,12 @@ const handleUpload = (req, res, next) => {
 // Anyone can browse doctors (patients searching for a doctor)
 // Supports query params: ?specialization=Cardiology&name=Smith&page=1&limit=10
 router.get('/', getAllDoctors);
+
+// GET /api/doctors/cities
+// Distinct cities that have active doctors (optionally ?specialization=).
+// MUST be declared before the '/:id' route below, otherwise Express would
+// treat "cities" as a doctor id.
+router.get('/cities', getDoctorCities);
 
 // GET /api/doctors/:id
 // Anyone can view a doctor's full profile
