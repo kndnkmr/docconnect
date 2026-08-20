@@ -1432,8 +1432,8 @@ function Dashboard() {
               { key: 'city', label: 'City *', placeholder: 'e.g., Delhi, Mumbai, Rishikesh' },
               { key: 'googleMapsLink', label: 'Google Maps Link (optional)', placeholder: 'Paste your clinic Google Maps URL' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
-              { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210 — shows a "Message on WhatsApp" button on your profile', type: 'tel' },
-              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., drname@okicici — shown as a fallback if your QR code can\'t be scanned' },
+              { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210', type: 'tel', hint: '⚠️ Public: if you add this, a "Message on WhatsApp" button appears on your public profile and any patient can message you directly. Leave blank to keep your WhatsApp private.' },
+              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., drname@okicici', hint: 'Shown to patients as a payment fallback if your UPI QR code can\'t be scanned.' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
@@ -1444,6 +1444,7 @@ function Dashboard() {
                   placeholder={field.placeholder}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 />
+                {field.hint && <p className="text-xs text-gray-500 mt-1">{field.hint}</p>}
               </div>
             ))}
             <div>
