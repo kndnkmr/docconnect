@@ -70,11 +70,19 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // not when it's imported by the test suite (which tests the app without a DB).
 const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
 const { sendCallStartReminders } = require('./utils/callReminder');
+const { fixEmailIndex } = require('./utils/fixIndexes');
 
 if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully!');
+
+    // One-time, idempotent index repair: rebuild the User.email index as
+    // sparse unique if an older non-sparse index is still in the database.
+    // Without this, the SECOND phone-only patient (no email) fails to
+    // register with a duplicate-key error. Safe to run every startup.
+    fixEmailIndex();
+
     // Promote the configured admin email to admin role (one-time bootstrap).
     // Set ADMIN_EMAIL in environment variables. Safe to run on every startup:
     // it only promotes an existing user, and only if not already an admin.
