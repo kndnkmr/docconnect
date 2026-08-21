@@ -70,83 +70,98 @@ function Home() {
           ]
         })}</script>
       </Helmet>
-      {/* ---- Hero Section with inline stats ---- */}
+      {/* ---- Hero Section — search-first, like Practo/1mg/Apollo ---- */}
+      {/* The patient's primary action (describe your problem → find a doctor)
+          IS the hero, so it's the first thing on screen — no scrolling past
+          marketing to reach it. Login/Register live in the navbar; the hero
+          stays focused on the one job a patient came to do. */}
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
-        <div className="container mx-auto px-4 py-16 md:py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Find the Right Doctor, Book Instantly
+        <div className="container mx-auto px-4 py-10 sm:py-14 md:py-20">
+          <div className="max-w-2xl mx-auto text-center">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3">
+              Find the Right Doctor & Book Instantly
             </h1>
-            <p className="text-lg md:text-xl text-primary-100 mb-6">
-              Connect with qualified healthcare professionals.
-              Browse profiles and book consultations — all in one place.
+            <p className="text-sm sm:text-lg text-primary-100 mb-6">
+              Video, phone, or in-person consultations with verified doctors across India.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              <Link to="/doctors" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors text-center">
-                Find a Doctor
-              </Link>
-              {!isAuthenticated && (
-                <Link to="/register?role=doctor" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-700 transition-colors text-center">
-                  Join as a Doctor
+
+            {/* Search box — the hero's centerpiece */}
+            <div className="max-w-xl mx-auto">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={symptomSearch}
+                  onChange={(e) => setSymptomSearch(e.target.value)}
+                  placeholder="Describe your problem (e.g., back pain, fever...)"
+                  className="w-full pl-5 pr-28 py-3.5 rounded-full text-gray-800 text-sm sm:text-base outline-none focus:ring-4 focus:ring-white/30 shadow-lg"
+                />
+                <Link
+                  to={symptomSearch
+                    ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
+                    : '/doctors'}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  Find Doctor
                 </Link>
-              )}
-              {!isAuthenticated && (
-                <Link to="/login" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary-700 transition-colors text-center">
-                  Sign In
-                </Link>
+              </div>
+              {symptomSearch && (
+                <p className="text-xs text-primary-100 mt-2 text-left pl-4">
+                  Suggested: <span className="font-semibold">{getSpecializationFromSymptom(symptomSearch)}</span>
+                </p>
               )}
             </div>
 
-            {/* Stats inline in hero — saves a full section */}
-            <div className="flex gap-8 pt-4 border-t border-primary-500">
+            {/* Quick one-tap concerns — the most common ones */}
+            <div className="flex flex-wrap justify-center gap-2 mt-5">
+              {[
+                { label: 'Fever / Cold', icon: '🤒', slug: 'general-physician' },
+                { label: 'Skin / Hair', icon: '🧴', slug: 'dermatologist' },
+                { label: 'Pregnancy', icon: '🤰', slug: 'gynaecologist' },
+                { label: 'Child Health', icon: '👶', slug: 'pediatrician' },
+                { label: 'Heart / BP', icon: '❤️', slug: 'cardiologist' },
+                { label: 'Mental Health', icon: '🧠', slug: 'psychiatrist' },
+              ].map((c) => (
+                <Link
+                  key={c.slug}
+                  to={`/specialization/${c.slug}`}
+                  className="bg-white/15 hover:bg-white/25 border border-white/25 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors"
+                >
+                  <span className="mr-1">{c.icon}</span>{c.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Trust stats — compact, below the action */}
+            <div className="flex justify-center gap-6 sm:gap-10 mt-8 pt-5 border-t border-primary-500/50">
               <div>
-                <div className="text-2xl font-bold">100+</div>
-                <div className="text-primary-200 text-sm">Doctors</div>
+                <div className="text-lg sm:text-2xl font-bold">100+</div>
+                <div className="text-primary-200 text-xs sm:text-sm">Doctors</div>
               </div>
               <div>
-                <div className="text-2xl font-bold">20+</div>
-                <div className="text-primary-200 text-sm">Specializations</div>
+                <div className="text-lg sm:text-2xl font-bold">20+</div>
+                <div className="text-primary-200 text-xs sm:text-sm">Specializations</div>
               </div>
               <div>
-                <div className="text-2xl font-bold">1000+</div>
-                <div className="text-primary-200 text-sm">Appointments</div>
+                <div className="text-lg sm:text-2xl font-bold">1000+</div>
+                <div className="text-primary-200 text-xs sm:text-sm">Appointments</div>
               </div>
             </div>
+
+            {!isAuthenticated && (
+              <p className="text-primary-100 text-xs sm:text-sm mt-5">
+                Are you a doctor?{' '}
+                <Link to="/register?role=doctor" className="underline font-semibold hover:text-white">Join ProMedicoz →</Link>
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* ---- Consult Now — top 6 symptoms only ---- */}
-      <section className="py-10 bg-white">
+      {/* ---- Browse by concern — full specialization grid ---- */}
+      <section className="pt-8 pb-10 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Consult Now</h2>
-          <p className="text-center text-gray-500 mb-6 text-sm">Select your concern — we'll find the right specialist</p>
-
-          {/* Symptom search */}
-          <div className="max-w-xl mx-auto mb-6">
-            <div className="relative">
-              <input
-                type="text"
-                value={symptomSearch}
-                onChange={(e) => setSymptomSearch(e.target.value)}
-                placeholder="Describe your problem (e.g., back pain, fever, anxiety...)"
-                className="w-full px-5 py-3 pr-24 border-2 border-gray-200 rounded-full focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
-              />
-              {symptomSearch && (
-                <Link
-                  to={`/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-primary-700"
-                >
-                  Find Doctor
-                </Link>
-              )}
-            </div>
-            {symptomSearch && (
-              <p className="text-xs text-primary-600 mt-2 text-center">
-                Suggested: {getSpecializationFromSymptom(symptomSearch)}
-              </p>
-            )}
-          </div>
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Consult by Specialization</h2>
+          <p className="text-center text-gray-500 mb-6 text-sm">Tap your concern — we'll show the right specialists</p>
 
           {/* Symptom cards — all departments */}
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-5xl mx-auto">
