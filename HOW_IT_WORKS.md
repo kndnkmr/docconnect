@@ -555,13 +555,22 @@ A: Yes. Buy a domain ($10-15/year from Namecheap/GoDaddy), then add it in Vercel
 
 ### Floating WhatsApp Emergency Button
 
-- Green WhatsApp icon floating on the bottom-right corner of EVERY page
-- Visible to ALL users (even without login)
-- Clicking opens WhatsApp to: **+919997019900**
-- Pre-filled message: "Hi, I need to consult with a doctor. Can you help me?"
-- Purpose: patients in emergency can reach out instantly without going through registration
+- Green WhatsApp icon floating on the bottom-right corner
+- **Shown to GUESTS only** — hidden the moment a user logs in (patient or
+  doctor). The component checks `isAuthenticated` from `useAuth()` and
+  returns `null` when logged in. Previously it only hid on `/dashboard`,
+  which was inconsistent (a logged-in patient still saw it on the doctor
+  list, profiles, home, etc.)
+- Rationale: the button exists to help not-yet-registered visitors reach
+  us (find a doctor, book, general help). Logged-in users already have
+  proper in-app channels — chat with their doctor, the booking flow, and
+  the footer Grievance/Support link — so for them the floating button was
+  just clutter, worst on mobile where it overlaps content
+- Number is configurable via `VITE_WHATSAPP_NUMBER` (falls back to
+  `919997019900`); clicking opens WhatsApp with a pre-filled help message
 - Component: `client/src/components/WhatsAppButton.jsx`
-- Added to: `client/src/App.jsx` (renders on all pages)
+- Rendered once in `client/src/App.jsx` (the auth check lives in the
+  component, so App just always renders it)
 
 ### Meeting Link (Video/Phone Consultations)
 
@@ -822,8 +831,76 @@ drift out of sync since nothing enforces it staying accurate.
   computed by the same rule on client and server (`getDoctorMissingSteps`).
 - `POST /api/admin/users/:id/setup-reminder` emails an incomplete doctor the
   specific steps still pending. Admin-triggered (a "📧 Remind" button), not an
-  automated recurring job — right-sized for a small roster. No-email doctors
-  can't be reminded by email (message tells admin to use phone/WhatsApp).
+  automated recurring job — right-sized for a small roster.
+- **Manual click-to-WhatsApp reminder** (a "📱 WhatsApp" button next to
+  "📧 Remind"): this is FRONTEND-ONLY — no endpoint, no paid WhatsApp
+  Business API, no automated sending. `handleWhatsAppReminder` in
+  `AdminDashboard.jsx` strips the stored phone (`+91XXXXXXXXXX`) to digits,
+  builds a profile-aware English message from the SAME `getDoctorMissingSteps`
+  the email uses (names exactly what's missing — verify email + check spam /
+  complete profile / add availability — plus a dashboard link), and opens
+  `wa.me/<digits>?text=<message>` in a new tab. The admin reviews and presses
+  send, so it stays personal and free.
+- Why WhatsApp matters here: it reaches phone-only doctors the email can't,
+  and sidesteps the new-domain email-spam problem (the verification/reminder
+  email often lands in spam). Shown only when there are pending steps AND a
+  phone number is on file.
+- **Admin email-verification bypass** (`POST /api/admin/users/:id/verify-email`,
+  `markEmailVerified` → sets `isVerified: true`, clears the token): when a
+  doctor's verification email is stuck in their spam folder, the admin can mark
+  their email verified directly from the Users table ("✅ Verify Email" button),
+  making them live for patients without waiting on the email. This is
+  DISTINCT from the "✅ Verify" admin trust badge
+  (`PUT /api/admin/users/:id/verify`, `setDoctorVerification` → `isAdminVerified`):
+  one clears the email gate that controls public visibility
+  (`getAllDoctors` filters `isVerified: { $ne: false }`), the other is the
+  "Verified by ProMedicoz" credential badge. Two different fields, two
+  different buttons, easy to confuse.
+
+### Doctor List Ranking (profile quality, not registration date)
+
+**The problem it fixed:** the public doctor list used to sort by
+`createdAt: -1` (newest registration first). So a brand-new doctor who
+hadn't filled in specialization, fee, photo, or availability appeared
+ABOVE established doctors with complete profiles and real reviews — the
+opposite of what patients want, and bad competitively.
+
+**How it ranks now** (`computeProfileScore` + `sortByQuality` in
+`doctorController.js`) — a simple, explainable score (no black-box ML):
+1. **Completeness (dominant factor, ~60 pts):** specialization, fee > 0,
+   availability set (bookable at all), photo, qualification, experience > 0,
+   bio, city — each worth points.
+2. **Rating (~25 pts):** real average, weighted by review count so one
+   5-star review can't outrank many 4-star ones (confidence ramps 0→1 over
+   the first ~5 reviews).
+3. **Admin-verified trust badge (8 pts).**
+4. **Experience (mild tiebreaker, ~5 pts, capped)** — a very senior doctor
+   with an empty profile still can't beat a complete one.
+5. **Newest registration** — used ONLY as the FINAL tiebreaker, so a
+   new-but-complete doctor still surfaces among equally-complete peers but
+   never jumps ahead of a more complete/higher-rated profile just for being
+   new.
+
+**Why it fetches all candidates then paginates in memory:** the score
+depends on each doctor's rating, so the whole matching set has to be scored
+BEFORE a page can be sliced (DB-level `skip`/`limit` would only sort within
+one page). `getAllDoctors` now fetches all candidates, attaches ratings,
+ranks, then slices the page — and attaches the more expensive
+`nextAvailable` compute to just the returned page. Doctor counts are modest
+(tens, not thousands), so this is fine; it's the same approach the
+"available today" path already used.
+
+**A subtle gotcha that's easy to reintroduce:** `attachNextAvailable`
+returns FRESH plain objects via `.toObject()`, which drops any `rating`
+that was attached to the Mongoose docs beforehand. So ratings must be
+(re)attached to whatever objects actually get scored/returned — both paths
+do this explicitly. If you refactor this and ratings suddenly all read as
+0 in the sort, this is why.
+
+**Verified** with an in-memory DB test: a complete admin-verified doctor
+ranked first, a partial one in the middle, and an empty newest-registered
+profile last (previously first). Confirmed live on production too — the
+three incomplete profiles moved to the bottom.
 
 ### The phone-only registration 500 (and the verification lesson)
 
@@ -878,6 +955,12 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 - Login page now shows: "Works for both Doctors and Patients — just use the email you registered with"
 - The system automatically detects the role from the database after login
 - No role selection needed at login — only during registration
+- **Duplicate-logo fix:** Login and Register each used to render their own
+  `🏥 ProMedicoz` brand block right below the navbar's brand, so it appeared
+  twice and looked unpolished. Removed the in-page brand block on both pages,
+  keeping just the page heading ("Welcome Back" / "Create Account"). The
+  navbar already shows the brand on every page. Forgot/Reset/Verify pages
+  never had this duplication.
 
 ### Patient ID
 
