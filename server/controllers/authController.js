@@ -195,12 +195,26 @@ const register = async (req, res) => {
     });
 
   } catch (error) {
-    // Something unexpected went wrong (database error, etc.)
     console.error('Register error:', error.message);
+
+    // A schema validation failure (e.g. password too short) is the user's
+    // input problem, not a server fault — surface it as a clear 400 with the
+    // actual message instead of a scary generic "server error".
+    if (error.name === 'ValidationError') {
+      const firstMessage = Object.values(error.errors)[0]?.message || 'Please check the details you entered.';
+      return res.status(400).json({ message: firstMessage });
+    }
+
+    // Duplicate key (email/phone already taken) — also a user-facing 400.
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0];
+      const label = field === 'phone' ? 'phone number' : field === 'email' ? 'email' : 'account';
+      return res.status(400).json({ message: `An account with this ${label} already exists.` });
+    }
+
     res.status(500).json({
       message: 'Server error during registration. Please try again.'
     });
-    // 500 = Internal Server Error (something broke on our end)
   }
 };
 

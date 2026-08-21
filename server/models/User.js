@@ -36,8 +36,13 @@ const userSchema = new mongoose.Schema({
     sparse: true,          // Allows multiple users with no email (sparse index)
     lowercase: true,       // Converts "John@Gmail.COM" to "john@gmail.com"
     trim: true,
-    default: ''
-    // Email is optional for patients — they can register with just phone number
+    default: undefined
+    // Email is optional for patients — they can register with just a phone.
+    // IMPORTANT: default MUST be `undefined`, not `''`. A sparse unique index
+    // only exempts documents where the field is ABSENT — an empty string is a
+    // real value, so with default '' the FIRST phone-only patient saves fine
+    // but EVERY later one collides on the duplicate '' and registration 500s.
+    // Same sparse-index rule as patientId/verificationToken elsewhere here.
   },
 
   password: {
