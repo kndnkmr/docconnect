@@ -26,20 +26,128 @@ import toast from 'react-hot-toast';
 const hasMedicalInfo = (u) =>
   !!(u?.allergies || u?.currentMedications || u?.medicalHistory || u?.bloodGroup || u?.emergencyContactName || u?.insuranceProvider);
 
-// Common symptoms for the quick-pick list — kept short and general rather
-// than exhaustive; "Other" covers everything else via the free-text reason.
+// Common symptoms for the quick-pick list. Bilingual so a Hindi-speaking
+// patient can recognise them — but the value STORED (and shown to the
+// doctor) is always the English `en`, so the doctor side stays English.
 const COMMON_SYMPTOMS = [
-  'Fever', 'Cough', 'Cold', 'Headache', 'Body Ache', 'Fatigue',
-  'Nausea/Vomiting', 'Diarrhea', 'Stomach Pain', 'Chest Pain',
-  'Shortness of Breath', 'Sore Throat', 'Skin Rash', 'Dizziness',
-  'Joint Pain', 'Back Pain'
+  { en: 'Fever', hi: 'बुखार' },
+  { en: 'Cough', hi: 'खांसी' },
+  { en: 'Cold', hi: 'सर्दी' },
+  { en: 'Headache', hi: 'सिरदर्द' },
+  { en: 'Body Ache', hi: 'बदन दर्द' },
+  { en: 'Fatigue', hi: 'थकान' },
+  { en: 'Nausea/Vomiting', hi: 'मतली / उल्टी' },
+  { en: 'Diarrhea', hi: 'दस्त' },
+  { en: 'Stomach Pain', hi: 'पेट दर्द' },
+  { en: 'Chest Pain', hi: 'सीने में दर्द' },
+  { en: 'Shortness of Breath', hi: 'सांस लेने में तकलीफ' },
+  { en: 'Sore Throat', hi: 'गले में खराश' },
+  { en: 'Skin Rash', hi: 'त्वचा पर चकत्ते' },
+  { en: 'Dizziness', hi: 'चक्कर आना' },
+  { en: 'Joint Pain', hi: 'जोड़ों का दर्द' },
+  { en: 'Back Pain', hi: 'कमर दर्द' },
 ];
+
+// Bilingual UI strings for the patient booking flow (Phase 2). Doctor-entered
+// content (name, specialization) and the values sent to the server stay in
+// English/as-typed — only fixed patient-facing labels are translated.
+const BOOKING_TXT = {
+  en: {
+    back: '← Back to doctor profile',
+    loading: 'Loading...',
+    feeLabel: 'Fee',
+    title: 'Book Appointment',
+    repeatNote: 'Rebooking from a previous appointment. Reason and consultation type have been pre-filled.',
+    dateLabel: 'Preferred Date *',
+    dateHint: 'Select a date to see available time slots',
+    slotLabel: 'Time Slot *',
+    slotsLoading: 'Loading available slots...',
+    pickDateFirst: 'Pick a date first to see available slots',
+    noSlots: 'No slots available on this date',
+    bookingFor: 'Booking For',
+    myself: 'Myself',
+    familyMember: 'A Family Member',
+    selectFamily: 'Select Family Member *',
+    noFamily: "You haven't added any family members yet.",
+    addFamily: '+ Add a family member →',
+    chooseFamily: 'Choose family member...',
+    medInfoOnFile: '✓ Your doctor will automatically see your medical info on file:',
+    lblAllergies: 'Allergies',
+    lblMedications: 'Current Medications',
+    lblHistory: 'Medical History',
+    lblBlood: 'Blood Group',
+    lblEmergency: 'Emergency Contact',
+    lblInsurance: 'Insurance',
+    updateIfChanged: 'Update this if anything has changed →',
+    addMedPrompt: '💡 Adding your allergies and emergency contact helps your doctor be prepared — takes a minute.',
+    addInSettings: 'Add it in Account Settings →',
+    consultType: 'Consultation Type',
+    inPerson: 'In-Person Visit',
+    video: 'Video Call',
+    phone: 'Phone Call',
+    symptomsLabel: 'Symptoms (optional)',
+    symptomsHint: 'Select any that apply — helps your doctor at a glance.',
+    reasonLabel: 'Reason for Visit *',
+    reasonPlaceholder: 'Briefly describe your symptoms or reason for the visit...',
+    booking: 'Booking...',
+    confirmBooking: 'Confirm Booking',
+    pendingNote: 'Your appointment will be pending until the doctor confirms.',
+  },
+  hi: {
+    back: '← डॉक्टर प्रोफ़ाइल पर वापस जाएं',
+    loading: 'लोड हो रहा है...',
+    feeLabel: 'शुल्क',
+    title: 'अपॉइंटमेंट बुक करें',
+    repeatNote: 'पिछले अपॉइंटमेंट से दोबारा बुकिंग। कारण और परामर्श का तरीका पहले से भर दिया गया है।',
+    dateLabel: 'पसंदीदा तारीख *',
+    dateHint: 'उपलब्ध समय स्लॉट देखने के लिए तारीख चुनें',
+    slotLabel: 'समय स्लॉट *',
+    slotsLoading: 'उपलब्ध स्लॉट लोड हो रहे हैं...',
+    pickDateFirst: 'स्लॉट देखने के लिए पहले तारीख चुनें',
+    noSlots: 'इस तारीख पर कोई स्लॉट उपलब्ध नहीं है',
+    bookingFor: 'किसके लिए बुकिंग',
+    myself: 'स्वयं के लिए',
+    familyMember: 'परिवार के सदस्य के लिए',
+    selectFamily: 'परिवार का सदस्य चुनें *',
+    noFamily: 'आपने अभी तक कोई परिवार सदस्य नहीं जोड़ा है।',
+    addFamily: '+ परिवार सदस्य जोड़ें →',
+    chooseFamily: 'परिवार सदस्य चुनें...',
+    medInfoOnFile: '✓ आपके डॉक्टर को आपकी दर्ज मेडिकल जानकारी अपने आप दिखेगी:',
+    lblAllergies: 'एलर्जी',
+    lblMedications: 'वर्तमान दवाएं',
+    lblHistory: 'चिकित्सा इतिहास',
+    lblBlood: 'रक्त समूह',
+    lblEmergency: 'आपातकालीन संपर्क',
+    lblInsurance: 'बीमा',
+    updateIfChanged: 'कुछ बदला हो तो यहाँ अपडेट करें →',
+    addMedPrompt: '💡 अपनी एलर्जी और आपातकालीन संपर्क जोड़ने से डॉक्टर बेहतर तैयारी कर पाते हैं — बस एक मिनट लगता है।',
+    addInSettings: 'इसे अकाउंट सेटिंग्स में जोड़ें →',
+    consultType: 'परामर्श का तरीका',
+    inPerson: 'क्लिनिक पर मिलें',
+    video: 'वीडियो कॉल',
+    phone: 'फ़ोन कॉल',
+    symptomsLabel: 'लक्षण (वैकल्पिक)',
+    symptomsHint: 'जो भी लागू हों चुनें — इससे डॉक्टर को एक नज़र में मदद मिलती है।',
+    reasonLabel: 'आने का कारण *',
+    reasonPlaceholder: 'अपने लक्षण या आने का कारण संक्षेप में बताएं...',
+    booking: 'बुकिंग हो रही है...',
+    confirmBooking: 'बुकिंग की पुष्टि करें',
+    pendingNote: 'डॉक्टर की पुष्टि होने तक आपका अपॉइंटमेंट लंबित रहेगा।',
+  },
+};
 
 function BookAppointment() {
   const { doctorId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+
+  // Language — shares the same stored choice as the Home page toggle, so a
+  // patient's selection carries across the site. Doctor-facing pages have no
+  // translation logic, so they stay English regardless of this.
+  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const t = BOOKING_TXT[lang];
+  const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   // Check if this is a repeat booking (prefilled data from Dashboard)
   const repeatData = location.state || {};
@@ -219,16 +327,34 @@ function BookAppointment() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-gray-600">{t.loading}</div>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link to={`/doctors/${doctorId}`} className="text-primary-600 hover:underline mb-6 inline-block">
-        ← Back to doctor profile
-      </Link>
+      <div className="flex items-center justify-between mb-6 max-w-2xl mx-auto">
+        <Link to={`/doctors/${doctorId}`} className="text-primary-600 hover:underline inline-block">
+          {t.back}
+        </Link>
+        {/* Language toggle — same choice as the home page, available here too
+            in case a patient landed straight on the booking page. */}
+        <div className="inline-flex items-center bg-gray-100 rounded-full p-0.5 text-xs">
+          <button
+            onClick={() => changeLang('en')}
+            className={`px-3 py-1 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-primary-600 text-white' : 'text-gray-600'}`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => changeLang('hi')}
+            className={`px-3 py-1 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-primary-600 text-white' : 'text-gray-600'}`}
+          >
+            हिंदी
+          </button>
+        </div>
+      </div>
 
       <div className="max-w-2xl mx-auto">
         {/* Doctor info card */}
@@ -244,21 +370,21 @@ function BookAppointment() {
             <h2 className="text-xl font-semibold text-gray-800">{doctor?.name}</h2>
             <p className="text-primary-600">{doctor?.specialization || 'General Physician'}</p>
             {doctor?.consultationFee > 0 && (
-              <p className="text-gray-500 text-sm">Fee: ₹{doctor.consultationFee}</p>
+              <p className="text-gray-500 text-sm">{t.feeLabel}: ₹{doctor.consultationFee}</p>
             )}
           </div>
         </div>
 
         {/* Booking form */}
         <div className="bg-white rounded-xl shadow-md p-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Book Appointment</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">{t.title}</h1>
 
           {/* Repeat booking indicator */}
           {repeatData.repeatBooking && (
             <div className="mb-5 p-3 bg-primary-50 border border-primary-200 rounded-lg flex items-center gap-2">
               <span className="text-lg">🔄</span>
               <p className="text-sm text-primary-700">
-                Rebooking from a previous appointment. Reason and consultation type have been pre-filled.
+                {t.repeatNote}
               </p>
             </div>
           )}
@@ -267,7 +393,7 @@ function BookAppointment() {
             {/* Date picker */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Preferred Date *
+                {t.dateLabel}
               </label>
               <input
                 type="date"
@@ -278,30 +404,30 @@ function BookAppointment() {
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                Select a date to see available time slots
+                {t.dateHint}
               </p>
             </div>
 
             {/* Time slot selector - NOW DYNAMIC */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Time Slot *
+                {t.slotLabel}
               </label>
 
               {/* Show loading while fetching slots */}
               {slotsLoading ? (
                 <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm">
-                  Loading available slots...
+                  {t.slotsLoading}
                 </div>
               ) : !formData.date ? (
                 // No date selected yet
                 <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm">
-                  Pick a date first to see available slots
+                  {t.pickDateFirst}
                 </div>
               ) : availableSlots.length === 0 ? (
                 // Date selected but no slots available
                 <div className="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                  {slotsMessage || 'No slots available on this date'}
+                  {slotsMessage || t.noSlots}
                 </div>
               ) : (
                 // Slots available — show as selectable grid
@@ -333,7 +459,7 @@ function BookAppointment() {
             {/* Who is this booking for? */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Booking For
+                {t.bookingFor}
               </label>
               <select
                 value={bookedFor}
@@ -343,8 +469,8 @@ function BookAppointment() {
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               >
-                <option value="self">Myself</option>
-                <option value="family">A Family Member</option>
+                <option value="self">{t.myself}</option>
+                <option value="family">{t.familyMember}</option>
               </select>
             </div>
 
@@ -352,18 +478,18 @@ function BookAppointment() {
             {bookedFor === 'family' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Select Family Member *
+                  {t.selectFamily}
                 </label>
                 {familyMembers.length === 0 ? (
                   <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-700">
-                      You haven't added any family members yet.
+                      {t.noFamily}
                     </p>
                     <Link
                       to="/dashboard?tab=familyMembers"
                       className="text-sm text-primary-600 hover:underline mt-1 inline-block"
                     >
-                      + Add a family member →
+                      {t.addFamily}
                     </Link>
                   </div>
                 ) : (
@@ -373,7 +499,7 @@ function BookAppointment() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     required
                   >
-                    <option value="">Choose family member...</option>
+                    <option value="">{t.chooseFamily}</option>
                     {familyMembers.map((member) => (
                       <option key={member._id} value={member.name}>
                         {member.name} ({member.relationship}{member.age ? `, ${member.age} yrs` : ''})
@@ -394,24 +520,24 @@ function BookAppointment() {
             {bookedFor === 'self' && (
               hasMedicalInfo(user) ? (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-                  <p className="font-medium mb-1">✓ Your doctor will automatically see your medical info on file:</p>
+                  <p className="font-medium mb-1">{t.medInfoOnFile}</p>
                   <ul className="text-green-700 space-y-0.5 list-disc list-inside">
-                    {user.allergies && <li>Allergies: {user.allergies}</li>}
-                    {user.currentMedications && <li>Current Medications: {user.currentMedications}</li>}
-                    {user.medicalHistory && <li>Medical History: {user.medicalHistory}</li>}
-                    {user.bloodGroup && <li>Blood Group: {user.bloodGroup}</li>}
-                    {user.emergencyContactName && <li>Emergency Contact: {user.emergencyContactName}</li>}
-                    {user.insuranceProvider && <li>Insurance: {user.insuranceProvider}</li>}
+                    {user.allergies && <li>{t.lblAllergies}: {user.allergies}</li>}
+                    {user.currentMedications && <li>{t.lblMedications}: {user.currentMedications}</li>}
+                    {user.medicalHistory && <li>{t.lblHistory}: {user.medicalHistory}</li>}
+                    {user.bloodGroup && <li>{t.lblBlood}: {user.bloodGroup}</li>}
+                    {user.emergencyContactName && <li>{t.lblEmergency}: {user.emergencyContactName}</li>}
+                    {user.insuranceProvider && <li>{t.lblInsurance}: {user.insuranceProvider}</li>}
                   </ul>
                   <Link to="/dashboard?tab=account" className="text-green-700 underline text-xs mt-1 inline-block">
-                    Update this if anything has changed →
+                    {t.updateIfChanged}
                   </Link>
                 </div>
               ) : (
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                  💡 Adding your allergies and emergency contact helps your doctor be prepared — takes a minute.{' '}
+                  {t.addMedPrompt}{' '}
                   <Link to="/dashboard?tab=account" className="underline font-medium">
-                    Add it in Account Settings →
+                    {t.addInSettings}
                   </Link>
                 </div>
               )
@@ -420,16 +546,16 @@ function BookAppointment() {
             {/* Consultation type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Consultation Type
+                {t.consultType}
               </label>
               <select
                 value={formData.consultationType}
                 onChange={(e) => setFormData(prev => ({ ...prev, consultationType: e.target.value }))}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               >
-                <option value="in-person">In-Person Visit</option>
-                <option value="video">Video Call</option>
-                <option value="phone">Phone Call</option>
+                <option value="in-person">{t.inPerson}</option>
+                <option value="video">{t.video}</option>
+                <option value="phone">{t.phone}</option>
               </select>
             </div>
 
@@ -437,22 +563,22 @@ function BookAppointment() {
                 the free-text reason below rather than replacing it */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Symptoms (optional)
+                {t.symptomsLabel}
               </label>
-              <p className="text-xs text-gray-500 mb-2">Select any that apply — helps your doctor at a glance.</p>
+              <p className="text-xs text-gray-500 mb-2">{t.symptomsHint}</p>
               <div className="flex flex-wrap gap-2">
                 {COMMON_SYMPTOMS.map((s) => (
                   <button
-                    key={s}
+                    key={s.en}
                     type="button"
-                    onClick={() => toggleSymptom(s)}
+                    onClick={() => toggleSymptom(s.en)}
                     className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
-                      symptoms.includes(s)
+                      symptoms.includes(s.en)
                         ? 'border-primary-500 bg-primary-50 text-primary-700'
                         : 'border-gray-200 text-gray-600 hover:border-primary-300 hover:bg-gray-50'
                     }`}
                   >
-                    {s}
+                    {lang === 'hi' ? s.hi : s.en}
                   </button>
                 ))}
               </div>
@@ -461,12 +587,12 @@ function BookAppointment() {
             {/* Reason */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reason for Visit *
+                {t.reasonLabel}
               </label>
               <textarea
                 value={formData.reason}
                 onChange={(e) => setFormData(prev => ({ ...prev, reason: e.target.value }))}
-                placeholder="Briefly describe your symptoms or reason for the visit..."
+                placeholder={t.reasonPlaceholder}
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
                 required
@@ -498,12 +624,12 @@ function BookAppointment() {
               disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
               className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Booking...' : 'Confirm Booking'}
+              {isSubmitting ? t.booking : t.confirmBooking}
             </button>
           </form>
 
           <p className="text-gray-500 text-sm mt-4 text-center">
-            Your appointment will be pending until the doctor confirms.
+            {t.pendingNote}
           </p>
         </div>
       </div>
