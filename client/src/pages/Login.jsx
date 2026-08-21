@@ -91,12 +91,10 @@ function Login() {
       <div className="w-full max-w-md">
         {/* max-w-md = max width ~448px (keeps form from being too wide) */}
 
-        {/* Header */}
+        {/* Header — no logo here on purpose; the navbar already shows the
+            ProMedicoz brand on every page, so repeating it here read as a
+            duplicate. */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-3xl">🏥</span>
-            <span className="text-xl font-bold text-primary-600">ProMedicoz</span>
-          </div>
           <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
           <p className="text-gray-600 mt-2">Sign in to your ProMedicoz account</p>
           <p className="text-gray-500 text-sm mt-1">
