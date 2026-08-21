@@ -1,18 +1,24 @@
 // ============================================
 // Floating WhatsApp Button - Emergency Contact
 // ============================================
-// A floating button in the bottom-right corner of every page.
+// A floating button in the bottom-right corner, shown to GUESTS only.
 // Clicking it opens WhatsApp with a pre-filled message.
-// Patients can contact directly without registering.
+//
+// Why guests only? This button exists to help people who haven't signed up
+// yet — someone browsing doctors, unsure how to book, or needing a human to
+// point them the right way. Once a user is logged in (patient or doctor),
+// they have proper in-app channels (chat with their doctor, booking flow,
+// the footer Grievance/Support link), so a floating "message us on WhatsApp"
+// just adds clutter — especially on mobile where it overlaps content.
 
-import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function WhatsAppButton() {
-  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900';
 
-  // Hide on dashboard (logged-in users have in-app chat)
-  if (location.pathname === '/dashboard') return null;
+  // Hide for anyone logged in (patient or doctor) — show only to guests.
+  if (isAuthenticated) return null;
 
   const message = encodeURIComponent(
     'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'

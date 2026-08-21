@@ -229,7 +229,8 @@ function App() {
         </div>
       </footer>
 
-      {/* Floating WhatsApp button — visible on all pages */}
+      {/* Floating WhatsApp button — shown to guests only (hidden once
+          logged in; the component itself checks auth) */}
       <WhatsAppButton />
 
       {/* Bottom navigation — mobile only */}
