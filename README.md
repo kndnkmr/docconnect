@@ -35,7 +35,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Search-first home page (like Practo/1mg): the symptom search is the hero, with the specialization grid, "How it works", real patient reviews, and FAQ below
 - Local SEO landing pages: `/specialization/:slug` and `/specialization/:slug/:city` ("Best Dermatologists in Rishikesh"), driven by real doctor-city data so no empty "doorway" pages are created
 - Helpful empty states: when a search finds no doctor, the patient gets a pre-filled WhatsApp lead-capture prompt (which also tells the admin what specialties/cities patients actually want)
-- Doctor onboarding tracking: the admin Users table shows each doctor's setup completeness (email verified / availability set / profile complete) and can email an incomplete doctor a reminder of exactly what's left
+- Doctor onboarding tracking: the admin Users table shows each doctor's setup completeness (email verified / availability set / profile complete) and can nudge an incomplete doctor with a reminder of exactly what's left — either by email, or via a manual click-to-WhatsApp button that opens WhatsApp with a profile-aware message pre-filled (names the specific missing steps, links to the dashboard) for the admin to review and send. The WhatsApp option needs no paid API and reaches phone-only doctors the email can't
+- Doctor list ranking: the public doctor list is ordered by a profile-quality score (completeness of specialization/fee/availability/photo/qualification/experience/bio/city, then real rating weighted by review count, admin-verified badge, and experience), with newest registration used only as a final tiebreaker — so complete, credible profiles lead and half-empty ones sink, instead of a brand-new empty profile floating to the top just for being newest
 - Smart specialization search with fuzzy matching (handles misspellings)
 - Advanced doctor search filters: specialization, name, max fee, "Available Today" (honest — only doctors with a real free slot left today)
 - Phone number auto-formatting with +91 validation for Indian numbers
@@ -43,7 +44,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctors register with email (required)
 - Login via phone (default) OR email (toggle switch)
 - Show/hide password toggle on login and registration pages (crisp SVG icon, not emoji — renders consistently across platforms)
-- Login/Register UX polish: autocomplete attributes (password manager support), autofocus on first field, numeric keypad + 10-digit cap for phone input, ProMedicoz branding on auth cards, loading spinner on submit
+- Login/Register UX polish: autocomplete attributes (password manager support), autofocus on first field, numeric keypad + 10-digit cap for phone input, loading spinner on submit (the brand logo shows once in the navbar, not repeated on the auth card, to avoid a duplicate-logo look)
 - JWT token authentication (login persists across sessions)
 - Rate limiting on auth endpoints (prevents brute force attacks)
 - Password reset with secure token — works via email OR phone (patients can register with phone only); phone-only accounts with no email on file are guided to WhatsApp support, and admin can generate/relay a reset link manually as an account-recovery assist
@@ -64,7 +65,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Patient complaints: patients file complaints (optionally tagged to a specific doctor/visit), admin reviews and responds via a dedicated Complaints tab in the admin panel — responding notifies the patient instantly (Socket.io + Web Push)
 - Patient medical information (optional): blood group, allergies, current medications, medical history, emergency contact, and insurance details — set once in Account Settings, shown automatically to the doctor on every appointment (allergies always visible, the rest behind an expander) instead of being asked every visit; also surfaced as a reminder on the booking form itself
 - Structured symptom tags on the booking form (Fever, Cough, Headache, etc.) — an optional, fast-glance supplement to the free-text "Reason for Visit"
-- Floating WhatsApp emergency button on all pages (configurable via env var)
+- Floating WhatsApp emergency button (configurable via env var) — shown to guests only; hidden once a user logs in, since logged-in patients and doctors already have in-app chat, booking, and the footer Grievance/Support link
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
 - Doctor rating & review system via modal (1-5 stars + text, shown on doctor profile)
@@ -91,7 +92,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Google Search Console with sitemap (14 indexed pages)
 - robots.txt configured (blocks private pages from indexing)
 - Email verification for doctors (must verify email to appear in patient search) — verification is idempotent, so an email security scanner pre-visiting the link (common with Outlook Safe Links and similar) no longer causes a false "expired" error on the doctor's real click
-- Dashboard verification banner with "Resend Email" button for unverified doctors
+- Dashboard verification banner with "Resend Email" button for unverified doctors (includes a "check your spam folder" note, since new-domain verification emails can land there)
+- Admin email-verification bypass: when a doctor's verification email is stuck in spam, the admin can mark that doctor's email verified directly from the Users table (`✅ Verify Email`), making them live for patients without waiting on the email. This is separate from the `✅ Verify` admin trust badge (credential check) — one clears the email gate, the other is the "admin verified" badge
 - Consultation fees displayed in ₹ (Indian Rupees)
 - "Next available" slot shown on each doctor card (e.g. "Next available at 3:30 PM" with an "Available Today" pill, or "Next available tomorrow at 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
@@ -548,7 +550,9 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/admin/duplicate-phones | Admin only | Read-only check for accounts sharing a phone number |
 | POST | /api/admin/users/:id/free-contact-info | Admin only | Non-destructive alternative to Delete: frees up an account's phone/email for reuse (renamed out of the way) and deactivates it if still active — for resolving duplicate accounts, or resetting someone for fresh re-registration. All history is kept intact either way |
 | POST | /api/admin/backfill-patient-ids | Admin only | One-time: assign a Patient ID to patients who registered before this field existed |
-| POST | /api/admin/users/:id/setup-reminder | Admin only | Email an incomplete doctor a reminder of the onboarding steps still pending |
+| POST | /api/admin/users/:id/setup-reminder | Admin only | Email an incomplete doctor a reminder of the onboarding steps still pending (the admin panel also offers a manual click-to-WhatsApp reminder for the same steps — that's frontend-only, opening wa.me with a pre-filled message, so it needs no endpoint) |
+| PUT | /api/admin/users/:id/verify | Admin only | Set/clear the "Verified by ProMedicoz" trust badge (credential check) |
+| POST | /api/admin/users/:id/verify-email | Admin only | Bypass a stuck email verification (email landed in spam): marks the doctor's email verified so they go live for patients |
 
 ### Announcements
 | Method | Endpoint | Access | Description |
