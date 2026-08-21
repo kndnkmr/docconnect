@@ -103,6 +103,20 @@ function AdminDashboard() {
     }
   };
 
+  // Bypass a stuck email verification (e.g. the verification email went to
+  // spam). Only do this once you're confident the doctor is genuine, since
+  // it's what makes them visible/bookable to patients.
+  const handleMarkEmailVerified = async (u) => {
+    if (!window.confirm(`Mark "${u.name}"'s email as verified?\n\nUse this only if you've confirmed this is a real doctor. It makes them live and visible to patients (bypassing the email link, useful when that email landed in spam).`)) return;
+    try {
+      const response = await adminAPI.markEmailVerified(u._id);
+      toast.success(response.data.message, { duration: 6000 });
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to mark email verified');
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       const params = { limit: 50 };
@@ -606,6 +620,18 @@ function AdminDashboard() {
                                 }`}
                               >
                                 {user.isAdminVerified ? 'Unverify' : '✓ Verify'}
+                              </button>
+                            )}
+                            {/* Admin bypass for a doctor stuck on email
+                                verification (email in spam). This is the flag
+                                that makes them visible to patients. */}
+                            {!user.isDeleted && user.role === 'doctor' && user.email && !user.isVerified && (
+                              <button
+                                onClick={() => handleMarkEmailVerified(user)}
+                                className="text-sm font-medium text-green-600 hover:text-green-800"
+                                title="Mark this doctor's email as verified so they go live (use when the verification email landed in spam)"
+                              >
+                                ✅ Verify Email
                               </button>
                             )}
                             {/* Nudge an incomplete doctor to finish onboarding.

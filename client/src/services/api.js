@@ -326,6 +326,10 @@ export const adminAPI = {
   // Email an incomplete doctor a reminder of the setup steps they still
   // need to finish (verify email / set availability / complete profile)
   sendSetupReminder: (id) => API.post(`/admin/users/${id}/setup-reminder`),
+
+  // Admin bypass: mark a doctor's email as verified (for when the
+  // verification email landed in spam and they can't self-verify)
+  markEmailVerified: (id) => API.post(`/admin/users/${id}/verify-email`),
 };
 
 // ============================================

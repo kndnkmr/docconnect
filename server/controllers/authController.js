@@ -168,7 +168,8 @@ const register = async (req, res) => {
               <a href="${verifyUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
                 Verify My Email
               </a>
-              <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 24 hours. If you didn't register, ignore this email.</p>
+              <p style="color: #6b7280; font-size: 13px; margin-top: 20px;">📌 If this email landed in your <b>Spam/Junk</b> folder, please mark it <b>"Not spam"</b> first — the verify button may not work while it's flagged as spam.</p>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">This link expires in 24 hours. If you didn't register, ignore this email.</p>
             </div>
           </div>
         `
@@ -781,7 +782,8 @@ const resendVerification = async (req, res) => {
             <a href="${verifyUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
               Verify My Email
             </a>
-            <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This link expires in 24 hours.</p>
+            <p style="color: #6b7280; font-size: 13px; margin-top: 20px;">📌 If this email landed in your <b>Spam/Junk</b> folder, please mark it <b>"Not spam"</b> first — the verify button may not work while it's flagged as spam.</p>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">This link expires in 24 hours.</p>
           </div>
         </div>
       `

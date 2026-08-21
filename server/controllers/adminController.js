@@ -450,6 +450,42 @@ const getDoctorMissingSteps = (user) => {
   return missing;
 };
 
+// ============================================
+// MARK EMAIL VERIFIED (admin bypass)
+// ============================================
+// Endpoint: POST /api/admin/users/:id/verify-email
+// Sets isVerified = true directly. This is the EMAIL-verified flag that
+// gates whether a doctor is visible/bookable by patients — distinct from
+// isAdminVerified (the trust badge). Needed because verification emails can
+// land in spam, leaving a legitimate doctor stuck and invisible. When the
+// admin has confirmed the doctor is real out-of-band, this makes them live
+// without waiting on the email link.
+
+const markEmailVerified = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.isVerified) {
+      return res.status(400).json({ message: `"${user.name}"'s email is already verified.` });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    res.json({
+      message: `"${user.name}"'s email marked as verified. If their profile and availability are complete, they're now live and visible to patients.`,
+      user: { _id: user._id, name: user.name, isVerified: true }
+    });
+  } catch (error) {
+    console.error('Mark email verified error:', error.message);
+    res.status(500).json({ message: 'Error marking email verified' });
+  }
+};
+
 const sendDoctorSetupReminder = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -721,4 +757,4 @@ const backfillPatientIds = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder, markEmailVerified };

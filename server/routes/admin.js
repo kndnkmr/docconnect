@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder, markEmailVerified } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -56,5 +56,9 @@ router.post('/backfill-patient-ids', backfillPatientIds);
 // POST /api/admin/users/:id/setup-reminder - email an incomplete doctor a
 // nudge listing the onboarding steps they still need to finish
 router.post('/users/:id/setup-reminder', sendDoctorSetupReminder);
+
+// POST /api/admin/users/:id/verify-email - admin bypass for a doctor whose
+// verification email landed in spam: marks their email verified so they go live
+router.post('/users/:id/verify-email', markEmailVerified);
 
 module.exports = router;

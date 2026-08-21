@@ -867,10 +867,11 @@ function Dashboard() {
             <div>
               <p className="font-semibold text-orange-800">Verify your email to go live</p>
               <p className="text-sm text-orange-700">Your profile won't appear in patient search until you verify your email.</p>
+              <p className="text-xs text-orange-600 mt-1">📌 Can't find the email? Check your <b>Spam/Junk</b> folder and mark it "Not spam" — the verify link may not work while it's flagged as spam.</p>
             </div>
           </div>
           <button
-            onClick={async () => { try { await authAPI.resendVerification(); toast.success('Verification email sent! Check your inbox.'); } catch(e) { toast.error(e.response?.data?.message || 'Failed to send'); } }}
+            onClick={async () => { try { await authAPI.resendVerification(); toast.success('Verification email sent! Check your inbox — and your Spam folder.'); } catch(e) { toast.error(e.response?.data?.message || 'Failed to send'); } }}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 whitespace-nowrap"
           >
             Resend Email
