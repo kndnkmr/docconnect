@@ -134,6 +134,73 @@ async function attachRatings(docs) {
 }
 
 // ============================================
+// Profile completeness / quality score
+// ============================================
+// Ranks doctors so complete, high-quality profiles lead the list and
+// half-empty ones sink — instead of the old "newest registration first",
+// which floated brand-new empty profiles above established doctors.
+//
+// Scoring is intentionally simple and explainable (no black-box ML):
+//   1. Completeness  — does the profile have the things a patient needs to
+//      decide and book? (specialization, fee, photo, qualification, bio,
+//      experience, city, availability). This is the dominant factor.
+//   2. Rating        — real average rating, weighted by how many reviews
+//      (so 1 five-star review doesn't outrank 20 four-star ones).
+//   3. Admin-verified trust badge — a small, honest boost.
+//   4. Experience    — mild tiebreaker.
+//   5. Freshness (createdAt) — used only as the FINAL tiebreaker so brand-new
+//      doctors still surface among equally-complete peers, but never jump
+//      ahead of a more complete/higher-rated profile just for being new.
+//
+// `doc` here is a plain object that already has `rating` attached (see
+// attachRatings) OR we default rating to 0 when it hasn't been attached yet.
+function computeProfileScore(doc) {
+  let score = 0;
+
+  // ---- 1. Completeness (max 60) ----
+  // Each field a patient relies on to choose/book is worth points.
+  if (doc.specialization && doc.specialization.trim()) score += 12;
+  if (Number(doc.consultationFee) > 0) score += 10;
+  if (Array.isArray(doc.availability) && doc.availability.length > 0) score += 12; // bookable at all
+  if (doc.profilePhoto && doc.profilePhoto.trim()) score += 8;
+  if (doc.qualification && doc.qualification.trim()) score += 6;
+  if (Number(doc.experience) > 0) score += 5;
+  if (doc.bio && doc.bio.trim()) score += 4;
+  if (doc.city && doc.city.trim()) score += 3;
+
+  // ---- 2. Rating (max ~25) ----
+  // Weight the average by review count so a single review can't dominate.
+  // confidence ramps from 0 → 1 over the first ~5 reviews.
+  const avg = doc.rating && doc.rating.average ? doc.rating.average : 0;
+  const count = doc.rating && doc.rating.count ? doc.rating.count : 0;
+  if (count > 0) {
+    const confidence = Math.min(count / 5, 1);
+    score += (avg / 5) * 25 * confidence; // up to 25 when 5-star with >=5 reviews
+  }
+
+  // ---- 3. Admin-verified trust badge (max 8) ----
+  if (doc.isAdminVerified) score += 8;
+
+  // ---- 4. Experience tiebreaker (max ~5) ----
+  // Capped so a very senior doctor with an empty profile still can't beat a
+  // complete one; experience only nudges among otherwise-similar profiles.
+  score += Math.min(Number(doc.experience) || 0, 25) / 5; // up to 5
+
+  return score;
+}
+
+// Sort a list of doctor plain-objects by quality score (desc), then by
+// newest registration as the final tiebreaker. Mutates + returns the array.
+function sortByQuality(docs) {
+  return docs.sort((a, b) => {
+    const diff = computeProfileScore(b) - computeProfileScore(a);
+    if (diff !== 0) return diff;
+    // Tiebreaker: newer first (stable, meaningful for equally-complete peers)
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+}
+
+// ============================================
 // GET ALL DOCTORS - Public (anyone can browse)
 // ============================================
 // Endpoint: GET /api/doctors
@@ -189,30 +256,42 @@ const getAllDoctors = async (req, res) => {
     // ---- Pagination ----
     const { page, limit, skip } = getPagination(req, { defaultLimit: 10 });
 
+    // Ranking note: we sort by a profile-quality score (see computeProfileScore),
+    // NOT by registration date. The score depends on each doctor's rating, so we
+    // fetch all matching candidates, attach ratings, score+sort, and only THEN
+    // paginate in memory. next-available (the more expensive per-doctor compute)
+    // is attached to just the page we return. Doctor counts here are modest
+    // (tens, not thousands), so loading all candidates to rank them is fine and
+    // is the same approach the "available today" path already used.
     let doctorsWithAvailability;
     let total;
 
+    // Fetch every candidate matching the filter (no DB-level pagination — we
+    // need the whole set to rank it correctly before slicing a page).
+    const candidates = await User.find(filter).select('-password -upiQrCode');
+
     if (wantAvailableToday) {
-      // Honest "available today": fetch all candidates, compute their next free
-      // slot, and keep only those genuinely free TODAY. Paginate in memory.
-      const candidates = await User.find(filter).select('-password -upiQrCode').sort({ createdAt: -1 });
+      // Honest "available today": compute each candidate's next free slot and
+      // keep only those genuinely free TODAY. attachNextAvailable returns fresh
+      // plain objects, so attach ratings AFTER it, then rank + paginate.
       const withNA = await attachNextAvailable(candidates);
-      const freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday);
+      let freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday);
+      freeToday = await attachRatings(freeToday); // ratings feed the score
+      sortByQuality(freeToday);
       total = freeToday.length;
       doctorsWithAvailability = freeToday.slice(skip, skip + limit);
     } else {
-      // Normal path: DB-level pagination, then attach next-available info.
-      const doctors = await User.find(filter)
-        .select('-password -upiQrCode')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 });
-      total = await User.countDocuments(filter);
-      doctorsWithAvailability = await attachNextAvailable(doctors);
+      // Normal path: attach ratings to all candidates (needed for the score),
+      // rank by quality, slice the page, then attach next-available to just
+      // that page. attachNextAvailable produces fresh plain objects (dropping
+      // the rating), so re-attach ratings to the final page.
+      const scored = await attachRatings(candidates);
+      sortByQuality(scored);
+      total = scored.length;
+      const pageDocs = scored.slice(skip, skip + limit);
+      doctorsWithAvailability = await attachNextAvailable(pageDocs);
+      doctorsWithAvailability = await attachRatings(doctorsWithAvailability);
     }
-
-    // Attach average rating + review count (one query for this page)
-    doctorsWithAvailability = await attachRatings(doctorsWithAvailability);
 
     // ---- Send response ----
     res.json({
