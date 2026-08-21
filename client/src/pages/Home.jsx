@@ -111,26 +111,6 @@ function Home() {
               )}
             </div>
 
-            {/* Quick one-tap concerns — the most common ones */}
-            <div className="flex flex-wrap justify-center gap-2 mt-5">
-              {[
-                { label: 'Fever / Cold', icon: '🤒', slug: 'general-physician' },
-                { label: 'Skin / Hair', icon: '🧴', slug: 'dermatologist' },
-                { label: 'Pregnancy', icon: '🤰', slug: 'gynaecologist' },
-                { label: 'Child Health', icon: '👶', slug: 'pediatrician' },
-                { label: 'Heart / BP', icon: '❤️', slug: 'cardiologist' },
-                { label: 'Mental Health', icon: '🧠', slug: 'psychiatrist' },
-              ].map((c) => (
-                <Link
-                  key={c.slug}
-                  to={`/specialization/${c.slug}`}
-                  className="bg-white/15 hover:bg-white/25 border border-white/25 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors"
-                >
-                  <span className="mr-1">{c.icon}</span>{c.label}
-                </Link>
-              ))}
-            </div>
-
             {/* Trust stats — compact, below the action */}
             <div className="flex justify-center gap-6 sm:gap-10 mt-8 pt-5 border-t border-primary-500/50">
               <div>
