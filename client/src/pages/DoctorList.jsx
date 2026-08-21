@@ -262,24 +262,51 @@ function DoctorList() {
           <div className="text-lg text-gray-600">Loading doctors...</div>
         </div>
       ) : doctors.length === 0 ? (
-        // No results
-        <div className="text-center py-12">
-          <div className="text-5xl mb-4">🔍</div>
-          <h3 className="text-xl font-medium text-gray-700">No doctors found</h3>
-          <p className="text-gray-500 mt-2">Try adjusting your search criteria</p>
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl inline-block">
-            <p className="text-green-800 font-medium mb-2">Can't find the right doctor?</p>
-            <a
-              href="https://wa.me/919997019900?text=Hi%2C%20I%20need%20help%20finding%20a%20doctor"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
-            >
-              <span>Chat with us on WhatsApp</span>
-            </a>
-            <p className="text-xs text-green-600 mt-2">We'll help you find the right specialist</p>
-          </div>
-        </div>
+        // No results — make it specific to what they searched for, capture
+        // the real demand via a pre-filled WhatsApp message (so we learn
+        // which specialists/cities to recruit next), and offer a real
+        // alternative instead of a dead end.
+        (() => {
+          const parts = [];
+          if (searchSpecialization) parts.push(searchSpecialization);
+          if (city) parts.push(`in ${city}`);
+          const searchedFor = parts.join(' ');
+          const waMessage = searchedFor
+            ? `Hi ProMedicoz, I'm looking for a ${searchedFor} but couldn't find one on the site. Can you help?`
+            : `Hi ProMedicoz, I couldn't find the doctor I'm looking for. Can you help?`;
+          return (
+            <div className="text-center py-12">
+              <div className="text-5xl mb-4">🔍</div>
+              <h3 className="text-xl font-medium text-gray-700">
+                {searchedFor ? `No ${searchedFor} available yet` : 'No doctors found'}
+              </h3>
+              <p className="text-gray-500 mt-2">
+                {searchedFor
+                  ? `We're actively adding doctors. Tell us what you need and we'll help you find a ${searchSpecialization || 'specialist'} — often within a day.`
+                  : 'Try adjusting your search, or let us help you find the right doctor.'}
+              </p>
+
+              <div className="mt-6 p-5 bg-green-50 border border-green-200 rounded-xl inline-block max-w-md">
+                <p className="text-green-800 font-medium mb-3">Can't find the right doctor? We'll find one for you.</p>
+                <a
+                  href={`https://wa.me/919997019900?text=${encodeURIComponent(waMessage)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                >
+                  💬 Chat with us on WhatsApp
+                </a>
+                <p className="text-xs text-green-600 mt-2">Tell us your concern — we'll connect you with the right specialist</p>
+              </div>
+
+              <div className="mt-6">
+                <Link to="/doctors" className="text-primary-600 text-sm font-medium hover:underline">
+                  ← Browse all available doctors
+                </Link>
+              </div>
+            </div>
+          );
+        })()
       ) : (
         // Doctor cards grid
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
