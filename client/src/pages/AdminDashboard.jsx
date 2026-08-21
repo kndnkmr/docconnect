@@ -103,6 +103,46 @@ function AdminDashboard() {
     }
   };
 
+  // Manual "click-to-WhatsApp" reminder. This does NOT send anything by itself
+  // and uses no paid WhatsApp API — it just opens WhatsApp (web/app) with the
+  // doctor's number and a pre-filled, profile-aware message. The admin reviews
+  // it and presses send, so it stays personal and free. English only, on
+  // purpose (per request — no bilingual text for doctors).
+  const handleWhatsAppReminder = (u) => {
+    // wa.me needs digits only (no '+' or spaces). Stored phones look like
+    // "+919599150825"; strip everything that isn't a digit.
+    const digits = (u.phone || '').replace(/\D/g, '');
+    if (!digits) {
+      toast.error('No phone number on file for this doctor');
+      return;
+    }
+
+    // Turn the pending onboarding steps into specific, friendly asks so the
+    // message names exactly what THIS doctor still needs to do.
+    const missing = getDoctorMissingSteps(u);
+    const asks = [];
+    if (missing.includes('Email')) {
+      asks.push('• Verify your email (please also check your Spam/Junk folder — the verification email sometimes lands there; mark it "Not spam", then click Verify)');
+    }
+    if (missing.includes('Profile')) {
+      asks.push('• Complete your profile (specialization and consultation fee) so patients can find and choose you');
+    }
+    if (missing.includes('Availability')) {
+      asks.push('• Add your weekly availability so patients can book appointment slots with you');
+    }
+
+    const firstName = (u.name || 'Doctor').split(' ')[0];
+    const message =
+      `Hello Dr. ${firstName}, this is the ProMedicoz team.\n\n` +
+      `Your account is almost ready. To start appearing to patients and receiving bookings, please finish these steps:\n\n` +
+      `${asks.join('\n')}\n\n` +
+      `You can do all of this here: https://www.promedicoz.in/dashboard\n\n` +
+      `Once done, your profile goes live for patients. Reply here if you need any help. Thank you!`;
+
+    const url = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   // Bypass a stuck email verification (e.g. the verification email went to
   // spam). Only do this once you're confident the doctor is genuine, since
   // it's what makes them visible/bookable to patients.
@@ -644,6 +684,20 @@ function AdminDashboard() {
                                 title="Email this doctor a reminder of the setup steps they still need to finish"
                               >
                                 📧 Remind
+                              </button>
+                            )}
+                            {/* WhatsApp reminder — opens WhatsApp with a
+                                profile-aware message pre-filled; admin presses
+                                send. Shown when steps are pending AND we have a
+                                phone number (works even for doctors with no
+                                email, where the email reminder can't help). */}
+                            {!user.isDeleted && user.role === 'doctor' && user.phone && getDoctorMissingSteps(user).length > 0 && (
+                              <button
+                                onClick={() => handleWhatsAppReminder(user)}
+                                className="text-sm font-medium text-green-600 hover:text-green-800"
+                                title="Open WhatsApp with a reminder of the setup steps pre-filled — you review and send"
+                              >
+                                📱 WhatsApp
                               </button>
                             )}
                             {!user.isDeleted && (
