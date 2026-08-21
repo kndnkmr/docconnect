@@ -177,14 +177,54 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-6 mt-auto">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">
-            &copy; 2024 ProMedicoz. Your health, our priority.
-          </p>
-          <div className="flex justify-center gap-4 mt-2">
-            <a href="/terms" className="text-gray-500 text-xs hover:text-gray-300">Terms & Conditions</a>
-            <a href="/privacy" className="text-gray-500 text-xs hover:text-gray-300">Privacy Policy</a>
+      <footer className="bg-gray-800 text-white pt-10 pb-6 mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            {/* Brand */}
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🏥</span>
+                <span className="text-lg font-bold">ProMedicoz</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Book verified doctors online — video, phone, or in-person consultations across India.
+              </p>
+            </div>
+
+            {/* For Patients */}
+            <div>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200">For Patients</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/doctors" className="text-gray-400 hover:text-white transition-colors">Find Doctors</a></li>
+                <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Health Blog</a></li>
+                <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Create Account</a></li>
+              </ul>
+            </div>
+
+            {/* For Doctors */}
+            <div>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200">For Doctors</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/register?role=doctor" className="text-gray-400 hover:text-white transition-colors">Join ProMedicoz</a></li>
+                <li><a href="/login" className="text-gray-400 hover:text-white transition-colors">Doctor Login</a></li>
+              </ul>
+            </div>
+
+            {/* Support & Legal */}
+            <div>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200">Support & Legal</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="mailto:support@promedicoz.in?subject=Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Grievance / Support</a></li>
+                <li><a href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-5 text-center">
+            <p className="text-gray-400 text-sm">
+              &copy; {new Date().getFullYear()} ProMedicoz. Your health, our priority.
+            </p>
           </div>
         </div>
       </footer>

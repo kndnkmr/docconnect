@@ -16,12 +16,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-// Same Grievance Officer contact already published in the Terms & Conditions
-// page — surfacing it directly in the nav means a patient with a complaint
-// doesn't have to go dig through the legal pages to find it.
-const GRIEVANCE_EMAIL = 'support@promedicoz.in';
-const GRIEVANCE_MAILTO = `mailto:${GRIEVANCE_EMAIL}?subject=${encodeURIComponent('Grievance - ProMedicoz')}`;
-
 function Navbar() {
   const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
   const navigate = useNavigate();
@@ -123,13 +117,10 @@ function Navbar() {
               </>
             )}
 
-            {/* Grievance Officer contact — same address published in Terms &
-                Conditions. Visible to everyone (guests, patients, doctors,
-                admin), not just logged-in users, since anyone visiting the
-                site may need to raise a complaint. */}
-            <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 transition-colors" title={`Email ${GRIEVANCE_EMAIL}`}>
-              ✉️ Grievance
-            </a>
+            {/* Grievance/support contact lives in the site footer now — a
+                cleaner, more conventional place than the primary nav (having
+                "Grievance" front-and-centre reads as complaint-oriented to a
+                first-time visitor). Still reachable site-wide via the footer. */}
 
             {isAuthenticated ? (
               <>
@@ -148,13 +139,15 @@ function Navbar() {
                       {user.role}
                     </span>
                   </span>
-                  {/* Install App button — always visible unless already installed */}
-                  {!isInstalled && (
+                  {/* Only show when the browser is actually ready to install
+                      (installPrompt set) — otherwise it was a dead button on
+                      desktop that did nothing when clicked. Matches mobile. */}
+                  {installPrompt && !isInstalled && (
                     <button
                       onClick={handleInstall}
-                      className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
+                      className="flex items-center gap-1 border border-green-500 text-green-600 px-3 py-1.5 rounded-lg text-sm hover:bg-green-50 transition-colors"
                     >
-                      📲 Install App
+                      📲 Install
                     </button>
                   )}
                   <button
@@ -167,12 +160,12 @@ function Navbar() {
               </>
             ) : (
               <>
-                {!isInstalled && (
+                {installPrompt && !isInstalled && (
                   <button
                     onClick={handleInstall}
-                    className="flex items-center gap-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors"
+                    className="flex items-center gap-1 border border-green-500 text-green-600 px-3 py-1.5 rounded-lg text-sm hover:bg-green-50 transition-colors"
                   >
-                    📲 Install App
+                    📲 Install
                   </button>
                 )}
                 <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">
@@ -232,9 +225,6 @@ function Navbar() {
                       Admin Panel
                     </Link>
                   )}
-                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    ✉️ Grievance
-                  </a>
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-500 hover:text-red-600 px-2 py-1">
                     Logout
                   </button>
@@ -247,9 +237,6 @@ function Navbar() {
                   <Link to="/register" className="text-primary-600 font-medium px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                     Register
                   </Link>
-                  <a href={GRIEVANCE_MAILTO} className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    ✉️ Grievance
-                  </a>
                 </>
               )}
             </div>
