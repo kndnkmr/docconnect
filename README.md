@@ -31,6 +31,11 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 - Doctor and patient registration with role-based access
 - Patient ID: every patient gets a short, human-readable id (e.g. `PT000123`) at registration — shown in their Account Settings, on the doctor's appointment card, Patient Reports, Prescriptions, and the downloadable prescription PDF; searchable everywhere a doctor or admin looks up a patient
+- Bilingual patient experience (English / हिंदी): a prominent language toggle on the home page and booking flow, remembered across visits. The home symptom cards are always bilingual so a Hindi-speaking patient can tap instead of type. Doctor-facing UI and anything a doctor types (profiles, prescriptions) deliberately stay English — no medical content is machine-translated
+- Search-first home page (like Practo/1mg): the symptom search is the hero, with the specialization grid, "How it works", real patient reviews, and FAQ below
+- Local SEO landing pages: `/specialization/:slug` and `/specialization/:slug/:city` ("Best Dermatologists in Rishikesh"), driven by real doctor-city data so no empty "doorway" pages are created
+- Helpful empty states: when a search finds no doctor, the patient gets a pre-filled WhatsApp lead-capture prompt (which also tells the admin what specialties/cities patients actually want)
+- Doctor onboarding tracking: the admin Users table shows each doctor's setup completeness (email verified / availability set / profile complete) and can email an incomplete doctor a reminder of exactly what's left
 - Smart specialization search with fuzzy matching (handles misspellings)
 - Advanced doctor search filters: specialization, name, max fee, "Available Today" (honest — only doctors with a real free slot left today)
 - Phone number auto-formatting with +91 validation for Indian numbers
@@ -226,7 +231,8 @@ docconnect/
 │   │   ├── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
 │   │   ├── accountCleanup.js    ← Daily job: anonymizes accounts past the 90-day deletion window
 │   │   ├── callReminder.js      ← Every-minute job: pushes "call starting" to both parties, clock-based
-│   │   └── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
+│   │   ├── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
+│   │   └── fixIndexes.js        ← Startup migration: rebuilds the email index as sparse unique (idempotent)
 │   │
 │   ├── tests/                   ← Backend smoke tests (npm test)
 │   │   └── api.test.js
@@ -470,7 +476,8 @@ Add the same three values to your hosting provider's environment variables (e.g.
 ### Doctors
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | /api/doctors | Public | Browse/search doctors |
+| GET | /api/doctors | Public | Browse/search doctors (?specialization=, ?city=, ?name=, ?maxFee=, ?availableToday=, ?page=, ?limit=) |
+| GET | /api/doctors/cities | Public | Distinct cities with active doctors (optionally ?specialization=) — powers local SEO city pages |
 | GET | /api/doctors/:id | Public | View doctor profile |
 | PUT | /api/doctors/profile | Doctor only | Update own profile |
 
@@ -541,6 +548,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/admin/duplicate-phones | Admin only | Read-only check for accounts sharing a phone number |
 | POST | /api/admin/users/:id/free-contact-info | Admin only | Non-destructive alternative to Delete: frees up an account's phone/email for reuse (renamed out of the way) and deactivates it if still active — for resolving duplicate accounts, or resetting someone for fresh re-registration. All history is kept intact either way |
 | POST | /api/admin/backfill-patient-ids | Admin only | One-time: assign a Patient ID to patients who registered before this field existed |
+| POST | /api/admin/users/:id/setup-reminder | Admin only | Email an incomplete doctor a reminder of the onboarding steps still pending |
 
 ### Announcements
 | Method | Endpoint | Access | Description |

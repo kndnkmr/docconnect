@@ -778,6 +778,101 @@ retention window, or add a new category of data collected from patients —
 check `PrivacyPolicy.jsx` at the same time. It's easy for this page to
 drift out of sync since nothing enforces it staying accurate.
 
+### Bilingual Patient Experience (English / हिंदी)
+
+- A language toggle appears on the home page (prominently in the hero, not
+  the navbar) and the booking flow. The choice is stored in localStorage
+  (`promedicoz_lang`) so it carries across pages and visits.
+- Implementation is a per-page string dictionary (`TXT` in `Home.jsx`,
+  `BOOKING_TXT` in `BookAppointment.jsx`) keyed by language — deliberately
+  lightweight, no i18n framework. The shared choice is just the localStorage
+  key; each page owns its own strings.
+- Home symptom cards are ALWAYS bilingual (English + Hindi together) — the
+  point is a Hindi-speaking patient can tap the right card instead of typing
+  English. Booking symptom chips display in the chosen language but STORE the
+  English value, so the doctor always sees English.
+- **Deliberately English:** brand name, Login/Register, and anything a doctor
+  types (profiles, specializations, prescriptions). Medical content is never
+  machine-translated — a mistranslated drug/condition is dangerous. Only fixed
+  UI labels get curated Hindi. The Hindi copy should be proofread by a native
+  speaker before being treated as final.
+- Scope so far: Phase 1 (home) + Phase 2 (booking flow). The patient dashboard
+  is still English (a possible Phase 3).
+
+### Local SEO City Pages
+
+- `/specialization/:slug` (e.g. dermatologist) and
+  `/specialization/:slug/:city` (e.g. dermatologist/rishikesh, "Best
+  Dermatologists in Rishikesh") — same `SpecializationPage.jsx`, city-aware.
+- The city links shown come from `GET /api/doctors/cities`, which returns only
+  cities that ACTUALLY have active doctors. This is intentional: linking/
+  generating empty city pages creates "doorway pages" that search engines
+  penalize. City pages are discovered by crawling the internal links on the
+  base specialization page.
+- City page adds a BreadcrumbList JSON-LD (Home > Specialization > City).
+- Note: this is a client-rendered SPA, so these pages rely on Google rendering
+  JS (it does, but SSR would be more reliable). The pages existing does not
+  equal ranking — it's the foundation; real ranking needs content, time, and
+  links.
+
+### Doctor Onboarding Tracking + Reminder
+
+- Admin Users table shows each doctor's setup completeness inline
+  ("Setup complete" or red "Needs Email / Availability / Profile" badges),
+  computed by the same rule on client and server (`getDoctorMissingSteps`).
+- `POST /api/admin/users/:id/setup-reminder` emails an incomplete doctor the
+  specific steps still pending. Admin-triggered (a "📧 Remind" button), not an
+  automated recurring job — right-sized for a small roster. No-email doctors
+  can't be reminded by email (message tells admin to use phone/WhatsApp).
+
+### The phone-only registration 500 (and the verification lesson)
+
+**Symptom:** patients registering WITHOUT an email (phone-only, the common
+Indian path) got "server error". The first phone-only patient worked; every
+one after failed.
+
+**Root cause:** `User.email` is meant to be unique + sparse, but (a) the schema
+stored a missing email as `''` (empty string) via `default: ''`, and (b) the
+LIVE database still had an old email index that was unique but NOT sparse. A
+sparse index only exempts fields that are truly ABSENT — an empty string is a
+real value — so every phone-only patient shared the same `''` email and
+collided (E11000), surfacing as a generic 500. Same sparse-index bug class as
+`patientId` earlier.
+
+**Fix (two parts, both required):**
+1. `User.email` default is now `undefined` (field absent when not provided).
+2. `utils/fixIndexes.js` — a guarded, idempotent startup migration that drops
+   the old non-sparse email index, unsets any `''`/null emails, and rebuilds
+   the index as sparse unique. Runs after DB connect in `server.js`; no-op once
+   the index is already sparse.
+Also: the register error handler now returns a clean 400 for validation
+(e.g. short password) and duplicate-key errors instead of a scary 500.
+
+**The lesson (important for future changes):** the bug slipped through because
+verification used a throwaway in-memory database, which builds FRESH indexes
+from the current schema — it literally cannot reproduce a mismatch with the
+existing production index/data. For any change to schemas, indexes, auth, or
+registration/login, verify against the **live production API** as well (a full
+register → login → book smoke test), and reason explicitly about the existing
+production data state, not just the code.
+
+### Production Smoke Test (run after risky changes)
+
+A fast way to confirm the critical flows work on live, using curl against the
+Render backend (`https://docconnect-fcg6.onrender.com/api`):
+1. `GET /health` → `"database":"Connected"`
+2. Register a patient (phone-only) → expect `201` + `patientId`
+3. Login (by phone), `GET /auth/me` → role patient
+4. Patient reads: `GET /appointments/my`, `/prescriptions/my`, `/reports/my`,
+   `/complaints/my` → all `200`
+5. Register a doctor (email), login, same reads → `200`
+6. Public: `GET /doctors`, `/doctors/cities` → `200` with data
+7. Guards: `GET /appointments/my` with no token → `401`
+8. Full booking: doctor `PUT /availability` → patient `GET
+   /availability/:docId/slots?date=` → patient `POST /appointments` → confirm
+   it appears in BOTH parties' `/appointments/my`
+Clean up any throwaway test accounts afterward via the admin Users tab.
+
 ### Login Page Clarification
 
 - Login page now shows: "Works for both Doctors and Patients — just use the email you registered with"
