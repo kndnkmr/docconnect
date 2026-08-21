@@ -433,6 +433,82 @@ const generateResetLink = async (req, res) => {
 };
 
 // ============================================
+// SEND DOCTOR SETUP REMINDER
+// ============================================
+// Endpoint: POST /api/admin/users/:id/setup-reminder
+// Emails an incomplete doctor a friendly nudge listing exactly what's still
+// missing (verify email / set availability / complete profile) so they can
+// finish onboarding and become visible/bookable to patients.
+
+// Shared helper so the admin list and this reminder agree on what "complete"
+// means. Returns the list of still-missing setup steps for a doctor.
+const getDoctorMissingSteps = (user) => {
+  const missing = [];
+  if (user.email && !user.isVerified) missing.push('verify your email address');
+  if (!user.availability || user.availability.length === 0) missing.push('set your weekly availability');
+  if (!user.specialization || !user.consultationFee) missing.push('complete your profile (specialization & consultation fee)');
+  return missing;
+};
+
+const sendDoctorSetupReminder = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'Setup reminders are only for doctors' });
+    }
+
+    const missing = getDoctorMissingSteps(user);
+    if (missing.length === 0) {
+      return res.status(400).json({ message: `"${user.name}" has already completed their setup.` });
+    }
+
+    if (!user.email) {
+      return res.status(400).json({
+        message: `"${user.name}" has no email on file, so a reminder can't be emailed. Please reach out via phone/WhatsApp instead.`,
+        missing
+      });
+    }
+
+    const stepsHtml = missing.map((s) => `<li style="margin-bottom: 6px;">${s.charAt(0).toUpperCase() + s.slice(1)}</li>`).join('');
+    const result = await sendEmail({
+      to: user.email,
+      subject: 'Finish setting up your ProMedicoz profile',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz</h1>
+          </div>
+          <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+            <h2 style="color: #1f2937; margin-top: 0;">You're almost there, Dr. ${user.name}!</h2>
+            <p style="color: #4b5563;">Your ProMedicoz account is created, but patients can't find or book you yet because a few steps are still pending:</p>
+            <ul style="color: #1f2937; padding-left: 20px;">${stepsHtml}</ul>
+            <p style="color: #4b5563;">It only takes a couple of minutes — log in to finish and start receiving appointments.</p>
+            <a href="https://www.promedicoz.in/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+              Complete My Setup
+            </a>
+            <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">If you've already done this, please ignore this email.</p>
+          </div>
+        </div>
+      `
+    });
+
+    res.json({
+      message: result.success
+        ? `Setup reminder emailed to "${user.name}" (${missing.length} step${missing.length > 1 ? 's' : ''} pending).`
+        : `Could not send the email right now. Pending steps: ${missing.join(', ')}. You may want to reach out manually.`,
+      emailed: !!result.success,
+      missing
+    });
+  } catch (error) {
+    console.error('Send doctor setup reminder error:', error.message);
+    res.status(500).json({ message: 'Error sending setup reminder' });
+  }
+};
+
+// ============================================
 // GET ANALYTICS - Revenue and consultation insights
 // ============================================
 // Endpoint: GET /api/admin/analytics
@@ -645,4 +721,4 @@ const backfillPatientIds = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder };

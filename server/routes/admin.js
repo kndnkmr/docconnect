@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -52,5 +52,9 @@ router.post('/users/:id/free-contact-info', freeUpContactInfo);
 // POST /api/admin/backfill-patient-ids - one-time: assign a Patient ID to
 // any existing patient who registered before this field existed
 router.post('/backfill-patient-ids', backfillPatientIds);
+
+// POST /api/admin/users/:id/setup-reminder - email an incomplete doctor a
+// nudge listing the onboarding steps they still need to finish
+router.post('/users/:id/setup-reminder', sendDoctorSetupReminder);
 
 module.exports = router;

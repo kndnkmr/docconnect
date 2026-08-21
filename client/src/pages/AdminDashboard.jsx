@@ -82,6 +82,27 @@ function AdminDashboard() {
     }
   };
 
+  // Which onboarding steps a doctor still hasn't finished — kept in sync with
+  // the backend's getDoctorMissingSteps so the admin sees the same picture the
+  // reminder email is based on.
+  const getDoctorMissingSteps = (u) => {
+    const missing = [];
+    if (u.email && !u.isVerified) missing.push('Email');
+    if (!u.availability || u.availability.length === 0) missing.push('Availability');
+    if (!u.specialization || !u.consultationFee) missing.push('Profile');
+    return missing;
+  };
+
+  const handleSendReminder = async (u) => {
+    if (!window.confirm(`Email "${u.name}" a reminder to finish their setup?`)) return;
+    try {
+      const response = await adminAPI.sendSetupReminder(u._id);
+      toast.success(response.data.message, { duration: 6000 });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to send reminder');
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       const params = { limit: 50 };
@@ -552,6 +573,19 @@ function AdminDashboard() {
                               ✓ Verified
                             </span>
                           )}
+                          {/* Doctor onboarding completeness — surfaces WHY a
+                              doctor isn't yet visible/bookable to patients. */}
+                          {user.role === 'doctor' && !user.isDeleted && (() => {
+                            const missing = getDoctorMissingSteps(user);
+                            if (missing.length === 0) {
+                              return <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Setup complete</span>;
+                            }
+                            return missing.map((m) => (
+                              <span key={m} className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700" title={`Doctor still needs to: ${m}`}>
+                                Needs {m}
+                              </span>
+                            ));
+                          })()}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(user.createdAt)}</td>
@@ -572,6 +606,18 @@ function AdminDashboard() {
                                 }`}
                               >
                                 {user.isAdminVerified ? 'Unverify' : '✓ Verify'}
+                              </button>
+                            )}
+                            {/* Nudge an incomplete doctor to finish onboarding.
+                                Only shown when there's actually something
+                                pending AND we have an email to send it to. */}
+                            {!user.isDeleted && user.role === 'doctor' && user.email && getDoctorMissingSteps(user).length > 0 && (
+                              <button
+                                onClick={() => handleSendReminder(user)}
+                                className="text-sm font-medium text-amber-600 hover:text-amber-800"
+                                title="Email this doctor a reminder of the setup steps they still need to finish"
+                              >
+                                📧 Remind
                               </button>
                             )}
                             {!user.isDeleted && (

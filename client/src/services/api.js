@@ -322,6 +322,10 @@ export const adminAPI = {
   // phone/email out of the way (keeps the record + all its appointment
   // history) instead of permanently deleting it
   freeUpContactInfo: (id) => API.post(`/admin/users/${id}/free-contact-info`),
+
+  // Email an incomplete doctor a reminder of the setup steps they still
+  // need to finish (verify email / set availability / complete profile)
+  sendSetupReminder: (id) => API.post(`/admin/users/${id}/setup-reminder`),
 };
 
 // ============================================
