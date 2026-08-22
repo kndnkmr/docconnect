@@ -84,7 +84,7 @@ function DoctorProfile() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <SEO
         title={doctor ? `Dr. ${doctor.name} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
         description={doctor ? `Book appointment with Dr. ${doctor.name} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: ₹${doctor.consultationFee || 'N/A'}.` : ''}
@@ -92,12 +92,20 @@ function DoctorProfile() {
         type="profile"
       />
       {doctor && <DoctorSchema doctor={doctor} />}
-      {/* Back link */}
-      <Link to="/doctors" className="text-primary-600 hover:underline mb-6 inline-block">
-        ← Back to all doctors
-      </Link>
 
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      {/* Slim gradient header band with the back link — keeps the page
+          consistent with the Doctors listing page and gives the profile
+          card something to sit against instead of bare gray. */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 pt-6 pb-16">
+          <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
+            ← Back to all doctors
+          </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-10">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden -mt-10 relative z-10">
         {/* ---- Header Section (photo + basic info) ---- */}
         {/* Stacked & centered on mobile, side-by-side on desktop — avoids a
             giant colored box on small screens and keeps info tidy either way. */}
@@ -303,6 +311,7 @@ function DoctorProfile() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
