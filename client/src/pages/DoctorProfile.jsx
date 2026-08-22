@@ -286,7 +286,7 @@ function DoctorProfile() {
                 </Link>
                 <p className="mt-2 text-sm text-gray-500">
                   {t.noAccount}{' '}
-                  <Link to="/register" className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
+                  <Link to="/register" className="text-primary-600 hover:underline font-medium whitespace-nowrap">{t.signUpFree}</Link>
                 </p>
               </div>
             )}
