@@ -215,7 +215,11 @@ function App() {
               <p className="text-gray-400 text-sm">
                 Book verified doctors online — video, phone, or in-person consultations across India.
               </p>
-              <a href="/about" className="inline-flex items-center gap-1 mt-4 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">About Us →</a>
+              {/* Role-neutral links (apply to patients and doctors alike) */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                <a href="/about" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">About Us →</a>
+                <a href="/install" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Get the App</a>
+              </div>
             </div>
 
             {/* For Patients */}
@@ -224,7 +228,6 @@ function App() {
               <ul className="space-y-2 text-sm">
                 <li><a href="/doctors" className="text-gray-400 hover:text-white transition-colors">Find Doctors</a></li>
                 <li><a href="/how-it-works" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="/install" className="text-gray-400 hover:text-white transition-colors">📲 Get the App</a></li>
                 <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Health Blog</a></li>
                 <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Create Account</a></li>
               </ul>
