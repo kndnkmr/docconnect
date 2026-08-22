@@ -144,22 +144,28 @@ function DoctorList() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <SEO
         title={searchSpecialization ? `${searchSpecialization} Doctors` : 'Find Doctors'}
         description={`Find and book ${searchSpecialization || ''} doctors online. Browse profiles, check availability, read reviews, and book appointments instantly on ProMedicoz.`}
         path="/doctors"
       />
-      {/* ---- Page Title ---- */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Find a Doctor</h1>
-        <p className="text-gray-600 mt-2">
-          Browse our network of {pagination.totalDoctors} qualified professionals
-        </p>
+
+      {/* ---- Header band ---- A compact gradient banner anchors the page
+          (instead of a bare heading floating on gray) and gives the search
+          card something to sit against for a modern, layered look. */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 pt-10 pb-20 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">Find a Doctor</h1>
+          <p className="text-primary-100 mt-2 text-sm sm:text-base">
+            Browse our network of {pagination.totalDoctors} verified doctor{pagination.totalDoctors === 1 ? '' : 's'} — book by video, phone, or in person
+          </p>
+        </div>
       </div>
 
-      {/* ---- Search/Filter Bar ---- */}
-      <form onSubmit={handleSearch} className="bg-white rounded-xl shadow-md p-6 mb-8">
+      <div className="container mx-auto px-4 pb-10">
+      {/* ---- Search/Filter Bar ---- pulled up to overlap the header band */}
+      <form onSubmit={handleSearch} className="bg-white rounded-xl shadow-lg p-6 mb-8 -mt-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Search by specialization with smart suggestions */}
           <div className="relative">
@@ -363,6 +369,7 @@ function DoctorList() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }
