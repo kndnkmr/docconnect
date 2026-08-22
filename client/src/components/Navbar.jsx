@@ -168,14 +168,9 @@ function Navbar() {
               </>
             ) : (
               <>
-                {installPrompt && !isInstalled && (
-                  <button
-                    onClick={handleInstall}
-                    className="flex items-center gap-1 border border-green-500 text-green-600 px-3 py-1.5 rounded-lg text-sm hover:bg-green-50 transition-colors"
-                  >
-                    📲 Install
-                  </button>
-                )}
+                {/* Guests already have the '📲 Get App' link above (works on
+                    all platforms via /install), so no separate Chrome-only
+                    install button here — it read as a duplicate. */}
                 <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">
                   Login
                 </Link>
@@ -210,17 +205,10 @@ function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
 
-              {/* Install App — only show when Chrome is ready to install */}
-              {installPrompt && !isInstalled && (
-                <button
-                  onClick={() => { handleInstall(); setIsMobileMenuOpen(false); }}
-                  className="flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg text-sm mx-2 font-medium"
-                >
-                  📲 Install App on Phone
-                </button>
-              )}
-
-              {/* Always-available link to the install/share page (all platforms) */}
+              {/* Single 'Get the App' entry — the /install page it opens
+                  already offers one-tap install (Chrome), iOS Add-to-Home
+                  steps, and sharing. Removed the separate 'Install App on
+                  Phone' button that used to sit here, which duplicated this. */}
               <Link to="/install" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
                 📲 Get the App
               </Link>
