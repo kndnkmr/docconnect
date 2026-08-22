@@ -43,6 +43,7 @@ import CancellationRefund from './pages/CancellationRefund';
 import AboutUs from './pages/AboutUs';
 import ForDoctors from './pages/ForDoctors';
 import HowItWorks from './pages/HowItWorks';
+import InstallApp from './pages/InstallApp';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -133,6 +134,7 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/for-doctors" element={<ForDoctors />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/install" element={<InstallApp />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
@@ -222,6 +224,7 @@ function App() {
               <ul className="space-y-2 text-sm">
                 <li><a href="/doctors" className="text-gray-400 hover:text-white transition-colors">Find Doctors</a></li>
                 <li><a href="/how-it-works" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
+                <li><a href="/install" className="text-gray-400 hover:text-white transition-colors">📲 Get the App</a></li>
                 <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Health Blog</a></li>
                 <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Create Account</a></li>
               </ul>
