@@ -131,7 +131,12 @@ function AdminDashboard() {
       asks.push('• Add your weekly availability so patients can book appointment slots with you');
     }
 
-    const firstName = (u.name || 'Doctor').split(' ')[0];
+    // Doctors' stored names often already include a "Dr"/"Dr." prefix
+    // (e.g. "Dr Anurag Agarwal"), so naively taking the first word gave
+    // "Hello Dr. Dr". Strip a leading Dr/Dr. first, THEN take the first name,
+    // so we get "Hello Dr. Anurag" whether or not the name was prefixed.
+    const cleanedName = (u.name || 'Doctor').replace(/^\s*dr\.?\s+/i, '').trim();
+    const firstName = (cleanedName || 'Doctor').split(' ')[0];
     const message =
       `Hello Dr. ${firstName}, this is the ProMedicoz team.\n\n` +
       `Your account is almost ready. To start appearing to patients and receiving bookings, please finish these steps:\n\n` +
