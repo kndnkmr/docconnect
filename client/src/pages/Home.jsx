@@ -389,6 +389,32 @@ function Home() {
         </div>
       </section>
 
+      {/* ---- Get the App strip ---- compact, so first-time visitors know
+           they can install ProMedicoz like an app and share it. */}
+      <section className="py-8 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <div className="text-4xl">📲</div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-gray-800">
+                {lang === 'hi' ? 'ProMedicoz को ऐप की तरह इंस्टॉल करें' : 'Install ProMedicoz like an app'}
+              </h3>
+              <p className="text-gray-600 text-sm mt-0.5">
+                {lang === 'hi'
+                  ? 'अपने फ़ोन की होम स्क्रीन पर जोड़ें — तेज़ पहुँच पाएं और परिवार व दोस्तों के साथ साझा करें।'
+                  : 'Add it to your phone’s home screen for quick access — and share it with family and friends.'}
+              </p>
+            </div>
+            <Link
+              to="/install"
+              className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+            >
+              {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ---- CTA ---- (flex-grow so this blue band fills any leftover space
            down to the footer on tall screens, instead of leaving a pale gap) */}
       <section className="py-12 bg-primary-700 text-white flex-grow flex flex-col justify-center">

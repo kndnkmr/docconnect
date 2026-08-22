@@ -114,6 +114,14 @@ function Navbar() {
                 <Link to="/blog" className="text-gray-600 hover:text-primary-600 transition-colors">
                   Blog
                 </Link>
+
+                {/* Always-visible link to the install/share page — works on
+                    every platform (the quick-install button elsewhere only
+                    appears on Chrome/Android; iOS users need the page's
+                    Add-to-Home-Screen steps). */}
+                <Link to="/install" className="text-gray-600 hover:text-primary-600 transition-colors">
+                  📲 Get App
+                </Link>
               </>
             )}
 
@@ -211,6 +219,11 @@ function Navbar() {
                   📲 Install App on Phone
                 </button>
               )}
+
+              {/* Always-available link to the install/share page (all platforms) */}
+              <Link to="/install" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                📲 Get the App
+              </Link>
 
               {isAuthenticated ? (
                 <>
