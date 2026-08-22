@@ -4,19 +4,24 @@ import { articles } from './blogData';
 
 function BlogList() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <SEO
         title="Health Blog — Expert Medical Articles"
         description="Read expert health articles on ProMedicoz. Learn about symptoms, when to see a doctor, treatment options, and preventive care tips."
         path="/blog"
       />
 
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-800">Health Blog</h1>
-        <p className="text-gray-500 mt-2">Expert articles to help you make informed health decisions</p>
+      {/* Gradient header band — consistent with Home/Doctors/Profile so the
+          whole app shares one polished visual language. */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 pt-10 pb-16 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">Health Blog</h1>
+          <p className="text-primary-100 mt-2 text-sm sm:text-base">Expert articles to help you make informed health decisions</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="container mx-auto px-4 pb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto -mt-8 relative z-10">
         {articles.map((article) => (
           <Link
             key={article.slug}
@@ -37,6 +42,7 @@ function BlogList() {
             </div>
           </Link>
         ))}
+      </div>
       </div>
     </div>
   );
