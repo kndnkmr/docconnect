@@ -3,8 +3,10 @@ import SEO from '../components/SEO';
 
 function ForDoctors() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <>
       <SEO title="For Doctors — How ProMedicoz Works" description="How ProMedicoz works for doctors: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person. Free to join." path="/for-doctors" />
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
 
       {/* Hero */}
       <div className="text-center mb-10">
@@ -72,16 +74,22 @@ function ForDoctors() {
           <h2 className="text-xl font-semibold text-gray-800 mb-3">Who can join</h2>
           <p>Registered medical practitioners with a valid medical license (registered with the National Medical Commission or a State Medical Council). You practise independently — ProMedicoz is a platform that connects you with patients, not your employer. See our <Link to="/terms" className="text-primary-600 hover:underline">Terms</Link> and <Link to="/medical-disclaimer" className="text-primary-600 hover:underline">Medical Disclaimer</Link>.</p>
         </section>
-
-        {/* CTA */}
-        <section className="bg-primary-50 rounded-xl p-6 text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Ready to join?</h2>
-          <p className="text-gray-600 mb-4">Free to join, no commission, you keep your full fee.</p>
-          <Link to="/register?role=doctor" className="bg-primary-600 text-white py-2.5 px-8 rounded-lg hover:bg-primary-700 transition-colors font-medium">Join as a Doctor</Link>
-          <p className="text-gray-500 mt-4">Questions first? Email <a href="mailto:support@promedicoz.in" className="text-primary-600 hover:underline">support@promedicoz.in</a></p>
-        </section>
       </div>
-    </div>
+      </div>
+
+      {/* Full-width closing CTA band — flows straight into the footer instead
+          of leaving a floating pale card in white space above the black
+          footer. Mirrors the Home page's bottom CTA band for a consistent,
+          finished look. */}
+      <section className="py-12 bg-primary-700 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl font-bold mb-2">Ready to join?</h2>
+          <p className="text-primary-100 mb-6 max-w-xl mx-auto">Free to join, no commission, you keep your full fee.</p>
+          <Link to="/register?role=doctor" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">Join as a Doctor</Link>
+          <p className="text-primary-100 text-sm mt-5">Questions first? Email <a href="mailto:support@promedicoz.in" className="underline hover:text-white">support@promedicoz.in</a></p>
+        </div>
+      </section>
+    </>
   );
 }
 
