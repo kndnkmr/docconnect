@@ -37,6 +37,7 @@ import BlogList from './pages/blog/BlogList';
 import BlogArticle from './pages/blog/BlogArticle';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import MedicalDisclaimer from './pages/MedicalDisclaimer';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -113,6 +114,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogArticle />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
@@ -210,13 +212,17 @@ function App() {
               </ul>
             </div>
 
-            {/* Support & Legal */}
+            {/* Legal & Support — grouped the way established health platforms
+                do (legal policies + a clear support/grievance contact), and
+                includes the Medical Disclaimer expected of a health site. */}
             <div>
-              <h3 className="font-semibold text-sm mb-3 text-gray-200">Support & Legal</h3>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200">Legal & Support</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="mailto:support@promedicoz.in?subject=Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Grievance / Support</a></li>
                 <li><a href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</a></li>
                 <li><a href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/medical-disclaimer" className="text-gray-400 hover:text-white transition-colors">Medical Disclaimer</a></li>
+                <li><a href="mailto:support@promedicoz.in?subject=Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Grievance / Support</a></li>
+                <li><a href="mailto:support@promedicoz.in?subject=Support%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
               </ul>
             </div>
           </div>
