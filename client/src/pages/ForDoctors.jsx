@@ -1,0 +1,88 @@
+import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
+
+function ForDoctors() {
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <SEO title="For Doctors — How ProMedicoz Works" description="How ProMedicoz works for doctors: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person. Free to join." path="/for-doctors" />
+
+      {/* Hero */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold text-gray-800">Grow your practice on ProMedicoz</h1>
+        <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+          Reach more patients, consult online or in person, and keep 100% of your consultation fee. ProMedicoz is free to join and takes no commission.
+        </p>
+        <Link to="/register?role=doctor" className="inline-block mt-5 bg-primary-600 text-white py-2.5 px-8 rounded-lg hover:bg-primary-700 transition-colors font-medium">
+          Join as a Doctor
+        </Link>
+      </div>
+
+      <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
+        {/* Payment — the #1 question doctors ask */}
+        <section className="bg-green-50 border border-green-200 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">💰 How you get paid</h2>
+          <ul className="space-y-2">
+            <li className="flex gap-2"><span>✅</span><span><strong>You keep 100% of your fee.</strong> ProMedicoz charges no commission and takes no cut.</span></li>
+            <li className="flex gap-2"><span>✅</span><span><strong>Patients pay you directly.</strong> The payment goes straight to your own UPI ID / QR code — ProMedicoz never collects, holds, or processes any money.</span></li>
+            <li className="flex gap-2"><span>✅</span><span><strong>You set your own fee.</strong> Enter your consultation fee in your profile; patients see it before booking.</span></li>
+            <li className="flex gap-2"><span>✅</span><span><strong>You confirm the payment.</strong> After a patient pays and taps "I Have Paid" (they can also upload a receipt), you verify it on your side before the consultation.</span></li>
+          </ul>
+          <p className="mt-3 text-gray-600">In short: ProMedicoz connects you with patients; the money is always directly between you and the patient.</p>
+        </section>
+
+        {/* How patients reach you */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">How patients find and book you</h2>
+          <ol className="list-decimal ml-6 space-y-2">
+            <li>Patients search by symptom, specialization, city, or the languages you speak, and see your profile — qualification, experience, fee, and reviews.</li>
+            <li>A patient books an available slot from your schedule. You get notified (in-app, and by push/email if enabled).</li>
+            <li>You confirm the request. The patient then pays your fee directly via UPI.</li>
+            <li>At the appointment time, you consult — by video, phone, or in person, whichever the patient booked.</li>
+          </ol>
+        </section>
+
+        {/* Consultation flow */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">How a consultation works</h2>
+          <p className="mb-3">Each appointment moves through simple steps, and the dashboard guides you at every stage:</p>
+          <ol className="list-decimal ml-6 space-y-2">
+            <li><strong>Confirm</strong> the appointment request.</li>
+            <li><strong>Mark Paid</strong> once you've received the patient's payment on your UPI.</li>
+            <li><strong>Join Call</strong> for a video or phone consultation — a private, secure call opens inside ProMedicoz at the slot time (no separate app or login needed). For an in-person visit, you simply see the patient at your clinic.</li>
+            <li><strong>Mark Complete</strong> when the consultation is done.</li>
+            <li><strong>Write a prescription</strong> — the patient sees it instantly in their account. Prescriptions and notes are written in English.</li>
+          </ol>
+          <p className="mt-3 text-gray-600">You can also chat with the patient in-app for the appointment, and share medical reports both ways.</p>
+        </section>
+
+        {/* Getting started */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">Getting started takes a few minutes</h2>
+          <ol className="list-decimal ml-6 space-y-2">
+            <li><strong>Register</strong> with your name, email, and phone.</li>
+            <li><strong>Verify your email</strong> (please check your spam folder — new-domain emails sometimes land there — mark it "Not spam" and click Verify).</li>
+            <li><strong>Complete your profile</strong>: specialization, qualification, medical registration number, experience, consultation fee, clinic address, UPI ID / QR code, and the languages you consult in.</li>
+            <li><strong>Set your availability</strong> so patients can book slots.</li>
+          </ol>
+          <p className="mt-3 text-gray-600">Once your profile is complete and verified, you become visible to patients and start receiving bookings.</p>
+        </section>
+
+        {/* What you need */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">Who can join</h2>
+          <p>Registered medical practitioners with a valid medical license (registered with the National Medical Commission or a State Medical Council). You practise independently — ProMedicoz is a platform that connects you with patients, not your employer. See our <Link to="/terms" className="text-primary-600 hover:underline">Terms</Link> and <Link to="/medical-disclaimer" className="text-primary-600 hover:underline">Medical Disclaimer</Link>.</p>
+        </section>
+
+        {/* CTA */}
+        <section className="bg-primary-50 rounded-xl p-6 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Ready to join?</h2>
+          <p className="text-gray-600 mb-4">Free to join, no commission, you keep your full fee.</p>
+          <Link to="/register?role=doctor" className="bg-primary-600 text-white py-2.5 px-8 rounded-lg hover:bg-primary-700 transition-colors font-medium">Join as a Doctor</Link>
+          <p className="text-gray-500 mt-4">Questions first? Email <a href="mailto:support@promedicoz.in" className="text-primary-600 hover:underline">support@promedicoz.in</a></p>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+export default ForDoctors;

@@ -40,6 +40,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import MedicalDisclaimer from './pages/MedicalDisclaimer';
 import CancellationRefund from './pages/CancellationRefund';
 import AboutUs from './pages/AboutUs';
+import ForDoctors from './pages/ForDoctors';
+import HowItWorks from './pages/HowItWorks';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -119,6 +121,8 @@ function App() {
           <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
           <Route path="/cancellation-refund" element={<CancellationRefund />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/for-doctors" element={<ForDoctors />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
@@ -203,6 +207,7 @@ function App() {
               <h3 className="font-semibold text-sm mb-3 text-gray-200">For Patients</h3>
               <ul className="space-y-2 text-sm">
                 <li><a href="/doctors" className="text-gray-400 hover:text-white transition-colors">Find Doctors</a></li>
+                <li><a href="/how-it-works" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
                 <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Health Blog</a></li>
                 <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Create Account</a></li>
               </ul>
@@ -212,6 +217,7 @@ function App() {
             <div>
               <h3 className="font-semibold text-sm mb-3 text-gray-200">For Doctors</h3>
               <ul className="space-y-2 text-sm">
+                <li><a href="/for-doctors" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
                 <li><a href="/register?role=doctor" className="text-gray-400 hover:text-white transition-colors">Join ProMedicoz</a></li>
                 <li><a href="/login" className="text-gray-400 hover:text-white transition-colors">Doctor Login</a></li>
               </ul>

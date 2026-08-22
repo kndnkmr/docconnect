@@ -397,9 +397,14 @@ function Home() {
             {t.ctaText}
           </p>
           {!isAuthenticated && (
-            <Link to="/register" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
-              {t.ctaButton}
-            </Link>
+            <div className="flex flex-wrap justify-center items-center gap-3">
+              <Link to="/register?role=doctor" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
+                {t.ctaButton}
+              </Link>
+              <Link to="/for-doctors" className="text-white underline font-medium hover:text-primary-100 inline-block">
+                {lang === 'hi' ? 'यह कैसे काम करता है जानें →' : 'See how it works →'}
+              </Link>
+            </div>
           )}
         </div>
       </section>
