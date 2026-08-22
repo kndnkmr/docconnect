@@ -37,6 +37,9 @@ const TXT = {
     shareBtn: '📤 Share ProMedicoz',
     shareOn: 'Or share directly on:',
     copyBtn: '🔗 Copy link',
+    captionLabel: 'Ready-to-post caption (for a story or post):',
+    copyCaption: '📋 Copy caption',
+    captionCopied: 'Caption copied! Paste it with your post.',
     qrPrompt: 'Or let someone scan this to open ProMedicoz:',
     copied: 'Link copied! Paste it anywhere to share.',
     copyManual: 'Copy this link to share ProMedicoz:',
@@ -69,6 +72,9 @@ const TXT = {
     shareBtn: '📤 ProMedicoz साझा करें',
     shareOn: 'या सीधे यहाँ साझा करें:',
     copyBtn: '🔗 लिंक कॉपी करें',
+    captionLabel: 'पोस्ट के लिए तैयार कैप्शन (स्टोरी या पोस्ट के लिए):',
+    copyCaption: '📋 कैप्शन कॉपी करें',
+    captionCopied: 'कैप्शन कॉपी हो गया! अपनी पोस्ट के साथ पेस्ट करें।',
     qrPrompt: 'या किसी को ProMedicoz खोलने के लिए इसे स्कैन करने दें:',
     copied: 'लिंक कॉपी हो गया! साझा करने के लिए कहीं भी पेस्ट करें।',
     copyManual: 'ProMedicoz साझा करने के लिए यह लिंक कॉपी करें:',
@@ -126,6 +132,18 @@ function InstallApp() {
       toast.success(t.copied);
     } catch {
       window.prompt(t.copyManual, SITE_URL);
+    }
+  };
+
+  // Copy the full ready-to-post caption (message + link) so it can be pasted
+  // alongside an image when posting to a story/feed (where uploading an image
+  // doesn't carry any text with it).
+  const handleCopyCaption = async () => {
+    try {
+      await navigator.clipboard.writeText(t.shareText);
+      toast.success(t.captionCopied);
+    } catch {
+      window.prompt(t.copyManual, t.shareText);
     }
   };
 
@@ -249,6 +267,19 @@ function InstallApp() {
                   <span>{s.name}</span>
                 </a>
               ))}
+            </div>
+
+            {/* Ready-to-post caption — for when you post an image to a story/
+                feed (an uploaded image carries no text, so you paste this). */}
+            <div className="mt-5">
+              <p className="text-sm text-gray-600 mb-2">{t.captionLabel}</p>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-line">{t.shareText}</div>
+              <button
+                onClick={handleCopyCaption}
+                className="w-full mt-3 border border-primary-300 text-primary-700 py-2.5 rounded-lg font-medium hover:bg-primary-50 transition-colors"
+              >
+                {t.copyCaption}
+              </button>
             </div>
 
             <div className="mt-6 text-center">
