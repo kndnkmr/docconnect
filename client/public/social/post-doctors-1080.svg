@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <circle cx="900" cy="180" r="240" fill="#ffffff" opacity="0.06"/>
+  <circle cx="160" cy="940" r="200" fill="#ffffff" opacity="0.05"/>
+
+  <text x="80" y="170" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="bold" fill="#c7d2fe">FOR DOCTORS</text>
+
+  <text x="80" y="320" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="bold" fill="#ffffff">Reach more patients.</text>
+  <text x="80" y="396" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="bold" fill="#ffffff">Keep 100% of your fee.</text>
+
+  <text x="80" y="500" font-family="Arial, Helvetica, sans-serif" font-size="40" fill="#e0e7ff">✓  Free to join — no commission</text>
+  <text x="80" y="565" font-family="Arial, Helvetica, sans-serif" font-size="40" fill="#e0e7ff">✓  Patients pay you directly (UPI)</text>
+  <text x="80" y="630" font-family="Arial, Helvetica, sans-serif" font-size="40" fill="#e0e7ff">✓  Set your own schedule</text>
+
+  <rect x="80" y="720" width="440" height="96" rx="48" fill="#ffffff"/>
+  <text x="300" y="782" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="bold" fill="#1e3a8a">Join free today</text>
+
+  <rect x="80" y="880" width="70" height="70" rx="16" fill="#ffffff"/>
+  <rect x="108" y="900" width="14" height="42" rx="4" fill="#1e3a8a"/>
+  <rect x="94" y="914" width="42" height="14" rx="4" fill="#1e3a8a"/>
+  <text x="170" y="928" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="bold" fill="#ffffff">ProMedicoz</text>
+  <text x="80" y="1000" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#c7d2fe">www.promedicoz.in/for-doctors</text>
+</svg>

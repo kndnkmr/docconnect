@@ -1039,6 +1039,57 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Grow-your-practice: share your own public profile with your existing
+          patients so they can book you online too. Their word-of-mouth is the
+          highest-trust, zero-cost way to bring users. Shown once the doctor's
+          profile is live (email verified). */}
+      {isDoctor && user && user.isVerified && (() => {
+        const profileUrl = `https://www.promedicoz.in/doctors/${user._id}`;
+        const shareMsg =
+          `Hello, you can now book an appointment with me (Dr. ${user.name}) online on ProMedicoz — ` +
+          `video, phone, or in-person. View my profile and pick a slot here: ${profileUrl}`;
+        return (
+          <div className="mb-6 p-4 sm:p-5 bg-green-50 border border-green-200 rounded-xl">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">📣</span>
+              <div className="flex-1">
+                <p className="font-semibold text-green-900">Share your profile with your patients</p>
+                <p className="text-sm text-green-800 mt-0.5">
+                  Send your ProMedicoz profile link to your existing patients so they can book you online — the easiest way to grow your bookings.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(shareMsg)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600"
+                  >
+                    💬 Share on WhatsApp
+                  </a>
+                  <button
+                    onClick={async () => {
+                      try { await navigator.clipboard.writeText(profileUrl); toast.success('Profile link copied!'); }
+                      catch { window.prompt('Copy your profile link:', profileUrl); }
+                    }}
+                    className="px-4 py-2 bg-white border border-green-500 text-green-700 rounded-lg text-sm font-medium hover:bg-green-50"
+                  >
+                    🔗 Copy profile link
+                  </button>
+                  <a
+                    href={`/doctors/${user._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
+                  >
+                    👁️ View my profile
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Welcome Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
