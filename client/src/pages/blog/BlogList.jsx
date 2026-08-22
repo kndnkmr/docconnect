@@ -3,18 +3,23 @@ import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { articles } from './blogData';
 
+// Topic chips are derived automatically from the articles' specialization
+// values, so they stay in sync as new articles are added.
+const TOPICS = ['All', ...Array.from(new Set(articles.map((a) => a.specialization))).sort()];
+
 function BlogList() {
   const [query, setQuery] = useState('');
+  const [topic, setTopic] = useState('All');
 
-  // Client-side search — all articles are already loaded, so we filter
-  // instantly across title, description, and specialization. No backend needed.
+  // Client-side filtering — all articles are already loaded, so we filter
+  // instantly by topic (specialization) and search text. No backend needed.
   const q = query.trim().toLowerCase();
   const sorted = [...articles].sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
-  const filtered = q
-    ? sorted.filter((a) =>
-        `${a.title} ${a.description} ${a.specialization}`.toLowerCase().includes(q)
-      )
-    : sorted;
+  const filtered = sorted.filter((a) => {
+    const topicOk = topic === 'All' || a.specialization === topic;
+    const searchOk = !q || `${a.title} ${a.description} ${a.specialization}`.toLowerCase().includes(q);
+    return topicOk && searchOk;
+  });
 
   return (
     <div>
@@ -47,20 +52,37 @@ function BlogList() {
       </div>
 
       <div className="container mx-auto px-4 pb-10">
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 -mt-8 relative z-10">
-            <div className="text-5xl mb-4">🔍</div>
-            <h3 className="text-xl font-medium text-gray-700">No articles found for “{query}”</h3>
-            <p className="text-gray-500 mt-2">Try a different word, or browse all articles.</p>
+        {/* Topic filter chips — browse by category with one tap */}
+        <div className="max-w-5xl mx-auto -mt-4 mb-6 relative z-10 flex flex-wrap justify-center gap-2">
+          {TOPICS.map((tp) => (
             <button
-              onClick={() => setQuery('')}
+              key={tp}
+              onClick={() => setTopic(tp)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                topic === tp
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              {tp}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">🔍</div>
+            <h3 className="text-xl font-medium text-gray-700">No articles found{query ? ` for “${query}”` : ''}</h3>
+            <p className="text-gray-500 mt-2">Try a different word or topic, or browse all articles.</p>
+            <button
+              onClick={() => { setQuery(''); setTopic('All'); }}
               className="mt-5 inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
             >
               Show all articles
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto -mt-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {filtered.map((article) => (
               <Link
                 key={article.slug}
