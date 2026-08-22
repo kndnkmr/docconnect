@@ -3,7 +3,7 @@ import SEO from '../components/SEO';
 
 function ForDoctors() {
   return (
-    <>
+    <div className="flex-grow flex flex-col">
       <SEO title="For Doctors — How ProMedicoz Works" description="How ProMedicoz works for doctors: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person. Free to join." path="/for-doctors" />
 
       <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -82,7 +82,7 @@ function ForDoctors() {
           of leaving a floating pale card in white space above the black
           footer. Mirrors the Home page's bottom CTA band for a consistent,
           finished look. */}
-      <section className="py-12 bg-primary-700 text-white">
+      <section className="py-12 bg-primary-700 text-white flex-grow flex flex-col justify-center">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-2">Ready to join?</h2>
           <p className="text-primary-100 mb-6 max-w-xl mx-auto">Free to join, no commission, you keep your full fee.</p>
@@ -90,7 +90,7 @@ function ForDoctors() {
           <p className="text-primary-100 text-sm mt-5">Questions first? Email <a href="mailto:support@promedicoz.in" className="underline hover:text-white">support@promedicoz.in</a></p>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

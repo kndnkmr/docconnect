@@ -137,7 +137,7 @@ function Home() {
   };
 
   return (
-    <div>
+    <div className="flex-grow flex flex-col">
       <SEO
         title="Find & Book Doctors Online in India"
         description="ProMedicoz - Book doctor appointments online. Find gynaecologists, cardiologists, dermatologists and 20+ specialists. Video, phone or in-person consultations."
@@ -389,8 +389,9 @@ function Home() {
         </div>
       </section>
 
-      {/* ---- CTA ---- */}
-      <section className="py-12 bg-primary-700 text-white">
+      {/* ---- CTA ---- (flex-grow so this blue band fills any leftover space
+           down to the footer on tall screens, instead of leaving a pale gap) */}
+      <section className="py-12 bg-primary-700 text-white flex-grow flex flex-col justify-center">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-3">{t.ctaHeading}</h2>
           <p className="text-primary-100 mb-6 max-w-xl mx-auto">
