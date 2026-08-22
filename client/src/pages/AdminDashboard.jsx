@@ -70,7 +70,7 @@ function AdminDashboard() {
   const handleFreeUpContactInfo = async (acc) => {
     const confirmMsg = acc.isDeleted
       ? `Free up "${acc.name}"'s phone/email so the other account can use it?\n\nThis keeps their record and all appointment history intact — it just renames the contact info out of the way, the same thing that happens automatically when someone re-registers.`
-      : `Reset "${acc.name}" for re-registration?\n\nThis deactivates the account (hidden, can't log in) and renames their phone/email out of the way so they (or someone else) can register fresh with the same details. All existing appointment/prescription/report history is kept intact — nothing is deleted.`;
+      : `Free up "${acc.name}" for a new signup?\n\nThis deactivates the account (hidden, can't log in) and renames their phone/email out of the way so they (or someone else) can register fresh with the same details. All existing appointment/prescription/report history is kept intact — nothing is deleted.\n\nNote: this does NOT reset a password — use "Send Password Reset" for that.`;
     if (!window.confirm(confirmMsg)) return;
     try {
       const response = await adminAPI.freeUpContactInfo(acc._id);
@@ -291,7 +291,7 @@ function AdminDashboard() {
   }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter]);
 
   const handleDeleteUser = async (id, name) => {
-    if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone — there is no recovery from this app.\n\nTip: use "Deactivate" to just hide them, or "Reset for Re-registration" if you want them to sign up fresh with the same phone/email. Both keep all their records intact.`)) return;
+    if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone — there is no recovery from this app.\n\nTip: use "Deactivate" to just hide them, or "Free Up for New Signup" if you want them to sign up fresh with the same phone/email. Both keep all their records intact.`)) return;
     try {
       await adminAPI.deleteUser(id);
       toast.success(`User "${name}" deleted`);
@@ -721,17 +721,17 @@ function AdminDashboard() {
                               <button
                                 onClick={() => handleGenerateResetLink(user)}
                                 className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                                title={user.email ? 'Emails a reset link to this user' : 'No email on file — copies a link for you to send manually'}
+                                title={user.email ? 'Password recovery: emails this user a link to set a new password (keeps their account)' : 'Password recovery: no email on file, copies a link for you to send manually (keeps their account)'}
                               >
-                                Reset Link
+                                Send Password Reset
                               </button>
                             )}
                             <button
                               onClick={() => handleFreeUpContactInfo(user)}
                               className="text-sm font-medium text-purple-600 hover:text-purple-800"
-                              title="Deactivates (if active) and frees up their phone/email so they can register fresh with the same details — keeps all history"
+                              title="Lets this person sign up again from scratch: deactivates the account and frees up their phone/email so it can be reused for a brand-new registration — keeps all their past records"
                             >
-                              Reset for Re-registration
+                              Free Up for New Signup
                             </button>
                             <button
                               onClick={() => handleDeleteUser(user._id, user.name)}
