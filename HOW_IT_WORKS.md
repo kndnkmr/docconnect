@@ -1012,6 +1012,78 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   `doctorPrescriptions` data already fetched for the appointment card's
   next-step hint, so it added no new API calls.
 
+### Doctor Languages Spoken + Patient Language Filter
+
+- New `User.languagesSpoken: [String]` (default `[]`). Deliberately NOT an
+  enum — the master language list lives in the frontend
+  (`client/src/utils/languages.js`, `LANGUAGES` + `SPOKEN_LANGUAGE_OPTIONS`)
+  so adding a language needs no schema/migration and we never reject a
+  language a doctor legitimately speaks. Doctors pick from checkboxes in Edit
+  Profile; it shows as "Speaks: …" on the card (`DoctorList`) and profile
+  (`DoctorProfile`).
+- Search filter: `GET /api/doctors?language=Bengali` uses `$elemMatch` with an
+  anchored, escaped, case-insensitive regex so "bengali" matches a stored
+  "Bengali" but "Beng" does NOT partial-match. We store the English name (so
+  data stays searchable/consistent) but display "English (native script)".
+- This is a spoken-language attribute the doctor selects — NOT a translation
+  of anything they type. Prescriptions/notes stay English.
+- One-time admin backfill `POST /api/admin/backfill-doctor-languages`
+  (`backfillDoctorLanguages`) seeds `['Hindi','English']` on doctors whose
+  field is empty/missing, since the field didn't exist when they registered.
+  Idempotent (a second run updates 0), never overwrites a doctor who chose
+  their own, ignores patients. Verified with an in-memory DB test.
+
+### "Get the App" — install + share (`/install`)
+
+- **Why:** the navbar's quick-install button relies on the `beforeinstallprompt`
+  event, which only fires on Chrome/Android. On iOS/Safari it NEVER fires, so
+  iPhone users had no way to install and no guidance. There was also no way to
+  share the app.
+- `InstallApp.jsx`: reuses `beforeinstallprompt` for a one-tap Android/Chrome
+  install; gives explicit "Add to Home Screen" steps for iPhone/Safari (the
+  only possible path on iOS — Apple allows no install button); a Share section
+  using `navigator.share` (same API as prescription sharing) with a WhatsApp
+  share + copy-link fallback; and a QR code via `qrcode.react` rendered
+  client-side as SVG (no third-party QR service, no data leaves the app).
+- Discoverable in three spots: navbar "📲 Get App" link (guests, desktop +
+  mobile), a compact bilingual Home-page strip, and a role-neutral footer pill.
+  The old standalone Chrome-only "Install" button was removed from the guest
+  navbar to avoid duplicating the new link.
+- `qrcode.react@4.2.0` is the only new dependency; it adds nothing to `npm
+  audit` (the pre-existing warnings are unrelated transitive deps).
+
+### Pre-signup info pages + legal pages
+
+- `/for-doctors` and `/how-it-works` answer "how does payment work / how do
+  patients join?" BEFORE signup (a doctor actually asked). Content is grounded
+  in the real flow verified in `Dashboard.jsx` (statuses pending/confirmed/
+  completed/cancelled; paymentStatus pending/patient_claimed/paid; direct UPI
+  patient→doctor, no commission). `/how-it-works` is bilingual (EN/हिंदी) via
+  the same per-page dictionary + shared `promedicoz_lang` pattern as Home.
+- Legal set: `MedicalDisclaimer.jsx`, `CancellationRefund.jsx`, `AboutUs.jsx`
+  (plus the existing Terms/Privacy). The Cancellation & Refund page states the
+  factual truth: ProMedicoz holds no money and takes no commission, so refunds
+  are strictly between patient and doctor.
+
+### Global scroll-to-top on route change
+
+- `components/ScrollToTop.jsx` (mounted once in `App`) resets scroll to the top
+  whenever the URL pathname changes. SPA route changes don't reset scroll
+  natively, so a page opened from a link at the bottom of another page used to
+  open scrolled to the bottom. Keyed on pathname only, so in-page tab switches
+  (Dashboard) and pagination (DoctorList) that scroll within the same route are
+  unaffected.
+
+### UI consistency: gradient header bands + sticky-footer gap fix
+
+- Home, Doctors, Doctor Profile, Blog, and the legal pages now share one
+  primary gradient header band with the content card overlapping it — one
+  visual language across the public site.
+- Sticky-footer gap fix: `main` had `pb-16` (mobile bottom-nav clearance) that
+  rendered as a large pale box between a page's last section and the dark
+  footer on mobile. Moved that clearance onto the footer (`pb-24 md:pb-6`), and
+  pages ending in a colored band let that band `flex-grow` to meet the footer.
+
 ---
 
 ## Complete File Reference

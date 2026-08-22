@@ -37,8 +37,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Helpful empty states: when a search finds no doctor, the patient gets a pre-filled WhatsApp lead-capture prompt (which also tells the admin what specialties/cities patients actually want)
 - Doctor onboarding tracking: the admin Users table shows each doctor's setup completeness (email verified / availability set / profile complete) and can nudge an incomplete doctor with a reminder of exactly what's left — either by email, or via a manual click-to-WhatsApp button that opens WhatsApp with a profile-aware message pre-filled (names the specific missing steps, links to the dashboard) for the admin to review and send. The WhatsApp option needs no paid API and reaches phone-only doctors the email can't
 - Doctor list ranking: the public doctor list is ordered by a profile-quality score (completeness of specialization/fee/availability/photo/qualification/experience/bio/city, then real rating weighted by review count, admin-verified badge, and experience), with newest registration used only as a final tiebreaker — so complete, credible profiles lead and half-empty ones sink, instead of a brand-new empty profile floating to the top just for being newest
+- Languages spoken: doctors pick the languages they can consult in (English, Hindi, Bengali, Telugu, Odia, Kannada, Tamil, Marathi, Gujarati, Punjabi, Malayalam) — shown as "Speaks: …" on their card/profile, and patients can filter doctors by language so local patients find someone they can talk to comfortably. This is a spoken-language attribute the doctor picks, NOT a translation of anything they type (prescriptions stay English). Includes a one-time admin backfill to seed Hindi + English on doctors who registered before the field existed
 - Smart specialization search with fuzzy matching (handles misspellings)
-- Advanced doctor search filters: specialization, name, max fee, "Available Today" (honest — only doctors with a real free slot left today)
+- Advanced doctor search filters: specialization, name, max fee, city, consultation mode, language, and "Available Today" (honest — only doctors with a real free slot left today)
 - Phone number auto-formatting with +91 validation for Indian numbers
 - Patients can register with phone number only (email optional)
 - Doctors register with email (required)
@@ -83,6 +84,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Paginated appointment history in Dashboard (Previous/Next navigation)
 - Modular Dashboard architecture: each tab is a separate component for maintainability
 - PWA support: installable on phone, offline caching, custom app icon
+- "Get the App" page (`/install`): one-tap install on Android/Chrome, clear step-by-step "Add to Home Screen" instructions for iPhone/Safari (where no install button is possible), plus a Share section (native share sheet, WhatsApp share with ready-to-send copy, copy-link) and a client-side QR code of the site — so patients and doctors can install and spread the app. Surfaced in the navbar, a Home-page strip, and the footer (role-neutral)
 - Auto-update PWA: service worker serves HTML network-first and auto-refreshes to the latest version on each deploy (no manual cache clearing needed), with an "Updating to the latest version…" toast
 - SEO optimized: unique page titles, meta descriptions, Open Graph tags per page
 - Structured data (Schema.org): MedicalBusiness, Physician, FAQPage schemas
@@ -121,7 +123,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Google Maps "Get Directions" for in-person appointments
 - Doctor name displayed with "Dr." prefix across the platform
 - Bottom navigation bar for mobile (Home, Doctors, My Appts, Blog)
-- Terms & Conditions and Privacy Policy pages (legal compliance)
+- Legal & info pages: Terms & Conditions, Privacy Policy, Medical Disclaimer, Cancellation & Refund Policy, and an About Us page — all linked in the footer (grouped as "Legal & Support"), stating honestly that ProMedicoz is a free intermediary that takes no commission and never handles payments (direct UPI patient→doctor)
+- Pre-signup info pages: `/for-doctors` (how payment works — keep 100%, no commission — how patients join, the consultation flow, getting started) and `/how-it-works` (patient-facing: find → book → pay the doctor directly after confirmation → join by video/phone/in-person), each ending in a signup CTA. `/how-it-works` is bilingual (English / हिंदी)
 - Medical Registration Number is mandatory for doctor profiles (existing profiles untouched until next edit)
 - Bilingual consent (English + Hindi) before booking (teleconsultation agreement), enforced on both frontend and backend
 - Consent recorded per appointment (timestamp + IP address) for audit/legal protection
@@ -168,6 +171,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 | Axios | HTTP client for API calls |
 | React Hot Toast | Notification popups |
 | socket.io-client | Real-time chat + call ringing (with polling fallback) |
+| qrcode.react | Client-side QR code on the "Get the App" page (renders as SVG in-browser — no third-party call) |
 
 ---
 
@@ -269,7 +273,8 @@ docconnect/
         │   ├── VideoCall.jsx    ← Daily.co video/audio calling integration
         │   ├── SEO.jsx          ← Per-page title, description, Open Graph tags
         │   ├── StructuredData.jsx ← Schema.org JSON-LD markup
-        │   └── WhatsAppButton.jsx ← Floating emergency WhatsApp button
+        │   ├── WhatsAppButton.jsx ← Floating WhatsApp button (guests only)
+        │   └── ScrollToTop.jsx  ← Resets scroll to top on route change
         │
         └── pages/
             ├── Home.jsx         ← Landing page (FAQs + structured data)
@@ -282,6 +287,11 @@ docconnect/
             ├── SpecializationPage.jsx ← SEO landing pages per specialty
             ├── BookAppointment.jsx ← Book with slot selection + family member
             ├── BookingConfirmation.jsx ← Post-booking summary
+            ├── HowItWorks.jsx   ← Patient "how it works" (bilingual EN/हिंदी)
+            ├── ForDoctors.jsx   ← Doctor-facing "how it works" + payment/no-commission
+            ├── InstallApp.jsx   ← "Get the App": install steps + share + QR
+            ├── AboutUs.jsx      ← About page
+            ├── TermsAndConditions.jsx / PrivacyPolicy.jsx / MedicalDisclaimer.jsx / CancellationRefund.jsx ← Legal pages
             ├── Dashboard.jsx    ← Main dashboard layout + appointments tab
             ├── dashboard/       ← Dashboard sub-components
             │   ├── DoctorAvailability.jsx
@@ -550,6 +560,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/admin/duplicate-phones | Admin only | Read-only check for accounts sharing a phone number |
 | POST | /api/admin/users/:id/free-contact-info | Admin only | Non-destructive alternative to Delete: frees up an account's phone/email for reuse (renamed out of the way) and deactivates it if still active — for resolving duplicate accounts, or resetting someone for fresh re-registration. All history is kept intact either way |
 | POST | /api/admin/backfill-patient-ids | Admin only | One-time: assign a Patient ID to patients who registered before this field existed |
+| POST | /api/admin/backfill-doctor-languages | Admin only | One-time: set a default languagesSpoken (Hindi + English, or a custom list in the body) on doctors who registered before the field existed and haven't set any. Idempotent; never overwrites a doctor who already chose their own |
 | POST | /api/admin/users/:id/setup-reminder | Admin only | Email an incomplete doctor a reminder of the onboarding steps still pending (the admin panel also offers a manual click-to-WhatsApp reminder for the same steps — that's frontend-only, opening wa.me with a pre-filled message, so it needs no endpoint) |
 | PUT | /api/admin/users/:id/verify | Admin only | Set/clear the "Verified by ProMedicoz" trust badge (credential check) |
 | POST | /api/admin/users/:id/verify-email | Admin only | Bypass a stuck email verification (email landed in spam): marks the doctor's email verified so they go live for patients |
