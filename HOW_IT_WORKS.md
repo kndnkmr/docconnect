@@ -792,10 +792,12 @@ drift out of sync since nothing enforces it staying accurate.
 - A language toggle appears on the home page (prominently in the hero, not
   the navbar) and the booking flow. The choice is stored in localStorage
   (`promedicoz_lang`) so it carries across pages and visits.
-- Implementation is a per-page string dictionary (`TXT` in `Home.jsx`,
-  `BOOKING_TXT` in `BookAppointment.jsx`) keyed by language — deliberately
-  lightweight, no i18n framework. The shared choice is just the localStorage
-  key; each page owns its own strings.
+- Implementation is a per-page string dictionary (`TXT`/`BOOKING_TXT`/
+  `PATIENT_TXT`) keyed by language — deliberately lightweight, no i18n
+  framework. The shared choice is just the localStorage key; each page owns
+  its own strings. Pages that aren't the "entry" toggle simply READ the stored
+  choice with `const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en')`
+  and don't render their own toggle.
 - Home symptom cards are ALWAYS bilingual (English + Hindi together) — the
   point is a Hindi-speaking patient can tap the right card instead of typing
   English. Booking symptom chips display in the chosen language but STORE the
@@ -805,8 +807,24 @@ drift out of sync since nothing enforces it staying accurate.
   machine-translated — a mistranslated drug/condition is dangerous. Only fixed
   UI labels get curated Hindi. The Hindi copy should be proofread by a native
   speaker before being treated as final.
-- Scope so far: Phase 1 (home) + Phase 2 (booking flow). The patient dashboard
-  is still English (a possible Phase 3).
+- **Scope (current):** the whole patient discovery→booking journey is
+  bilingual — `Home.jsx`, `DoctorList.jsx` (Find a Doctor: header, all search
+  fields/placeholders, filters, empty state, pagination, and the `DoctorCard`
+  labels via a `t` prop), `DoctorProfile.jsx` (badges, buttons, section
+  headings, reviews), `BookAppointment.jsx`, `BookingConfirmation.jsx`,
+  `HowItWorks.jsx`, and `InstallApp.jsx` (install steps + share + the share
+  message itself). Doctor-entered content on those pages (names,
+  specializations, bios, addresses, review text) is shown as-is.
+- **Patient dashboard — PARTIAL Hindi (important nuance):** `Dashboard.jsx`
+  is a SHARED component (same file for doctors and patients). Translating it
+  wholesale would wrongly flip the doctor UI to Hindi. So it uses a
+  patient-only layer: `const pt = PATIENT_TXT[isPatient && _lang === 'hi' ? 'hi' : 'en']`
+  — Hindi ONLY when the viewer is a patient who chose Hindi; `pt` falls back to
+  English for doctors. Only high-value patient labels are translated so far
+  (welcome header/subtitle, patient-visible tab labels, "+ Book New
+  Appointment"). The denser appointment-card status/next-step guidance text is
+  intentionally left English for now — deliberately partial. If you extend it,
+  keep the `pt`-only guard so you never translate a doctor-facing branch.
 
 ### Local SEO City Pages
 
