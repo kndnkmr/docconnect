@@ -869,24 +869,28 @@ function Dashboard() {
       {/* Push notification nudge — works for everyone, including patients
           who registered with phone only (no email on file) */}
       {showPushNudge && (
-        <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🔔</span>
+        <div className="mb-6 p-4 sm:p-5 bg-gradient-to-r from-indigo-600 to-primary-700 text-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3">
+            <span className="text-3xl">🔔</span>
             <div>
-              <p className="font-semibold text-indigo-800">Turn on notifications</p>
-              <p className="text-sm text-indigo-700">Get instant updates on appointments, messages, and calls — even when the app isn't open.</p>
+              <p className="font-bold text-base">Get alerts on your phone — don't miss anything</p>
+              <p className="text-sm text-indigo-100 mt-0.5">
+                {isDoctor
+                  ? "Get notified the instant a patient books, pays, or messages you — right on your phone, even when the app is closed. No email needed."
+                  : "Get notified the instant your doctor confirms your appointment, replies, or the call starts — right on your phone, even when the app is closed. No email needed."}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
             <button
               onClick={handleEnablePush}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 whitespace-nowrap"
+              className="px-5 py-2.5 bg-white text-indigo-700 rounded-lg text-sm font-semibold hover:bg-gray-100 whitespace-nowrap"
             >
-              Enable
+              Turn on alerts
             </button>
             <button
               onClick={dismissPushNudge}
-              className="text-indigo-400 hover:text-indigo-600 text-xl px-1"
+              className="text-indigo-200 hover:text-white text-xl px-1"
               aria-label="Dismiss"
             >
               &times;
@@ -1380,6 +1384,32 @@ function Dashboard() {
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <button onClick={async () => { await appointmentAPI.markPayment(apt._id); toast.success('Payment marked as received'); fetchAppointments(); }} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600">Mark Paid</button>
                       )}
+                      {/* Optional: message the patient the confirmation directly on
+                          WhatsApp (free, manual — opens WhatsApp with a pre-filled
+                          note; the doctor taps send). Shown for confirmed
+                          appointments when the patient has a phone number. Reaches
+                          patients more reliably than email/push. */}
+                      {isDoctor && apt.status === 'confirmed' && apt.patient?.phone && (() => {
+                        const digits = (apt.patient.phone || '').replace(/\D/g, '');
+                        const dateStr = new Date(apt.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+                        const modeLabel = apt.consultationType === 'in-person' ? 'in-person at the clinic' : `by ${apt.consultationType} call`;
+                        const msg =
+                          `Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz.\n\n` +
+                          `Your appointment is confirmed for ${dateStr} at ${apt.timeSlot} (${modeLabel}).\n\n` +
+                          (apt.paymentStatus !== 'paid' ? `Please complete the payment on ProMedicoz to secure your slot. ` : '') +
+                          `You can view details and join here: https://www.promedicoz.in/dashboard`;
+                        return (
+                          <a
+                            href={`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 whitespace-nowrap"
+                            title="Message this patient the confirmation on WhatsApp (you review and send)"
+                          >
+                            📱 WhatsApp Patient
+                          </a>
+                        );
+                      })()}
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && (
                         <>
                           {apt.consultationType !== 'in-person' && isWithinCallWindow(apt) && (
