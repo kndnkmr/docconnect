@@ -22,7 +22,9 @@ function BlogList() {
 
       <div className="container mx-auto px-4 pb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto -mt-8 relative z-10">
-        {articles.map((article) => (
+        {/* Newest first — so recently added articles surface at the top
+            instead of being buried at the end of the list. */}
+        {[...articles].sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate)).map((article) => (
           <Link
             key={article.slug}
             to={`/blog/${article.slug}`}
