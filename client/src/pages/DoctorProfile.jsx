@@ -18,10 +18,52 @@ import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
 import toast from 'react-hot-toast';
 
+// Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
+// translate; doctor-entered content (name, specialization, bio, address,
+// review text) is shown as-is.
+const TXT = {
+  en: {
+    loading: 'Loading profile...',
+    notFoundTitle: 'Doctor Not Found', notFoundMsg: "This profile doesn't exist or was removed.",
+    backToDoctors: '← Back to all doctors',
+    verified: 'Verified by ProMedicoz',
+    yrsExp: (y) => `${y} yrs experience`,
+    feeBadge: (f) => `₹${f} consultation`,
+    consultsDone: (n) => `✅ ${n} consultation${n > 1 ? 's' : ''} completed`,
+    newDoctor: '🆕 New on ProMedicoz',
+    inPerson: '🏥 In-Person', video: '📹 Video', phone: '📞 Phone',
+    speaks: 'Speaks', bookAppointment: 'Book Appointment',
+    messageWhatsApp: 'Message on WhatsApp', shareWhatsApp: 'Share via WhatsApp',
+    loginPrefix: 'Log in', loginSuffix: 'as a patient to book an appointment.',
+    about: 'About', clinicAddress: 'Clinic Address', getDirections: '📍 Get Directions',
+    patientReviews: 'Patient Reviews', noReviews: 'No reviews yet. Be the first to consult and rate!',
+    ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} review${n > 1 ? 's' : ''})`,
+  },
+  hi: {
+    loading: 'प्रोफ़ाइल लोड हो रही है...',
+    notFoundTitle: 'डॉक्टर नहीं मिला', notFoundMsg: 'यह प्रोफ़ाइल मौजूद नहीं है या हटा दी गई है।',
+    backToDoctors: '← सभी डॉक्टर पर वापस जाएं',
+    verified: 'ProMedicoz द्वारा सत्यापित',
+    yrsExp: (y) => `${y} वर्ष का अनुभव`,
+    feeBadge: (f) => `₹${f} परामर्श`,
+    consultsDone: (n) => `✅ ${n} परामर्श पूरे`,
+    newDoctor: '🆕 ProMedicoz पर नया',
+    inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो', phone: '📞 फ़ोन',
+    speaks: 'बोलते हैं', bookAppointment: 'अपॉइंटमेंट बुक करें',
+    messageWhatsApp: 'WhatsApp पर संदेश भेजें', shareWhatsApp: 'WhatsApp पर साझा करें',
+    loginPrefix: 'लॉग इन करें', loginSuffix: 'और मरीज़ के रूप में अपॉइंटमेंट बुक करें।',
+    about: 'परिचय', clinicAddress: 'क्लिनिक का पता', getDirections: '📍 रास्ता देखें',
+    patientReviews: 'मरीज़ों की समीक्षाएं', noReviews: 'अभी कोई समीक्षा नहीं। पहले परामर्श लें और रेटिंग दें!',
+    ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} समीक्षा${n > 1 ? 'एं' : ''})`,
+  },
+};
+
 function DoctorProfile() {
   const { id } = useParams();
   // If URL is /doctors/abc123, then id = "abc123"
 
+  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const t = TXT[lang];
   const { isAuthenticated, isPatient } = useAuth();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +104,7 @@ function DoctorProfile() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-lg text-gray-600">Loading profile...</div>
+        <div className="text-lg text-gray-600">{t.loading}</div>
       </div>
     );
   }
@@ -73,10 +115,10 @@ function DoctorProfile() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="text-5xl mb-4">😕</div>
-          <h2 className="text-2xl font-bold text-gray-800">Doctor Not Found</h2>
-          <p className="text-gray-600 mt-2">This profile doesn't exist or was removed.</p>
+          <h2 className="text-2xl font-bold text-gray-800">{t.notFoundTitle}</h2>
+          <p className="text-gray-600 mt-2">{t.notFoundMsg}</p>
           <Link to="/doctors" className="text-primary-600 hover:underline mt-4 inline-block">
-            ← Back to all doctors
+            {t.backToDoctors}
           </Link>
         </div>
       </div>
@@ -99,7 +141,7 @@ function DoctorProfile() {
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-16">
           <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
-            ← Back to all doctors
+            {t.backToDoctors}
           </Link>
         </div>
       </div>
@@ -132,7 +174,7 @@ function DoctorProfile() {
               {doctor.isAdminVerified && <VerifiedBadge size={22} />}
             </h1>
             {doctor.isAdminVerified && (
-              <p className="text-xs text-blue-600 font-medium mt-0.5">Verified by ProMedicoz</p>
+              <p className="text-xs text-blue-600 font-medium mt-0.5">{t.verified}</p>
             )}
 
             {doctor.specialization && (
@@ -155,12 +197,12 @@ function DoctorProfile() {
             <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
               {doctor.experience > 0 && (
                 <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  {doctor.experience} yrs experience
+                  {t.yrsExp(doctor.experience)}
                 </span>
               )}
               {doctor.consultationFee > 0 && (
                 <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  ₹{doctor.consultationFee} consultation
+                  {t.feeBadge(doctor.consultationFee)}
                 </span>
               )}
               {doctor.city && (
@@ -170,11 +212,11 @@ function DoctorProfile() {
               )}
               {doctor.completedConsultations > 0 ? (
                 <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  ✅ {doctor.completedConsultations} consultation{doctor.completedConsultations > 1 ? 's' : ''} completed
+                  {t.consultsDone(doctor.completedConsultations)}
                 </span>
               ) : (
                 <span className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium">
-                  🆕 New on ProMedicoz
+                  {t.newDoctor}
                 </span>
               )}
             </div>
@@ -182,16 +224,16 @@ function DoctorProfile() {
             {/* Consultation modes */}
             {doctor.consultationModes && doctor.consultationModes.length > 0 && (
               <div className="flex flex-wrap justify-center md:justify-start gap-1 mt-2">
-                {doctor.consultationModes.includes('in-person') && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">🏥 In-Person</span>}
-                {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">📹 Video</span>}
-                {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">📞 Phone</span>}
+                {doctor.consultationModes.includes('in-person') && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">{t.inPerson}</span>}
+                {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">{t.video}</span>}
+                {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">{t.phone}</span>}
               </div>
             )}
 
             {/* Languages the doctor can consult in */}
             {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
               <p className="text-gray-600 text-sm mt-3 text-center md:text-left">
-                🗣️ <span className="font-medium text-gray-700">Speaks:</span> {doctor.languagesSpoken.join(', ')}
+                🗣️ <span className="font-medium text-gray-700">{t.speaks}:</span> {doctor.languagesSpoken.join(', ')}
               </p>
             )}
 
@@ -202,7 +244,7 @@ function DoctorProfile() {
                   to={`/book-appointment/${doctor._id}`}
                   className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
                 >
-                  Book Appointment
+                  {t.bookAppointment}
                 </Link>
               )}
 
@@ -216,7 +258,7 @@ function DoctorProfile() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
                 >
-                  <span>💬</span> Message on WhatsApp
+                  <span>💬</span> {t.messageWhatsApp}
                 </a>
               )}
 
@@ -229,16 +271,16 @@ function DoctorProfile() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
               >
-                <span>📤</span> Share via WhatsApp
+                <span>📤</span> {t.shareWhatsApp}
               </button>
             </div>
 
             {!isAuthenticated && (
               <p className="mt-3 text-sm text-gray-500">
                 <Link to="/login" className="text-primary-600 hover:underline">
-                  Log in
+                  {t.loginPrefix}
                 </Link>{' '}
-                as a patient to book an appointment.
+                {t.loginSuffix}
               </p>
             )}
           </div>
@@ -250,7 +292,7 @@ function DoctorProfile() {
             {/* About */}
             {doctor.bio && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">About</h2>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.about}</h2>
                 <p className="text-gray-600 leading-relaxed">{doctor.bio}</p>
                 {/* leading-relaxed = more line spacing (easier to read paragraphs) */}
               </div>
@@ -259,7 +301,7 @@ function DoctorProfile() {
             {/* Clinic Address */}
             {doctor.clinicAddress && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">Clinic Address</h2>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.clinicAddress}</h2>
                 <p className="text-gray-600">{doctor.clinicAddress}</p>
                 <a
                   href={doctor.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(doctor.clinicAddress || doctor.city || '')}`}
@@ -267,7 +309,7 @@ function DoctorProfile() {
                   rel="noopener noreferrer"
                   className="inline-block mt-2 text-sm text-primary-600 hover:underline font-medium"
                 >
-                  📍 Get Directions
+                  {t.getDirections}
                 </a>
               </div>
             )}
@@ -277,16 +319,16 @@ function DoctorProfile() {
         {/* ---- Reviews Section ---- */}
         <div className="border-t p-8">
           <div className="flex items-center gap-3 mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Patient Reviews</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t.patientReviews}</h2>
             {reviewStats.totalReviews > 0 && (
               <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
-                ⭐ {reviewStats.averageRating} / 5 ({reviewStats.totalReviews} reviews)
+                {t.ratingBadge(reviewStats.averageRating, reviewStats.totalReviews)}
               </span>
             )}
           </div>
 
           {reviews.length === 0 ? (
-            <p className="text-gray-500">No reviews yet. Be the first to consult and rate!</p>
+            <p className="text-gray-500">{t.noReviews}</p>
           ) : (
             <div className="space-y-4">
               {reviews.map((review) => (
