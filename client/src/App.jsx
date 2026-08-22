@@ -227,8 +227,7 @@ function App() {
                 <li><a href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/medical-disclaimer" className="text-gray-400 hover:text-white transition-colors">Medical Disclaimer</a></li>
                 <li><a href="/cancellation-refund" className="text-gray-400 hover:text-white transition-colors">Cancellation & Refund</a></li>
-                <li><a href="mailto:support@promedicoz.in?subject=Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Grievance / Support</a></li>
-                <li><a href="mailto:support@promedicoz.in?subject=Support%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="mailto:support@promedicoz.in?subject=Contact%20%2F%20Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Contact / Grievance</a></li>
               </ul>
             </div>
           </div>
