@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder, markEmailVerified } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -52,6 +52,12 @@ router.post('/users/:id/free-contact-info', freeUpContactInfo);
 // POST /api/admin/backfill-patient-ids - one-time: assign a Patient ID to
 // any existing patient who registered before this field existed
 router.post('/backfill-patient-ids', backfillPatientIds);
+
+// POST /api/admin/backfill-doctor-languages - one-time: set a default
+// languagesSpoken (Hindi + English) on doctors who registered before the
+// field existed and haven't set any yet. Idempotent; never overwrites a
+// doctor who already chose their own languages.
+router.post('/backfill-doctor-languages', backfillDoctorLanguages);
 
 // POST /api/admin/users/:id/setup-reminder - email an incomplete doctor a
 // nudge listing the onboarding steps they still need to finish

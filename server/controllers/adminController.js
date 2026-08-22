@@ -757,4 +757,50 @@ const backfillPatientIds = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, sendDoctorSetupReminder, markEmailVerified };
+// ============================================
+// BACKFILL DOCTOR LANGUAGES (admin, one-time)
+// ============================================
+// Endpoint: POST /api/admin/backfill-doctor-languages
+//
+// The "languages you can consult in" field didn't exist when the current
+// doctors registered, so they couldn't have set it — their languagesSpoken
+// is empty. Since all current doctors speak Hindi + English, seed that as a
+// sensible default so the "Speaks: ..." line and the patient language filter
+// have real data immediately, while doctors are told to refine it themselves.
+//
+// SAFETY: only touches doctors whose languagesSpoken is empty or missing —
+// it never overwrites a doctor who has already chosen their own languages.
+// Idempotent: running it again after doctors have set languages is a no-op
+// for them (they no longer match the filter). Default is configurable via
+// the request body { languages: [...] } but falls back to Hindi + English.
+
+const backfillDoctorLanguages = async (req, res) => {
+  try {
+    const defaults = Array.isArray(req.body?.languages) && req.body.languages.length > 0
+      ? req.body.languages
+      : ['Hindi', 'English'];
+
+    // Match doctors with no languages set yet: field missing, empty array.
+    const filter = {
+      role: 'doctor',
+      $or: [
+        { languagesSpoken: { $exists: false } },
+        { languagesSpoken: { $size: 0 } }
+      ]
+    };
+
+    const result = await User.updateMany(filter, { $set: { languagesSpoken: defaults } });
+    const updated = result.modifiedCount != null ? result.modifiedCount : result.nModified || 0;
+
+    res.json({
+      message: `Set languages (${defaults.join(', ')}) on ${updated} doctor(s) who hadn't set any. Doctors can change this in Edit Profile.`,
+      updated,
+      languages: defaults
+    });
+  } catch (error) {
+    console.error('Backfill doctor languages error:', error.message);
+    res.status(500).json({ message: 'Error backfilling doctor languages' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified };
