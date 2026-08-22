@@ -84,14 +84,18 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Paginated appointment history in Dashboard (Previous/Next navigation)
 - Modular Dashboard architecture: each tab is a separate component for maintainability
 - PWA support: installable on phone, offline caching, custom app icon
-- "Get the App" page (`/install`): one-tap install on Android/Chrome, clear step-by-step "Add to Home Screen" instructions for iPhone/Safari (where no install button is possible), plus a Share section (native share sheet, WhatsApp share with ready-to-send copy, copy-link) and a client-side QR code of the site — so patients and doctors can install and spread the app. Surfaced in the navbar, a Home-page strip, and the footer (role-neutral)
+- "Get the App" page (`/install`, bilingual EN/हिंदी): one-tap install on Android/Chrome, clear step-by-step "Add to Home Screen" instructions for iPhone/Safari (where no install button is possible), plus a full Share section — native share sheet, direct per-platform buttons (WhatsApp, Facebook, Telegram, X, LinkedIn, Email), copy-link, a ready-to-post caption with a "Copy caption" button, and a client-side QR code of the site. Surfaced in the navbar, a Home-page strip, and the footer (role-neutral)
+- Social link previews: Open Graph + Twitter large-image tags in the static HTML (so Facebook/WhatsApp/LinkedIn show a proper card), pointing at a 1200×630 branded `og-image.png`. Ready-to-post branded social graphics ship in `client/public/social/` (a vertical 1080×1920 Story image, a 1080×1080 square, and health-tip / doctor-recruitment / "book in 2 minutes" posts)
+- Doctors can share their own public profile with their existing patients from the dashboard (WhatsApp share + copy profile link) — the highest-trust, zero-cost way to bring patients onto the platform
+- Free phone-reach without a paid SMS/WhatsApp API: Web Push delivers booking/confirmation/message/call alerts to phones automatically (a prominent, benefit-driven enable prompt drives opt-in), and doctors get an optional one-tap "message on WhatsApp" button on a confirmed appointment (opens WhatsApp with a pre-filled note; the doctor sends it — the appointment is already confirmed in-app)
+- Doctor names are cleaned for display everywhere (strips a doctor-typed "Dr"/"Dr." prefix and title-cases the name, so "Dr akash verma" shows as "Dr. Akash Verma") — display only; the stored name is unchanged
 - Auto-update PWA: service worker serves HTML network-first and auto-refreshes to the latest version on each deploy (no manual cache clearing needed), with an "Updating to the latest version…" toast
 - SEO optimized: unique page titles, meta descriptions, Open Graph tags per page
 - Structured data (Schema.org): MedicalBusiness, Physician, FAQPage schemas
 - 10 dedicated specialization landing pages with FAQs (targets long-tail keywords)
 - Homepage FAQ section with expandable questions and structured data
 - Google Analytics integration for visitor tracking
-- Google Search Console with sitemap (14 indexed pages)
+- Google Search Console with sitemap (all key pages incl. the health-blog articles and specialization/info pages)
 - robots.txt configured (blocks private pages from indexing)
 - Email verification for doctors (must verify email to appear in patient search) — verification is idempotent, so an email security scanner pre-visiting the link (common with Outlook Safe Links and similar) no longer causes a false "expired" error on the doctor's real click
 - Dashboard verification banner with "Resend Email" button for unverified doctors (includes a "check your spam folder" note, since new-domain verification emails can land there)
@@ -124,7 +128,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Doctor name displayed with "Dr." prefix across the platform
 - Bottom navigation bar for mobile (Home, Doctors, My Appts, Blog)
 - Legal & info pages: Terms & Conditions, Privacy Policy, Medical Disclaimer, Cancellation & Refund Policy, and an About Us page — all linked in the footer (grouped as "Legal & Support"), stating honestly that ProMedicoz is a free intermediary that takes no commission and never handles payments (direct UPI patient→doctor)
-- Pre-signup info pages: `/for-doctors` (how payment works — keep 100%, no commission — how patients join, the consultation flow, getting started) and `/how-it-works` (patient-facing: find → book → pay the doctor directly after confirmation → join by video/phone/in-person), each ending in a signup CTA. `/how-it-works` is bilingual (English / हिंदी)
+- Pre-signup info pages: `/for-doctors` (how payment works — keep 100%, no commission — how patients join, the consultation flow, getting started, plus a FAQ answering doctors' real objections: "will I lose my existing patients?", "why is it free?", payment/privacy/availability/leave-anytime) and `/how-it-works` (patient-facing: find → book → pay the doctor directly after confirmation → join by video/phone/in-person), each ending in a signup CTA. `/how-it-works` is bilingual (English / हिंदी)
 - Medical Registration Number is mandatory for doctor profiles (existing profiles untouched until next edit)
 - Bilingual consent (English + Hindi) before booking (teleconsultation agreement), enforced on both frontend and backend
 - Consent recorded per appointment (timestamp + IP address) for audit/legal protection

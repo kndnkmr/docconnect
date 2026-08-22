@@ -1102,6 +1102,69 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   footer on mobile. Moved that clearance onto the footer (`pb-24 md:pb-6`), and
   pages ending in a colored band let that band `flex-grow` to meet the footer.
 
+### Social sharing + link previews
+
+- **Link previews (Open Graph):** the OG + `twitter:summary_large_image` tags
+  live in the STATIC `index.html` (and mirrored in `SEO.jsx`) because social
+  scrapers usually don't run JS — JS-injected tags aren't seen. They point at
+  a real 1200×630 `client/public/og-image.png`. **Gotcha:** the file must
+  actually exist — a missing `/og-image.png` still returns 200 via the SPA
+  HTML fallback, so a broken image looks "present". Facebook caches previews,
+  so after changes you must re-scrape once in Facebook's Sharing Debugger.
+- **Images are generated from SVG via `rsvg-convert`** (SVG sources kept next
+  to the PNGs in `client/public/` and `client/public/social/`). `rsvg` can't
+  render color emoji — use drawn shapes (e.g. the medical-cross logo tile),
+  not emoji, in these SVGs. Sizes: `og-image` 1200×630 (feed/link),
+  `social/story` 1080×1920 (Stories), `social/square` + post graphics 1080×1080.
+- **Share UI (`InstallApp.jsx`):** native `navigator.share`, per-platform
+  links (WhatsApp/Facebook/Telegram/X/LinkedIn/Email — Facebook's sharer only
+  takes the URL, so its card comes from the OG tags), copy-link, and a
+  copy-caption button (uploading an image to a story carries no text, so the
+  caption is copied separately). Bilingual.
+- `qrcode.react` renders the QR client-side as SVG (no third-party call).
+
+### Free phone reach (no paid SMS/WhatsApp API)
+
+- **Web Push** already delivers booking/confirm/message/call alerts to phones
+  automatically and free (works for phone-only users). The only gate is opt-in,
+  so the enable-prompt in `Dashboard.jsx` was made prominent + benefit-driven +
+  role-aware to lift adoption. This is the primary, automatic phone channel.
+- **Doctor click-to-WhatsApp on a confirmed appointment:** a secondary,
+  clearly-optional outline button ("📱 Also message on WhatsApp (optional)")
+  that opens `wa.me` to the patient's phone with a pre-filled confirmation. The
+  DOCTOR taps send — manual, free, no API, no ban risk. Deliberately styled as
+  secondary (not solid) with an explicit tooltip so doctors don't think it's a
+  required second confirmation step (the real confirm is the in-app button).
+- Why not automated SMS/WhatsApp: automated WhatsApp needs the paid WhatsApp
+  Business API (Meta verification + approved templates) or a DLT-registered SMS
+  gateway (MSG91/Fast2SMS) — both cost money and setup, deferred until volume.
+
+### Doctor growth: share-your-profile + name formatting
+
+- **`utils/formatName.js`** (`cleanDoctorName`/`formatDoctorName`): doctors type
+  their own name, so we saw "Dr. Dr Akash verma" (doubled prefix) and casing
+  like "verma". The formatter strips a leading "Dr"/"Dr."/"doctor" and
+  title-cases the name — DISPLAY only, stored name unchanged. Applied on
+  `DoctorProfile.jsx` (heading, SEO, WhatsApp/share text) and `DoctorList.jsx`
+  cards. If you show a doctor name with a "Dr." prefix anywhere new, use
+  `formatDoctorName` so it stays consistent.
+- **Doctor "share your profile" card** on the dashboard (verified doctors):
+  WhatsApp-share + copy of their public profile URL
+  (`/doctors/{user._id}`) so they seed their own patients — highest-trust,
+  zero-cost growth. Doctor-facing card, English.
+
+### SEO blog articles (growth)
+
+- `blog/blogData.js` holds static articles (`{slug,title,description,
+  specialization,publishedDate,readTime,image,content:[{type,text}]}`; content
+  types intro/heading/paragraph). Added 5 symptom/question-based articles
+  (is-online-consultation-safe, frequent-headaches, fever-home-care, how-to-
+  book-online) that cast a wider net than the per-specialty ones. **Each
+  article's `specialization` must map to a real specialty** — the article
+  page's CTA links to `/doctors?specialization=...`. New articles must also be
+  added to `client/public/sitemap.xml` for Google to find them (SEO is a slow
+  burn; resubmit the sitemap in Search Console after adding).
+
 ---
 
 ## Complete File Reference
