@@ -75,6 +75,73 @@ function ForDoctors() {
           <h2 className="text-xl font-semibold text-gray-800 mb-3">Who can join</h2>
           <p>Registered medical practitioners with a valid medical license (registered with the National Medical Commission or a State Medical Council). You practise independently — ProMedicoz is a platform that connects you with patients, not your employer. See our <Link to="/terms" className="text-primary-600 hover:underline">Terms</Link> and <Link to="/medical-disclaimer" className="text-primary-600 hover:underline">Medical Disclaimer</Link>.</p>
         </section>
+
+        {/* FAQ — leads with the two objections doctors raise most: losing
+            existing patients, and why it's free. Written to reassure. */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Doctors' most common questions</h2>
+          <div className="space-y-3">
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>Will I lose my existing patients if I join?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                No — ProMedicoz only adds to your practice, it doesn't take anything away. Your existing patients stay yours and keep visiting you exactly as before. What changes is that <strong>new</strong> patients — people searching online who would never have found your clinic otherwise — can now discover you, see your qualifications and reviews, and book you. Think of it as a second, always-open front door to your practice, not a replacement for the one you already have. You even get a shareable profile link you can send to your current patients so <em>they</em> can book you more easily too.
+              </p>
+            </details>
+
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>Why is it free? What's the catch?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                There's no catch. ProMedicoz takes <strong>no commission and charges you nothing</strong> — you keep 100% of every consultation fee, paid to you directly by the patient via your own UPI. The big platforms take a cut of your earnings or charge listing fees, which quietly eats into what you make and pushes you to raise your prices. We deliberately don't do that. Keeping the platform free lets you keep your fees affordable, which brings you more patients — and that's the whole point: help good doctors reach more people, not tax them for it.
+              </p>
+            </details>
+
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>How do I get paid?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                Directly and fully. The patient pays your fee straight to your UPI ID / QR code — ProMedicoz never touches, holds, or delays the money. You set your own fee, and you confirm the payment on your side before the consultation. There's nothing to withdraw and no settlement wait.
+              </p>
+            </details>
+
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>Is my personal number and data safe?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                Yes. You choose what patients see. Your login phone number is not shown publicly — a WhatsApp number only appears on your profile if you deliberately add one as a contact option, and you can leave it out. Patient conversations happen through the in-app chat and calls. See our <Link to="/privacy" className="text-primary-600 hover:underline">Privacy Policy</Link> for how data is handled.
+              </p>
+            </details>
+
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>Do I have to be available all the time?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                No. You set your own weekly availability — only the days and hours you choose. Patients can only book the slots you've opened, and you confirm each appointment before it's final. It fits around your existing clinic hours, not the other way around.
+              </p>
+            </details>
+
+            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
+              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+                <span>Can I leave whenever I want?</span>
+                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+              </summary>
+              <p className="text-gray-600 mt-3">
+                Anytime. There's no lock-in, no contract, and no fee. You can deactivate your profile or delete your account whenever you like. Since it costs you nothing and only brings you additional patients, there's really nothing to lose by trying it.
+              </p>
+            </details>
+          </div>
+        </section>
       </div>
       </div>
 
