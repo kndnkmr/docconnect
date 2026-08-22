@@ -1519,6 +1519,10 @@ function Dashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">UPI QR Code (for receiving payments) *</label>
               <p className="text-xs text-gray-500 mb-2">Upload a screenshot of your GPay/PhonePe/Paytm QR code. Patients will scan this to pay you.</p>
+              <div className="text-xs text-green-800 bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                <p className="font-medium">🔒 Safe to share — your QR can only receive money</p>
+                <p className="mt-1 text-green-700">A UPI QR code only lets patients <strong>send</strong> payment to you. It can never be used to withdraw money from your account, and it doesn't reveal your bank account number, card, or PIN — it only carries your UPI ID. It's the same QR you'd display at a shop counter.</p>
+              </div>
               {profileData.upiQrCode && (
                 <img src={getUploadUrl(profileData.upiQrCode)} alt="Current QR" className="w-32 h-32 object-contain border rounded-lg mb-2" />
               )}

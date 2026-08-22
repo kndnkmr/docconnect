@@ -28,6 +28,7 @@ function ForDoctors() {
             <li className="flex gap-2"><span>✅</span><span><strong>Patients pay you directly.</strong> The payment goes straight to your own UPI ID / QR code — ProMedicoz never collects, holds, or processes any money.</span></li>
             <li className="flex gap-2"><span>✅</span><span><strong>You set your own fee.</strong> Enter your consultation fee in your profile; patients see it before booking.</span></li>
             <li className="flex gap-2"><span>✅</span><span><strong>You confirm the payment.</strong> After a patient pays and taps "I Have Paid" (they can also upload a receipt), you verify it on your side before the consultation.</span></li>
+            <li className="flex gap-2"><span>🔒</span><span><strong>Your UPI QR is safe to share.</strong> It can only <em>receive</em> money — it can never be used to withdraw from your account, and it doesn't reveal your bank account number, card, or PIN. It's the same QR you'd show at a shop counter.</span></li>
           </ul>
           <p className="mt-3 text-gray-600">In short: ProMedicoz connects you with patients; the money is always directly between you and the patient.</p>
         </section>
