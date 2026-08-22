@@ -105,7 +105,7 @@ function App() {
           flex column so a page can let its last section stretch to fill the
           leftover space (avoids an orphan pale gap between a page's final
           colored band and the dark footer on tall screens). */}
-      <main className="flex-grow flex flex-col pb-16 md:pb-0">
+      <main className="flex-grow flex flex-col">
         {/*
           Routes = "Look at the current URL and render the matching component"
           Each Route maps a path to a page component
@@ -197,7 +197,11 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white pt-10 pb-6">
+      {/* Extra bottom padding on mobile (pb-24) so the fixed BottomNav bar
+          doesn't cover the footer's last line; removed at md+ where there's
+          no bottom nav. This lives on the footer (not main) so it never
+          creates a white gap between a page's content and the footer. */}
+      <footer className="bg-gray-800 text-white pt-10 pb-24 md:pb-6">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
