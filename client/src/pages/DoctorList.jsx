@@ -15,6 +15,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import VerifiedBadge from '../components/VerifiedBadge';
+import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import toast from 'react-hot-toast';
 
 function DoctorList() {
@@ -42,6 +43,7 @@ function DoctorList() {
   const [availableToday, setAvailableToday] = useState(false);
   const [city, setCity] = useState('');
   const [consultationMode, setConsultationMode] = useState('');
+  const [language, setLanguage] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // List of common specializations (for smart suggestions)
@@ -104,6 +106,7 @@ function DoctorList() {
       if (availableToday) params.availableToday = 'true';
       if (city) params.city = city;
       if (consultationMode) params.consultationMode = consultationMode;
+      if (language) params.language = language;
 
       const response = await doctorAPI.getAll(params);
       // This calls GET /api/doctors?page=1&limit=9&name=...&specialization=...
@@ -231,6 +234,17 @@ function DoctorList() {
               <option value="in-person">🏥 In-Person</option>
               <option value="video">📹 Video Call</option>
               <option value="phone">📞 Phone Call</option>
+            </select>
+          </div>
+
+          {/* Language filter — find a doctor who speaks the patient's language */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
+              <option value="">Any Language</option>
+              {SPOKEN_LANGUAGE_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
           </div>
 
@@ -478,6 +492,14 @@ function DoctorCard({ doctor }) {
             {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">📹 Video</span>}
             {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">📞 Phone</span>}
           </div>
+        )}
+
+        {/* Languages the doctor can consult in — helps local patients find
+            someone they can talk to comfortably */}
+        {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
+          <p className="text-gray-500 text-xs mt-2">
+            🗣️ Speaks: {doctor.languagesSpoken.join(', ')}
+          </p>
         )}
 
         {/* View Profile link */}

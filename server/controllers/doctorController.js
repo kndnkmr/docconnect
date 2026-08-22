@@ -243,6 +243,16 @@ const getAllDoctors = async (req, res) => {
       filter.consultationModes = req.query.consultationMode;
     }
 
+    // Filter by a language the doctor consults in. languagesSpoken is an
+    // array; matching a scalar against an array field matches when the array
+    // CONTAINS that value. Use an anchored, case-insensitive regex (escaped)
+    // so "bengali" matches a stored "Bengali" without matching substrings of
+    // an unrelated language.
+    if (req.query.language) {
+      const escaped = req.query.language.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.languagesSpoken = { $elemMatch: { $regex: `^${escaped}$`, $options: 'i' } };
+    }
+
     const wantAvailableToday = req.query.availableToday === 'true';
 
     // As a cheap pre-filter for "available today", narrow to doctors who have a
@@ -447,6 +457,7 @@ const updateDoctorProfile = async (req, res) => {
       'city',
       'googleMapsLink',
       'consultationModes',
+      'languagesSpoken',
       'consultationFee',
       'bio',
       'profilePhoto',

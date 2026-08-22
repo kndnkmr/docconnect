@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reportAPI, reviewAPI, messageAPI, availabilityAPI } from '../services/api';
 import { getUploadUrl } from '../services/api';
 import { getSocket } from '../services/socket';
+import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import ChatBox from '../components/ChatBox';
@@ -223,7 +224,8 @@ function Dashboard() {
     specialization: '', experience: '', qualification: '', medicalRegistrationNo: '',
     clinicAddress: '', consultationFee: '', bio: '',
     phone: '', whatsappNumber: '', upiId: '', upiQrCode: '', profilePhoto: '',
-    city: '', googleMapsLink: '', consultationModes: ['in-person']
+    city: '', googleMapsLink: '', consultationModes: ['in-person'],
+    languagesSpoken: []
   });
   const photoInputRef = useRef(null); // hidden file input for one-click photo upload
 
@@ -325,7 +327,8 @@ function Dashboard() {
         phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
         upiQrCode: d.upiQrCode || '', profilePhoto: d.profilePhoto || '',
         city: d.city || '', googleMapsLink: d.googleMapsLink || '',
-        consultationModes: d.consultationModes || ['in-person']
+        consultationModes: d.consultationModes || ['in-person'],
+        languagesSpoken: d.languagesSpoken || []
       });
     } catch (error) { console.error('Fetch profile error:', error); }
     finally { setProfileLoaded(true); }
@@ -1471,6 +1474,30 @@ function Dashboard() {
                 ))}
               </div>
               <p className="text-xs text-gray-500 mt-1">Select all consultation types you offer</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Languages You Can Consult In</label>
+              <div className="flex flex-wrap gap-3">
+                {SPOKEN_LANGUAGE_OPTIONS.map(opt => (
+                  <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={profileData.languagesSpoken?.includes(opt.value)}
+                      onChange={(e) => {
+                        const langs = profileData.languagesSpoken || [];
+                        if (e.target.checked) {
+                          setProfileData(prev => ({ ...prev, languagesSpoken: [...langs, opt.value] }));
+                        } else {
+                          setProfileData(prev => ({ ...prev, languagesSpoken: langs.filter(l => l !== opt.value) }));
+                        }
+                      }}
+                      className="w-4 h-4 text-primary-600 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Patients can filter doctors by language — this helps local patients find a doctor they can talk to comfortably. (Prescriptions and written notes stay in English.)</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio / About</label>

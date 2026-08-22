@@ -150,6 +150,19 @@ const userSchema = new mongoose.Schema({
     // What consultation types this doctor offers
   },
 
+  // --- Languages the doctor can CONSULT in (doctor-specific) ---
+  // Free-form list of language names (e.g. ["Hindi", "English", "Bengali"]).
+  // Shown on the doctor's card/profile ("Speaks: ...") and patients can
+  // filter doctors by language. This is a spoken-language attribute the
+  // doctor picks themselves — NOT a translation of anything they type.
+  // Deliberately not an enum: the master list lives in the frontend so new
+  // languages can be added without a schema/migration change, and we don't
+  // want to reject a language a doctor legitimately speaks.
+  languagesSpoken: {
+    type: [String],
+    default: []
+  },
+
   consultationFee: {
     type: Number,          // Fee in your currency
     default: 0,

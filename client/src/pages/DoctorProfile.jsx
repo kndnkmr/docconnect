@@ -180,6 +180,13 @@ function DoctorProfile() {
               </div>
             )}
 
+            {/* Languages the doctor can consult in */}
+            {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
+              <p className="text-gray-600 text-sm mt-3 text-center md:text-left">
+                🗣️ <span className="font-medium text-gray-700">Speaks:</span> {doctor.languagesSpoken.join(', ')}
+              </p>
+            )}
+
             {/* Actions */}
             <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-6">
               {isAuthenticated && isPatient && (
