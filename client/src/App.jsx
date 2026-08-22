@@ -201,7 +201,7 @@ function App() {
           doesn't cover the footer's last line; removed at md+ where there's
           no bottom nav. This lives on the footer (not main) so it never
           creates a white gap between a page's content and the footer. */}
-      <footer className="bg-gray-800 text-white pt-10 pb-24 md:pb-6">
+      <footer className="bg-gray-800 text-white pt-10 pb-24 md:pb-6 mt-4">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
@@ -213,7 +213,7 @@ function App() {
               <p className="text-gray-400 text-sm">
                 Book verified doctors online — video, phone, or in-person consultations across India.
               </p>
-              <a href="/about" className="inline-block text-gray-400 hover:text-white transition-colors text-sm mt-3">About Us →</a>
+              <a href="/about" className="inline-flex items-center gap-1 mt-4 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">About Us →</a>
             </div>
 
             {/* For Patients */}
