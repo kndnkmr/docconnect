@@ -1157,13 +1157,36 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 - `blog/blogData.js` holds static articles (`{slug,title,description,
   specialization,publishedDate,readTime,image,content:[{type,text}]}`; content
-  types intro/heading/paragraph). Added 5 symptom/question-based articles
-  (is-online-consultation-safe, frequent-headaches, fever-home-care, how-to-
-  book-online) that cast a wider net than the per-specialty ones. **Each
-  article's `specialization` must map to a real specialty** — the article
-  page's CTA links to `/doctors?specialization=...`. New articles must also be
-  added to `client/public/sitemap.xml` for Google to find them (SEO is a slow
-  burn; resubmit the sitemap in Search Console after adding).
+  types intro/heading/paragraph). Grew to ~25 articles across three kinds:
+  per-specialty "when to see a [specialist]", symptom/question explainers
+  (frequent-headaches, fever-home-care, is-online-consultation-safe, silent-
+  signs-high-blood-sugar, always-tired, high-bp, stop-googling-symptoms), and
+  responsibly-framed wellness/traditional-habit pieces (ancient-indian-wellness,
+  gut-health, sleep, immunity).
+- **Each article's `specialization` must map to a real specialty** — the
+  article page's CTA links to `/doctors?specialization=...`. New articles must
+  also be added to `client/public/sitemap.xml` (SEO is a slow burn; resubmit
+  the sitemap in Search Console after adding).
+- **Content rules (important for a health platform):** articles are written
+  ORIGINAL (never copied — duplicate content is plagiarism and Google penalizes
+  it). Wellness/Ayurvedic/traditional content is framed as SUPPORTIVE LIFESTYLE
+  habits, NOT cures — every such article explicitly says it doesn't replace
+  medical care and points to a doctor. Do NOT add content claiming a
+  herb/remedy treats or cures a disease (unsafe + liability). Keep the "see a
+  doctor" framing on every article.
+- **Blog discovery (`BlogList.jsx`, all client-side):** newest-first ordering
+  (sort by `publishedDate` desc on a COPY, never mutate the imported array); an
+  instant search box (filters title/description/specialization — not full body,
+  which is noisy); and topic filter chips auto-derived from the set of
+  `specialization` values (so they stay in sync as articles are added). Topic +
+  search combine; the no-results state resets both.
+- **Per-article engagement (`BlogArticle.jsx`):** share buttons (WhatsApp/
+  Facebook/native/copy) to grow reach, and a private "Was this helpful?" 👍/👎
+  stored in localStorage only (no backend, no public counter). We deliberately
+  do NOT have public likes/comments — on a health blog they invite spam and
+  medical misinformation, and an empty counter at low traffic hurts trust.
+- The floating WhatsApp button is hidden on `/blog` and `/blog/<slug>` (see
+  `WhatsAppButton.jsx`) so it doesn't distract readers or get mis-tapped.
 
 ---
 
