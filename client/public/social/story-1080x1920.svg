@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="920" cy="240" r="300" fill="#ffffff" opacity="0.06"/>
+  <circle cx="140" cy="1680" r="260" fill="#ffffff" opacity="0.05"/>
+
+  <!-- Brand: white rounded tile + medical cross, centered -->
+  <g>
+    <rect x="440" y="430" width="200" height="200" rx="46" fill="#ffffff"/>
+    <rect x="522" y="470" width="36" height="120" rx="10" fill="#2563eb"/>
+    <rect x="480" y="512" width="120" height="36" rx="10" fill="#2563eb"/>
+  </g>
+  <text x="540" y="760" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="bold" fill="#ffffff">ProMedicoz</text>
+
+  <!-- Headline -->
+  <text x="540" y="940" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">Consult verified</text>
+  <text x="540" y="1030" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">doctors online</text>
+
+  <!-- Sub -->
+  <text x="540" y="1140" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" fill="#dbeafe">Video • Phone • In-person</text>
+  <text x="540" y="1210" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" fill="#dbeafe">across India</text>
+
+  <!-- CTA pill -->
+  <rect x="290" y="1360" width="500" height="120" rx="60" fill="#ffffff"/>
+  <text x="540" y="1438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="#2563eb">Book in 2 minutes</text>
+
+  <!-- URL -->
+  <text x="540" y="1600" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="bold" fill="#ffffff">www.promedicoz.in</text>
+</svg>
