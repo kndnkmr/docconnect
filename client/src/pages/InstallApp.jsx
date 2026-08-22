@@ -35,7 +35,7 @@ const TXT = {
     installNote: 'Installing adds an icon to your home screen and opens ProMedicoz full-screen — no app store needed, no storage worries.',
     shareHeading: 'Share with others',
     shareBtn: '📤 Share ProMedicoz',
-    whatsappBtn: '💬 Share on WhatsApp',
+    shareOn: 'Or share directly on:',
     copyBtn: '🔗 Copy link',
     qrPrompt: 'Or let someone scan this to open ProMedicoz:',
     copied: 'Link copied! Paste it anywhere to share.',
@@ -67,7 +67,7 @@ const TXT = {
     installNote: 'इंस्टॉल करने पर आपकी होम स्क्रीन पर एक आइकन जुड़ जाता है और ProMedicoz पूरी स्क्रीन पर खुलता है — किसी ऐप स्टोर की ज़रूरत नहीं, स्टोरेज की चिंता नहीं।',
     shareHeading: 'दूसरों के साथ साझा करें',
     shareBtn: '📤 ProMedicoz साझा करें',
-    whatsappBtn: '💬 WhatsApp पर साझा करें',
+    shareOn: 'या सीधे यहाँ साझा करें:',
     copyBtn: '🔗 लिंक कॉपी करें',
     qrPrompt: 'या किसी को ProMedicoz खोलने के लिए इसे स्कैन करने दें:',
     copied: 'लिंक कॉपी हो गया! साझा करने के लिए कहीं भी पेस्ट करें।',
@@ -129,7 +129,21 @@ function InstallApp() {
     }
   };
 
-  const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(t.shareText)}`;
+  // Per-platform share links. Each social network has its own share endpoint;
+  // most take the URL (and some take text separately). We pass both where
+  // supported so the shared post has our message + link. Facebook's sharer
+  // only accepts the URL — the text/preview comes from the page's Open Graph
+  // tags (set in index.html), which is why those matter for a good FB card.
+  const u = encodeURIComponent(SITE_URL);
+  const txt = encodeURIComponent(t.shareText);
+  const shareLinks = [
+    { name: 'WhatsApp', emoji: '💬', color: 'bg-green-500 hover:bg-green-600', url: `https://wa.me/?text=${txt}` },
+    { name: 'Facebook', emoji: '📘', color: 'bg-[#1877F2] hover:bg-[#0d65d9]', url: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+    { name: 'Telegram', emoji: '✈️', color: 'bg-[#229ED9] hover:bg-[#1b8ec2]', url: `https://t.me/share/url?url=${u}&text=${txt}` },
+    { name: 'X', emoji: '𝕏', color: 'bg-black hover:bg-gray-800', url: `https://twitter.com/intent/tweet?text=${txt}` },
+    { name: 'LinkedIn', emoji: '💼', color: 'bg-[#0A66C2] hover:bg-[#084e97]', url: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+    { name: 'Email', emoji: '✉️', color: 'bg-gray-500 hover:bg-gray-600', url: `mailto:?subject=${encodeURIComponent('Check out ProMedicoz')}&body=${txt}` },
+  ];
 
   return (
     <div>
@@ -204,26 +218,37 @@ function InstallApp() {
             <h2 className="text-lg font-semibold text-gray-800 mb-4">{t.shareHeading}</h2>
 
             <div className="flex flex-col gap-3">
+              {/* Native share (mobile share sheet) + copy link */}
               <button
                 onClick={handleShare}
                 className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
               >
                 {t.shareBtn}
               </button>
-              <a
-                href={whatsappShareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full text-center bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
-              >
-                {t.whatsappBtn}
-              </a>
               <button
                 onClick={handleCopyLink}
                 className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
                 {t.copyBtn}
               </button>
+            </div>
+
+            {/* Direct per-platform share buttons */}
+            <p className="text-sm text-gray-600 mt-5 mb-3">{t.shareOn}</p>
+            <div className="grid grid-cols-3 gap-3">
+              {shareLinks.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex flex-col items-center justify-center gap-1 py-3 rounded-lg text-white text-xs font-medium transition-colors ${s.color}`}
+                  aria-label={`Share on ${s.name}`}
+                >
+                  <span className="text-lg leading-none">{s.emoji}</span>
+                  <span>{s.name}</span>
+                </a>
+              ))}
             </div>
 
             <div className="mt-6 text-center">

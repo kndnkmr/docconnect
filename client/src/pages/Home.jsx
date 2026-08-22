@@ -405,12 +405,20 @@ function Home() {
                   : 'Add it to your phone’s home screen for quick access — and share it with family and friends.'}
               </p>
             </div>
-            <Link
-              to="/install"
-              className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-            >
-              {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
-            </Link>
+            <div className="flex gap-2 flex-shrink-0">
+              <Link
+                to="/install"
+                className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              >
+                {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
+              </Link>
+              <Link
+                to="/install"
+                className="whitespace-nowrap bg-white text-primary-700 border border-primary-300 px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
+              >
+                {lang === 'hi' ? '📤 साझा करें' : '📤 Share'}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
