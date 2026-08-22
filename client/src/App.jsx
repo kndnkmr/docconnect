@@ -26,6 +26,7 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import WhatsAppButton from './components/WhatsAppButton';
 import BottomNav from './components/BottomNav';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -90,6 +91,11 @@ function App() {
         min-h-screen = minimum height is the full screen
         flex flex-col = use flexbox in column direction (stack vertically)
       */}
+
+      {/* Reset scroll to the top on every route change (SPA nav doesn't do
+          this automatically — otherwise a page opened from a link clicked at
+          the bottom of another page starts scrolled to the bottom). */}
+      <ScrollToTop />
 
       {/* Navbar appears on ALL pages */}
       <Navbar />
