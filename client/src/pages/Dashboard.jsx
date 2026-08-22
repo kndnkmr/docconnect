@@ -78,8 +78,41 @@ const getWhenDateRange = (value) => {
   return {};
 };
 
+// Partial Hindi for the PATIENT dashboard only. Dashboard.jsx is shared with
+// doctors, so these labels are applied only when the viewer is a patient AND
+// has chosen Hindi (see `pt` below) — the doctor experience stays English.
+// Only high-value, unambiguously patient-facing labels are translated.
+const PATIENT_TXT = {
+  en: {
+    welcome: (name) => `Welcome, ${name}!`,
+    welcomeSub: 'View your appointments and find doctors',
+    tabAppointments: 'My Appointments',
+    tabFamily: 'Family Members',
+    tabPrescriptions: 'Prescriptions',
+    tabReports: 'My Reports',
+    tabComplaints: 'Complaints',
+    tabAccount: 'Account Settings',
+    bookNew: '+ Book New Appointment',
+  },
+  hi: {
+    welcome: (name) => `नमस्ते, ${name}!`,
+    welcomeSub: 'अपनी अपॉइंटमेंट देखें और डॉक्टर खोजें',
+    tabAppointments: 'मेरी अपॉइंटमेंट',
+    tabFamily: 'परिवार के सदस्य',
+    tabPrescriptions: 'प्रिस्क्रिप्शन',
+    tabReports: 'मेरी रिपोर्ट',
+    tabComplaints: 'शिकायतें',
+    tabAccount: 'खाता सेटिंग्स',
+    bookNew: '+ नई अपॉइंटमेंट बुक करें',
+  },
+};
+
 function Dashboard() {
   const { user, isDoctor, isPatient } = useAuth();
+  // Patient-only Hindi: pick the dictionary only for a Hindi-choosing patient;
+  // doctors always get English regardless of the stored language.
+  const _lang = (typeof localStorage !== 'undefined' && localStorage.getItem('promedicoz_lang')) || 'en';
+  const pt = PATIENT_TXT[isPatient && _lang === 'hi' ? 'hi' : 'en'];
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [appointments, setAppointments] = useState([]);
@@ -1004,22 +1037,22 @@ function Dashboard() {
 
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome, {isDoctor ? 'Dr. ' : ''}{user?.name}!</h1>
-        <p className="text-gray-600 mt-1">{isDoctor ? 'Manage your practice and appointments' : 'View your appointments and find doctors'}</p>
+        <h1 className="text-3xl font-bold text-gray-800">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
+        <p className="text-gray-600 mt-1">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
       </div>
 
       {/* Tab Navigation */}
       <div ref={tabSectionRef} className="flex border-b mb-6 overflow-x-auto">
         {[
-          { key: 'appointments', label: 'My Appointments', show: true },
+          { key: 'appointments', label: pt.tabAppointments, show: true },
           { key: 'profile', label: 'Edit Profile', show: isDoctor },
           { key: 'availability', label: 'Availability', show: isDoctor },
           { key: 'patientReports', label: 'Patient Reports', show: isDoctor },
-          { key: 'familyMembers', label: 'Family Members', show: isPatient },
-          { key: 'prescriptions', label: 'Prescriptions', show: isPatient || isDoctor },
-          { key: 'reports', label: 'My Reports', show: isPatient },
-          { key: 'complaints', label: 'Complaints', show: isPatient },
-          { key: 'account', label: 'Account Settings', show: true },
+          { key: 'familyMembers', label: pt.tabFamily, show: isPatient },
+          { key: 'prescriptions', label: pt.tabPrescriptions, show: isPatient || isDoctor },
+          { key: 'reports', label: pt.tabReports, show: isPatient },
+          { key: 'complaints', label: pt.tabComplaints, show: isPatient },
+          { key: 'account', label: pt.tabAccount, show: true },
         ].filter(t => t.show).map(tab => (
           <button
             key={tab.key}
@@ -1036,7 +1069,7 @@ function Dashboard() {
         <div>
           {isPatient && (
             <div className="mb-6">
-              <Link to="/doctors" className="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">+ Book New Appointment</Link>
+              <Link to="/doctors" className="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">{pt.bookNew}</Link>
             </div>
           )}
 
