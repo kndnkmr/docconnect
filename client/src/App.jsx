@@ -38,6 +38,8 @@ import BlogArticle from './pages/blog/BlogArticle';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import MedicalDisclaimer from './pages/MedicalDisclaimer';
+import CancellationRefund from './pages/CancellationRefund';
+import AboutUs from './pages/AboutUs';
 import Dashboard from './pages/Dashboard';
 import BookAppointment from './pages/BookAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
@@ -115,6 +117,8 @@ function App() {
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
+          <Route path="/cancellation-refund" element={<CancellationRefund />} />
+          <Route path="/about" element={<AboutUs />} />
           {/* 
             ":id" = dynamic segment. Any value works here.
             /doctors/abc123 → DoctorProfile gets "abc123" as the id param
@@ -191,6 +195,7 @@ function App() {
               <p className="text-gray-400 text-sm">
                 Book verified doctors online — video, phone, or in-person consultations across India.
               </p>
+              <a href="/about" className="inline-block text-gray-400 hover:text-white transition-colors text-sm mt-3">About Us →</a>
             </div>
 
             {/* For Patients */}
@@ -221,6 +226,7 @@ function App() {
                 <li><a href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</a></li>
                 <li><a href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/medical-disclaimer" className="text-gray-400 hover:text-white transition-colors">Medical Disclaimer</a></li>
+                <li><a href="/cancellation-refund" className="text-gray-400 hover:text-white transition-colors">Cancellation & Refund</a></li>
                 <li><a href="mailto:support@promedicoz.in?subject=Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Grievance / Support</a></li>
                 <li><a href="mailto:support@promedicoz.in?subject=Support%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
               </ul>
