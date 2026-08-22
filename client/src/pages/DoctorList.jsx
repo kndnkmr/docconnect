@@ -18,10 +18,76 @@ import VerifiedBadge from '../components/VerifiedBadge';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import toast from 'react-hot-toast';
 
+// Patient-facing page → bilingual (English / हिंदी) for the fixed UI labels,
+// using the shared 'promedicoz_lang' choice. Doctor-entered content (names,
+// specializations, cities, bios) is shown as-is and never translated.
+const TXT = {
+  en: {
+    headerTitle: 'Find a Doctor',
+    headerSubtitle: (n) => `Browse our network of ${n} verified doctor${n === 1 ? '' : 's'} — book by video, phone, or in person`,
+    specialization: 'Specialization', specializationPh: 'e.g., Gynaecologist, Cardiologist...',
+    doctorName: 'Doctor Name', doctorNamePh: 'Search by name...',
+    maxFee: 'Max Fee (₹)', maxFeePh: 'e.g., 500',
+    city: 'City', cityPh: 'e.g., Delhi, Mumbai',
+    consultation: 'Consultation', allTypes: 'All Types',
+    inPerson: '🏥 In-Person', video: '📹 Video Call', phone: '📞 Phone Call',
+    language: 'Language', anyLanguage: 'Any Language',
+    availableToday: 'Available Today', search: 'Search',
+    loading: 'Loading doctors...', noMatches: 'No matches found',
+    yearsExp: (y) => `${y} years experience`,
+    reviews: (c) => `(${c} review${c > 1 ? 's' : ''})`,
+    nextAt: (time) => `Next available at ${time}`,
+    nextTomorrow: (time) => `Next available tomorrow at ${time}`,
+    nextDay: (day, time) => `Next available ${day} at ${time}`,
+    noUpcoming: 'No upcoming availability',
+    newDoctor: '🆕 New on ProMedicoz',
+    speaks: 'Speaks', viewProfile: 'View Profile →',
+    prev: 'Previous', next: 'Next', pageOf: (c, tot) => `Page ${c} of ${tot}`,
+    noResultsTitle: (s) => s ? `No ${s} available yet` : 'No doctors found',
+    noResultsMsgSpec: (s) => `We're actively adding doctors. Tell us what you need and we'll help you find a ${s || 'specialist'} — often within a day.`,
+    noResultsMsgGeneric: 'Try adjusting your search, or let us help you find the right doctor.',
+    cantFind: "Can't find the right doctor? We'll find one for you.",
+    chatWhatsApp: '💬 Chat with us on WhatsApp',
+    chatHint: "Tell us your concern — we'll connect you with the right specialist",
+    browseAll: '← Browse all available doctors',
+  },
+  hi: {
+    headerTitle: 'डॉक्टर खोजें',
+    headerSubtitle: (n) => `हमारे ${n} सत्यापित डॉक्टर${n === 1 ? '' : 'ों'} में से चुनें — वीडियो, फ़ोन या क्लिनिक पर बुक करें`,
+    specialization: 'विशेषज्ञता', specializationPh: 'जैसे: स्त्री रोग विशेषज्ञ, हृदय रोग विशेषज्ञ...',
+    doctorName: 'डॉक्टर का नाम', doctorNamePh: 'नाम से खोजें...',
+    maxFee: 'अधिकतम शुल्क (₹)', maxFeePh: 'जैसे: 500',
+    city: 'शहर', cityPh: 'जैसे: दिल्ली, मुंबई',
+    consultation: 'परामर्श', allTypes: 'सभी प्रकार',
+    inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो कॉल', phone: '📞 फ़ोन कॉल',
+    language: 'भाषा', anyLanguage: 'कोई भी भाषा',
+    availableToday: 'आज उपलब्ध', search: 'खोजें',
+    loading: 'डॉक्टर लोड हो रहे हैं...', noMatches: 'कोई मिलान नहीं मिला',
+    yearsExp: (y) => `${y} वर्ष का अनुभव`,
+    reviews: (c) => `(${c} समीक्षा${c > 1 ? 'एं' : ''})`,
+    nextAt: (time) => `अगली उपलब्धता ${time} बजे`,
+    nextTomorrow: (time) => `अगली उपलब्धता कल ${time} बजे`,
+    nextDay: (day, time) => `अगली उपलब्धता ${day} को ${time} बजे`,
+    noUpcoming: 'आगे कोई उपलब्धता नहीं',
+    newDoctor: '🆕 ProMedicoz पर नया',
+    speaks: 'बोलते हैं', viewProfile: 'प्रोफ़ाइल देखें →',
+    prev: 'पिछला', next: 'अगला', pageOf: (c, tot) => `पृष्ठ ${c} / ${tot}`,
+    noResultsTitle: (s) => s ? `अभी कोई ${s} उपलब्ध नहीं` : 'कोई डॉक्टर नहीं मिला',
+    noResultsMsgSpec: (s) => `हम लगातार डॉक्टर जोड़ रहे हैं। हमें बताएं आपको क्या चाहिए, हम आपको ${s || 'विशेषज्ञ'} खोजने में मदद करेंगे — अक्सर एक दिन के भीतर।`,
+    noResultsMsgGeneric: 'अपनी खोज बदलकर देखें, या सही डॉक्टर खोजने में हमसे मदद लें।',
+    cantFind: 'सही डॉक्टर नहीं मिल रहा? हम आपके लिए खोज देंगे।',
+    chatWhatsApp: '💬 WhatsApp पर हमसे बात करें',
+    chatHint: 'हमें अपनी समस्या बताएं — हम आपको सही विशेषज्ञ से जोड़ेंगे',
+    browseAll: '← सभी उपलब्ध डॉक्टर देखें',
+  },
+};
+
 function DoctorList() {
   // Read specialization from URL query params (from Consult Now section)
   const [searchParams] = useSearchParams();
   const urlSpecialization = searchParams.get('specialization') || '';
+  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const t = TXT[lang];
 
   // ---- State ----
   const [doctors, setDoctors] = useState([]);
@@ -156,9 +222,9 @@ function DoctorList() {
           card something to sit against for a modern, layered look. */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-10 pb-20 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold">Find a Doctor</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t.headerTitle}</h1>
           <p className="text-primary-100 mt-2 text-sm sm:text-base">
-            Browse our network of {pagination.totalDoctors} verified doctor{pagination.totalDoctors === 1 ? '' : 's'} — book by video, phone, or in person
+            {t.headerSubtitle(pagination.totalDoctors)}
           </p>
         </div>
       </div>
@@ -170,7 +236,7 @@ function DoctorList() {
           {/* Search by specialization with smart suggestions */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Specialization
+              {t.specialization}
             </label>
             <input
               type="text"
@@ -180,7 +246,7 @@ function DoctorList() {
                 setShowSuggestions(true);
               }}
               onFocus={() => setShowSuggestions(true)}
-              placeholder="e.g., Gynaecologist, Cardiologist..."
+              placeholder={t.specializationPh}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               autoComplete="off"
             />
@@ -200,7 +266,7 @@ function DoctorList() {
                   </button>
                 ))}
                 {getSmartSuggestions(searchSpecialization).length === 0 && (
-                  <div className="px-4 py-2 text-sm text-gray-500">No matches found</div>
+                  <div className="px-4 py-2 text-sm text-gray-500">{t.noMatches}</div>
                 )}
               </div>
             )}
@@ -209,45 +275,45 @@ function DoctorList() {
           {/* Search by name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Doctor Name
+              {t.doctorName}
             </label>
             <input
               type="text"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
-              placeholder="Search by name..."
+              placeholder={t.doctorNamePh}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
             />
           </div>
 
           {/* Max fee filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Max Fee (₹)</label>
-            <input type="number" value={maxFee} onChange={(e) => setMaxFee(e.target.value)} placeholder="e.g., 500" min="0" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.maxFee}</label>
+            <input type="number" value={maxFee} onChange={(e) => setMaxFee(e.target.value)} placeholder={t.maxFeePh} min="0" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
           </div>
 
           {/* City filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-            <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g., Delhi, Mumbai" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.city}</label>
+            <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder={t.cityPh} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" />
           </div>
 
           {/* Consultation mode filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Consultation</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.consultation}</label>
             <select value={consultationMode} onChange={(e) => setConsultationMode(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
-              <option value="">All Types</option>
-              <option value="in-person">🏥 In-Person</option>
-              <option value="video">📹 Video Call</option>
-              <option value="phone">📞 Phone Call</option>
+              <option value="">{t.allTypes}</option>
+              <option value="in-person">{t.inPerson}</option>
+              <option value="video">{t.video}</option>
+              <option value="phone">{t.phone}</option>
             </select>
           </div>
 
           {/* Language filter — find a doctor who speaks the patient's language */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t.language}</label>
             <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none">
-              <option value="">Any Language</option>
+              <option value="">{t.anyLanguage}</option>
               {SPOKEN_LANGUAGE_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -263,13 +329,13 @@ function DoctorList() {
                 onChange={(e) => setAvailableToday(e.target.checked)}
                 className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">Available Today</span>
+              <span className="text-sm text-gray-700">{t.availableToday}</span>
             </label>
             <button
               type="submit"
               className="w-full bg-primary-600 text-white py-2 px-6 rounded-lg hover:bg-primary-700 transition-colors font-medium"
             >
-              Search
+              {t.search}
             </button>
           </div>
         </div>
@@ -279,7 +345,7 @@ function DoctorList() {
       {loading ? (
         // Loading state
         <div className="text-center py-12">
-          <div className="text-lg text-gray-600">Loading doctors...</div>
+          <div className="text-lg text-gray-600">{t.loading}</div>
         </div>
       ) : doctors.length === 0 ? (
         // No results — make it specific to what they searched for, capture
@@ -298,30 +364,30 @@ function DoctorList() {
             <div className="text-center py-12">
               <div className="text-5xl mb-4">🔍</div>
               <h3 className="text-xl font-medium text-gray-700">
-                {searchedFor ? `No ${searchedFor} available yet` : 'No doctors found'}
+                {t.noResultsTitle(searchedFor)}
               </h3>
               <p className="text-gray-500 mt-2">
                 {searchedFor
-                  ? `We're actively adding doctors. Tell us what you need and we'll help you find a ${searchSpecialization || 'specialist'} — often within a day.`
-                  : 'Try adjusting your search, or let us help you find the right doctor.'}
+                  ? t.noResultsMsgSpec(searchSpecialization)
+                  : t.noResultsMsgGeneric}
               </p>
 
               <div className="mt-6 p-5 bg-green-50 border border-green-200 rounded-xl inline-block max-w-md">
-                <p className="text-green-800 font-medium mb-3">Can't find the right doctor? We'll find one for you.</p>
+                <p className="text-green-800 font-medium mb-3">{t.cantFind}</p>
                 <a
                   href={`https://wa.me/919997019900?text=${encodeURIComponent(waMessage)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
                 >
-                  💬 Chat with us on WhatsApp
+                  {t.chatWhatsApp}
                 </a>
-                <p className="text-xs text-green-600 mt-2">Tell us your concern — we'll connect you with the right specialist</p>
+                <p className="text-xs text-green-600 mt-2">{t.chatHint}</p>
               </div>
 
               <div className="mt-6">
                 <Link to="/doctors" className="text-primary-600 text-sm font-medium hover:underline">
-                  ← Browse all available doctors
+                  {t.browseAll}
                 </Link>
               </div>
             </div>
@@ -335,7 +401,7 @@ function DoctorList() {
             This is how React renders lists — transform data into JSX elements
           */}
           {doctors.map((doctor) => (
-            <DoctorCard key={doctor._id} doctor={doctor} />
+            <DoctorCard key={doctor._id} doctor={doctor} t={t} />
             // "key" = unique identifier React uses to track list items
             // Without key, React can't efficiently update the list
           ))}
@@ -351,12 +417,12 @@ function DoctorList() {
             disabled={!pagination.hasPrevPage}
             className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            {t.prev}
           </button>
 
           {/* Page info */}
           <span className="text-gray-600 px-4">
-            Page {pagination.currentPage} of {pagination.totalPages}
+            {t.pageOf(pagination.currentPage, pagination.totalPages)}
           </span>
 
           {/* Next button */}
@@ -365,7 +431,7 @@ function DoctorList() {
             disabled={!pagination.hasNextPage}
             className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            {t.next}
           </button>
         </div>
       )}
@@ -378,8 +444,8 @@ function DoctorList() {
 // A smaller component used inside DoctorList
 // This is "component composition" — building UIs from small reusable pieces
 
-function DoctorCard({ doctor }) {
-  // { doctor } = destructuring props (the data passed from parent)
+function DoctorCard({ doctor, t }) {
+  // { doctor } = the data; t = the language dictionary passed from DoctorList
 
   // Real next-available slot comes from the backend (accounts for past + booked
   // slots), so the card never misleads patients.
@@ -401,14 +467,14 @@ function DoctorCard({ doctor }) {
     const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
     if (na.isToday) {
       // The green "Available Today" pill already conveys today — don't repeat it here.
-      availabilityLabel = `Next available at ${startTime}`;
+      availabilityLabel = t.nextAt(startTime);
     } else if (na.date === tomorrowStr) {
-      availabilityLabel = `Next available tomorrow at ${startTime}`;
+      availabilityLabel = t.nextTomorrow(startTime);
     } else {
-      availabilityLabel = `Next available ${na.dayName} at ${startTime}`;
+      availabilityLabel = t.nextDay(na.dayName, startTime);
     }
   } else {
-    availabilityLabel = 'No upcoming availability';
+    availabilityLabel = t.noUpcoming;
   }
 
   // Horizontal card layout — small circular avatar on the left, info stacked on
@@ -446,12 +512,12 @@ function DoctorCard({ doctor }) {
         <div className="flex flex-wrap gap-1 mt-1">
           {availableToday && (
             <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium whitespace-nowrap">
-              Available Today
+              {t.availableToday}
             </span>
           )}
           {isNewDoctor && (
             <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-medium whitespace-nowrap">
-              🆕 New on ProMedicoz
+              {t.newDoctor}
             </span>
           )}
         </div>
@@ -464,7 +530,7 @@ function DoctorCard({ doctor }) {
 
         {doctor.experience > 0 && (
           <p className="text-gray-500 text-sm mt-0.5">
-            {doctor.experience} years experience
+            {t.yearsExp(doctor.experience)}
           </p>
         )}
 
@@ -473,7 +539,7 @@ function DoctorCard({ doctor }) {
           <p className="text-sm mt-0.5 flex items-center gap-1">
             <span className="text-yellow-500">⭐</span>
             <span className="font-medium text-gray-700">{doctor.rating.average}</span>
-            <span className="text-gray-400">({doctor.rating.count} review{doctor.rating.count > 1 ? 's' : ''})</span>
+            <span className="text-gray-400">{t.reviews(doctor.rating.count)}</span>
           </p>
         )}
 
@@ -505,14 +571,14 @@ function DoctorCard({ doctor }) {
             someone they can talk to comfortably */}
         {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
           <p className="text-gray-500 text-xs mt-2">
-            🗣️ Speaks: {doctor.languagesSpoken.join(', ')}
+            🗣️ {t.speaks}: {doctor.languagesSpoken.join(', ')}
           </p>
         )}
 
         {/* View Profile link */}
         <div className="mt-3">
           <span className="text-primary-600 text-sm font-medium hover:underline">
-            View Profile →
+            {t.viewProfile}
           </span>
         </div>
       </div>
