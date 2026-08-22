@@ -2,11 +2,18 @@ import SEO from '../components/SEO';
 
 function CancellationRefund() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div>
       <SEO title="Cancellation & Refund Policy" description="Cancellation and refund policy for ProMedicoz. Payments are made directly to the doctor via UPI; ProMedicoz does not collect or hold any money." path="/cancellation-refund" />
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Cancellation &amp; Refund Policy</h1>
-      <p className="text-sm text-gray-500 mb-8">Last updated: August 2026</p>
+      {/* Gradient header band — consistent with the rest of the app */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 py-8 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold">Cancellation &amp; Refund Policy</h1>
+          <p className="text-primary-100 text-sm mt-1">Last updated: August 2026</p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
 
       {/* Most important fact up front — the platform handles no money */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
@@ -51,6 +58,7 @@ function CancellationRefund() {
           <p className="mt-2">Email: support@promedicoz.in</p>
           <p>Response time: within 48 hours on working days</p>
         </section>
+      </div>
       </div>
     </div>
   );

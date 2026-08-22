@@ -2,11 +2,18 @@ import SEO from '../components/SEO';
 
 function TermsAndConditions() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div>
       <SEO title="Terms & Conditions" description="Terms and Conditions for using ProMedicoz doctor consultation platform." path="/terms" />
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Terms & Conditions</h1>
-      <p className="text-sm text-gray-500 mb-8">Last updated: August 2026</p>
+      {/* Gradient header band — consistent with the rest of the app */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 py-8 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold">Terms &amp; Conditions</h1>
+          <p className="text-primary-100 text-sm mt-1">Last updated: August 2026</p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
 
       <div className="space-y-6 text-gray-700 text-sm leading-relaxed">
         <section>
@@ -101,6 +108,7 @@ function TermsAndConditions() {
           <h2 className="text-lg font-semibold text-gray-800 mb-2">12. Changes to Terms</h2>
           <p>ProMedicoz reserves the right to modify these terms at any time. Users will be notified of significant changes. Continued use of the platform after changes constitutes acceptance.</p>
         </section>
+      </div>
       </div>
     </div>
   );

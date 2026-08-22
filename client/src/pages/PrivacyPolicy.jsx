@@ -2,11 +2,18 @@ import SEO from '../components/SEO';
 
 function PrivacyPolicy() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div>
       <SEO title="Privacy Policy" description="Privacy Policy for ProMedicoz - how we collect, use, and protect your personal and health data." path="/privacy" />
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Privacy Policy</h1>
-      <p className="text-sm text-gray-500 mb-8">Last updated: August 2026</p>
+      {/* Gradient header band — consistent with the rest of the app */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <div className="container mx-auto px-4 py-8 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl font-bold">Privacy Policy</h1>
+          <p className="text-primary-100 text-sm mt-1">Last updated: August 2026</p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
 
       <div className="space-y-6 text-gray-700 text-sm leading-relaxed">
         <section>
@@ -104,6 +111,7 @@ function PrivacyPolicy() {
           <p>For privacy-related queries or to exercise your rights:</p>
           <p className="mt-2">Email: support@promedicoz.in</p>
         </section>
+      </div>
       </div>
     </div>
   );
