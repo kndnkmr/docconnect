@@ -16,6 +16,7 @@ import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
+import { formatDoctorName } from '../utils/formatName';
 import toast from 'react-hot-toast';
 
 // Patient-facing page → bilingual (English / हिंदी) for the fixed UI labels,
@@ -506,7 +507,7 @@ function DoctorCard({ doctor, t }) {
         {/* Name gets the full row width; badges sit on their own line below
             so they never squeeze the name into a narrow, wrapping column. */}
         <h3 className="text-lg font-semibold text-gray-800 leading-snug flex items-center gap-1.5">
-          Dr. {doctor.name}
+          {formatDoctorName(doctor.name)}
           {doctor.isAdminVerified && <VerifiedBadge size={16} />}
         </h3>
         <div className="flex flex-wrap gap-1 mt-1">

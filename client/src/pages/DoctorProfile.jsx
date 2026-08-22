@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
+import { formatDoctorName } from '../utils/formatName';
 import toast from 'react-hot-toast';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
@@ -34,7 +35,7 @@ const TXT = {
     inPerson: '🏥 In-Person', video: '📹 Video', phone: '📞 Phone',
     speaks: 'Speaks', bookAppointment: 'Book Appointment',
     messageWhatsApp: 'Message on WhatsApp', shareWhatsApp: 'Share via WhatsApp',
-    loginPrefix: 'Log in', loginSuffix: 'as a patient to book an appointment.',
+    loginToBook: 'Log in to Book Appointment', noAccount: 'New to ProMedicoz?', signUpFree: 'Create a free account →',
     about: 'About', clinicAddress: 'Clinic Address', getDirections: '📍 Get Directions',
     patientReviews: 'Patient Reviews', noReviews: 'No reviews yet. Be the first to consult and rate!',
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} review${n > 1 ? 's' : ''})`,
@@ -51,7 +52,7 @@ const TXT = {
     inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो', phone: '📞 फ़ोन',
     speaks: 'बोलते हैं', bookAppointment: 'अपॉइंटमेंट बुक करें',
     messageWhatsApp: 'WhatsApp पर संदेश भेजें', shareWhatsApp: 'WhatsApp पर साझा करें',
-    loginPrefix: 'लॉग इन करें', loginSuffix: 'और मरीज़ के रूप में अपॉइंटमेंट बुक करें।',
+    loginToBook: 'अपॉइंटमेंट बुक करने के लिए लॉग इन करें', noAccount: 'ProMedicoz पर नए हैं?', signUpFree: 'मुफ़्त खाता बनाएं →',
     about: 'परिचय', clinicAddress: 'क्लिनिक का पता', getDirections: '📍 रास्ता देखें',
     patientReviews: 'मरीज़ों की समीक्षाएं', noReviews: 'अभी कोई समीक्षा नहीं। पहले परामर्श लें और रेटिंग दें!',
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} समीक्षा${n > 1 ? 'एं' : ''})`,
@@ -128,8 +129,8 @@ function DoctorProfile() {
   return (
     <div>
       <SEO
-        title={doctor ? `Dr. ${doctor.name} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
-        description={doctor ? `Book appointment with Dr. ${doctor.name} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: ₹${doctor.consultationFee || 'N/A'}.` : ''}
+        title={doctor ? `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
+        description={doctor ? `Book appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: ₹${doctor.consultationFee || 'N/A'}.` : ''}
         path={`/doctors/${id}`}
         type="profile"
       />
@@ -170,7 +171,7 @@ function DoctorProfile() {
           {/* Basic Info */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
-              Dr. {doctor.name}
+              {formatDoctorName(doctor.name)}
               {doctor.isAdminVerified && <VerifiedBadge size={22} />}
             </h1>
             {doctor.isAdminVerified && (
@@ -253,7 +254,7 @@ function DoctorProfile() {
                   LINK with someone else, not a message TO the doctor. */}
               {doctor.whatsappNumber && (
                 <a
-                  href={`https://wa.me/${doctor.whatsappNumber.replace('+', '')}?text=${encodeURIComponent(`Hi Dr. ${doctor.name}, I would like to consult with you.`)}`}
+                  href={`https://wa.me/${doctor.whatsappNumber.replace('+', '')}?text=${encodeURIComponent(`Hi ${formatDoctorName(doctor.name)}, I would like to consult with you.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
@@ -265,7 +266,7 @@ function DoctorProfile() {
               <button
                 onClick={() => {
                   const shareUrl = window.location.href;
-                  const shareText = `Check out ${doctor.name} (${doctor.specialization || 'Doctor'}) on ProMedicoz - ${shareUrl}`;
+                  const shareText = `Check out ${formatDoctorName(doctor.name)} (${doctor.specialization || 'Doctor'}) on ProMedicoz - ${shareUrl}`;
                   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
                   window.open(whatsappUrl, '_blank');
                 }}
@@ -276,12 +277,18 @@ function DoctorProfile() {
             </div>
 
             {!isAuthenticated && (
-              <p className="mt-3 text-sm text-gray-500">
-                <Link to="/login" className="text-primary-600 hover:underline">
-                  {t.loginPrefix}
-                </Link>{' '}
-                {t.loginSuffix}
-              </p>
+              <div className="mt-4">
+                <Link
+                  to="/login"
+                  className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  {t.loginToBook}
+                </Link>
+                <p className="mt-2 text-sm text-gray-500">
+                  {t.noAccount}{' '}
+                  <Link to="/register" className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
+                </p>
+              </div>
             )}
           </div>
         </div>
