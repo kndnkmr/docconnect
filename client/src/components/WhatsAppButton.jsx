@@ -12,13 +12,21 @@
 // just adds clutter — especially on mobile where it overlaps content.
 
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 function WhatsAppButton() {
   const { isAuthenticated } = useAuth();
+  const { pathname } = useLocation();
   const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900';
 
   // Hide for anyone logged in (patient or doctor) — show only to guests.
   if (isAuthenticated) return null;
+
+  // Hide on blog pages — a reader focused on an article doesn't need it, and
+  // on mobile the floating button can overlap the text or get tapped by
+  // accident while scrolling. They can still find a doctor via the in-article
+  // CTA. (Covers /blog and /blog/<slug>.)
+  if (pathname === '/blog' || pathname.startsWith('/blog/')) return null;
 
   const message = encodeURIComponent(
     'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'
