@@ -24,7 +24,9 @@ function PrivacyPolicy() {
             <li>Health information shared during consultations (symptoms, medical history)</li>
             <li>Optional medical profile information you choose to provide: blood group, known allergies, current medications, medical history, emergency contact, and insurance details — used to give your doctor useful context before/during a visit</li>
             <li>Appointment history, prescriptions, and uploaded test reports</li>
+            <li>Ratings and reviews you write about a doctor after a completed consultation</li>
             <li>Payment screenshots (if uploaded)</li>
+            <li>If you choose to enable browser notifications, a technical push "subscription" token for your device (so we can send reminders and updates). This contains no health information and can be turned off anytime in your browser settings</li>
           </ul>
           <p className="mt-3"><strong>From Doctors:</strong></p>
           <ul className="list-disc ml-6 mt-1 space-y-1">
@@ -38,9 +40,9 @@ function PrivacyPolicy() {
         <section>
           <h2 className="text-lg font-semibold text-gray-800 mb-2">2. How We Use Your Information</h2>
           <ul className="list-disc ml-6 space-y-1">
-            <li>To facilitate appointment booking and consultations</li>
-            <li>To display doctor profiles to patients</li>
-            <li>To send appointment notifications via email</li>
+            <li>To facilitate appointment booking, rescheduling, and consultations</li>
+            <li>To display doctor profiles (and patient reviews) to patients</li>
+            <li>To send you appointment updates and reminders — including when a doctor confirms or reschedules, a reminder before your appointment, new chat messages, and incoming calls — by email and, if you enable it, browser (push) notifications</li>
             <li>To improve our platform and services</li>
             <li>To comply with legal requirements</li>
           </ul>
@@ -97,6 +99,7 @@ function PrivacyPolicy() {
             <li><strong>Daily.co:</strong> For video/audio consultations (private per-appointment rooms, no recording)</li>
             <li><strong>Cloudinary:</strong> For secure storage of uploaded images and files (profile photos, payment screenshots, medical reports)</li>
             <li><strong>Resend:</strong> For sending email notifications</li>
+            <li><strong>Browser push notifications:</strong> If you enable notifications, your browser's push service (e.g. Google, Apple, Mozilla) delivers our alerts to your device. We send only the notification text (appointment updates, reminders, messages) — never health details — and you can disable this anytime in your browser</li>
             <li><strong>Google Analytics:</strong> For anonymous usage statistics</li>
           </ul>
         </section>

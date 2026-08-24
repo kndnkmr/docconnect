@@ -24,8 +24,9 @@ function CancellationRefund() {
 
       <div className="space-y-6 text-gray-700 text-sm leading-relaxed">
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">1. Cancelling an Appointment</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">1. Cancelling or Rescheduling an Appointment</h2>
           <p>You can cancel an appointment from your dashboard before the scheduled consultation time. To cancel, open the appointment and choose "Cancel", optionally adding a reason. Once cancelled, that time slot becomes available for other patients to book.</p>
+          <p className="mt-2">You can also <strong>reschedule</strong> a pending or confirmed appointment to a different available time with the same doctor, instead of cancelling — your details and any payment already made stay with the same appointment, and the doctor re-confirms the new time. Since a reschedule keeps the same doctor and fee, no refund is involved.</p>
         </section>
 
         <section>
