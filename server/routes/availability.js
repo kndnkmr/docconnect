@@ -15,10 +15,21 @@ const router = express.Router();
 const {
   setAvailability,
   getMyAvailability,
-  getFreeSlots
+  getFreeSlots,
+  setBlockedDates,
+  getMyBlockedDates
 } = require('../controllers/availabilityController');
 
 const { protect, authorize } = require('../middleware/auth');
+
+// ---- PROTECTED ROUTES (doctor only) — blocked dates / vacation ----
+// Defined BEFORE the public '/:doctorId/slots' route. (They don't actually
+// collide — that route needs two path segments — but keeping the specific,
+// literal routes first is the safe habit for param routers.)
+// GET  /api/availability/blocked-dates → doctor views their vacation days
+// PUT  /api/availability/blocked-dates → doctor sets their vacation days
+router.get('/blocked-dates', protect, authorize('doctor'), getMyBlockedDates);
+router.put('/blocked-dates', protect, authorize('doctor'), setBlockedDates);
 
 // ---- PUBLIC ROUTE ----
 // GET /api/availability/:doctorId/slots?date=2024-03-15

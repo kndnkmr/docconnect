@@ -63,6 +63,10 @@ function computeNextAvailable(doctor, bookedByDate) {
     const dayName = _dayNames[d.getDay()];
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+    // Skip dates the doctor has blocked (vacation / day off) — keeps
+    // "next available" and "available today" consistent with the slot endpoint.
+    if ((doctor.blockedDates || []).some((b) => b.date === dateStr)) continue;
+
     const sessions = availability.filter((a) => a.day === dayName);
     if (sessions.length === 0) continue;
 

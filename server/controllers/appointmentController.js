@@ -60,6 +60,16 @@ const bookAppointment = async (req, res) => {
       });
     }
 
+    // Step 2b: Reject dates the doctor has blocked (vacation / day off).
+    // Slot generation already hides these, but this guard stops a direct API
+    // call from booking a blocked date the UI would never have offered.
+    const isBlockedDate = (doctor.blockedDates || []).some((b) => b.date === date);
+    if (isBlockedDate) {
+      return res.status(400).json({
+        message: 'The doctor is not available on this date. Please choose another day.'
+      });
+    }
+
     // Step 3: Check if the time slot is already taken
     const existingAppointment = await Appointment.findOne({
       doctor: doctorId,

@@ -179,11 +179,24 @@ const getFreeSlots = async (req, res) => {
 
     // Find the doctor
     const doctor = await User.findOne({ _id: doctorId, role: 'doctor' })
-      .select('availability slotDuration name');
+      .select('availability slotDuration name blockedDates');
 
     if (!doctor) {
       return res.status(404).json({
         message: 'Doctor not found'
+      });
+    }
+
+    // If the doctor has blocked this exact date (vacation / day off), there
+    // are no bookable slots — regardless of their weekly schedule.
+    const isBlocked = (doctor.blockedDates || []).some((b) => b.date === date);
+    if (isBlocked) {
+      return res.json({
+        date,
+        dayOfWeek,
+        doctorName: doctor.name,
+        message: `Dr. ${doctor.name} is not available on ${date}`,
+        slots: []
       });
     }
 
@@ -331,5 +344,79 @@ function timeStringToMinutes(timeStr) {
   return hours * 60 + mins;
 }
 
+// ============================================
+// SET BLOCKED DATES - Doctor marks vacation / days off
+// ============================================
+// Endpoint: PUT /api/availability/blocked-dates
+// Body: { blockedDates: [{ date: "2026-08-20", reason: "Vacation" }, ...] }
+//
+// Replaces the doctor's full blocked-dates list (the client sends the whole
+// list, same pattern as setAvailability). Dates in the past are dropped —
+// blocking yesterday is meaningless. Validated to YYYY-MM-DD and de-duped.
+
+const setBlockedDates = async (req, res) => {
+  try {
+    const { blockedDates } = req.body;
+
+    if (!Array.isArray(blockedDates)) {
+      return res.status(400).json({ message: 'Please provide blockedDates as an array' });
+    }
+
+    // Today in IST (YYYY-MM-DD) — we drop past dates.
+    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const todayIST = nowInIST.getFullYear() + '-' +
+      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowInIST.getDate()).padStart(2, '0');
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const seen = new Set();
+    const clean = [];
+
+    for (const entry of blockedDates) {
+      const date = entry && typeof entry.date === 'string' ? entry.date.trim() : '';
+      if (!dateRegex.test(date)) {
+        return res.status(400).json({ message: `Invalid date "${date}". Use YYYY-MM-DD.` });
+      }
+      if (date < todayIST) continue;      // silently drop past dates
+      if (seen.has(date)) continue;       // de-dupe
+      seen.add(date);
+      const reason = entry.reason ? String(entry.reason).trim().slice(0, 100) : '';
+      clean.push({ date, reason });
+    }
+
+    // Keep sorted by date for a tidy UI.
+    clean.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+    const doctor = await User.findByIdAndUpdate(
+      req.user._id,
+      { blockedDates: clean },
+      { new: true }
+    ).select('blockedDates');
+
+    res.json({
+      message: 'Blocked dates updated',
+      blockedDates: doctor.blockedDates
+    });
+  } catch (error) {
+    console.error('Set blocked dates error:', error.message);
+    res.status(500).json({ message: 'Error updating blocked dates' });
+  }
+};
+
+// ============================================
+// GET MY BLOCKED DATES - Doctor views their vacation days
+// ============================================
+// Endpoint: GET /api/availability/blocked-dates
+
+const getMyBlockedDates = async (req, res) => {
+  try {
+    const doctor = await User.findById(req.user._id).select('blockedDates');
+    res.json({ blockedDates: (doctor && doctor.blockedDates) || [] });
+  } catch (error) {
+    console.error('Get blocked dates error:', error.message);
+    res.status(500).json({ message: 'Error fetching blocked dates' });
+  }
+};
+
 // ---- Export ----
-module.exports = { setAvailability, getMyAvailability, getFreeSlots };
+module.exports = { setAvailability, getMyAvailability, getFreeSlots, setBlockedDates, getMyBlockedDates };

@@ -277,6 +277,11 @@ export const availabilityAPI = {
   // Get free slots for a doctor on a specific date (public)
   getFreeSlots: (doctorId, date) => API.get(`/availability/${doctorId}/slots`, { params: { date } }),
   // date = "2024-03-15" (YYYY-MM-DD format)
+
+  // Blocked dates / vacation (doctor only)
+  getBlockedDates: () => API.get('/availability/blocked-dates'),
+  setBlockedDates: (blockedDates) => API.put('/availability/blocked-dates', { blockedDates }),
+  // blockedDates = [{ date: "2026-08-20", reason: "Vacation" }, ...]
 };
 
 // ============================================

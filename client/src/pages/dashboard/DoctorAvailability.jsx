@@ -11,7 +11,16 @@ function DoctorAvailability({ onScheduleChange }) {
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
 
+  // Blocked dates / vacation state
+  const [blockedDates, setBlockedDates] = useState([]); // [{ date, reason }]
+  const [blockFrom, setBlockFrom] = useState('');
+  const [blockTo, setBlockTo] = useState('');
+  const [blockReason, setBlockReason] = useState('');
+  const [blockSaving, setBlockSaving] = useState(false);
+
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  // Today in local YYYY-MM-DD, used as the min for the date pickers.
+  const todayStr = new Date().toLocaleDateString('en-CA');
 
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -26,9 +35,68 @@ function DoctorAvailability({ onScheduleChange }) {
       } catch (error) {
         console.error('Fetch availability error:', error);
       } finally { setLoading(false); }
+      // Load blocked dates too (non-critical — don't block the schedule UI).
+      try {
+        const res = await availabilityAPI.getBlockedDates();
+        setBlockedDates(res.data.blockedDates || []);
+      } catch (error) { /* ignore — section just starts empty */ }
     };
     fetchAvailability();
   }, []);
+
+  // Save the full blocked-dates list (server replaces the whole list, drops
+  // past dates, de-dupes, and sorts). Reverts on failure to stay in sync.
+  const persistBlocked = async (next, successMsg) => {
+    const previous = blockedDates;
+    setBlockedDates(next);
+    setBlockSaving(true);
+    try {
+      const res = await availabilityAPI.setBlockedDates(next);
+      setBlockedDates(res.data.blockedDates || next); // trust server's cleaned list
+      if (successMsg) toast.success(successMsg);
+    } catch (error) {
+      setBlockedDates(previous);
+      toast.error(error.response?.data?.message || 'Failed to save — please try again');
+    } finally {
+      setBlockSaving(false);
+    }
+  };
+
+  const handleAddBlockedDates = () => {
+    if (!blockFrom) { toast.error('Please pick a date'); return; }
+    const to = blockTo || blockFrom;
+    if (to < blockFrom) { toast.error('The "To" date must be on or after the "From" date'); return; }
+    // Expand a range into individual YYYY-MM-DD dates (kept simple: the model
+    // stores flat dates). Cap at 60 days to avoid an accidental huge range.
+    const dates = [];
+    const cur = new Date(blockFrom + 'T00:00:00');
+    const end = new Date(to + 'T00:00:00');
+    let guard = 0;
+    while (cur <= end && guard < 60) {
+      dates.push(cur.toLocaleDateString('en-CA'));
+      cur.setDate(cur.getDate() + 1);
+      guard++;
+    }
+    const reason = blockReason.trim();
+    const existing = new Set(blockedDates.map((b) => b.date));
+    const merged = [...blockedDates];
+    for (const d of dates) {
+      if (!existing.has(d)) merged.push({ date: d, reason });
+    }
+    setBlockFrom(''); setBlockTo(''); setBlockReason('');
+    persistBlocked(merged, `Blocked ${dates.length} date(s)`);
+  };
+
+  const handleRemoveBlocked = (date) => {
+    persistBlocked(blockedDates.filter((b) => b.date !== date), 'Date unblocked');
+  };
+
+  // Nicely format a YYYY-MM-DD for display (e.g. "Thu, 20 Aug 2026").
+  const fmtDate = (d) => {
+    try {
+      return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return d; }
+  };
 
   const toggleDay = (day) => {
     setSelectedDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
@@ -171,6 +239,73 @@ function DoctorAvailability({ onScheduleChange }) {
             ))}
           </div>
         )}
+      </div>
+
+      {/* ---- Blocked dates / vacation ---- */}
+      <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <h3 className="font-medium text-gray-800 mb-1">Block Dates / Vacation</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Mark days you're away. Patients won't be able to book you on these dates, even if they fall on your weekly schedule.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">From</label>
+            <input
+              type="date"
+              value={blockFrom}
+              min={todayStr}
+              onChange={(e) => setBlockFrom(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">To <span className="text-gray-400">(optional)</span></label>
+            <input
+              type="date"
+              value={blockTo}
+              min={blockFrom || todayStr}
+              onChange={(e) => setBlockTo(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Reason <span className="text-gray-400">(optional)</span></label>
+            <input
+              type="text"
+              value={blockReason}
+              maxLength={100}
+              placeholder="e.g. Vacation"
+              onChange={(e) => setBlockReason(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <button
+            onClick={handleAddBlockedDates}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            + Block
+          </button>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Leave "To" empty to block a single day. For a holiday, set both dates.</p>
+
+        {blockedDates.length > 0 && (
+          <div className="mt-5 space-y-2">
+            {blockedDates.map((b) => (
+              <div key={b.date} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                <div>
+                  <span className="text-sm font-medium text-gray-800">{fmtDate(b.date)}</span>
+                  {b.reason ? <span className="text-sm text-gray-500 ml-2">— {b.reason}</span> : null}
+                </div>
+                <button onClick={() => handleRemoveBlocked(b.date)} className="text-red-500 hover:text-red-700 text-xs">Unblock</button>
+              </div>
+            ))}
+          </div>
+        )}
+        {blockSaving && <p className="text-xs text-gray-500 mt-2">Saving…</p>}
+        <p className="text-xs text-amber-600 mt-3">
+          Note: blocking a date does not cancel appointments already booked on it — check your Appointments and cancel those manually if needed.
+        </p>
       </div>
 
       <div className="flex items-center gap-2 text-sm">

@@ -215,6 +215,29 @@ const userSchema = new mongoose.Schema({
     max: [180, 'Slot duration cannot exceed 3 hours']
   },
 
+  // --- Blocked Dates (Doctor vacation / days off) ---
+  // Specific calendar dates the doctor is unavailable, ON TOP OF the weekly
+  // `availability` schedule above. A date listed here generates NO bookable
+  // slots (checked in availabilityController.getFreeSlots, the booking guard
+  // in appointmentController, and doctorController's next-available compute).
+  // Stored as plain "YYYY-MM-DD" strings so comparison is timezone-agnostic
+  // (the same IST calendar date the rest of the app uses). A range in the UI
+  // is expanded into individual dates before saving, keeping this simple.
+  blockedDates: {
+    type: [{
+      date: {
+        type: String,   // "YYYY-MM-DD"
+        required: true
+      },
+      reason: {
+        type: String,
+        default: '',
+        maxlength: [100, 'Reason cannot exceed 100 characters']
+      }
+    }],
+    default: []
+  },
+
   // --- Family Members ---
   // Patients can add family members and book appointments on their behalf.
   // Each family member is an embedded subdocument (stored within the user document).
