@@ -7,7 +7,7 @@ export const articles = [
     title: '10 Signs You Should See a Dermatologist',
     description: 'Persistent acne, unusual moles, sudden hair loss? Learn the warning signs that mean you need a dermatologist consultation.',
     specialization: 'Dermatologist',
-    publishedDate: '2026-08-01',
+    publishedDate: '2026-06-17',
     readTime: '5 min',
     image: '🧴',
     content: [
@@ -41,7 +41,7 @@ export const articles = [
     title: 'When to Visit a Gynaecologist — Complete Guide',
     description: 'Irregular periods, pelvic pain, pregnancy planning? Know when you should consult a gynaecologist and what to expect during your visit.',
     specialization: 'Gynaecologist',
-    publishedDate: '2026-08-02',
+    publishedDate: '2026-06-18',
     readTime: '6 min',
     image: '🤰',
     content: [
@@ -65,7 +65,7 @@ export const articles = [
     title: 'Heart Attack Warning Signs — When to See a Cardiologist',
     description: 'Chest pain, breathlessness, high BP? Learn the warning signs of heart disease and when you should consult a cardiologist immediately.',
     specialization: 'Cardiologist',
-    publishedDate: '2026-08-03',
+    publishedDate: '2026-06-19',
     readTime: '5 min',
     image: '❤️',
     content: [
@@ -87,7 +87,7 @@ export const articles = [
     title: 'Is Your Child Sick? When to Take Them to a Pediatrician',
     description: 'Fever, cough, rashes in children — know when home remedies are enough and when you need a pediatrician consultation.',
     specialization: 'Pediatrician',
-    publishedDate: '2026-08-04',
+    publishedDate: '2026-06-20',
     readTime: '5 min',
     image: '👶',
     content: [
@@ -109,7 +109,7 @@ export const articles = [
     title: 'Mental Health: 7 Signs You Need Professional Help',
     description: 'Depression, anxiety, insomnia — when should you see a psychiatrist? Learn the signs that indicate you need professional mental health support.',
     specialization: 'Psychiatrist',
-    publishedDate: '2026-08-05',
+    publishedDate: '2026-06-21',
     readTime: '5 min',
     image: '🧠',
     content: [
@@ -137,7 +137,7 @@ export const articles = [
     title: 'Back Pain: When to See an Orthopedic Doctor',
     description: 'Is your back pain serious? Learn when home remedies aren\'t enough and you need an orthopedic specialist for back, knee, or joint pain.',
     specialization: 'Orthopedic',
-    publishedDate: '2026-08-06',
+    publishedDate: '2026-06-22',
     readTime: '5 min',
     image: '🦴',
     content: [
@@ -161,7 +161,7 @@ export const articles = [
     title: 'Common Dental Problems and When to See a Dentist',
     description: 'Toothache, bleeding gums, bad breath? Learn about common dental issues and when you should visit a dentist before it gets worse.',
     specialization: 'Dentist',
-    publishedDate: '2026-08-07',
+    publishedDate: '2026-06-23',
     readTime: '5 min',
     image: '🦷',
     content: [
@@ -185,7 +185,7 @@ export const articles = [
     title: 'Eye Problems: When to See an Ophthalmologist',
     description: 'Blurry vision, eye strain, headaches? Know when common eye problems need professional attention from an ophthalmologist.',
     specialization: 'Ophthalmologist',
-    publishedDate: '2026-08-08',
+    publishedDate: '2026-06-24',
     readTime: '5 min',
     image: '👁️',
     content: [
@@ -209,7 +209,7 @@ export const articles = [
     title: 'Stomach Problems: When to Consult a Gastroenterologist',
     description: 'Acidity, bloating, constipation? Learn when digestive problems need a gastroenterologist and what conditions they treat.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-08-09',
+    publishedDate: '2026-06-25',
     readTime: '5 min',
     image: '🤢',
     content: [
@@ -233,7 +233,7 @@ export const articles = [
     title: 'Diabetes and Thyroid: When to See an Endocrinologist',
     description: 'Managing diabetes, thyroid disorders, or hormonal imbalances? Learn when you need an endocrinologist and what they treat.',
     specialization: 'Endocrinologist',
-    publishedDate: '2026-08-10',
+    publishedDate: '2026-06-26',
     readTime: '5 min',
     image: '💉',
     content: [
@@ -257,7 +257,7 @@ export const articles = [
     title: 'Ear, Nose & Throat Problems: When to See an ENT Specialist',
     description: 'Ear pain, sinus issues, tonsillitis, snoring? Learn when ENT problems need specialist attention and what treatments are available.',
     specialization: 'ENT Specialist',
-    publishedDate: '2026-08-11',
+    publishedDate: '2026-06-27',
     readTime: '5 min',
     image: '👂',
     content: [
@@ -281,7 +281,7 @@ export const articles = [
     title: 'Brain & Nerve Problems: When to See a Neurologist',
     description: 'Headaches, dizziness, numbness, memory problems? Learn which neurological symptoms need specialist attention and when to worry.',
     specialization: 'Neurologist',
-    publishedDate: '2026-08-12',
+    publishedDate: '2026-06-28',
     readTime: '5 min',
     image: '🤕',
     content: [
@@ -305,7 +305,7 @@ export const articles = [
     title: 'Kidney & Urinary Problems: When to See a Urologist',
     description: 'UTIs, kidney stones, frequent urination? Learn when urinary problems need a urologist and how to protect your kidney health.',
     specialization: 'Urologist',
-    publishedDate: '2026-08-13',
+    publishedDate: '2026-06-29',
     readTime: '5 min',
     image: '💧',
     content: [
@@ -329,7 +329,7 @@ export const articles = [
     title: 'Breathing Problems: When to See a Pulmonologist',
     description: 'Asthma, chronic cough, breathlessness? Know when lung problems need a specialist and what a pulmonologist can do for you.',
     specialization: 'Pulmonologist',
-    publishedDate: '2026-08-14',
+    publishedDate: '2026-06-30',
     readTime: '5 min',
     image: '🫁',
     content: [
@@ -354,7 +354,7 @@ export const articles = [
     title: 'Physiotherapy: When Exercises Are Better Than Medicine',
     description: 'Chronic pain, post-surgery recovery, sports injuries? Learn when physiotherapy is the answer and how it helps heal without medication.',
     specialization: 'Physiotherapist',
-    publishedDate: '2026-08-15',
+    publishedDate: '2026-07-01',
     readTime: '5 min',
     image: '🏃',
     content: [
@@ -378,7 +378,7 @@ export const articles = [
     title: 'Is Online Doctor Consultation Safe and Legal in India?',
     description: 'Wondering if consulting a doctor online is safe, legal, and effective? Here\'s everything you need to know about teleconsultation in India.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-12',
+    publishedDate: '2026-07-02',
     readTime: '5 min',
     image: '💻',
     content: [
@@ -404,7 +404,7 @@ export const articles = [
     title: 'Frequent Headaches: Causes and When to Worry',
     description: 'Getting headaches often? Learn the common causes, simple remedies, and the warning signs that mean you should see a doctor.',
     specialization: 'Neurologist',
-    publishedDate: '2026-08-13',
+    publishedDate: '2026-07-03',
     readTime: '5 min',
     image: '🤕',
     content: [
@@ -426,7 +426,7 @@ export const articles = [
     title: 'Fever: When Home Care Is Enough and When to See a Doctor',
     description: 'Running a fever? Learn safe home care, which medicines help, and the exact signs that mean you should consult a doctor without delay.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-14',
+    publishedDate: '2026-07-04',
     readTime: '5 min',
     image: '🌡️',
     content: [
@@ -450,7 +450,7 @@ export const articles = [
     title: 'How to Consult a Doctor from Home in India (Step by Step)',
     description: 'New to online doctor consultation? A simple step-by-step guide to finding a verified doctor and booking an appointment from your phone.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-15',
+    publishedDate: '2026-07-05',
     readTime: '4 min',
     image: '📲',
     content: [
@@ -476,7 +476,7 @@ export const articles = [
     title: '7 Silent Signs Your Blood Sugar May Be High',
     description: 'Diabetes often shows no obvious symptoms for years. Here are 7 quiet warning signs of high blood sugar you should never ignore — and when to get tested.',
     specialization: 'Endocrinologist',
-    publishedDate: '2026-08-16',
+    publishedDate: '2026-07-06',
     readTime: '5 min',
     image: '🩸',
     content: [
@@ -506,7 +506,7 @@ export const articles = [
     title: 'Always Tired? 8 Reasons You Feel Exhausted (That Aren\'t Just "Lack of Sleep")',
     description: 'Feeling tired all the time even after resting? From thyroid and anaemia to vitamin deficiency and stress — here are 8 real medical causes of constant fatigue.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-17',
+    publishedDate: '2026-07-07',
     readTime: '6 min',
     image: '😴',
     content: [
@@ -536,7 +536,7 @@ export const articles = [
     title: 'High Blood Pressure: Why It\'s Called the "Silent Killer"',
     description: 'High BP usually has NO symptoms — until it causes a heart attack, stroke, or kidney damage. Here\'s what every adult should know, and how to check yours.',
     specialization: 'Cardiologist',
-    publishedDate: '2026-08-18',
+    publishedDate: '2026-07-08',
     readTime: '5 min',
     image: '🩺',
     content: [
@@ -560,7 +560,7 @@ export const articles = [
     title: 'Stop Googling Your Symptoms at 2 AM — Do This Instead',
     description: 'Searching your symptoms online often leads to panic and wrong conclusions. Here\'s why "Dr. Google" misleads you — and a calmer, smarter way to get real answers.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-19',
+    publishedDate: '2026-07-09',
     readTime: '4 min',
     image: '🔍',
     content: [
@@ -584,7 +584,7 @@ export const articles = [
     title: '7 Ancient Indian Wellness Habits That Modern Science Now Agrees With',
     description: 'Turmeric, warm water, oil massage, early dinners — traditional Indian habits our grandparents swore by, and what science actually says about them today.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-20',
+    publishedDate: '2026-07-10',
     readTime: '6 min',
     image: '🪔',
     content: [
@@ -614,7 +614,7 @@ export const articles = [
     title: 'Gut Health 101: Why Your Stomach Controls More Than You Think',
     description: 'Your gut affects your immunity, energy, mood, and skin. A simple, practical guide to a healthier gut — the modern science and the traditional Indian wisdom.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-08-21',
+    publishedDate: '2026-07-11',
     readTime: '6 min',
     image: '🦠',
     content: [
@@ -636,7 +636,7 @@ export const articles = [
     title: 'Can\'t Sleep? A Practical Guide to Better Sleep Tonight',
     description: 'Tossing and turning at night? Simple, proven habits to fall asleep faster and sleep deeper — plus calming traditional practices and when sleep problems need a doctor.',
     specialization: 'Psychiatrist',
-    publishedDate: '2026-08-22',
+    publishedDate: '2026-07-12',
     readTime: '5 min',
     image: '🌙',
     content: [
@@ -658,7 +658,7 @@ export const articles = [
     title: 'How to Support Your Immunity Naturally (No Magic Pills Needed)',
     description: 'Forget expensive supplements — real immunity comes from simple daily habits. A practical, honest guide combining modern science with traditional Indian wisdom.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-23',
+    publishedDate: '2026-07-13',
     readTime: '5 min',
     image: '🛡️',
     content: [
@@ -680,7 +680,7 @@ export const articles = [
     title: 'Vitamin D Deficiency: Why So Many Indians Are Low (Despite the Sunshine)',
     description: 'India gets plenty of sun, yet vitamin D deficiency is incredibly common — causing fatigue, body aches, low immunity and mood dips. Here\'s why, and what to do.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-24',
+    publishedDate: '2026-07-14',
     readTime: '5 min',
     image: '☀️',
     content: [
@@ -702,7 +702,7 @@ export const articles = [
     title: 'Why a Yearly Health Check-Up Is Worth It (Even When You Feel Fine)',
     description: 'Many serious conditions — high BP, diabetes, high cholesterol, fatty liver — show no symptoms for years. Here\'s why a simple yearly check-up can save your life.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-25',
+    publishedDate: '2026-07-15',
     readTime: '5 min',
     image: '🩺',
     content: [
@@ -724,7 +724,7 @@ export const articles = [
     title: 'It\'s Not Just Weight: Why Belly Fat Is a Bigger Health Warning Than the Scale',
     description: 'For Indians, waist size can matter more than weight. Understand metabolic health, why we\'re at risk at lower BMI, and practical steps — without crash diets.',
     specialization: 'Endocrinologist',
-    publishedDate: '2026-08-26',
+    publishedDate: '2026-07-16',
     readTime: '6 min',
     image: '⚖️',
     content: [
@@ -748,7 +748,7 @@ export const articles = [
     title: 'Screens and Your Child\'s Eyes: What Every Parent Should Know',
     description: 'Kids are spending more time on screens than ever — and eye problems in children are rising fast. Practical, doable ways to protect your child\'s vision.',
     specialization: 'Ophthalmologist',
-    publishedDate: '2026-08-27',
+    publishedDate: '2026-07-17',
     readTime: '5 min',
     image: '📱',
     content: [
@@ -770,7 +770,7 @@ export const articles = [
     title: 'Acidity &amp; Heartburn: Why It Happens and How to Get Relief',
     description: 'Burning chest, sour burps, bloating after meals? Understand what really causes acidity, simple habits that help, and when frequent heartburn needs a doctor.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-08-28',
+    publishedDate: '2026-07-18',
     readTime: '5 min',
     image: '🔥',
     content: [
@@ -792,7 +792,7 @@ export const articles = [
     title: 'How Much Water Do You Really Need? (Hydration Myths, Busted)',
     description: 'Is 8 glasses a day a real rule? Does tea count? Here\'s the honest truth about hydration, signs you\'re not drinking enough, and simple ways to stay on track.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-29',
+    publishedDate: '2026-07-19',
     readTime: '4 min',
     image: '💧',
     content: [
@@ -816,7 +816,7 @@ export const articles = [
     title: 'Tired, Pale, Breathless? You Might Be Low on Iron',
     description: 'Iron-deficiency anaemia is extremely common in India, especially in women — causing fatigue, pale skin, hair fall and breathlessness. Here\'s what to know.',
     specialization: 'General Physician',
-    publishedDate: '2026-08-30',
+    publishedDate: '2026-07-20',
     readTime: '5 min',
     image: '🩸',
     content: [
@@ -838,7 +838,7 @@ export const articles = [
     title: '"Tech Neck": How Your Phone and Desk Are Hurting Your Neck &amp; Back',
     description: 'Constant neck, shoulder, or back pain from phones and desk work? Learn what "tech neck" is, simple fixes, and stretches to undo the damage.',
     specialization: 'Orthopedic',
-    publishedDate: '2026-08-31',
+    publishedDate: '2026-07-21',
     readTime: '5 min',
     image: '💺',
     content: [
@@ -860,7 +860,7 @@ export const articles = [
     title: 'PCOS/PCOD Explained: Irregular Periods, Weight &amp; What Really Helps',
     description: 'Irregular periods, unwanted hair, acne, weight gain? PCOS/PCOD is very common in young women — and very manageable. Here\'s a clear, honest guide.',
     specialization: 'Gynaecologist',
-    publishedDate: '2026-09-01',
+    publishedDate: '2026-07-22',
     readTime: '8 min',
     image: '🌸',
     content: [
@@ -884,7 +884,7 @@ export const articles = [
     title: 'Cholesterol Explained: "Good" vs "Bad" and How to Keep It in Check',
     description: 'Confused about cholesterol? Learn what LDL, HDL and triglycerides mean, why high cholesterol is dangerous yet silent, and simple ways to improve your numbers.',
     specialization: 'Cardiologist',
-    publishedDate: '2026-09-02',
+    publishedDate: '2026-07-23',
     readTime: '7 min',
     image: '🫀',
     content: [
@@ -908,7 +908,7 @@ export const articles = [
     title: 'Piles (Haemorrhoids): Causes, Relief, and When to Stop Ignoring It',
     description: 'Pain or bleeding during toilet trips? Piles are extremely common and nothing to be embarrassed about. Learn the causes, simple relief, and when to see a doctor.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-09-03',
+    publishedDate: '2026-07-24',
     readTime: '7 min',
     image: '🚽',
     content: [
@@ -932,7 +932,7 @@ export const articles = [
     title: 'What Happens to Your Body When You Quit Smoking (Hour by Hour)',
     description: 'Thinking of quitting smoking? See how your body starts healing within hours, the real benefits over time, and practical tips to quit for good.',
     specialization: 'Pulmonologist',
-    publishedDate: '2026-09-04',
+    publishedDate: '2026-07-25',
     readTime: '7 min',
     image: '🚭',
     content: [
@@ -954,7 +954,7 @@ export const articles = [
     title: 'Migraine or "Just a Headache"? How to Tell the Difference',
     description: 'Not every bad headache is a migraine, and not every migraine is "just stress." Learn how to tell them apart, what triggers migraines, and how to get real relief.',
     specialization: 'Neurologist',
-    publishedDate: '2026-09-05',
+    publishedDate: '2026-07-26',
     readTime: '7 min',
     image: '🌩️',
     content: [
@@ -978,7 +978,7 @@ export const articles = [
     title: 'Burning When You Pee? Understanding UTIs and How to Get Relief',
     description: 'That burning, urgent, frequent need to pee is usually a UTI — very common, especially in women. Learn the signs, what helps, what to avoid, and when to see a doctor.',
     specialization: 'Urologist',
-    publishedDate: '2026-09-06',
+    publishedDate: '2026-07-27',
     readTime: '7 min',
     image: '🚻',
     content: [
@@ -1004,7 +1004,7 @@ export const articles = [
     title: 'Anxiety and Panic Attacks: You\'re Not "Overreacting" — Here\'s What\'s Happening',
     description: 'Racing heart, tight chest, a wave of dread out of nowhere? Anxiety and panic attacks are real, common, and treatable. A calm, honest guide to understanding them.',
     specialization: 'Psychiatrist',
-    publishedDate: '2026-09-07',
+    publishedDate: '2026-07-28',
     readTime: '7 min',
     image: '🌊',
     content: [
@@ -1028,7 +1028,7 @@ export const articles = [
     title: 'Fatty Liver: The Silent Problem Quietly Affecting Millions of Indians',
     description: 'Fatty liver often has no symptoms, is rising fast in India, and even affects slim people. The good news: caught early, it is often reversible. Here\'s what to know.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-09-08',
+    publishedDate: '2026-07-29',
     readTime: '7 min',
     image: '🫄',
     content: [
@@ -1052,7 +1052,7 @@ export const articles = [
     title: 'Hair Fall: Why It Happens and What Actually Works (No Magic Oils)',
     description: 'Finding hair on your pillow, comb, and shower drain? Hair fall is common and usually treatable. Learn the real causes, what genuinely helps, and when to see a doctor.',
     specialization: 'Dermatologist',
-    publishedDate: '2026-09-09',
+    publishedDate: '2026-07-30',
     readTime: '7 min',
     image: '💇',
     content: [
@@ -1074,7 +1074,7 @@ export const articles = [
     title: 'Knee Pain: What\'s Causing It and How to Protect Your Knees',
     description: 'Knee pain climbing stairs, after sitting, or with age? Learn the common causes, simple ways to ease and protect your knees, and the signs that need a doctor.',
     specialization: 'Orthopedic',
-    publishedDate: '2026-09-10',
+    publishedDate: '2026-07-31',
     readTime: '7 min',
     image: '🦵',
     content: [
@@ -1096,7 +1096,7 @@ export const articles = [
     title: 'Cold, Flu, or Something More? How to Tell the Difference',
     description: 'Runny nose, fever, body aches — is it a common cold, the flu, or something else? Learn how to tell them apart, care for yourself at home, and when to see a doctor.',
     specialization: 'General Physician',
-    publishedDate: '2026-09-11',
+    publishedDate: '2026-08-01',
     readTime: '7 min',
     image: '🤧',
     content: [
@@ -1120,7 +1120,7 @@ export const articles = [
     title: 'Your Thyroid, Explained: The Tiny Gland Behind Fatigue, Weight &amp; Mood',
     description: 'Unexplained tiredness, weight changes, hair fall, or mood swings? Your thyroid might be involved. A clear guide to hypo- and hyperthyroidism and what to do.',
     specialization: 'Endocrinologist',
-    publishedDate: '2026-09-12',
+    publishedDate: '2026-08-02',
     readTime: '7 min',
     image: '🦋',
     content: [
@@ -1146,7 +1146,7 @@ export const articles = [
     title: 'Constipation: Why It Happens and How to Get Things Moving Again',
     description: 'Straining, bloating, going only every few days? Constipation is common and usually fixable with simple changes. Learn the real causes, what helps, and when to see a doctor.',
     specialization: 'Gastroenterologist',
-    publishedDate: '2026-09-13',
+    publishedDate: '2026-08-03',
     readTime: '7 min',
     image: '🚻',
     content: [
@@ -1168,7 +1168,7 @@ export const articles = [
     title: 'Itchy Rashes and Hives: Why Your Skin Reacts and What to Do',
     description: 'Sudden itchy welts, rashes that come and go, skin that flares for no clear reason? Learn what triggers skin allergies and hives, how to calm them, and when to see a doctor.',
     specialization: 'Dermatologist',
-    publishedDate: '2026-09-14',
+    publishedDate: '2026-08-04',
     readTime: '7 min',
     image: '🌿',
     content: [
@@ -1192,7 +1192,7 @@ export const articles = [
     title: 'The Room Is Spinning: Understanding Vertigo and Dizziness',
     description: 'Sudden spinning, unsteadiness, or lightheadedness? Vertigo is common and often very treatable. Learn what causes that spinning feeling and when dizziness needs a doctor.',
     specialization: 'ENT Specialist',
-    publishedDate: '2026-09-15',
+    publishedDate: '2026-08-05',
     readTime: '7 min',
     image: '🌀',
     content: [
@@ -1216,7 +1216,7 @@ export const articles = [
     title: 'Think You Might Be Pregnant? Early Signs and First-Trimester Care',
     description: 'Missed period, nausea, tender breasts, tiredness? A warm, clear guide to early pregnancy signs, confirming it, and looking after yourself in the crucial first trimester.',
     specialization: 'Gynaecologist',
-    publishedDate: '2026-09-16',
+    publishedDate: '2026-08-06',
     readTime: '8 min',
     image: '🤰',
     content: [
