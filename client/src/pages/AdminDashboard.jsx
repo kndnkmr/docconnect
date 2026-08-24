@@ -507,44 +507,74 @@ function AdminDashboard() {
             </div>
           )}
 
+          {/* Clickable stat cards — each drills into the matching tab with the
+              relevant filter pre-applied, so a number leads to the actual list. */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+            <button
+              onClick={() => { setUserRoleFilter(''); setActiveTab('users'); }}
+              className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg hover:bg-gray-50 transition-all"
+            >
               <div className="text-3xl font-bold text-primary-600">{stats.totalUsers}</div>
               <div className="text-gray-600 mt-1">Total Users</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-xs text-primary-500 mt-1">View all →</div>
+            </button>
+            <button
+              onClick={() => { setUserRoleFilter('doctor'); setActiveTab('users'); }}
+              className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg hover:bg-gray-50 transition-all"
+            >
               <div className="text-3xl font-bold text-blue-600">{stats.totalDoctors}</div>
               <div className="text-gray-600 mt-1">Doctors</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-xs text-blue-500 mt-1">View doctors →</div>
+            </button>
+            <button
+              onClick={() => { setUserRoleFilter('patient'); setActiveTab('users'); }}
+              className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg hover:bg-gray-50 transition-all"
+            >
               <div className="text-3xl font-bold text-green-600">{stats.totalPatients}</div>
               <div className="text-gray-600 mt-1">Patients</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
+              <div className="text-xs text-green-500 mt-1">View patients →</div>
+            </button>
+            <button
+              onClick={() => { setAppointmentStatusFilter(''); setActiveTab('appointments'); }}
+              className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg hover:bg-gray-50 transition-all"
+            >
               <div className="text-3xl font-bold text-purple-600">{stats.totalAppointments}</div>
               <div className="text-gray-600 mt-1">Appointments</div>
-            </div>
+              <div className="text-xs text-purple-500 mt-1">View all →</div>
+            </button>
           </div>
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Appointment Breakdown</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-yellow-50 rounded-lg text-center">
+              <button
+                onClick={() => { setAppointmentStatusFilter('pending'); setActiveTab('appointments'); }}
+                className="p-4 bg-yellow-50 rounded-lg text-center hover:bg-yellow-100 transition-colors"
+              >
                 <div className="text-2xl font-bold text-yellow-700">{stats.pendingAppointments}</div>
                 <div className="text-yellow-600 text-sm">Pending</div>
-              </div>
-              <div className="p-4 bg-green-50 rounded-lg text-center">
+              </button>
+              <button
+                onClick={() => { setAppointmentStatusFilter('confirmed'); setActiveTab('appointments'); }}
+                className="p-4 bg-green-50 rounded-lg text-center hover:bg-green-100 transition-colors"
+              >
                 <div className="text-2xl font-bold text-green-700">{stats.confirmedAppointments}</div>
                 <div className="text-green-600 text-sm">Confirmed</div>
-              </div>
-              <div className="p-4 bg-blue-50 rounded-lg text-center">
+              </button>
+              <button
+                onClick={() => { setAppointmentStatusFilter('completed'); setActiveTab('appointments'); }}
+                className="p-4 bg-blue-50 rounded-lg text-center hover:bg-blue-100 transition-colors"
+              >
                 <div className="text-2xl font-bold text-blue-700">{stats.completedAppointments}</div>
                 <div className="text-blue-600 text-sm">Completed</div>
-              </div>
-              <div className="p-4 bg-red-50 rounded-lg text-center">
+              </button>
+              <button
+                onClick={() => { setAppointmentStatusFilter('cancelled'); setActiveTab('appointments'); }}
+                className="p-4 bg-red-50 rounded-lg text-center hover:bg-red-100 transition-colors"
+              >
                 <div className="text-2xl font-bold text-red-700">{stats.cancelledAppointments}</div>
                 <div className="text-red-600 text-sm">Cancelled</div>
-              </div>
+              </button>
             </div>
           </div>
 
