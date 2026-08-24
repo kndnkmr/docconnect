@@ -3,23 +3,58 @@ import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { articles } from './blogData';
 
-// Topic chips are derived automatically from the articles' specialization
-// values, so they stay in sync as new articles are added.
-const TOPICS = ['All', ...Array.from(new Set(articles.map((a) => a.specialization))).sort()];
+// Broad, friendly categories so ~55 articles feel browsable instead of
+// overwhelming. Each maps to one or more of the underlying `specialization`
+// values used on the articles. New specialties fall into "More" until mapped.
+const CATEGORIES = [
+  { label: 'All', icon: '📚', specs: null },
+  { label: 'Heart & BP', icon: '❤️', specs: ['Cardiologist'] },
+  { label: "Women's Health", icon: '🌸', specs: ['Gynaecologist'] },
+  { label: 'Mental Health', icon: '🧠', specs: ['Psychiatrist'] },
+  { label: 'Digestion', icon: '🍎', specs: ['Gastroenterologist'] },
+  { label: 'Diabetes & Hormones', icon: '💉', specs: ['Endocrinologist'] },
+  { label: 'Bones & Joints', icon: '🦴', specs: ['Orthopedic', 'Physiotherapist'] },
+  { label: 'Skin & Hair', icon: '🧴', specs: ['Dermatologist'] },
+  { label: 'Kids', icon: '👶', specs: ['Pediatrician'] },
+  { label: 'Brain & Nerves', icon: '🧩', specs: ['Neurologist'] },
+  { label: 'Eyes', icon: '👁️', specs: ['Ophthalmologist'] },
+  { label: 'ENT', icon: '👂', specs: ['ENT Specialist'] },
+  { label: 'Kidney & Urinary', icon: '💧', specs: ['Urologist'] },
+  { label: 'Lungs', icon: '🫁', specs: ['Pulmonologist'] },
+  { label: 'Dental', icon: '🦷', specs: ['Dentist'] },
+  { label: 'General & Wellness', icon: '🩺', specs: ['General Physician'] },
+];
+
+// A short, hand-picked "Start Here" set for first-time visitors — broadly
+// useful, high-interest reads so they aren't faced with 55 articles at once.
+// Shown only on the default view (no search, "All" selected).
+const START_HERE_SLUGS = [
+  'why-preventive-health-checkups-matter',
+  'silent-signs-high-blood-sugar',
+  'high-bp-the-silent-killer',
+  'stop-googling-symptoms-do-this-instead',
+];
 
 function BlogList() {
   const [query, setQuery] = useState('');
-  const [topic, setTopic] = useState('All');
+  const [category, setCategory] = useState('All');
 
   // Client-side filtering — all articles are already loaded, so we filter
-  // instantly by topic (specialization) and search text. No backend needed.
+  // instantly by category (a group of specializations) and search text.
   const q = query.trim().toLowerCase();
+  const activeCategory = CATEGORIES.find((c) => c.label === category) || CATEGORIES[0];
   const sorted = [...articles].sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
   const filtered = sorted.filter((a) => {
-    const topicOk = topic === 'All' || a.specialization === topic;
+    const categoryOk = !activeCategory.specs || activeCategory.specs.includes(a.specialization);
     const searchOk = !q || `${a.title} ${a.description} ${a.specialization}`.toLowerCase().includes(q);
-    return topicOk && searchOk;
+    return categoryOk && searchOk;
   });
+
+  // Show the "Start Here" strip only on the default, unfiltered view.
+  const showStartHere = category === 'All' && !q;
+  const startHere = showStartHere
+    ? START_HERE_SLUGS.map((s) => articles.find((a) => a.slug === s)).filter(Boolean)
+    : [];
 
   return (
     <div>
@@ -52,22 +87,44 @@ function BlogList() {
       </div>
 
       <div className="container mx-auto px-4 pb-10">
-        {/* Topic filter chips — browse by category with one tap */}
+        {/* Category filter chips — browse by broad topic with one tap */}
         <div className="max-w-5xl mx-auto -mt-4 mb-6 relative z-10 flex flex-wrap justify-center gap-2">
-          {TOPICS.map((tp) => (
+          {CATEGORIES.map((c) => (
             <button
-              key={tp}
-              onClick={() => setTopic(tp)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                topic === tp
+              key={c.label}
+              onClick={() => setCategory(c.label)}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                category === c.label
                   ? 'bg-primary-600 text-white'
                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
               }`}
             >
-              {tp}
+              <span className="mr-1">{c.icon}</span>{c.label}
             </button>
           ))}
         </div>
+
+        {/* Start Here — a friendly on-ramp for first-time visitors, shown only
+            on the default view so it never gets in the way of searching. */}
+        {startHere.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-8">
+            <h2 className="text-lg font-semibold text-gray-800 mb-1">✨ Start Here</h2>
+            <p className="text-gray-500 text-sm mb-4">New here? These popular reads are a great place to begin.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {startHere.map((a) => (
+                <Link
+                  key={a.slug}
+                  to={`/blog/${a.slug}`}
+                  className="bg-white border border-primary-100 rounded-xl p-4 hover:shadow-md hover:border-primary-300 transition-all block"
+                >
+                  <div className="text-3xl mb-2">{a.image}</div>
+                  <span className="block text-xs text-primary-600 font-medium">{a.specialization}</span>
+                  <h3 className="font-medium text-gray-800 mt-1 text-sm line-clamp-2">{a.title}</h3>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {filtered.length === 0 ? (
           <div className="text-center py-16">
@@ -75,7 +132,7 @@ function BlogList() {
             <h3 className="text-xl font-medium text-gray-700">No articles found{query ? ` for “${query}”` : ''}</h3>
             <p className="text-gray-500 mt-2">Try a different word or topic, or browse all articles.</p>
             <button
-              onClick={() => { setQuery(''); setTopic('All'); }}
+              onClick={() => { setQuery(''); setCategory('All'); }}
               className="mt-5 inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
             >
               Show all articles
