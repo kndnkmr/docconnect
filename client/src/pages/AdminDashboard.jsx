@@ -783,6 +783,7 @@ function AdminDashboard() {
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Date</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Time</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Status</th>
+                    <th className="px-4 py-3 text-sm font-medium text-gray-600">Payment</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Reason</th>
                   </tr>
                 </thead>
@@ -806,6 +807,24 @@ function AdminDashboard() {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
                           {apt.status}
                         </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {(() => {
+                          // Payment visibility for admin. paymentStatus:
+                          //   'paid'            -> doctor confirmed payment received
+                          //   'patient_claimed' -> patient said paid, doctor not yet verified
+                          //   else (pending/unset) -> not paid yet
+                          // Only meaningful once the appointment is confirmed; a
+                          // pending/cancelled appointment has no payment expected.
+                          if (apt.status === 'cancelled') return <span className="text-gray-400 text-xs">—</span>;
+                          if (apt.paymentStatus === 'paid') {
+                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Paid</span>;
+                          }
+                          if (apt.paymentStatus === 'patient_claimed') {
+                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Awaiting verify</span>;
+                          }
+                          return <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Unpaid</span>;
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{apt.reason}</td>
                     </tr>
