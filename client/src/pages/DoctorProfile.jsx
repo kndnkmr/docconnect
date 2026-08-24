@@ -39,6 +39,8 @@ const TXT = {
     about: 'About', clinicAddress: 'Clinic Address', getDirections: '📍 Get Directions',
     patientReviews: 'Patient Reviews', noReviews: 'No reviews yet. Be the first to consult and rate!',
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} review${n > 1 ? 's' : ''})`,
+    doctorReplyLabel: "Doctor's reply", reply: 'Reply', editReply: 'Edit reply',
+    replyPlaceholder: 'Write a public reply…', postReply: 'Post reply', cancel: 'Cancel',
   },
   hi: {
     loading: 'प्रोफ़ाइल लोड हो रही है...',
@@ -56,6 +58,8 @@ const TXT = {
     about: 'परिचय', clinicAddress: 'क्लिनिक का पता', getDirections: '📍 रास्ता देखें',
     patientReviews: 'मरीज़ों की समीक्षाएं', noReviews: 'अभी कोई समीक्षा नहीं। पहले परामर्श लें और रेटिंग दें!',
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} समीक्षा${n > 1 ? 'एं' : ''})`,
+    doctorReplyLabel: 'डॉक्टर का जवाब', reply: 'जवाब दें', editReply: 'जवाब संपादित करें',
+    replyPlaceholder: 'सार्वजनिक जवाब लिखें…', postReply: 'जवाब पोस्ट करें', cancel: 'रद्द करें',
   },
 };
 
@@ -65,11 +69,46 @@ function DoctorProfile() {
 
   const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
-  const { isAuthenticated, isPatient } = useAuth();
+  const { isAuthenticated, isPatient, user } = useAuth();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [reviewStats, setReviewStats] = useState({ averageRating: 0, totalReviews: 0 });
+  // Doctor reply UI: which review is open for reply, and the draft text.
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [replySaving, setReplySaving] = useState(false);
+
+  // True when the logged-in user is the doctor whose profile this is —
+  // gates the "Reply" controls to only their own reviews.
+  const isOwnProfile = isAuthenticated && user && doctor && user._id === doctor._id;
+
+  // Reusable reviews fetch (also called after posting a reply to refresh).
+  const loadReviews = async () => {
+    try {
+      const reviewResponse = await reviewAPI.getDoctorReviews(id);
+      setReviews(reviewResponse.data.reviews);
+      setReviewStats(reviewResponse.data.stats);
+    } catch (error) {
+      console.error('Fetch reviews error:', error);
+    }
+  };
+
+  const handleReply = async (reviewId) => {
+    if (!replyText.trim()) { toast.error('Please write a reply'); return; }
+    setReplySaving(true);
+    try {
+      await reviewAPI.reply(reviewId, replyText.trim());
+      toast.success('Reply posted');
+      setReplyingTo(null);
+      setReplyText('');
+      await loadReviews();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to post reply');
+    } finally {
+      setReplySaving(false);
+    }
+  };
 
   // Fetch doctor data when component loads
   useEffect(() => {
@@ -85,19 +124,8 @@ function DoctorProfile() {
       }
     };
 
-    const fetchReviews = async () => {
-      try {
-        const reviewResponse = await reviewAPI.getDoctorReviews(id);
-        setReviews(reviewResponse.data.reviews);
-        setReviewStats(reviewResponse.data.stats);
-      } catch (error) {
-        // Silently fail — reviews are optional, don't block the page
-        console.error('Fetch reviews error:', error);
-      }
-    };
-
     fetchDoctor();
-    fetchReviews();
+    loadReviews();
   }, [id]);
   // [id] = re-fetch if the ID in the URL changes
 
@@ -355,6 +383,52 @@ function DoctorProfile() {
                       <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
                     </div>
                   </div>
+
+                  {/* Doctor's public reply, if any */}
+                  {review.doctorReply && review.doctorReply.text && (
+                    <div className="mt-3 ml-3 pl-3 border-l-2 border-primary-200">
+                      <p className="text-xs font-semibold text-primary-700">💬 {t.doctorReplyLabel}</p>
+                      <p className="text-sm text-gray-700 mt-1">{review.doctorReply.text}</p>
+                    </div>
+                  )}
+
+                  {/* Doctor viewing their OWN profile: reply / edit-reply control */}
+                  {isOwnProfile && (
+                    replyingTo === review._id ? (
+                      <div className="mt-3">
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          maxLength={500}
+                          rows={2}
+                          placeholder={t.replyPlaceholder}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                        />
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            onClick={() => handleReply(review._id)}
+                            disabled={replySaving}
+                            className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-60"
+                          >
+                            {t.postReply}
+                          </button>
+                          <button
+                            onClick={() => { setReplyingTo(null); setReplyText(''); }}
+                            className="px-4 py-1.5 text-gray-600 rounded-lg text-sm hover:bg-gray-100"
+                          >
+                            {t.cancel}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => { setReplyingTo(review._id); setReplyText(review.doctorReply?.text || ''); }}
+                        className="mt-3 text-xs font-medium text-primary-600 hover:underline"
+                      >
+                        {review.doctorReply && review.doctorReply.text ? t.editReply : t.reply}
+                      </button>
+                    )
+                  )}
                 </div>
               ))}
             </div>

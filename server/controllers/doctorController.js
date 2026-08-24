@@ -122,7 +122,9 @@ async function attachRatings(docs) {
   const ids = docs.map((d) => d._id);
 
   const stats = await Review.aggregate([
-    { $match: { doctor: { $in: ids } } },
+    // Exclude admin-hidden reviews so a hidden review stops counting toward
+    // the public average/count everywhere doctors are listed or ranked.
+    { $match: { doctor: { $in: ids }, isHidden: { $ne: true } } },
     { $group: { _id: '$doctor', average: { $avg: '$rating' }, count: { $sum: 1 } } }
   ]);
 

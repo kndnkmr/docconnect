@@ -73,13 +73,14 @@ const createReview = async (req, res) => {
 
 const getDoctorReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ doctor: req.params.doctorId })
+    // Public view — never show admin-hidden reviews.
+    const reviews = await Review.find({ doctor: req.params.doctorId, isHidden: { $ne: true } })
       .populate('patient', 'name')
       .sort({ createdAt: -1 })
       .limit(20);
 
-    // Calculate average rating
-    const allReviews = await Review.find({ doctor: req.params.doctorId });
+    // Calculate average rating (hidden reviews don't count toward it)
+    const allReviews = await Review.find({ doctor: req.params.doctorId, isHidden: { $ne: true } });
     const totalReviews = allReviews.length;
     const avgRating = totalReviews > 0
       ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
@@ -125,7 +126,7 @@ const deleteReview = async (req, res) => {
 
 const getTopReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ rating: { $gte: 4 }, comment: { $ne: '' } })
+    const reviews = await Review.find({ rating: { $gte: 4 }, comment: { $ne: '' }, isHidden: { $ne: true } })
       .populate('patient', 'name')
       .populate('doctor', 'name specialization')
       .sort({ createdAt: -1 })
@@ -139,4 +140,94 @@ const getTopReviews = async (req, res) => {
   }
 };
 
-module.exports = { createReview, getDoctorReviews, deleteReview, getTopReviews };
+// ============================================
+// REPLY TO REVIEW - Doctor's public right of reply
+// ============================================
+// Endpoint: PUT /api/reviews/:id/reply
+// Body: { text }
+// Only the doctor being reviewed can reply. Sets/updates their public reply.
+
+const replyToReview = async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ message: 'Reply text is required' });
+    }
+
+    const review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    // Only the doctor who was reviewed can reply to it.
+    if (review.doctor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only reply to reviews of your own profile' });
+    }
+
+    review.doctorReply = { text: text.trim().slice(0, 500), repliedAt: new Date() };
+    await review.save();
+
+    res.json({ message: 'Reply posted', review });
+  } catch (error) {
+    console.error('Reply to review error:', error.message);
+    res.status(500).json({ message: 'Error posting reply' });
+  }
+};
+
+// ============================================
+// HIDE / UNHIDE REVIEW - Admin moderation (soft, reversible)
+// ============================================
+// Endpoint: PUT /api/reviews/:id/hide
+// Body: { isHidden: true|false, hiddenReason? }
+// Hidden reviews stay in the DB but are excluded from every public read path.
+
+const setReviewHidden = async (req, res) => {
+  try {
+    const { isHidden, hiddenReason } = req.body;
+
+    const review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    review.isHidden = !!isHidden;
+    review.hiddenReason = isHidden ? (hiddenReason ? String(hiddenReason).trim().slice(0, 200) : 'Hidden by admin') : '';
+    await review.save();
+
+    res.json({
+      message: review.isHidden ? 'Review hidden' : 'Review unhidden',
+      review
+    });
+  } catch (error) {
+    console.error('Set review hidden error:', error.message);
+    res.status(500).json({ message: 'Error updating review' });
+  }
+};
+
+// ============================================
+// GET ALL REVIEWS - Admin moderation list (includes hidden)
+// ============================================
+// Endpoint: GET /api/reviews/all?hidden=true|false
+// Admin-only. Returns all reviews (with patient + doctor names) for moderation,
+// newest first, optionally filtered to only hidden / only visible.
+
+const getAllReviews = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.hidden === 'true') filter.isHidden = true;
+    else if (req.query.hidden === 'false') filter.isHidden = { $ne: true };
+
+    const reviews = await Review.find(filter)
+      .populate('patient', 'name patientId')
+      .populate('doctor', 'name specialization')
+      .sort({ createdAt: -1 })
+      .limit(200);
+
+    res.json({ reviews });
+  } catch (error) {
+    console.error('Get all reviews error:', error.message);
+    res.status(500).json({ message: 'Error fetching reviews' });
+  }
+};
+
+module.exports = { createReview, getDoctorReviews, deleteReview, getTopReviews, replyToReview, setReviewHidden, getAllReviews };

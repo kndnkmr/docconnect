@@ -3,7 +3,7 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
-import { adminAPI, announcementAPI, complaintAPI } from '../services/api';
+import { adminAPI, announcementAPI, complaintAPI, reviewAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 function AdminDashboard() {
@@ -33,6 +33,35 @@ function AdminDashboard() {
   // Complaints state
   const [complaints, setComplaints] = useState([]);
   const [complaintStatusFilter, setComplaintStatusFilter] = useState('');
+
+  // Reviews moderation state
+  const [reviews, setReviews] = useState([]);
+  const [reviewHiddenFilter, setReviewHiddenFilter] = useState(''); // '' = all, 'true' = hidden, 'false' = visible
+
+  const fetchReviews = async () => {
+    try {
+      const params = reviewHiddenFilter ? { hidden: reviewHiddenFilter } : {};
+      const response = await reviewAPI.getAll(params);
+      setReviews(response.data.reviews || []);
+    } catch (error) {
+      toast.error('Failed to load reviews');
+    }
+  };
+
+  const handleToggleReviewHidden = async (review) => {
+    const willHide = !review.isHidden;
+    let reason = '';
+    if (willHide) {
+      reason = window.prompt('Reason for hiding this review (optional):', '') || '';
+    }
+    try {
+      await reviewAPI.setHidden(review._id, { isHidden: willHide, hiddenReason: reason });
+      toast.success(willHide ? 'Review hidden' : 'Review unhidden');
+      fetchReviews();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update review');
+    }
+  };
 
   // Fetch stats on load
   useEffect(() => {
@@ -288,7 +317,8 @@ function AdminDashboard() {
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'appointments') fetchAppointments();
     if (activeTab === 'complaints') fetchComplaints();
-  }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter]);
+    if (activeTab === 'reviews') fetchReviews();
+  }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter, reviewHiddenFilter]);
 
   const handleDeleteUser = async (id, name) => {
     if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone — there is no recovery from this app.\n\nTip: use "Deactivate" to just hide them, or "Free Up for New Signup" if you want them to sign up fresh with the same phone/email. Both keep all their records intact.`)) return;
@@ -447,6 +477,14 @@ function AdminDashboard() {
           }`}
         >
           Complaints
+        </button>
+        <button
+          onClick={() => setActiveTab('reviews')}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'reviews' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Reviews
         </button>
       </div>
 
@@ -1204,6 +1242,74 @@ function AdminDashboard() {
                       </button>
                     )}
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* === REVIEWS TAB === */}
+      {activeTab === 'reviews' && (
+        <div>
+          <div className="mb-4">
+            <select
+              value={reviewHiddenFilter}
+              onChange={(e) => setReviewHiddenFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            >
+              <option value="">All reviews</option>
+              <option value="false">Visible only</option>
+              <option value="true">Hidden only</option>
+            </select>
+          </div>
+
+          {reviews.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-md p-12 text-center">
+              <div className="text-5xl mb-4">⭐</div>
+              <h3 className="text-xl font-medium text-gray-700">No reviews</h3>
+              <p className="text-gray-500 mt-2">Patient reviews will appear here. Hide any that are fake, abusive, or spam — hidden reviews stay on record but disappear from doctor profiles, the homepage, and rating averages.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((r) => (
+                <div key={r._id} className={`bg-white rounded-xl shadow-md p-6 ${r.isHidden ? 'opacity-70 border border-red-200' : ''}`}>
+                  <div className="flex justify-between items-start gap-3 flex-wrap">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-yellow-500">{'⭐'.repeat(r.rating)}</span>
+                        <span className="text-sm text-gray-500">({r.rating}/5)</span>
+                        {r.isHidden && (
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-medium">🚫 Hidden</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {r.patient?.name || 'Unknown patient'}
+                        {r.patient?.patientId && <span className="font-mono text-gray-400"> ({r.patient.patientId})</span>}
+                        {' → Dr. '}{r.doctor?.name || 'Unknown'}{r.doctor?.specialization ? ` (${r.doctor.specialization})` : ''}
+                        {' • '}{formatDate(r.createdAt)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleToggleReviewHidden(r)}
+                      className={`px-3 py-1 rounded-lg text-sm whitespace-nowrap ${r.isHidden ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
+                    >
+                      {r.isHidden ? 'Unhide' : 'Hide'}
+                    </button>
+                  </div>
+
+                  {r.comment && <p className="text-gray-700 text-sm mt-3">"{r.comment}"</p>}
+
+                  {r.doctorReply && r.doctorReply.text && (
+                    <div className="mt-3 ml-3 pl-3 border-l-2 border-primary-200">
+                      <p className="text-xs font-semibold text-primary-700">💬 Doctor's reply</p>
+                      <p className="text-sm text-gray-700 mt-1">{r.doctorReply.text}</p>
+                    </div>
+                  )}
+
+                  {r.isHidden && r.hiddenReason && (
+                    <p className="text-xs text-red-500 mt-2">Hidden reason: {r.hiddenReason}</p>
+                  )}
                 </div>
               ))}
             </div>

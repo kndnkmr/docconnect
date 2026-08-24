@@ -406,11 +406,20 @@ export const reviewAPI = {
   // Patient submits review
   create: (data) => API.post('/reviews', data),
 
-  // Get reviews for a doctor (public)
+  // Get reviews for a doctor (public; hidden reviews excluded server-side)
   getDoctorReviews: (doctorId) => API.get(`/reviews/doctor/${doctorId}`),
 
   // Get top reviews for homepage testimonials (public)
   getTopReviews: () => API.get('/reviews/top'),
+
+  // Doctor replies to a review of their own profile
+  reply: (reviewId, text) => API.put(`/reviews/${reviewId}/reply`, { text }),
+
+  // Admin: hide/unhide a review (soft moderation). data = { isHidden, hiddenReason }
+  setHidden: (reviewId, data) => API.put(`/reviews/${reviewId}/hide`, data),
+
+  // Admin: moderation list of all reviews (optionally ?hidden=true|false)
+  getAll: (params) => API.get('/reviews/all', { params }),
 };
 
 export { getUploadUrl };
