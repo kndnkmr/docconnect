@@ -293,13 +293,6 @@ export const adminAPI = {
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
 
-  // Book an appointment on behalf of a patient (for patients who call/WhatsApp
-  // and can't book themselves). Finds or creates the patient by phone.
-  // data = { patientName, patientPhone, patientEmail?, patientPassword?, doctorId, date, timeSlot, reason, consultationType? }
-  // patientPassword (optional): sets the login password for a NEW patient so
-  // the admin can share phone + password. Ignored for an existing patient.
-  bookForPatient: (data) => API.post('/admin/appointments', data),
-
   // Delete a user (permanent)
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
 

@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, bookAppointmentForPatient } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -21,11 +21,6 @@ router.get('/users', getAllUsers);
 
 // GET /api/admin/appointments - All appointments (with filter)
 router.get('/appointments', getAllAppointments);
-
-// POST /api/admin/appointments - Book an appointment on behalf of a patient
-// (for patients who call/WhatsApp and can't book themselves). Finds or creates
-// the patient by phone, then books a free slot with the chosen doctor.
-router.post('/appointments', bookAppointmentForPatient);
 
 // DELETE /api/admin/users/:id - Remove a user (permanent)
 router.delete('/users/:id', deleteUser);
