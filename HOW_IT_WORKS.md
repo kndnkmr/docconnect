@@ -1,4 +1,6 @@
-# How DocConnect Works — Full Technical Documentation
+# How ProMedicoz Works — Full Technical Documentation
+
+> Note: this project's repo/older docs use the name "DocConnect"; the live product is **ProMedicoz**. They refer to the same app.
 
 This document explains how the entire application works — the architecture, data flow, user journeys, and how all services connect.
 
@@ -1187,6 +1189,110 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   medical misinformation, and an empty counter at low traffic hurts trust.
 - The floating WhatsApp button is hidden on `/blog` and `/blog/<slug>` (see
   `WhatsAppButton.jsx`) so it doesn't distract readers or get mis-tapped.
+
+### Blog growth: categories, Start Here, health tip, related articles
+
+- **Blog grew to ~55 original articles** (from ~25). Same `blogData.js` schema
+  and content rules as above (original text, wellness framed as lifestyle
+  support never cures, every article's `specialization` maps to a real
+  specialty for the CTA, new slugs added to `client/public/sitemap.xml`).
+- **Category browsing (`BlogList.jsx`):** the raw ~15 specialization chips are
+  grouped into broad, icon-labelled categories (Heart & BP, Women's Health,
+  Mental Health, Digestion, Diabetes & Hormones, Bones & Joints, Skin & Hair,
+  Kids, Brain & Nerves, Eyes, ENT, Kidney & Urinary, Lungs, Dental, General &
+  Wellness) via a `CATEGORIES` map — each category lists the specialties it
+  covers, so it stays browsable as articles grow. Every current specialty maps
+  to a category; any future unmapped specialty just stays visible under "All"
+  (safe fallback — nothing disappears).
+- **"Start Here" strip:** a hand-picked shortlist (`START_HERE_SLUGS`) of
+  broadly-useful reads shown ONLY on the default view (no search, "All"
+  selected), so first-timers aren't faced with 55 articles at once. Disappears
+  the moment someone searches or picks a category.
+- **Smarter related articles (`BlogArticle.jsx`):** each article now suggests
+  up to 3 others — SAME specialty first (most relevant to what the reader is
+  already interested in), then filled with the most recent others — plus a
+  "browse all" link, to keep people reading instead of bouncing.
+- **Health Tip of the Day (`Home.jsx`):** picks one article deterministically
+  from the date (`dayNumber % articles.length`), so it's the SAME for everyone
+  on a given day and rotates daily — a gentle reason for casual visitors to
+  return. The surrounding UI labels are bilingual (badge, "read the full
+  article", "more health articles"); the article title/description stay English
+  on purpose (same rule as all medical content — never machine-translated).
+  Rolls over at UTC midnight (5:30 AM IST) and walks the array in order (not
+  curated-by-impact) — both deliberate, minor, left simple.
+
+### Automated appointment reminders (cut no-shows)
+
+- **Why:** before this, a confirmed appointment arrived with no nudge at all
+  unless the patient happened to open the dashboard — a real no-show driver.
+- **How:** `server/utils/appointmentReminder.js` — a once-a-minute clock-based
+  job (scheduled in `server.js` next to the existing `callReminder`) that, ~1
+  hour before a `confirmed` appointment (ANY consultation type), pushes a
+  reminder to BOTH the patient and the doctor via Web Push (free, works when
+  the app is closed). Patient's push names the doctor; the doctor's is generic
+  (doesn't leak the patient's name).
+- **Timing:** fires once in the 60→55-min-before window (job runs every
+  minute), guarded so a late server start won't send a stale reminder for a
+  slot about to begin (the at-start call reminder covers that case). Reuses the
+  same IST slot-time parsing helpers as `callReminder.js`.
+- **Dedupe:** a new `reminderSentAt` field on `Appointment` (separate from
+  `callReminderSentAt`, which fires AT slot start for calls) — so the two
+  reminders never interfere and each fires once. Reschedule resets both flags
+  so reminders re-fire for the new time.
+
+### Doctor block dates / vacation
+
+- **What:** doctors mark specific dates (single day or a range) as unavailable,
+  ON TOP OF their weekly `availability`. Stored as a new `blockedDates`
+  array on `User` (`[{ date: "YYYY-MM-DD", reason }]`) — plain date strings so
+  comparison is IST-calendar-agnostic; a UI range is expanded into individual
+  dates before saving, keeping the model simple.
+- **Enforced in ALL THREE slot-computation paths** (this consistency is the
+  crux — a blocked date must never leak a bookable slot anywhere):
+  1. Public free-slots endpoint (`availabilityController.getFreeSlots`) —
+     returns `slots: []` for a blocked date.
+  2. Booking guard (`appointmentController.bookAppointment`) — rejects a direct
+     API booking on a blocked date the UI would never have offered.
+  3. Next-available / "available today" (`doctorController.computeNextAvailable`)
+     — skips blocked days, so a doctor's card never advertises a slot they're off.
+     (The reschedule handler reuses the same booking guard.)
+- **Endpoints:** `GET`/`PUT /api/availability/blocked-dates` (doctor only).
+  `setBlockedDates` replaces the whole list, drops past dates, de-dupes, sorts.
+- **UI:** a "Block Dates / Vacation" section in `DoctorAvailability.jsx`
+  (auto-saves like the rest of that screen; From/To/reason; unblock button).
+- **Deliberate limitation:** blocking a date does NOT auto-cancel appointments
+  already booked on it — the UI warns (amber note) to handle those manually.
+  Auto-cancelling a patient's confirmed appointment is a bigger decision left
+  to the doctor.
+
+### Patient reschedule (pending or confirmed, paid or not)
+
+- **What:** a patient moves a `pending` OR `confirmed` appointment (completed/
+  cancelled are final) to a different free slot with the SAME doctor. New
+  `PUT /api/appointments/:id/reschedule` (patient-only), and a Reschedule
+  button + `dashboard/RescheduleModal.jsx` (reuses the public free-slots picker,
+  so it only offers genuinely open slots and honours blocked dates).
+- **Same-doctor only, by design.** Switching doctors = a new booking — mixing
+  that into "reschedule" would create refund/ownership messiness (payment is
+  already with the original doctor via direct UPI).
+- **What's preserved vs reset** (`rescheduleAppointment` in
+  `appointmentController.js`):
+  - Preserved: identity, `paymentStatus`/`paidAt`/`amountCollected` (paid stays
+    paid — no re-payment), `reason`, `symptoms`, `consultationType`, consent,
+    family info, notes, `isFollowUp`.
+  - Reset: `date`/`timeSlot` (the move), `status` → `pending` (doctor
+    re-confirms), `meetingLink` → `''`, the call flags, and BOTH reminder
+    dedupe flags (`callReminderSentAt`, `reminderSentAt`) so reminders re-fire
+    for the new time.
+- **Guards reused from booking:** blocked date, not-in-past, and slot-taken —
+  the slot-taken check EXCLUDES the appointment itself (`_id: { $ne: ... }`) so
+  "rescheduling to the same slot" doesn't collide with itself.
+- **Notifications:** the doctor gets push + email that it moved and needs
+  re-confirming.
+- **No time cutoff yet** — a patient could technically reschedule minutes
+  before the slot. Kept simple; add a "can't reschedule within X hours" rule
+  later if it's abused. Direct-UPI payment is why reschedule needs no refund
+  logic (same doctor, same fee).
 
 ---
 

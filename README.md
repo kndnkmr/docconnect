@@ -54,6 +54,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Search and filter doctors by name or specialization
 - Real-time availability: doctors set weekly schedule (multi-day selection) that auto-saves on every add/remove (no separate Save step); patients see only free slots
 - Appointment booking with status workflow (pending → confirmed → completed/cancelled)
+- Patient reschedule: a patient can move a pending OR confirmed appointment (paid or not) to a different free slot with the SAME doctor — payment status, reason, consent, and all details are preserved; it returns to "pending" so the doctor re-confirms the new time, the doctor is notified (push + email), the old slot frees up, and it reuses the same guards as booking (can't land on a blocked/past date or an already-taken slot). Reminder timers reset so both reminders re-fire for the new time
+- Automated appointment reminders: an every-minute clock-based job pushes a reminder to BOTH the patient and doctor about an hour before a confirmed appointment (any consultation type), reducing no-shows — free web push, works even when the app isn't open; dedupes so it fires once per appointment
+- Doctor block dates / vacation: doctors can mark specific dates (single day or a range) as unavailable on top of their weekly schedule. Blocked dates produce no bookable slots (enforced in the public slot endpoint, the booking guard, and the "next available"/"available today" computation), so patients can't book them. Doesn't auto-cancel appointments already booked on a date later blocked (the UI warns to handle those manually)
 - Family members: patients can add/manage family members and book appointments on their behalf
 - Repeat booking: rebook a past appointment with same doctor/details (one-click "Book Again")
 - Meeting link sharing: doctor adds Google Meet/Zoom link when confirming (patient sees "Join" button)
@@ -67,7 +70,8 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Patient medical information (optional): blood group, allergies, current medications, medical history, emergency contact, and insurance details — set once in Account Settings, shown automatically to the doctor on every appointment (allergies always visible, the rest behind an expander) instead of being asked every visit; also surfaced as a reminder on the booking form itself
 - Structured symptom tags on the booking form (Fever, Cough, Headache, etc.) — an optional, fast-glance supplement to the free-text "Reason for Visit"
 - Floating WhatsApp emergency button (configurable via env var) — shown to guests only; hidden once a user logs in (they already have in-app chat/booking/footer support) and on blog pages (a reader focused on an article doesn't need it, and it avoids accidental taps while scrolling)
-- Health blog with discovery built in: an instant client-side search box (by symptom/keyword, e.g. "toothache"), topic filter chips (auto-derived from article specializations), newest-first ordering, per-article share buttons (WhatsApp/Facebook/native/copy) and a private "Was this helpful?" 👍/👎 (local-only, no public counter — deliberately no open comments/likes to avoid spam + medical-misinformation risk on a health blog). ~25 original SEO articles spanning "when to see a [specialist]", symptom/question explainers (frequent headaches, fever care, is online consultation safe), and responsibly-framed wellness/traditional-habit pieces (gut health, sleep, immunity, ancient Indian wellness) — all framed as lifestyle support, never as cures, always pointing to a doctor
+- Health blog with discovery built in: an instant client-side search box (by symptom/keyword, e.g. "toothache"), broad category filter chips (Heart & BP, Women's Health, Mental Health, Digestion, Kids, etc. — each grouping one or more specialties, so ~55 articles feel browsable), a hand-picked "Start Here" strip for first-time visitors (shown only on the default unfiltered view), newest-first ordering, smarter related-article suggestions on each article (same-specialty first, then recent), per-article share buttons (WhatsApp/Facebook/native/copy) and a private "Was this helpful?" 👍/👎 (local-only, no public counter — deliberately no open comments/likes to avoid spam + medical-misinformation risk on a health blog). ~55 original SEO articles spanning "when to see a [specialist]", symptom/question explainers (frequent headaches, fever care, migraine, UTI, acidity, PCOS, cholesterol, piles, kidney stones, hair fall, knee pain, thyroid, etc.), and responsibly-framed wellness/traditional-habit pieces (gut health, sleep, immunity, ancient Indian wellness) — all framed as lifestyle support, never as cures, always pointing to a doctor
+- Health Tip of the Day on the Home page: one article, rotating daily (deterministic by date — same for everyone on a given day, changes each day), linking to the full read — a gentle reason for casual visitors to come back. Bilingual UI labels; the article title/description stay English (medical content is never machine-translated)
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
 - Doctor rating & review system via modal (1-5 stars + text, shown on doctor profile)
@@ -242,6 +246,7 @@ docconnect/
 │   │   ├── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
 │   │   ├── accountCleanup.js    ← Daily job: anonymizes accounts past the 90-day deletion window
 │   │   ├── callReminder.js      ← Every-minute job: pushes "call starting" to both parties, clock-based
+│   │   ├── appointmentReminder.js ← Every-minute job: pushes "appointment in ~1 hour" to both parties (cuts no-shows)
 │   │   ├── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
 │   │   └── fixIndexes.js        ← Startup migration: rebuilds the email index as sparse unique (idempotent)
 │   │
@@ -305,6 +310,7 @@ docconnect/
             │   ├── PatientPrescriptions.jsx
             │   ├── PatientReports.jsx
             │   ├── PatientComplaints.jsx
+            │   ├── RescheduleModal.jsx   ← Patient reschedule modal (date + free-slot picker)
             │   └── AccountSettings.jsx
             └── AdminDashboard.jsx ← Admin panel
 ```
@@ -510,6 +516,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | PUT | /api/appointments/:id/call-log/:logId/end | Protected | Finalize a call log with duration |
 | PUT | /api/appointments/:id/status | Doctor only | Confirm/complete appointment |
 | PUT | /api/appointments/:id/call | Protected | Set call active/inactive (ringing signal) |
+| PUT | /api/appointments/:id/reschedule | Patient only | Move a pending/confirmed appointment to a new free slot (same doctor); preserves payment, resets to pending, notifies doctor |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
 | PUT | /api/appointments/:id/payment | Doctor only | Mark payment received |
 
@@ -526,7 +533,9 @@ Add the same three values to your hosting provider's environment variables (e.g.
 |--------|----------|--------|-------------|
 | GET | /api/availability | Doctor only | View own schedule |
 | PUT | /api/availability | Doctor only | Set weekly schedule |
-| GET | /api/availability/:doctorId/slots?date=YYYY-MM-DD | Public | Get free slots |
+| GET | /api/availability/blocked-dates | Doctor only | View own blocked dates / vacation days |
+| PUT | /api/availability/blocked-dates | Doctor only | Set blocked dates (replaces the list; drops past dates, de-dupes, sorts) |
+| GET | /api/availability/:doctorId/slots?date=YYYY-MM-DD | Public | Get free slots (returns none on a blocked date) |
 
 ### Prescriptions
 | Method | Endpoint | Access | Description |
