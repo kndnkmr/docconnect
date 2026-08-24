@@ -110,8 +110,20 @@ function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">10. Contact Us</h2>
-          <p>For privacy-related queries or to exercise your rights:</p>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">10. Legal Basis &amp; Your Data Rights (India)</h2>
+          <p>We handle your personal data in accordance with applicable Indian law, including the Digital Personal Data Protection Act, 2023 (DPDP Act). In plain terms, this means:</p>
+          <ul className="list-disc ml-6 mt-2 space-y-1">
+            <li>We collect and use your data only for the purposes described in this policy (running your account, appointments, and consultations), and with your consent</li>
+            <li>You can access and correct your information from your dashboard, and withdraw consent or delete your account at any time (see "Your Rights" and "Data Retention" above)</li>
+            <li>We ask for notification permission only if you choose to enable it, and you can turn it off anytime</li>
+            <li>If you believe your data has been mishandled, you can contact us using the details below, and you retain your rights under applicable law</li>
+          </ul>
+          <p className="mt-2">Note: the DPDP Act's detailed rules are still being brought into force by the Government of India. We aim to align our practices with them as they take effect, and will update this policy as needed.</p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">11. Contact Us</h2>
+          <p>For privacy-related queries, to exercise your data rights, or to raise a concern about how your data is handled:</p>
           <p className="mt-2">Email: support@promedicoz.in</p>
         </section>
       </div>
