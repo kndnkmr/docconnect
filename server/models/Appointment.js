@@ -218,6 +218,15 @@ const appointmentSchema = new mongoose.Schema({
     type: String,
     default: ''
     // IP address at the time of consent (audit trail)
+  },
+
+  // ---- Booked by admin on the patient's behalf (phone/WhatsApp assist) ----
+  // Set true when an admin creates this appointment for a patient who
+  // couldn't book it themselves. Purely informational/audit — the doctor
+  // still confirms it through the normal flow, exactly like a self-booking.
+  bookedByAdmin: {
+    type: Boolean,
+    default: false
   }
 
 }, {
