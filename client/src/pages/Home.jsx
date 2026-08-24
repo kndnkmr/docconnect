@@ -5,6 +5,7 @@ import { reviewAPI } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
 import { Helmet } from 'react-helmet-async';
+import { articles } from './blog/blogData';
 
 // Bilingual UI strings for the patient-facing home page (Phase 1).
 // Only fixed UI labels are translated. Brand name, Login/Register, and
@@ -23,6 +24,9 @@ const TXT = {
     statAppointments: 'Appointments',
     areYouDoctor: 'Are you a doctor?',
     joinLink: 'Join ProMedicoz →',
+    tipBadge: '💡 Health Tip of the Day',
+    tipRead: 'Read the full article →',
+    tipMore: 'More health articles →',
     specHeading: 'Consult by Specialization',
     specSubtitle: "Tap your concern — we'll show the right specialists",
     browseAll: '🔍 Browse All Specializations →',
@@ -60,6 +64,9 @@ const TXT = {
     statAppointments: 'अपॉइंटमेंट',
     areYouDoctor: 'क्या आप डॉक्टर हैं?',
     joinLink: 'ProMedicoz से जुड़ें →',
+    tipBadge: '💡 आज का स्वास्थ्य सुझाव',
+    tipRead: 'पूरा लेख पढ़ें →',
+    tipMore: 'और स्वास्थ्य लेख →',
     specHeading: 'बीमारी के अनुसार परामर्श करें',
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
@@ -96,6 +103,18 @@ function Home() {
   const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
   const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
+
+  // "Health Tip of the Day" — pick one article deterministically from the
+  // date, so it's the same for everyone on a given day and rotates daily.
+  // This gives casual visitors a fresh reason to come back and read.
+  // Article text (title/description) stays in English on purpose — the same
+  // rule we apply to all doctor/medical content, which we don't machine-translate.
+  const dailyTip = (() => {
+    if (!articles.length) return null;
+    const now = new Date();
+    const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+    return articles[dayNumber % articles.length];
+  })();
 
   useEffect(() => {
     const fetchTopReviews = async () => {
@@ -300,6 +319,40 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---- Health Tip of the Day ---- rotates daily; a gentle nudge to
+           read the free health content and come back for more. */}
+      {dailyTip && (
+        <section className="py-8 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <Link
+                to={`/blog/${dailyTip.slug}`}
+                className="group block bg-white border border-primary-100 rounded-2xl p-5 sm:p-6 hover:shadow-md hover:border-primary-300 transition-all"
+              >
+                <span className="inline-block bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                  {t.tipBadge}
+                </span>
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl sm:text-5xl flex-shrink-0">{dailyTip.image}</div>
+                  <div className="flex-1">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-primary-700 transition-colors">
+                      {dailyTip.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">{dailyTip.description}</p>
+                    <span className="text-primary-600 text-sm font-medium mt-2 inline-block group-hover:underline">
+                      {t.tipRead}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+              <div className="text-center mt-3">
+                <Link to="/blog" className="text-primary-600 text-sm font-medium hover:underline">{t.tipMore}</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---- How It Works ---- */}
       <section className="py-12 bg-gray-50">

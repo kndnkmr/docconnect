@@ -46,6 +46,17 @@ function BlogArticle() {
     );
   }
 
+  // Related articles: same specialty first (most relevant to what the reader
+  // is already interested in), then fill up to 3 with other recent articles.
+  const others = articles.filter(a => a.slug !== slug);
+  const sameSpecialty = others
+    .filter(a => a.specialization === article.specialization)
+    .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
+  const rest = others
+    .filter(a => a.specialization !== article.specialization)
+    .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
+  const relatedArticles = [...sameSpecialty, ...rest].slice(0, 3);
+
   // Article structured data for Google
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -143,17 +154,24 @@ function BlogArticle() {
           )}
         </div>
 
-        {/* Related articles */}
+        {/* Related articles — prefer the SAME specialty first (so a reader on
+            "cholesterol" is offered "high BP", "belly fat", etc.), then fill
+            with other recent articles. This keeps people reading instead of
+            bouncing after one article. */}
         <div className="mt-10">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">More articles</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {articles.filter(a => a.slug !== slug).slice(0, 2).map(a => (
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">More to read</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {relatedArticles.map(a => (
               <Link key={a.slug} to={`/blog/${a.slug}`} className="p-4 bg-white border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
                 <span className="text-2xl">{a.image}</span>
-                <h4 className="font-medium text-gray-800 mt-2 text-sm">{a.title}</h4>
-                <span className="text-primary-600 text-xs mt-1 inline-block">Read →</span>
+                <span className="block text-xs text-primary-600 font-medium mt-2">{a.specialization}</span>
+                <h4 className="font-medium text-gray-800 mt-1 text-sm line-clamp-2">{a.title}</h4>
+                <span className="text-primary-600 text-xs mt-2 inline-block">Read →</span>
               </Link>
             ))}
+          </div>
+          <div className="mt-5 text-center">
+            <Link to="/blog" className="text-primary-600 hover:underline text-sm font-medium">Browse all health articles →</Link>
           </div>
         </div>
       </div>
