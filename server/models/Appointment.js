@@ -202,6 +202,17 @@ const appointmentSchema = new mongoose.Schema({
     default: null
   },
 
+  // ---- "Your appointment is coming up" reminder (dedupe flag) ----
+  // Set the first time the ~1-hour-before reminder push has been sent for this
+  // appointment (server/utils/appointmentReminder.js), so the once-a-minute job
+  // never reminds the same appointment twice. Separate from callReminderSentAt,
+  // which fires AT the slot start for video/phone calls — this one is the
+  // earlier "get ready" nudge and applies to all consultation types.
+  reminderSentAt: {
+    type: Date,
+    default: null
+  },
+
   // ---- Teleconsultation consent (captured at booking, for legal record) ----
   consentGiven: {
     type: Boolean,

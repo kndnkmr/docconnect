@@ -70,6 +70,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // not when it's imported by the test suite (which tests the app without a DB).
 const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
 const { sendCallStartReminders } = require('./utils/callReminder');
+const { sendAppointmentReminders } = require('./utils/appointmentReminder');
 const { fixEmailIndex } = require('./utils/fixIndexes');
 
 if (require.main === module) {
@@ -100,6 +101,11 @@ mongoose.connect(process.env.MONGODB_URI)
     // first. Runs every minute - cheap at this scale, and the job itself
     // dedupes via callReminderSentAt so nobody gets pushed twice.
     setInterval(sendCallStartReminders, 60 * 1000);
+
+    // Remind both doctor and patient ~1 hour before a confirmed appointment
+    // (any consultation type) to cut no-shows. Same once-a-minute cadence;
+    // dedupes via reminderSentAt so nobody gets reminded twice.
+    setInterval(sendAppointmentReminders, 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
