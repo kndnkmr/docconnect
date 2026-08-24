@@ -823,7 +823,7 @@ const backfillDoctorLanguages = async (req, res) => {
 
 const bookAppointmentForPatient = async (req, res) => {
   try {
-    const { patientName, patientPhone, patientEmail, doctorId, date, timeSlot, reason, consultationType } = req.body;
+    const { patientName, patientPhone, patientEmail, patientPassword, doctorId, date, timeSlot, reason, consultationType } = req.body;
 
     // Step 1: Validate required fields
     if (!patientName || !patientPhone || !doctorId || !date || !timeSlot || !reason) {
@@ -839,6 +839,17 @@ const bookAppointmentForPatient = async (req, res) => {
       });
     }
     const formattedPhone = formatIndianPhone(patientPhone);
+
+    // Optional admin-set password for a NEW patient — same 6-char minimum as
+    // signup. The admin shares "phone + password" with the patient so they can
+    // log in themselves next time. (Ignored for an existing patient, who
+    // already has their own password.)
+    const wantsPassword = patientPassword !== undefined && patientPassword !== null && patientPassword !== '';
+    if (wantsPassword && String(patientPassword).length < 6) {
+      return res.status(400).json({
+        message: 'Password must be at least 6 characters'
+      });
+    }
 
     // Step 3: Verify the doctor exists and is actually a doctor
     const doctor = await User.findOne({ _id: doctorId, role: 'doctor' });
@@ -881,15 +892,16 @@ const bookAppointmentForPatient = async (req, res) => {
         if (!emailTaken) emailToUse = normalizedEmail;
       }
 
-      // Create a minimal patient account. Random password (never shared) —
-      // the patient can set their own later via the admin "reset link" tool
-      // if they ever want to log in themselves.
-      const randomPassword = crypto.randomBytes(16).toString('hex');
+      // Use the admin-provided password if given (so the admin can share
+      // "phone + password" with the patient for next-time login). Otherwise
+      // fall back to a random one they can reset later. Either way the User
+      // pre-save hook hashes it before storage.
+      const passwordToUse = wantsPassword ? String(patientPassword) : crypto.randomBytes(16).toString('hex');
       patient = await User.create({
         name: patientName.trim(),
         phone: formattedPhone,
         email: emailToUse,
-        password: randomPassword,
+        password: passwordToUse,
         role: 'patient',
         isVerified: true,
         consentAcceptedAt: new Date()
@@ -924,10 +936,21 @@ const bookAppointmentForPatient = async (req, res) => {
     // Notify the doctor exactly like a normal booking (non-blocking).
     sendAppointmentNotification(doctor, patient, appointment);
 
+    // Tell the admin exactly what to share. Only report a shareable password
+    // when it was set on a brand-new account (we never expose/know an existing
+    // patient's password).
+    const passwordWasSet = createdNewPatient && wantsPassword;
+    let message;
+    if (passwordWasSet) {
+      message = `New patient account created (${patient.patientId}) and appointment booked. Share these login details with the patient: phone ${patient.phone} + the password you set. Waiting for doctor confirmation.`;
+    } else if (createdNewPatient) {
+      message = `New patient account created (${patient.patientId}) and appointment booked. No password was set — use "Send Password Reset" from the Users tab if the patient wants to log in. Waiting for doctor confirmation.`;
+    } else {
+      message = 'Appointment booked for an existing patient. They log in with their own existing password. Waiting for doctor confirmation.';
+    }
+
     res.status(201).json({
-      message: createdNewPatient
-        ? `New patient account created (${patient.patientId}) and appointment booked. Waiting for doctor confirmation.`
-        : 'Appointment booked for existing patient. Waiting for doctor confirmation.',
+      message,
       appointment,
       patient: {
         _id: patient._id,
@@ -935,7 +958,8 @@ const bookAppointmentForPatient = async (req, res) => {
         phone: patient.phone,
         patientId: patient.patientId
       },
-      createdNewPatient
+      createdNewPatient,
+      passwordWasSet
     });
 
   } catch (error) {

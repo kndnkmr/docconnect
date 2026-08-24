@@ -37,7 +37,7 @@ function AdminDashboard() {
   // "Book for Patient" state — admin books on behalf of a patient who called
   // or WhatsApp'd and couldn't book themselves.
   const [bookForm, setBookForm] = useState({
-    patientName: '', patientPhone: '', patientEmail: '',
+    patientName: '', patientPhone: '', patientEmail: '', patientPassword: '',
     doctorId: '', date: '', timeSlot: '', reason: '', consultationType: 'in-person'
   });
   const [bookDoctorQuery, setBookDoctorQuery] = useState('');
@@ -99,7 +99,7 @@ function AdminDashboard() {
       toast.success(res.data.message, { duration: 7000 });
       // Reset the form for the next booking.
       setBookForm({
-        patientName: '', patientPhone: '', patientEmail: '',
+        patientName: '', patientPhone: '', patientEmail: '', patientPassword: '',
         doctorId: '', date: '', timeSlot: '', reason: '', consultationType: 'in-person'
       });
       setBookSelectedDoctor(null);
@@ -994,7 +994,7 @@ function AdminDashboard() {
                     placeholder="9876543210"
                   />
                 </div>
-                <div className="sm:col-span-2">
+                <div>
                   <label className="block text-sm text-gray-600 mb-1">Email (optional)</label>
                   <input
                     type="email"
@@ -1004,8 +1004,21 @@ function AdminDashboard() {
                     placeholder="patient@example.com"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Set password (optional)</label>
+                  <input
+                    type="text"
+                    value={bookForm.patientPassword}
+                    onChange={(e) => setBookForm((f) => ({ ...f, patientPassword: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    placeholder="Min 6 characters"
+                  />
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-1">If a patient with this phone already exists, we'll use that account. Otherwise a new one is created.</p>
+              <p className="text-xs text-gray-400 mt-1">
+                If a patient with this phone already exists, we'll use that account (their own password stays unchanged).
+                For a new patient, set a password here and share <strong>phone + password</strong> with them so they can log in next time.
+              </p>
             </div>
 
             {/* Doctor selection */}

@@ -295,7 +295,9 @@ export const adminAPI = {
 
   // Book an appointment on behalf of a patient (for patients who call/WhatsApp
   // and can't book themselves). Finds or creates the patient by phone.
-  // data = { patientName, patientPhone, patientEmail?, doctorId, date, timeSlot, reason, consultationType? }
+  // data = { patientName, patientPhone, patientEmail?, patientPassword?, doctorId, date, timeSlot, reason, consultationType? }
+  // patientPassword (optional): sets the login password for a NEW patient so
+  // the admin can share phone + password. Ignored for an existing patient.
   bookForPatient: (data) => API.post('/admin/appointments', data),
 
   // Delete a user (permanent)
