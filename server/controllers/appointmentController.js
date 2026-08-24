@@ -484,6 +484,122 @@ const cancelAppointment = async (req, res) => {
 };
 
 // ============================================
+// RESCHEDULE APPOINTMENT - Patient moves it to a new slot
+// ============================================
+// Endpoint: PUT /api/appointments/:id/reschedule
+// Body: { date, timeSlot }
+//
+// Moves a PENDING or CONFIRMED appointment (paid or not) to a different free
+// slot with the SAME doctor. Everything about the appointment is preserved —
+// its identity, payment status, reason, consent — only date/timeSlot change.
+// It goes back to 'pending' so the doctor re-confirms the new time (they'd
+// blocked the old slot), and the reminder flags reset so the reminders re-fire
+// for the new time. Reuses the same guards as booking (blocked date, slot
+// taken, not in the past) so it can't create an impossible booking.
+
+const rescheduleAppointment = async (req, res) => {
+  try {
+    const { date, timeSlot } = req.body;
+
+    if (!date || !timeSlot) {
+      return res.status(400).json({ message: 'Please provide the new date and time slot' });
+    }
+
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Only the patient who booked it can reschedule.
+    if (appointment.patient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only reschedule your own appointments' });
+    }
+
+    // Only pending/confirmed can move — completed/cancelled are final.
+    if (!['pending', 'confirmed'].includes(appointment.status)) {
+      return res.status(400).json({
+        message: `Cannot reschedule an appointment that is already ${appointment.status}`
+      });
+    }
+
+    // Same doctor as the original (reschedule ≠ switching doctors).
+    const doctor = await User.findOne({ _id: appointment.doctor, role: 'doctor' });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Guard: doctor blocked this date (vacation / day off).
+    const isBlockedDate = (doctor.blockedDates || []).some((b) => b.date === date);
+    if (isBlockedDate) {
+      return res.status(400).json({
+        message: 'The doctor is not available on this date. Please choose another day.'
+      });
+    }
+
+    // Guard: not in the past (IST) — same check as booking.
+    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const todayIST = nowInIST.getFullYear() + '-' +
+      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowInIST.getDate()).padStart(2, '0');
+    if (date < todayIST) {
+      return res.status(400).json({ message: 'Cannot reschedule to a date in the past' });
+    }
+
+    // Guard: the new slot isn't already taken — EXCLUDING this appointment
+    // itself (so "rescheduling" to the same slot doesn't collide with itself).
+    const conflict = await Appointment.findOne({
+      doctor: appointment.doctor,
+      date: new Date(date),
+      timeSlot: timeSlot,
+      _id: { $ne: appointment._id },
+      status: { $nin: ['cancelled'] }
+    });
+    if (conflict) {
+      return res.status(400).json({
+        message: 'This time slot is already booked. Please choose another time.'
+      });
+    }
+
+    // ---- Apply the move ----
+    // Change ONLY the timing + fields that logically reset; preserve payment,
+    // reason, symptoms, consent, consultationType, family info, notes, etc.
+    appointment.date = new Date(date);
+    appointment.timeSlot = timeSlot;
+    appointment.status = 'pending';        // doctor must re-confirm the new time
+    appointment.meetingLink = '';           // old link no longer applies
+    appointment.callActive = false;
+    appointment.callStartedAt = null;
+    appointment.callStartedBy = null;
+    appointment.callReminderSentAt = null;  // let the at-start reminder fire again
+    appointment.reminderSentAt = null;      // let the 1-hour reminder fire again
+
+    await appointment.save({ validateBeforeSave: false });
+
+    await appointment.populate('doctor', 'name specialization profilePhoto');
+
+    // Notify the doctor: it moved and needs re-confirmation (push + email).
+    const newDateLabel = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    sendPushToUser(appointment.doctor._id ? appointment.doctor._id : appointment.doctor, {
+      title: 'Appointment rescheduled',
+      body: `${req.user.name} moved their appointment to ${newDateLabel} at ${timeSlot}. Please re-confirm.`,
+      url: '/dashboard',
+      tag: `appointment-${appointment._id}`
+    });
+    const patient = await User.findById(req.user._id).select('name phone email');
+    sendAppointmentNotification(doctor, patient, appointment);
+
+    res.json({
+      message: 'Appointment rescheduled. Waiting for the doctor to confirm the new time.',
+      appointment
+    });
+
+  } catch (error) {
+    console.error('Reschedule appointment error:', error.message);
+    res.status(500).json({ message: 'Error rescheduling appointment' });
+  }
+};
+
+// ============================================
 // MARK PAYMENT RECEIVED - Doctor/Admin marks payment
 // ============================================
 // Endpoint: PUT /api/appointments/:id/payment
@@ -887,6 +1003,7 @@ module.exports = {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
+  rescheduleAppointment,
   markPayment,
   uploadPaymentScreenshot,
   notifyPayment,

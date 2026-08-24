@@ -26,6 +26,7 @@ import PatientPrescriptions from './dashboard/PatientPrescriptions';
 import PatientReports from './dashboard/PatientReports';
 import PatientComplaints from './dashboard/PatientComplaints';
 import AccountSettings from './dashboard/AccountSettings';
+import RescheduleModal from './dashboard/RescheduleModal';
 
 // Every tab key the dashboard supports. Used to validate a deep-link
 // (?tab=familyMembers) so other pages can send patients straight to the
@@ -194,6 +195,7 @@ function Dashboard() {
 
   // Modal state
   const [cancelModal, setCancelModal] = useState({ open: false, id: null });
+  const [rescheduleModal, setRescheduleModal] = useState({ open: false, appointment: null });
   const [rateModal, setRateModal] = useState({ open: false, id: null });
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
@@ -1475,6 +1477,7 @@ function Dashboard() {
                         </>
                       )}
                       {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">{hasPrescription ? 'Update Prescription' : 'Write Prescription'}</button>}
+                      {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setRescheduleModal({ open: true, appointment: apt })} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Reschedule</button>}
                       {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
@@ -1750,6 +1753,14 @@ function Dashboard() {
         onConfirm={handleCancel}
         onCancel={() => setCancelModal({ open: false, id: null })}
       />
+
+      {rescheduleModal.open && (
+        <RescheduleModal
+          appointment={rescheduleModal.appointment}
+          onClose={() => setRescheduleModal({ open: false, appointment: null })}
+          onDone={() => { setRescheduleModal({ open: false, appointment: null }); fetchAppointments(); }}
+        />
+      )}
 
       <PromptModal
         open={rateModal.open}

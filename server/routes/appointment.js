@@ -23,6 +23,7 @@ const {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
+  rescheduleAppointment,
   markPayment,
   uploadPaymentScreenshot,
   notifyPayment,
@@ -83,6 +84,11 @@ router.put('/:id/call-log/:logId/end', endCallLog);
 // PUT /api/appointments/:id/status
 // Only doctors can confirm/complete appointments
 router.put('/:id/status', authorize('doctor'), updateAppointmentStatus);
+
+// ---- PATIENT: Reschedule appointment ----
+// PUT /api/appointments/:id/reschedule
+// Only the patient who booked can move it to a new free slot (same doctor)
+router.put('/:id/reschedule', authorize('patient'), rescheduleAppointment);
 
 // ---- PATIENT: Cancel appointment ----
 // PUT /api/appointments/:id/cancel

@@ -189,6 +189,10 @@ export const appointmentAPI = {
   cancel: (id, data) => API.put(`/appointments/${id}/cancel`, data),
   // data = { cancellationReason }
 
+  // Reschedule appointment to a new date/time with the same doctor (patient only)
+  reschedule: (id, data) => API.put(`/appointments/${id}/reschedule`, data),
+  // data = { date, timeSlot }
+
   // Mark payment received (doctor only)
   markPayment: (id) => API.put(`/appointments/${id}/payment`, { paymentStatus: 'paid' }),
 
