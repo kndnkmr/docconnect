@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
 // translate; booking values (doctor name, specialization, reason) stay as-is.
@@ -23,6 +24,13 @@ const TXT = {
     ],
     browseMore: 'Browse More Doctors',
     dateLocale: 'en-IN',
+    notifyTitle: 'Get a reminder before your appointment',
+    notifyText: "Turn on notifications and we'll alert you when the doctor confirms, and remind you about an hour before your appointment — so you never miss it.",
+    notifyEnable: 'Enable notifications',
+    notifyLater: 'Maybe later',
+    notifyEnabling: 'Enabling…',
+    notifyDone: '✓ Notifications on — you\'ll get reminders for this appointment.',
+    notifyFailed: 'Could not enable notifications. You can turn them on later from your dashboard.',
   },
   hi: {
     noBooking: 'कोई बुकिंग विवरण नहीं मिला', goDashboard: 'डैशबोर्ड पर जाएं',
@@ -39,6 +47,13 @@ const TXT = {
     ],
     browseMore: 'और डॉक्टर देखें',
     dateLocale: 'hi-IN',
+    notifyTitle: 'अपॉइंटमेंट से पहले याद दिलाएं',
+    notifyText: 'नोटिफिकेशन चालू करें — डॉक्टर के पुष्टि करने पर और अपॉइंटमेंट से लगभग एक घंटा पहले हम आपको सूचित करेंगे, ताकि आप कभी न चूकें।',
+    notifyEnable: 'नोटिफिकेशन चालू करें',
+    notifyLater: 'बाद में',
+    notifyEnabling: 'चालू हो रहा है…',
+    notifyDone: '✓ नोटिफिकेशन चालू — आपको इस अपॉइंटमेंट के लिए रिमाइंडर मिलेंगे।',
+    notifyFailed: 'नोटिफिकेशन चालू नहीं हो सका। आप इसे बाद में अपने डैशबोर्ड से चालू कर सकते हैं।',
   },
 };
 
@@ -48,6 +63,22 @@ function BookingConfirmation() {
   const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
   // Booking data passed from BookAppointment page via navigate state
+
+  // Contextual notification opt-in. Only worth showing when the browser can do
+  // push AND the user hasn't already decided — permission 'default' means
+  // never asked. If it's 'granted' they're already set; 'denied' means the
+  // browser has permanently blocked us and asking again does nothing, so we
+  // don't show a dead button. This is the highest-converting moment to ask,
+  // because the benefit (a reminder for THIS appointment) is concrete and now.
+  const [notifyState, setNotifyState] = useState(() =>
+    isPushSupported() && getPushPermission() === 'default' ? 'prompt' : 'hidden'
+  );
+
+  const handleEnableNotify = async () => {
+    setNotifyState('enabling');
+    const ok = await enablePushNotifications();
+    setNotifyState(ok ? 'done' : 'failed');
+  };
 
   if (!booking) {
     return (
@@ -119,6 +150,46 @@ function BookingConfirmation() {
             {t.next(booking.consultationType).map((step, i) => <li key={i}>{step}</li>)}
           </ol>
         </div>
+
+        {/* Contextual notification opt-in — benefit-driven, dismissible, and
+            only shown when the browser can push and hasn't already decided. */}
+        {notifyState !== 'hidden' && (
+          <div className="bg-primary-50 border border-primary-200 rounded-xl p-5 mb-6">
+            {notifyState === 'done' ? (
+              <p className="text-sm font-medium text-green-700">{t.notifyDone}</p>
+            ) : (
+              <>
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl flex-shrink-0">🔔</span>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">{t.notifyTitle}</h3>
+                    <p className="text-sm text-gray-600 mt-1">{t.notifyText}</p>
+                  </div>
+                </div>
+                {notifyState === 'failed' && (
+                  <p className="text-sm text-amber-600 mt-3">{t.notifyFailed}</p>
+                )}
+                {notifyState !== 'failed' && (
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={handleEnableNotify}
+                      disabled={notifyState === 'enabling'}
+                      className="bg-primary-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700 disabled:opacity-60"
+                    >
+                      {notifyState === 'enabling' ? t.notifyEnabling : t.notifyEnable}
+                    </button>
+                    <button
+                      onClick={() => setNotifyState('hidden')}
+                      className="px-5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100"
+                    >
+                      {t.notifyLater}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
         {/* Action buttons */}
         <div className="flex gap-4">
