@@ -818,7 +818,13 @@ function AdminDashboard() {
                           // pending/cancelled appointment has no payment expected.
                           if (apt.status === 'cancelled') return <span className="text-gray-400 text-xs">—</span>;
                           if (apt.paymentStatus === 'paid') {
-                            return <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Paid</span>;
+                            return (
+                              <div>
+                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Paid</span>
+                                {apt.amountCollected > 0 && <div className="text-xs text-gray-600 mt-1">₹{apt.amountCollected}</div>}
+                                {apt.paidAt && <div className="text-xs text-gray-400">{formatDate(apt.paidAt)}</div>}
+                              </div>
+                            );
                           }
                           if (apt.paymentStatus === 'patient_claimed') {
                             return <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Awaiting verify</span>;
