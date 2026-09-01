@@ -14,14 +14,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { usePwa } from '../context/PwaContext';
 import toast from 'react-hot-toast';
 
 function Navbar() {
   const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
+  const { canInstall, promptInstall } = usePwa();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
   const navRef = useRef(null);
 
   // Close the mobile hamburger menu on any click/tap outside the navbar —
@@ -42,29 +42,12 @@ function Navbar() {
     };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    // Check if already running as installed PWA
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
-    }
-    const handler = (e) => {
-      e.preventDefault();
-      setInstallPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => setIsInstalled(true));
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
+  // One-tap install using the shared PWA prompt (captured once, app-wide).
+  // Closes the mobile menu if it was triggered from there.
   const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') {
-      toast.success('ProMedicoz installed!');
-      setInstallPrompt(null);
-      setIsInstalled(true);
-    }
+    const accepted = await promptInstall();
+    if (accepted) toast.success('ProMedicoz installed!');
+    setIsMobileMenuOpen(false);
   };
 
   // Handle logout
@@ -115,13 +98,21 @@ function Navbar() {
                   Blog
                 </Link>
 
-                {/* Always-visible link to the install/share page — works on
-                    every platform (the quick-install button elsewhere only
-                    appears on Chrome/Android; iOS users need the page's
-                    Add-to-Home-Screen steps). */}
-                <Link to="/install" className="text-gray-600 hover:text-primary-600 transition-colors">
-                  📲 Get App
-                </Link>
+                {/* One-tap install when the browser supports it (Chrome/
+                    Android/desktop Edge); otherwise a link to the /install
+                    page which has the manual Add-to-Home-Screen steps (iOS). */}
+                {canInstall ? (
+                  <button
+                    onClick={handleInstall}
+                    className="flex items-center gap-1 border border-green-500 text-green-600 px-3 py-1.5 rounded-lg text-sm hover:bg-green-50 transition-colors"
+                  >
+                    📲 Install App
+                  </button>
+                ) : (
+                  <Link to="/install" className="text-gray-600 hover:text-primary-600 transition-colors">
+                    📲 Get App
+                  </Link>
+                )}
               </>
             )}
 
@@ -148,9 +139,8 @@ function Navbar() {
                     </span>
                   </span>
                   {/* Only show when the browser is actually ready to install
-                      (installPrompt set) — otherwise it was a dead button on
-                      desktop that did nothing when clicked. Matches mobile. */}
-                  {installPrompt && !isInstalled && (
+                      (shared canInstall) — otherwise it'd be a dead button. */}
+                  {canInstall && (
                     <button
                       onClick={handleInstall}
                       className="flex items-center gap-1 border border-green-500 text-green-600 px-3 py-1.5 rounded-lg text-sm hover:bg-green-50 transition-colors"
@@ -205,13 +195,18 @@ function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-3">
 
-              {/* Single 'Get the App' entry — the /install page it opens
-                  already offers one-tap install (Chrome), iOS Add-to-Home
-                  steps, and sharing. Removed the separate 'Install App on
-                  Phone' button that used to sit here, which duplicated this. */}
-              <Link to="/install" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
-                📲 Get the App
-              </Link>
+              {/* One-tap install when the browser supports it; otherwise the
+                  /install page (iOS Add-to-Home steps + sharing). Same shared
+                  prompt the Home strip and /install page use. */}
+              {canInstall ? (
+                <button onClick={handleInstall} className="text-left text-green-600 font-medium hover:text-green-700 px-2 py-1">
+                  📲 Install App (1 tap)
+                </button>
+              ) : (
+                <Link to="/install" className="text-gray-600 hover:text-primary-600 px-2 py-1" onClick={() => setIsMobileMenuOpen(false)}>
+                  📲 Get the App
+                </Link>
+              )}
 
               {isAuthenticated ? (
                 <>

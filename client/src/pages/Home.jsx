@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { usePwa } from '../context/PwaContext';
 import { reviewAPI } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
@@ -97,6 +98,7 @@ const TXT = {
 
 function Home() {
   const { isAuthenticated } = useAuth();
+  const { canInstall, promptInstall } = usePwa();
   const [symptomSearch, setSymptomSearch] = useState('');
   const [topReviews, setTopReviews] = useState([]);
   // Language toggle (Phase 1: Home page). Remembered across visits.
@@ -459,12 +461,21 @@ function Home() {
               </p>
             </div>
             <div className="flex gap-2 flex-shrink-0">
-              <Link
-                to="/install"
-                className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-              >
-                {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
-              </Link>
+              {canInstall ? (
+                <button
+                  onClick={promptInstall}
+                  className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  {lang === 'hi' ? '📲 इंस्टॉल करें' : '📲 Install now'}
+                </button>
+              ) : (
+                <Link
+                  to="/install"
+                  className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
+                </Link>
+              )}
               <Link
                 to="/install"
                 className="whitespace-nowrap bg-white text-primary-700 border border-primary-300 px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-50 transition-colors"

@@ -30,6 +30,10 @@ import { AuthProvider } from './context/AuthContext.jsx';
 // AuthProvider = wraps our app with authentication state
 // Any component can then check: "Is the user logged in? What's their role?"
 
+import { PwaProvider } from './context/PwaContext.jsx';
+// PwaProvider = captures the browser's "install app" prompt ONCE and shares
+// it, so every "Get the App" entry point offers the same one-tap install.
+
 import './index.css';
 // Import our global styles (Tailwind CSS directives)
 
@@ -42,7 +46,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
       <BrowserRouter>
         <AuthProvider>
-          <App />
+          <PwaProvider>
+            <App />
+          </PwaProvider>
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import SEO from '../components/SEO';
+import { usePwa } from '../context/PwaContext';
 import toast from 'react-hot-toast';
 
 // Public site URL used for sharing + QR.
@@ -91,29 +92,15 @@ function InstallApp() {
   const t = TXT[lang];
   const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
-  // Android/Chrome fires beforeinstallprompt; we capture it so the user can
-  // install with one tap. iOS/Safari never fires it — those users follow the
-  // manual "Add to Home Screen" steps below (Apple allows no install button).
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  useEffect(() => {
-    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
-    window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => setIsInstalled(true));
-    if (window.matchMedia?.('(display-mode: standalone)').matches) setIsInstalled(true);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  // The install prompt is captured once, app-wide, in PwaContext and shared
+  // via usePwa() — so this page, the navbar, and the Home strip all offer the
+  // same one-tap install. iOS/Safari never fires the prompt (canInstall stays
+  // false), so those users follow the manual "Add to Home Screen" steps below.
+  const { canInstall, promptInstall } = usePwa();
 
   const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') {
-      toast.success(t.installedToast);
-      setInstallPrompt(null);
-      setIsInstalled(true);
-    }
+    const accepted = await promptInstall();
+    if (accepted) toast.success(t.installedToast);
   };
 
   const handleShare = async () => {
@@ -203,7 +190,7 @@ function InstallApp() {
               </div>
             ) : (
               <>
-                {installPrompt && (
+                {canInstall && (
                   <button
                     onClick={handleInstall}
                     className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors mb-4"
