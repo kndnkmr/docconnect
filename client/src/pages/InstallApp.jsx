@@ -98,7 +98,7 @@ function InstallApp() {
   // via usePwa() — so this page, the navbar, and the Home strip all offer the
   // same one-tap install. iOS/Safari never fires the prompt (canInstall stays
   // false), so those users follow the manual "Add to Home Screen" steps below.
-  const { canInstall, promptInstall } = usePwa();
+  const { canInstall, isInstalled, promptInstall } = usePwa();
 
   const handleInstall = async () => {
     const accepted = await promptInstall();
