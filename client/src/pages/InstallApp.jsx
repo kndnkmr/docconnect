@@ -44,6 +44,7 @@ const TXT = {
     qrPrompt: 'Or let someone scan this to open ProMedicoz:',
     copied: 'Link copied! Paste it anywhere to share.',
     copyManual: 'Copy this link to share ProMedicoz:',
+    shareFallback: 'Link copied! Or use the WhatsApp / Facebook buttons below to share directly.',
     installedToast: 'ProMedicoz installed!',
     shareText:
       '🏥 ProMedicoz is now live! Consult verified doctors online — video, phone, or in-person.\n\n' +
@@ -79,6 +80,7 @@ const TXT = {
     qrPrompt: 'या किसी को ProMedicoz खोलने के लिए इसे स्कैन करने दें:',
     copied: 'लिंक कॉपी हो गया! साझा करने के लिए कहीं भी पेस्ट करें।',
     copyManual: 'ProMedicoz साझा करने के लिए यह लिंक कॉपी करें:',
+    shareFallback: 'लिंक कॉपी हो गया! या नीचे दिए WhatsApp / Facebook बटन से सीधे साझा करें।',
     installedToast: 'ProMedicoz इंस्टॉल हो गया!',
     shareText:
       '🏥 ProMedicoz अब उपलब्ध है! सत्यापित डॉक्टरों से ऑनलाइन परामर्श करें — वीडियो, फ़ोन या क्लिनिक पर।\n\n' +
@@ -104,13 +106,23 @@ function InstallApp() {
   };
 
   const handleShare = async () => {
+    // Native share sheet exists on most phones (and some Safari). On desktop
+    // it usually doesn't — so instead of silently copying (which felt like
+    // "nothing happened"), copy the link AND point the user to the per-platform
+    // buttons right below, so the button always gives clear feedback.
     if (navigator.share) {
       try {
         await navigator.share({ title: 'ProMedicoz', text: t.shareText, url: SITE_URL });
         return;
       } catch { /* user cancelled — do nothing */ }
+      return;
     }
-    handleCopyLink();
+    try {
+      await navigator.clipboard.writeText(SITE_URL);
+      toast.success(t.shareFallback, { duration: 5000 });
+    } catch {
+      window.prompt(t.copyManual, SITE_URL);
+    }
   };
 
   const handleCopyLink = async () => {
