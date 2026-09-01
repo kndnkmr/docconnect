@@ -1047,17 +1047,29 @@ function Dashboard() {
           profile is live (email verified). */}
       {isDoctor && user && user.isVerified && (() => {
         const profileUrl = `https://www.promedicoz.in/doctors/${user._id}`;
+        // A ready-to-send invite in the doctor's own voice. The key benefit is
+        // framed as KEEPING patients (and reaching their family in other cities)
+        // — not "join a platform" — because that's what actually motivates both
+        // the doctor to share and the patient to book.
         const shareMsg =
-          `Hello, you can now book an appointment with me (Dr. ${user.name}) online on ProMedicoz — ` +
-          `video, phone, or in-person. View my profile and pick a slot here: ${profileUrl}`;
+          `Hello, this is Dr. ${user.name}. You can now consult me online on ProMedicoz — by video, phone, or in-person — ` +
+          `so you can reach me even when you can't come to the clinic. Please share this with family or friends in other cities ` +
+          `who'd like to consult me too. Book a slot here: ${profileUrl}`;
+        const copyMessage = async () => {
+          try { await navigator.clipboard.writeText(shareMsg); toast.success('Invite message copied — paste it to any patient!'); }
+          catch { window.prompt('Copy this invite message:', shareMsg); }
+        };
         return (
           <div className="mb-6 p-4 sm:p-5 bg-green-50 border border-green-200 rounded-xl">
             <div className="flex items-start gap-3">
               <span className="text-2xl">📣</span>
               <div className="flex-1">
-                <p className="font-semibold text-green-900">Share your profile with your patients</p>
-                <p className="text-sm text-green-800 mt-0.5">
-                  Send your ProMedicoz profile link to your existing patients so they can book you online — the easiest way to grow your bookings.
+                <p className="font-semibold text-green-900">Bring your own patients online — keep them, don't lose them</p>
+                <p className="text-sm text-green-800 mt-1">
+                  Think of this as your own online clinic. When a patient moves away, or their family lives in another city
+                  (say your Delhi patient's family in Bihar), they no longer have to travel to see you — they can consult you
+                  online and stay your patient. Share your profile with your existing patients so they, and their families
+                  anywhere, can book you.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <a
@@ -1069,13 +1081,19 @@ function Dashboard() {
                     💬 Share on WhatsApp
                   </a>
                   <button
+                    onClick={copyMessage}
+                    className="px-4 py-2 bg-white border border-green-500 text-green-700 rounded-lg text-sm font-medium hover:bg-green-50"
+                  >
+                    ✍️ Copy invite message
+                  </button>
+                  <button
                     onClick={async () => {
                       try { await navigator.clipboard.writeText(profileUrl); toast.success('Profile link copied!'); }
                       catch { window.prompt('Copy your profile link:', profileUrl); }
                     }}
                     className="px-4 py-2 bg-white border border-green-500 text-green-700 rounded-lg text-sm font-medium hover:bg-green-50"
                   >
-                    🔗 Copy profile link
+                    🔗 Copy link only
                   </button>
                   <a
                     href={`/doctors/${user._id}`}
@@ -1086,6 +1104,9 @@ function Dashboard() {
                     👁️ View my profile
                   </a>
                 </div>
+                <p className="text-xs text-green-700 mt-3">
+                  Tip: even 5–10 of your regular patients sharing this with their families is the fastest way to grow your online bookings.
+                </p>
               </div>
             </div>
           </div>

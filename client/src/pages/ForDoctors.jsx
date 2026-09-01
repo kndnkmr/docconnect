@@ -12,7 +12,7 @@ function ForDoctors() {
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-gray-800">Grow your practice on ProMedicoz</h1>
         <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-          Reach more patients, consult online or in person, and keep 100% of your consultation fee. ProMedicoz is free to join and takes no commission.
+          Keep the patients you already have — even when they move cities — reach their families anywhere, and welcome new patients too. Consult online or in person, and keep 100% of your fee. Free to join, no commission.
         </p>
         <Link to="/register?role=doctor" className="inline-block mt-5 bg-primary-600 text-white py-2.5 px-8 rounded-lg hover:bg-primary-700 transition-colors font-medium">
           Join as a Doctor
@@ -31,6 +31,29 @@ function ForDoctors() {
             <li className="flex gap-2"><span>🔒</span><span><strong>Your UPI QR is safe to share.</strong> It can only <em>receive</em> money — it can never be used to withdraw from your account, and it doesn't reveal your bank account number, card, or PIN. It's the same QR you'd show at a shop counter.</span></li>
           </ul>
           <p className="mt-3 text-gray-600">In short: ProMedicoz connects you with patients; the money is always directly between you and the patient.</p>
+        </section>
+
+        {/* Keep-your-patients benefit — the most persuasive reason for a
+            practising doctor. Framed as retention + reaching their patients'
+            families in other cities, not "join a platform". */}
+        <section className="bg-primary-50 border border-primary-200 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">🏠 Your own online clinic — keep the patients you already have</h2>
+          <p className="mb-3">
+            This isn't just about finding new patients. It's about <strong>not losing the ones you already have</strong>.
+            Patients move cities for work, study, or family. Their parents and relatives often live far from you. Today,
+            that usually means they stop seeing you and start over with someone new.
+          </p>
+          <p className="mb-3">
+            With your ProMedicoz profile, they don't have to. <strong>A patient of yours in Delhi can have their family in
+            Bihar consult you online</strong> — same trusted doctor, no train ticket, no travel for the elderly or unwell.
+            You stay their family's doctor, wherever they are.
+          </p>
+          <ul className="space-y-2 mt-3">
+            <li className="flex gap-2"><span>✅</span><span>Keep treating patients who relocate, instead of losing them</span></li>
+            <li className="flex gap-2"><span>✅</span><span>Reach your patients' families in other cities — they consult the doctor they already trust</span></li>
+            <li className="flex gap-2"><span>✅</span><span>A shareable profile link that works like your personal clinic page, open 24/7</span></li>
+          </ul>
+          <p className="mt-3 text-gray-600">Once you're set up, share your profile link with your current patients — that alone can bring their whole family to you, online.</p>
         </section>
 
         {/* How patients reach you */}
@@ -87,7 +110,7 @@ function ForDoctors() {
                 <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
               </summary>
               <p className="text-gray-600 mt-3">
-                No — ProMedicoz only adds to your practice, it doesn't take anything away. Your existing patients stay yours and keep visiting you exactly as before. What changes is that <strong>new</strong> patients — people searching online who would never have found your clinic otherwise — can now discover you, see your qualifications and reviews, and book you. Think of it as a second, always-open front door to your practice, not a replacement for the one you already have. You even get a shareable profile link you can send to your current patients so <em>they</em> can book you more easily too.
+                The opposite — it helps you <strong>keep</strong> them. Your existing patients stay yours and keep visiting exactly as before. But when one of them moves to another city, or their family lives far away, they no longer have to leave you for a local doctor: they can consult you online and remain your patient. So a patient of yours in Delhi can have their family in Bihar consult you too — the doctor they already trust — without anyone travelling. On top of that, <strong>new</strong> patients searching online can now discover you, see your qualifications and reviews, and book you. Think of it as a second, always-open front door to your practice — and a way to hold on to patients you'd otherwise lose to distance. You also get a shareable profile link to send your current patients so they (and their families anywhere) can book you easily.
               </p>
             </details>
 
