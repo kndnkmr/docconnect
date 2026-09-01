@@ -212,7 +212,7 @@ function Login() {
 
           {/* Forgot password link */}
           <p className="text-center mt-4">
-            <Link to="/forgot-password" className="text-sm text-gray-500 hover:text-primary-600">
+            <Link to="/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline">
               Forgot your password?
             </Link>
           </p>
