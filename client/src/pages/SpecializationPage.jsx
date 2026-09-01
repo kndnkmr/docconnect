@@ -149,6 +149,164 @@ const specializationData = {
   },
 };
 
+// ---- Hindi content for each specialization (patient-readable). Kept SEPARATE
+// from the English specializationData above ON PURPOSE: the English text is
+// what feeds the SEO <title>/<description> and FAQ structured data (Google's
+// index), so it must never change. This block only affects what a Hindi user
+// SEES on screen. Any slug missing here simply falls back to English.
+const specializationHi = {
+  'gynaecologist': {
+    subtitle: 'महिला स्वास्थ्य विशेषज्ञ',
+    description: 'स्त्री रोग विशेषज्ञ महिलाओं के प्रजनन स्वास्थ्य, गर्भावस्था देखभाल, प्रजनन उपचार और मासिक धर्म संबंधी समस्याओं में विशेषज्ञ होते हैं।',
+    conditions: ['अनियमित मासिक धर्म', 'PCOD/PCOS', 'गर्भावस्था देखभाल', 'बांझपन/IVF', 'रजोनिवृत्ति', 'एंडोमेट्रियोसिस', 'फाइब्रॉएड', 'सर्वाइकल जांच'],
+    faqs: [
+      { q: 'मुझे स्त्री रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'अनियमित मासिक धर्म, गर्भावस्था की योजना, पेल्विक दर्द, असामान्य स्राव, या 21 वर्ष के बाद नियमित जांच के लिए स्त्री रोग विशेषज्ञ से मिलें।' },
+      { q: 'स्त्री रोग विशेषज्ञ के परामर्श का खर्च कितना है?', a: 'ProMedicoz पर ऑनलाइन परामर्श आमतौर पर डॉक्टर के अनुभव के अनुसार ₹300 से ₹1000 तक होता है।' },
+      { q: 'क्या मैं ऑनलाइन स्त्री रोग विशेषज्ञ से परामर्श कर सकती हूं?', a: 'हां, ProMedicoz गैर-आपातकालीन समस्याओं के लिए अनुभवी स्त्री रोग विशेषज्ञों के साथ वीडियो और फोन परामर्श प्रदान करता है।' },
+    ]
+  },
+  'dermatologist': {
+    subtitle: 'त्वचा, बाल और नाखून विशेषज्ञ',
+    description: 'त्वचा विशेषज्ञ त्वचा, बाल और नाखूनों से जुड़ी समस्याओं की जांच और इलाज करते हैं। मुहांसों से लेकर बाल झड़ने तक, वे विशेषज्ञ देखभाल देते हैं।',
+    conditions: ['मुहांसे', 'बाल झड़ना', 'त्वचा पर चकत्ते', 'एक्जिमा', 'सोरायसिस', 'फंगल संक्रमण', 'रंजकता', 'रूसी'],
+    faqs: [
+      { q: 'मुझे त्वचा विशेषज्ञ को कब दिखाना चाहिए?', a: 'लगातार मुहांसे, असामान्य तिल, अचानक बाल झड़ना, या ठीक न होने वाले चकत्तों के लिए त्वचा विशेषज्ञ से मिलें।' },
+      { q: 'क्या त्वचा की समस्याओं का ऑनलाइन इलाज हो सकता है?', a: 'हां, कई त्वचा और बाल संबंधी समस्याओं का साफ़ फोटो के आधार पर ऑनलाइन आकलन और इलाज किया जा सकता है।' },
+      { q: 'त्वचा विशेषज्ञ के परामर्श में क्या होता है?', a: 'डॉक्टर आपकी त्वचा/बालों की जांच करते हैं, लक्षण समझते हैं, और उपचार या ज़रूरत पड़ने पर जांच की सलाह देते हैं।' },
+    ]
+  },
+  'cardiologist': {
+    subtitle: 'हृदय एवं रक्त वाहिका विशेषज्ञ',
+    description: 'हृदय रोग विशेषज्ञ हृदय की बीमारियों, उच्च रक्तचाप, कोलेस्ट्रॉल और रक्त संचार से जुड़ी समस्याओं की जांच और इलाज करते हैं।',
+    conditions: ['उच्च रक्तचाप', 'छाती में दर्द', 'उच्च कोलेस्ट्रॉल', 'धड़कन तेज़ होना', 'सांस फूलना', 'हृदय की कमज़ोरी', 'अनियमित धड़कन', 'बंद धमनियां'],
+    faqs: [
+      { q: 'मुझे हृदय रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'छाती में दर्द, सांस फूलना, अनियमित धड़कन, उच्च रक्तचाप या हृदय रोग के पारिवारिक इतिहास पर हृदय रोग विशेषज्ञ से मिलें।' },
+      { q: 'क्या हृदय संबंधी समस्याओं के लिए ऑनलाइन परामर्श ठीक है?', a: 'रिपोर्ट समीक्षा, दवा और फॉलो-अप के लिए ऑनलाइन परामर्श उपयोगी है, लेकिन आपातकाल में तुरंत नज़दीकी अस्पताल जाएं।' },
+      { q: 'हृदय की जांच में क्या होता है?', a: 'डॉक्टर लक्षण और इतिहास देखते हैं और ज़रूरत पड़ने पर ECG, इको या रक्त जांच की सलाह देते हैं।' },
+    ]
+  },
+  'neurologist': {
+    subtitle: 'मस्तिष्क एवं तंत्रिका तंत्र विशेषज्ञ',
+    description: 'न्यूरोलॉजिस्ट मस्तिष्क, रीढ़ की हड्डी और तंत्रिकाओं के विकारों का इलाज करते हैं, जैसे सिरदर्द, दौरे, स्ट्रोक और तंत्रिका दर्द।',
+    conditions: ['माइग्रेन और सिरदर्द', 'दौरे/मिर्गी', 'सुन्नपन/झनझनाहट', 'चक्कर आना', 'याददाश्त की समस्या', 'स्ट्रोक', 'पार्किंसंस', 'तंत्रिका दर्द'],
+    faqs: [
+      { q: 'मुझे न्यूरोलॉजिस्ट को कब दिखाना चाहिए?', a: 'बार-बार तेज़ सिरदर्द, दौरे, सुन्नपन, चक्कर, या याददाश्त संबंधी समस्याओं के लिए न्यूरोलॉजिस्ट से मिलें।' },
+      { q: 'क्या तंत्रिका संबंधी समस्याओं का ऑनलाइन इलाज हो सकता है?', a: 'परामर्श, दवा और फॉलो-अप ऑनलाइन हो सकते हैं; कुछ स्थितियों में शारीरिक जांच या स्कैन ज़रूरी होता है।' },
+      { q: 'अचानक तेज़ "जीवन का सबसे बुरा" सिरदर्द होने पर क्या करें?', a: 'यह आपातकाल हो सकता है — इंतज़ार न करें, तुरंत नज़दीकी अस्पताल जाएं।' },
+    ]
+  },
+  'orthopedic': {
+    subtitle: 'हड्डी, जोड़ एवं रीढ़ विशेषज्ञ',
+    description: 'हड्डी रोग विशेषज्ञ हड्डियों, जोड़ों, मांसपेशियों और रीढ़ से जुड़ी समस्याओं का इलाज करते हैं — फ्रैक्चर से लेकर गठिया तक।',
+    conditions: ['कमर दर्द', 'घुटने का दर्द', 'जोड़ों में अकड़न', 'फ्रैक्चर', 'गठिया', 'स्लिप डिस्क', 'खेल चोटें', 'कंधे का दर्द'],
+    faqs: [
+      { q: 'मुझे हड्डी रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'लगातार या तेज़ कमर/जोड़ों का दर्द, चोट के बाद दर्द, सूजन, या हिलने-डुलने में कठिनाई पर हड्डी रोग विशेषज्ञ से मिलें।' },
+      { q: 'क्या हड्डी/जोड़ की समस्या ऑनलाइन देखी जा सकती है?', a: 'कई समस्याओं का पहले ऑनलाइन आकलन किया जा सकता है ताकि तय हो सके कि X-ray या व्यक्तिगत जांच ज़रूरी है या नहीं।' },
+      { q: 'क्या फिजियोथेरेपी मदद करती है?', a: 'कई मामलों में हां — डॉक्टर या फिजियोथेरेपिस्ट सही व्यायाम और इलाज की सलाह देते हैं।' },
+    ]
+  },
+  'pediatrician': {
+    subtitle: 'बाल स्वास्थ्य विशेषज्ञ',
+    description: 'बाल रोग विशेषज्ञ शिशुओं, बच्चों और किशोरों के स्वास्थ्य की देखभाल करते हैं — टीकाकरण से लेकर बचपन की बीमारियों तक।',
+    conditions: ['बच्चों में बुखार', 'टीकाकरण', 'विकास संबंधी चिंताएं', 'एलर्जी', 'खांसी-जुकाम', 'बचपन के संक्रमण', 'पोषण सलाह', 'विकास में देरी'],
+    faqs: [
+      { q: 'मुझे बाल रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'बच्चे में तेज़ या लगातार बुखार, खांसी-जुकाम, चकत्ते, कम खाना, या विकास संबंधी चिंता पर बाल रोग विशेषज्ञ से मिलें।' },
+      { q: 'क्या बच्चों की समस्या ऑनलाइन देखी जा सकती है?', a: 'सामान्य समस्याओं और फॉलो-अप के लिए ऑनलाइन परामर्श उपयोगी है; गंभीर लक्षणों में तुरंत डॉक्टर को दिखाएं।' },
+      { q: 'टीकाकरण कब कराना चाहिए?', a: 'डॉक्टर बच्चे की उम्र के अनुसार टीकाकरण का सही समय बताते हैं।' },
+    ]
+  },
+  'psychiatrist': {
+    subtitle: 'मानसिक स्वास्थ्य विशेषज्ञ',
+    description: 'मनोचिकित्सक अवसाद, चिंता, OCD, PTSD और नींद संबंधी विकारों जैसी मानसिक स्वास्थ्य समस्याओं की जांच और इलाज करते हैं।',
+    conditions: ['अवसाद', 'चिंता', 'अनिद्रा', 'पैनिक अटैक', 'OCD', 'PTSD', 'बाइपोलर विकार', 'तनाव प्रबंधन'],
+    faqs: [
+      { q: 'मुझे मनोचिकित्सक को कब दिखाना चाहिए?', a: 'यदि लंबे समय से उदासी, चिंता, नींद न आना, या रोज़मर्रा के काम प्रभावित हो रहे हों, तो मदद लेना समझदारी है।' },
+      { q: 'क्या मानसिक स्वास्थ्य परामर्श ऑनलाइन हो सकता है?', a: 'हां — मानसिक स्वास्थ्य के लिए ऑनलाइन परामर्श बहुत सुविधाजनक और निजी है, आप घर से खुलकर बात कर सकते हैं।' },
+      { q: 'अगर खुद को नुकसान पहुंचाने के विचार आएं तो?', a: 'इसे तुरंत गंभीरता से लें — किसी डॉक्टर या हेल्पलाइन से अभी संपर्क करें (भारत में टेली-मानस: 14416)।' },
+    ]
+  },
+  'dentist': {
+    subtitle: 'दंत एवं मुख स्वास्थ्य विशेषज्ञ',
+    description: 'दंत चिकित्सक संपूर्ण मुख स्वास्थ्य देखभाल देते हैं — सफाई, फिलिंग, रूट कैनाल, ब्रेसेस और मसूड़ों के इलाज सहित।',
+    conditions: ['दांत दर्द', 'कैविटी', 'मसूड़ों से खून', 'मुंह की दुर्गंध', 'दांत सफेद करना', 'ब्रेसेस', 'अक्ल दाढ़ का दर्द', 'रूट कैनाल'],
+    faqs: [
+      { q: 'मुझे दंत चिकित्सक को कब दिखाना चाहिए?', a: 'दांत दर्द, मसूड़ों से खून, मुंह की दुर्गंध, या कैविटी की आशंका पर देर होने से पहले दंत चिकित्सक से मिलें।' },
+      { q: 'क्या दांत की समस्या ऑनलाइन देखी जा सकती है?', a: 'शुरुआती सलाह ऑनलाइन ली जा सकती है, पर अधिकतर दंत उपचार के लिए क्लिनिक जाना ज़रूरी होता है।' },
+      { q: 'दांतों की जांच कितनी बार करानी चाहिए?', a: 'आमतौर पर हर 6 महीने में एक बार जांच कराना अच्छा रहता है।' },
+    ]
+  },
+  'general-physician': {
+    subtitle: 'प्राथमिक चिकित्सा डॉक्टर',
+    description: 'जनरल फिज़ीशियन अधिकांश स्वास्थ्य समस्याओं के लिए आपका पहला संपर्क होते हैं। वे जांच करते हैं, इलाज करते हैं, और ज़रूरत पड़ने पर विशेषज्ञ के पास भेजते हैं।',
+    conditions: ['बुखार और फ्लू', 'खांसी-जुकाम', 'शरीर में दर्द', 'कमज़ोरी', 'संक्रमण', 'रक्तचाप जांच', 'मधुमेह प्रबंधन', 'सामान्य जांच'],
+    faqs: [
+      { q: 'मुझे जनरल फिज़ीशियन को कब दिखाना चाहिए?', a: 'किसी भी नई स्वास्थ्य समस्या — बुखार, शरीर दर्द, थकान, संक्रमण — या जब समझ न आए कि किस विशेषज्ञ को दिखाएं, तब।' },
+      { q: 'क्या जनरल फिज़ीशियन पुरानी बीमारियों का इलाज करते हैं?', a: 'हां, वे मधुमेह, रक्तचाप, थायरॉइड जैसी बीमारियों का प्रबंधन करते हैं और जटिल मामलों में विशेषज्ञ के पास भेजते हैं।' },
+      { q: 'क्या GP के साथ ऑनलाइन परामर्श प्रभावी है?', a: 'बुखार, जुकाम, संक्रमण, फॉलो-अप और दवा नवीनीकरण जैसी सामान्य समस्याओं के लिए बहुत प्रभावी है।' },
+    ]
+  },
+  'ent-specialist': {
+    subtitle: 'कान, नाक एवं गला विशेषज्ञ',
+    description: 'ENT विशेषज्ञ कान, नाक, गला, सिर और गर्दन की समस्याओं का इलाज करते हैं, जैसे सुनने में कमी, साइनस और टॉन्सिल।',
+    conditions: ['कान दर्द', 'सुनने में कमी', 'साइनस', 'टॉन्सिल', 'खर्राटे', 'नाक बंद होना', 'गले का संक्रमण', 'चक्कर'],
+    faqs: [
+      { q: 'मुझे ENT विशेषज्ञ को कब दिखाना चाहिए?', a: 'लगातार कान दर्द, सुनने की समस्या, पुराना साइनस, बार-बार गले का संक्रमण, खर्राटे या आवाज़ में बदलाव पर।' },
+      { q: 'क्या ENT समस्याओं का ऑनलाइन इलाज हो सकता है?', a: 'संक्रमण की दवा, एलर्जी प्रबंधन और फॉलो-अप ऑनलाइन हो सकते हैं; कुछ स्थितियों में जांच ज़रूरी है।' },
+      { q: 'ENT परामर्श में क्या होता है?', a: 'डॉक्टर कान, नाक और गले की जांच करते हैं और ज़रूरत पड़ने पर सुनने की जांच या स्कैन की सलाह देते हैं।' },
+    ]
+  },
+  'microbiologist': {
+    subtitle: 'प्रयोगशाला एवं संक्रमण विशेषज्ञ',
+    description: 'माइक्रोबायोलॉजिस्ट प्रयोगशाला विशेषज्ञ होते हैं जो संक्रमण के पीछे मौजूद बैक्टीरिया, वायरस और फंगस की पहचान करते हैं और सही जांच व एंटीबायोटिक की सलाह देते हैं। वे आमतौर पर रोज़मर्रा की बीमारियों के लिए मरीज़ नहीं देखते, बल्कि पर्दे के पीछे इलाज में मदद करते हैं।',
+    conditions: ['संक्रमण की पहचान', 'कल्चर एवं सेंसिटिविटी जांच', 'एंटीबायोटिक सलाह', 'लैब रिपोर्ट व्याख्या', 'अस्पताल संक्रमण नियंत्रण', 'प्रतिरोधी संक्रमण'],
+    faqs: [
+      { q: 'माइक्रोबायोलॉजिस्ट क्या करते हैं?', a: 'वे प्रयोगशाला में संक्रमण पैदा करने वाले जीव की पहचान करते हैं और बताते हैं कि कौन-सी एंटीबायोटिक काम करेगी — आपके इलाज करने वाले डॉक्टर की मदद करते हैं, उनकी जगह नहीं लेते।' },
+      { q: 'क्या बुखार या जुकाम के लिए माइक्रोबायोलॉजिस्ट को दिखाएं?', a: 'आमतौर पर नहीं। बुखार, खांसी या शरीर दर्द जैसी सामान्य समस्याओं के लिए पहले जनरल फिज़ीशियन को दिखाएं।' },
+      { q: 'मेरे इलाज में माइक्रोबायोलॉजिस्ट कब शामिल होते हैं?', a: 'आमतौर पर जब डॉक्टर कल्चर या विशेष संक्रमण जांच कराते हैं, या जटिल/प्रतिरोधी संक्रमण में।' },
+    ]
+  },
+};
+
+// UI labels for the page chrome (headings, buttons). English + Hindi.
+const UI = {
+  en: {
+    conditionsTitle: 'Common Conditions Treated',
+    topDoctors: (s, city) => city ? `Top ${s} Doctors in ${city}` : `Top ${s} Doctors on ProMedicoz`,
+    loadingDoctors: 'Loading doctors...',
+    noneCity: (s, city) => `No ${s} doctors in ${city} yet.`,
+    noneAll: (s) => `No ${s} doctors registered yet.`,
+    areYou: (s) => `Are you a ${s}? Register now →`,
+    yrsExp: 'yrs exp', consultation: 'Consultation', bookAppointment: 'Book Appointment →',
+    viewAll: (s) => `View all ${s} doctors →`,
+    findByCity: (s) => `Find ${s} Doctors by City`,
+    inCity: (s, city) => `${s} in ${city}`,
+    allDoctors: (s) => `← All ${s} doctors`,
+    bookConsult: (s) => `Book ${s} Consultation`,
+    faqTitle: 'Frequently Asked Questions',
+    ctaTitle: (s) => `Need a ${s} consultation?`,
+    ctaText: 'Book an appointment in under 2 minutes. Video, phone, or in-person.',
+    ctaBtn: (s) => `Find ${s} Doctors`,
+  },
+  hi: {
+    conditionsTitle: 'आमतौर पर इलाज की जाने वाली समस्याएं',
+    topDoctors: (s, city) => city ? `${city} में शीर्ष ${s} डॉक्टर` : `ProMedicoz पर शीर्ष ${s} डॉक्टर`,
+    loadingDoctors: 'डॉक्टर लोड हो रहे हैं...',
+    noneCity: (s, city) => `${city} में अभी कोई ${s} डॉक्टर नहीं है।`,
+    noneAll: (s) => `अभी कोई ${s} डॉक्टर पंजीकृत नहीं है।`,
+    areYou: (s) => `क्या आप ${s} हैं? अभी पंजीकरण करें →`,
+    yrsExp: 'वर्ष अनुभव', consultation: 'परामर्श', bookAppointment: 'अपॉइंटमेंट बुक करें →',
+    viewAll: (s) => `सभी ${s} डॉक्टर देखें →`,
+    findByCity: (s) => `शहर के अनुसार ${s} डॉक्टर खोजें`,
+    inCity: (s, city) => `${city} में ${s}`,
+    allDoctors: (s) => `← सभी ${s} डॉक्टर`,
+    bookConsult: (s) => `${s} परामर्श बुक करें`,
+    faqTitle: 'अक्सर पूछे जाने वाले प्रश्न',
+    ctaTitle: (s) => `${s} परामर्श चाहिए?`,
+    ctaText: '2 मिनट से भी कम में अपॉइंटमेंट बुक करें। वीडियो, फोन या क्लिनिक पर।',
+    ctaBtn: (s) => `${s} डॉक्टर खोजें`,
+  },
+};
+
 function SpecializationPage() {
   const { slug, city: citySlug } = useParams();
   const cityName = citySlug ? slugToCityName(citySlug) : '';
@@ -158,8 +316,23 @@ function SpecializationPage() {
   // on the base (non-city) page, to build the "Find X in your city" links.
   const [cities, setCities] = useState([]);
 
+  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const ui = UI[lang] || UI.en;
+
   const data = specializationData[slug];
   const specName = data?.title || slug;
+  // Hindi overlay for the VISIBLE content (title stays English — it's a proper
+  // noun / the canonical specialty label and also what we search doctors by).
+  // Falls back to English fields when a Hindi entry is missing.
+  const hi = (lang === 'hi' && specializationHi[slug]) || null;
+  const view = data ? {
+    title: data.title,
+    subtitle: hi?.subtitle || data.subtitle,
+    description: hi?.description || data.description,
+    conditions: hi?.conditions || data.conditions,
+    faqs: hi?.faqs || data.faqs,
+    icon: data.icon,
+  } : null;
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -189,13 +362,14 @@ function SpecializationPage() {
   if (!data) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-gray-800">Specialization not found</h1>
-        <Link to="/doctors" className="text-primary-600 hover:underline mt-4 inline-block">Browse all doctors →</Link>
+        <h1 className="text-2xl font-bold text-gray-800">{lang === 'hi' ? 'विशेषज्ञता नहीं मिली' : 'Specialization not found'}</h1>
+        <Link to="/doctors" className="text-primary-600 hover:underline mt-4 inline-block">{lang === 'hi' ? 'सभी डॉक्टर देखें →' : 'Browse all doctors →'}</Link>
       </div>
     );
   }
 
-  // FAQ structured data for Google "People Also Ask"
+  // FAQ structured data for Google "People Also Ask" — ALWAYS English (this
+  // feeds Google's index; the visible FAQs may be shown in Hindi via `view`).
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -238,25 +412,25 @@ function SpecializationPage() {
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
-            <span className="text-5xl">{data.icon}</span>
+            <span className="text-5xl">{view.icon}</span>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">
-                {cityName ? `Best ${data.title} Doctors in ${cityName}` : data.title}
+                {cityName ? `${view.title} — ${cityName}` : view.title}
               </h1>
-              <p className="text-primary-200 text-lg">{data.subtitle}</p>
+              <p className="text-primary-200 text-lg">{view.subtitle}</p>
             </div>
           </div>
           {cityName && (
             <p className="text-primary-100 text-sm mb-2">
-              <Link to={`/specialization/${slug}`} className="underline hover:text-white">← All {data.title} doctors</Link>
+              <Link to={`/specialization/${slug}`} className="underline hover:text-white">{ui.allDoctors(view.title)}</Link>
             </p>
           )}
-          <p className="text-primary-100 max-w-2xl text-lg">{data.description}</p>
+          <p className="text-primary-100 max-w-2xl text-lg">{view.description}</p>
           <Link
             to={`/doctors?specialization=${encodeURIComponent(specName)}`}
             className="inline-block mt-6 bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
-            Book {data.title} Consultation
+            {ui.bookConsult(view.title)}
           </Link>
         </div>
       </section>
@@ -264,9 +438,9 @@ function SpecializationPage() {
       {/* Common conditions */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Common Conditions Treated</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{ui.conditionsTitle}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {data.conditions.map((condition, idx) => (
+            {view.conditions.map((condition, idx) => (
               <div key={idx} className="bg-gray-50 border border-gray-100 rounded-lg p-3 text-center">
                 <p className="text-sm font-medium text-gray-700">{condition}</p>
               </div>
@@ -279,19 +453,17 @@ function SpecializationPage() {
       <section className="py-10 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            {cityName ? `Top ${data.title} Doctors in ${cityName}` : `Top ${data.title} Doctors on ProMedicoz`}
+            {ui.topDoctors(view.title, cityName)}
           </h2>
           {loading ? (
-            <p className="text-gray-500">Loading doctors...</p>
+            <p className="text-gray-500">{ui.loadingDoctors}</p>
           ) : doctors.length === 0 ? (
             <div className="bg-white rounded-xl p-8 text-center">
               <p className="text-gray-600 mb-4">
-                {cityName
-                  ? `No ${data.title.toLowerCase()} doctors in ${cityName} yet.`
-                  : `No ${data.title.toLowerCase()} doctors registered yet.`}
+                {cityName ? ui.noneCity(view.title, cityName) : ui.noneAll(view.title)}
               </p>
               <Link to="/register?role=doctor" className="text-primary-600 font-medium hover:underline">
-                Are you a {data.title.toLowerCase()}? Register now →
+                {ui.areYou(view.title)}
               </Link>
             </div>
           ) : (
@@ -304,18 +476,18 @@ function SpecializationPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800">{doc.name}</h3>
-                      <p className="text-sm text-gray-500">{doc.experience || 0} yrs exp</p>
+                      <p className="text-sm text-gray-500">{doc.experience || 0} {ui.yrsExp}</p>
                     </div>
                   </div>
-                  {doc.consultationFee > 0 && <p className="text-sm text-gray-600">Consultation: ₹{doc.consultationFee}</p>}
-                  <span className="text-primary-600 text-sm font-medium mt-2 inline-block">Book Appointment →</span>
+                  {doc.consultationFee > 0 && <p className="text-sm text-gray-600">{ui.consultation}: ₹{doc.consultationFee}</p>}
+                  <span className="text-primary-600 text-sm font-medium mt-2 inline-block">{ui.bookAppointment}</span>
                 </Link>
               ))}
             </div>
           )}
           <div className="text-center mt-6">
             <Link to={`/doctors?specialization=${encodeURIComponent(specName)}`} className="text-primary-600 font-medium hover:underline">
-              View all {data.title.toLowerCase()} doctors →
+              {ui.viewAll(view.title)}
             </Link>
           </div>
         </div>
@@ -328,7 +500,7 @@ function SpecializationPage() {
       {!citySlug && cities.length > 0 && (
         <section className="py-10 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Find {data.title} Doctors by City</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">{ui.findByCity(view.title)}</h2>
             <div className="flex flex-wrap gap-3">
               {cities.map((c) => (
                 <Link
@@ -336,7 +508,7 @@ function SpecializationPage() {
                   to={`/specialization/${slug}/${cityToSlug(c.city)}`}
                   className="px-4 py-2 bg-primary-50 border border-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors"
                 >
-                  {data.title} in {c.city}
+                  {ui.inCity(view.title, c.city)}
                   <span className="text-primary-400 ml-1">({c.count})</span>
                 </Link>
               ))}
@@ -348,9 +520,9 @@ function SpecializationPage() {
       {/* FAQs */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{ui.faqTitle}</h2>
           <div className="space-y-4">
-            {data.faqs.map((faq, idx) => (
+            {view.faqs.map((faq, idx) => (
               <div key={idx} className="border border-gray-200 rounded-xl p-5">
                 <h3 className="font-semibold text-gray-800 mb-2">{faq.q}</h3>
                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -363,10 +535,10 @@ function SpecializationPage() {
       {/* CTA */}
       <section className="py-10 bg-primary-50">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-3">Need a {data.title} consultation?</h2>
-          <p className="text-gray-600 mb-5">Book an appointment in under 2 minutes. Video, phone, or in-person.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-3">{ui.ctaTitle(view.title)}</h2>
+          <p className="text-gray-600 mb-5">{ui.ctaText}</p>
           <Link to={`/doctors?specialization=${encodeURIComponent(specName)}`} className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-block">
-            Find {data.title} Doctors
+            {ui.ctaBtn(view.title)}
           </Link>
         </div>
       </section>
