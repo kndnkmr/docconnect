@@ -135,6 +135,18 @@ const specializationData = {
       { q: 'What does an ENT consultation involve?', a: 'The doctor examines your ear, nose, and throat, reviews symptoms, and may recommend hearing tests or scans.' },
     ]
   },
+  'microbiologist': {
+    title: 'Microbiologist',
+    subtitle: 'Laboratory & Infection Specialist',
+    description: 'Microbiologists are laboratory specialists who identify the bacteria, viruses, fungi, and parasites behind infections, and advise on the right tests and antibiotics. They typically support diagnosis and treatment behind the scenes rather than seeing patients for everyday illnesses.',
+    conditions: ['Infection diagnosis', 'Culture & sensitivity tests', 'Antibiotic guidance', 'Lab test interpretation', 'Hospital infection control', 'Resistant infections'],
+    icon: '🔬',
+    faqs: [
+      { q: 'What does a microbiologist do?', a: 'They work in the laboratory to identify the exact organism causing an infection and advise which antibiotic will work — supporting your treating doctor rather than replacing them.' },
+      { q: 'Should I see a microbiologist for a fever or cold?', a: 'Usually no. For everyday symptoms like fever, cough, or body pain, start with a General Physician. A microbiologist helps with lab diagnosis and antibiotic guidance, often on referral.' },
+      { q: 'When is a microbiologist involved in my care?', a: 'Typically when a doctor orders cultures or specialised infection tests, or for complex or antibiotic-resistant infections.' },
+    ]
+  },
 };
 
 function SpecializationPage() {

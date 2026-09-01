@@ -121,7 +121,7 @@ function DoctorList() {
     'Gastroenterologist', 'Pulmonologist', 'Endocrinologist',
     'Oncologist', 'Nephrologist', 'Rheumatologist', 'Surgeon',
     'Physiotherapist', 'Radiologist', 'Anesthesiologist',
-    'Plastic Surgeon', 'Sexologist', 'Homeopathy', 'Ayurveda'
+    'Plastic Surgeon', 'Sexologist', 'Microbiologist', 'Homeopathy', 'Ayurveda'
   ];
 
   // Smart/fuzzy matching function

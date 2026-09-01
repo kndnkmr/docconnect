@@ -23,6 +23,12 @@ const SYNONYM_GROUPS = [
   // General/family medicine — the big one the owner hit.
   ['General Physician', 'Internal Medicine', 'Internal Medicine Specialist',
    'Physician', 'General Medicine', 'Family Medicine', 'Family Physician', 'GP'],
+
+  // Lab/infection specialty — doctors write either the person ("Microbiologist")
+  // or the field ("Microbiology"); substring search wouldn't otherwise match
+  // one against the other. This is a LAB specialty, kept separate from clinical
+  // GP care on purpose (a microbiologist is not a substitute general physician).
+  ['Microbiologist', 'Microbiology'],
 ];
 
 // Given a searched specialization term, return the list of equivalent terms
