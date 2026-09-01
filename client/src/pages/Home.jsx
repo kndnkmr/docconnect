@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePwa } from '../context/PwaContext';
 import { reviewAPI } from '../services/api';
@@ -99,7 +99,24 @@ const TXT = {
 function Home() {
   const { isAuthenticated } = useAuth();
   const { canInstall, promptInstall } = usePwa();
+  const navigate = useNavigate();
   const [symptomSearch, setSymptomSearch] = useState('');
+
+  // Hero Share: use the phone's native share sheet when available; otherwise
+  // send the user to the /install page which has all the per-platform share
+  // buttons (WhatsApp, Facebook, copy link, QR).
+  const handleHeroShare = async () => {
+    const shareData = {
+      title: 'ProMedicoz',
+      text: 'Consult verified doctors online on ProMedicoz — video, phone, or in-person.',
+      url: 'https://www.promedicoz.in',
+    };
+    if (navigator.share) {
+      try { await navigator.share(shareData); } catch { /* user cancelled */ }
+      return;
+    }
+    navigate('/install');
+  };
   const [topReviews, setTopReviews] = useState([]);
   // Language toggle (Phase 1: Home page). Remembered across visits.
   const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
@@ -185,21 +202,51 @@ function Home() {
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 py-10 sm:py-14 md:py-20">
           <div className="max-w-2xl mx-auto text-center">
-            {/* Language toggle — placed prominently in the hero (not the
-                navbar, which is easy to miss) so a non-English speaker sees
-                it immediately. */}
-            <div className="inline-flex items-center bg-white/15 rounded-full p-1 mb-5 text-sm">
+            {/* Top row: language toggle centered, with Install (left) and
+                Share (right) filling the empty space on either side. Wraps
+                cleanly on small screens. Language toggle stays prominent in
+                the hero (not the navbar) so a non-English speaker sees it. */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+              {/* Install — one-tap when the browser supports it, else the
+                  /install page (iOS steps). */}
+              {canInstall ? (
+                <button
+                  onClick={promptInstall}
+                  className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                >
+                  📲 {lang === 'hi' ? 'इंस्टॉल' : 'Install'}
+                </button>
+              ) : (
+                <Link
+                  to="/install"
+                  className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                >
+                  📲 {lang === 'hi' ? 'ऐप पाएं' : 'Get App'}
+                </Link>
+              )}
+
+              <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
+                <button
+                  onClick={() => changeLang('en')}
+                  className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => changeLang('hi')}
+                  className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+                >
+                  हिंदी
+                </button>
+              </div>
+
+              {/* Share — native share sheet on mobile; otherwise go to the
+                  /install page which has all the per-platform share buttons. */}
               <button
-                onClick={() => changeLang('en')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+                onClick={handleHeroShare}
+                className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
               >
-                English
-              </button>
-              <button
-                onClick={() => changeLang('hi')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-              >
-                हिंदी
+                📤 {lang === 'hi' ? 'साझा करें' : 'Share'}
               </button>
             </div>
 
