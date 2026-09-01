@@ -22,6 +22,10 @@ import { Toaster } from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
 // Custom hook to access auth state (is user logged in? what role?)
 
+import { usePwa } from './context/PwaContext';
+// Shared PWA install prompt — lets the footer "Get the App" offer 1-tap
+// install, the same as the navbar and Home strip.
+
 // ---- Import Page Components ----
 import Navbar from './components/Navbar';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -86,6 +90,8 @@ function ProtectedRoute({ children, allowedRoles }) {
 
 // ---- Main App Component ----
 function App() {
+  const { canInstall, promptInstall } = usePwa();
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* 
@@ -218,7 +224,11 @@ function App() {
               {/* Role-neutral links (apply to patients and doctors alike) */}
               <div className="flex flex-wrap gap-2 mt-4">
                 <a href="/about" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">About Us →</a>
-                <a href="/install" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Get the App</a>
+                {canInstall ? (
+                  <button onClick={promptInstall} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Install App</button>
+                ) : (
+                  <a href="/install" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Get the App</a>
+                )}
               </div>
             </div>
 
