@@ -117,7 +117,7 @@ function DoctorList() {
   const specializations = [
     'Gynaecologist', 'Neurologist', 'Cardiologist', 'Dermatologist',
     'Orthopedic', 'Pediatrician', 'Psychiatrist', 'Ophthalmologist',
-    'ENT Specialist', 'Dentist', 'General Physician', 'Urologist',
+    'ENT Specialist', 'Dentist', 'General Physician', 'Internal Medicine', 'Urologist',
     'Gastroenterologist', 'Pulmonologist', 'Endocrinologist',
     'Oncologist', 'Nephrologist', 'Rheumatologist', 'Surgeon',
     'Physiotherapist', 'Radiologist', 'Anesthesiologist',

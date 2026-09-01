@@ -14,6 +14,7 @@ const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const Review = require('../models/Review');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
+const { getSpecializationSynonyms } = require('../utils/specializationSynonyms');
 const { formatIndianPhone } = require('../utils/formatPhone');
 const { uploadFile } = require('../utils/uploadFile');
 
@@ -226,7 +227,17 @@ const getAllDoctors = async (req, res) => {
       // Case-insensitive "contains" search, e.g. "cardio" matches
       // "Cardiologist"/"Cardiology" — input is escaped so it's always
       // treated as a literal substring, never as a regex pattern.
-      filter.specialization = safeContainsRegex(req.query.specialization);
+      //
+      // We also expand the term to its equivalents (e.g. "General Physician"
+      // also matches doctors who wrote "Internal Medicine" / "Family Medicine"
+      // — they treat the same everyday problems). For terms with no synonyms
+      // this is just the single original term, so behaviour is unchanged.
+      const synonyms = getSpecializationSynonyms(req.query.specialization);
+      if (synonyms.length > 1) {
+        filter.specialization = { $in: synonyms.map((s) => safeContainsRegex(s)) };
+      } else {
+        filter.specialization = safeContainsRegex(req.query.specialization);
+      }
     }
 
     // If filtering by name (search)
@@ -352,7 +363,12 @@ const getDoctorCities = async (req, res) => {
       city: { $nin: [null, ''] }
     };
     if (req.query.specialization) {
-      match.specialization = safeContainsRegex(req.query.specialization);
+      // Expand to equivalents (e.g. General Physician ⇄ Internal Medicine) so
+      // the "find in your city" counts stay consistent with the doctor list.
+      const synonyms = getSpecializationSynonyms(req.query.specialization);
+      match.specialization = synonyms.length > 1
+        ? { $in: synonyms.map((s) => safeContainsRegex(s)) }
+        : safeContainsRegex(req.query.specialization);
     }
 
     const rows = await User.aggregate([
