@@ -206,35 +206,35 @@ function Home() {
                 Share (right) filling the empty space on either side. Wraps
                 cleanly on small screens. Language toggle stays prominent in
                 the hero (not the navbar) so a non-English speaker sees it. */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-5">
               {/* Install — one-tap when the browser supports it, else the
                   /install page (iOS steps). */}
               {canInstall ? (
                 <button
                   onClick={promptInstall}
-                  className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   📲 {lang === 'hi' ? 'इंस्टॉल' : 'Install'}
                 </button>
               ) : (
                 <Link
                   to="/install"
-                  className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
                 >
-                  📲 {lang === 'hi' ? 'ऐप पाएं' : 'Get App'}
+                  📲 {lang === 'hi' ? 'ऐप' : 'Get App'}
                 </Link>
               )}
 
-              <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
+              <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-xs sm:text-sm">
                 <button
                   onClick={() => changeLang('en')}
-                  className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+                  className={`px-2.5 sm:px-4 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
                 >
                   English
                 </button>
                 <button
                   onClick={() => changeLang('hi')}
-                  className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+                  className={`px-2.5 sm:px-4 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
                 >
                   हिंदी
                 </button>
@@ -244,9 +244,9 @@ function Home() {
                   /install page which has all the per-platform share buttons. */}
               <button
                 onClick={handleHeroShare}
-                className="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
               >
-                📤 {lang === 'hi' ? 'साझा करें' : 'Share'}
+                📤 {lang === 'hi' ? 'साझा' : 'Share'}
               </button>
             </div>
 
