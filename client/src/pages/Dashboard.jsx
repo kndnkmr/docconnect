@@ -1107,6 +1107,21 @@ function Dashboard() {
                 <p className="text-xs text-green-700 mt-3">
                   Tip: even 5–10 of your regular patients sharing this with their families is the fastest way to grow your online bookings.
                 </p>
+
+                {/* Collapsible "why bother" pitch — reminds the doctor of the
+                    concrete benefits each time, so the share card isn't just a
+                    button but a standing reason to use it. */}
+                <details className="mt-3 group">
+                  <summary className="cursor-pointer text-sm font-medium text-green-800 hover:text-green-900 list-none flex items-center gap-1">
+                    <span className="transition-transform group-open:rotate-90">▶</span> Why this grows your practice
+                  </summary>
+                  <ul className="mt-2 space-y-2 text-sm text-green-800 pl-1">
+                    <li>💚 <strong>Keep patients you'd otherwise lose.</strong> When a patient shifts city for work or study, they don't have to find a new doctor — they stay with you, online.</li>
+                    <li>👨‍👩‍👧 <strong>Reach their whole family, anywhere.</strong> Your Delhi patient's parents in Bihar can consult you too — no travel, same trusted doctor.</li>
+                    <li>💰 <strong>Free, and you keep 100% of your fee.</strong> No joining cost, no commission — patients pay you directly by UPI.</li>
+                    <li>⏱️ <strong>30 seconds to share.</strong> Tap "Share on WhatsApp" above and send it to 5–10 of your regular patients this week. That alone can start your online bookings.</li>
+                  </ul>
+                </details>
               </div>
             </div>
           </div>
