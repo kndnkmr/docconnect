@@ -71,18 +71,39 @@ function BlogList() {
           <h1 className="text-2xl sm:text-3xl font-bold">Health Blog</h1>
           <p className="text-primary-100 mt-2 text-sm sm:text-base">Expert articles to help you make informed health decisions</p>
 
-          {/* Search box */}
+          {/* Search box — filters instantly as you type (no button needed).
+              The live result line + clear button make that obvious. */}
           <div className="max-w-lg mx-auto mt-6 relative">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search articles (e.g. toothache, diabetes, headache)..."
-              className="w-full pl-11 pr-4 py-3 rounded-full text-gray-800 outline-none focus:ring-2 focus:ring-white/60 shadow-md"
+              className="w-full pl-11 pr-11 py-3 rounded-full text-gray-800 outline-none focus:ring-2 focus:ring-white/60 shadow-md"
               aria-label="Search health articles"
             />
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                ✕
+              </button>
+            )}
           </div>
+
+          {/* Live feedback so it's obvious the search works as you type and the
+              results are just below — no hidden "Search" button to hunt for. */}
+          {q && (
+            <p className="text-primary-100 text-sm mt-3">
+              {filtered.length > 0
+                ? `Showing ${filtered.length} ${filtered.length === 1 ? 'result' : 'results'} for “${query.trim()}” below ↓`
+                : `No articles match “${query.trim()}”`}
+            </p>
+          )}
         </div>
       </div>
 
@@ -139,7 +160,21 @@ function BlogList() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto">
+          {q && (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {filtered.length} {filtered.length === 1 ? 'result' : 'results'} for “{query.trim()}”
+              </h2>
+              <button
+                onClick={() => { setQuery(''); setCategory('All'); }}
+                className="text-primary-600 hover:underline text-sm font-medium"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((article) => (
               <Link
                 key={article.slug}
@@ -160,6 +195,7 @@ function BlogList() {
                 </div>
               </Link>
             ))}
+          </div>
           </div>
         )}
       </div>
