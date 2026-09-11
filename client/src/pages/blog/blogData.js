@@ -1027,13 +1027,31 @@ export const articles = [
       { type: 'heading', text: 'What Actually Happens' },
       { type: 'paragraph', text: 'Your stomach makes acid to digest food. When some of that acid flows back up into the food pipe (reflux), you feel the classic burning, sour taste, or chest discomfort. Occasional reflux is normal; frequent reflux is called GERD and needs attention.' },
       { type: 'heading', text: 'Common Triggers' },
-      { type: 'paragraph', text: '• Spicy, oily, or fried food\n• Large meals, or eating late at night\n• Lying down soon after eating\n• Tea, coffee, and carbonated drinks\n• Smoking and alcohol\n• Stress\n• Being overweight' },
+      { type: 'list', items: [
+        'Spicy, oily, or fried food',
+        'Large meals, or eating late at night',
+        'Lying down soon after eating',
+        'Tea, coffee, and carbonated drinks',
+        'Smoking and alcohol',
+        'Stress, and being overweight'
+      ]},
       { type: 'heading', text: 'Simple Habits That Help' },
-      { type: 'paragraph', text: '• Eat smaller meals, more slowly\n• Finish dinner 2-3 hours before bed\n• Don\'t lie down right after eating\n• Cut back on trigger foods and drinks\n• Raise the head of your bed slightly if night-time reflux is a problem\n• Manage weight and stress' },
-      { type: 'heading', text: 'Be Careful with Antacids' },
-      { type: 'paragraph', text: 'Over-the-counter antacids give quick relief, but relying on them daily for weeks masks a problem that may need proper treatment. Long-term acid issues can inflame or damage the food pipe — so recurring acidity shouldn\'t just be self-medicated indefinitely.' },
+      { type: 'list', items: [
+        'Eat smaller meals, more slowly',
+        'Finish dinner 2–3 hours before bed',
+        'Don\'t lie down right after eating',
+        'Cut back on trigger foods and drinks',
+        'Raise the head of your bed slightly for night-time reflux',
+        'Manage weight and stress'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Go easy on daily antacids', text: 'Over-the-counter antacids give quick relief, but leaning on them **daily for weeks** masks a problem that may need proper treatment — and long-term acid can inflame the food pipe. Recurring acidity should not just be self-medicated forever.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'See a doctor if you have heartburn more than twice a week, difficulty or pain swallowing, unexplained weight loss, vomiting, or black stools. And treat chest pain seriously — if you\'re ever unsure whether it\'s acidity or your heart, get urgent help. For ongoing acidity, an online consultation can sort out the cause and the right treatment.' },
+      { type: 'callout', variant: 'warning', title: 'See a doctor for', items: [
+        'Heartburn more than twice a week',
+        'Difficulty or pain when swallowing',
+        'Unexplained weight loss, vomiting, or black stools'
+      ]},
+      { type: 'paragraph', text: 'And take **chest pain** seriously — if you are ever unsure whether it is acidity or your heart, get urgent help. For ongoing acidity, an **online consultation** can sort out the cause and the right treatment.' },
     ]
   },
   {
@@ -1048,16 +1066,28 @@ export const articles = [
       { type: 'intro', text: 'We\'re told to drink "8 glasses a day," carry giant water bottles, and that being thirsty means we\'re already dehydrated. Some of this is true, some is myth. Here\'s a clear, honest guide to staying properly hydrated — without overthinking it.' },
       { type: 'heading', text: 'Is 8 Glasses a Day a Real Rule?' },
       { type: 'paragraph', text: 'Not exactly — it\'s a rough guide, not a magic number. Your real need depends on your body size, activity, the weather (a lot, in Indian summers), and your health. Most healthy people do well listening to thirst and keeping their urine pale yellow.' },
+      { type: 'callout', variant: 'tip', title: 'The simplest hydration check', text: 'Forget counting glasses — just glance at your urine. **Pale straw-coloured = well hydrated.** Dark yellow = drink more. Your body\'s thirst is a good guide for most healthy people.' },
       { type: 'heading', text: 'Signs You\'re Not Drinking Enough' },
-      { type: 'paragraph', text: '• Dark yellow urine\n• Headaches and tiredness\n• Dry mouth and lips\n• Feeling dizzy on standing\n• Constipation\n\nA simple check: pale straw-coloured urine usually means you\'re well hydrated.' },
+      { type: 'list', items: [
+        'Dark yellow urine',
+        'Headaches and tiredness',
+        'Dry mouth and lips',
+        'Feeling dizzy on standing',
+        'Constipation'
+      ]},
       { type: 'heading', text: 'Does Tea/Coffee Count?' },
-      { type: 'paragraph', text: 'Mostly yes — despite the myth, moderate tea and coffee do add to your daily fluids. But water, buttermilk, and coconut water are better everyday choices than lots of sugary drinks or very strong caffeine.' },
-      { type: 'heading', text: 'Can You Drink Too Much?' },
-      { type: 'paragraph', text: 'Rarely, but yes — forcing huge amounts of water isn\'t "detoxing" and can even be harmful in extreme cases. You don\'t need to chug litres beyond thirst. Balance, not excess, is the goal.' },
+      { type: 'paragraph', text: 'Mostly **yes** — despite the myth, moderate tea and coffee do add to your daily fluids. But water, buttermilk, and coconut water are better everyday choices than sugary drinks or very strong caffeine.' },
+      { type: 'callout', variant: 'info', title: 'Can you drink too much?', text: 'Rarely, but yes — forcing huge amounts is not "detoxing" and can even be harmful in extreme cases. You do not need to chug litres beyond thirst. **Balance, not excess.**' },
       { type: 'heading', text: 'Easy Ways to Stay Hydrated' },
-      { type: 'paragraph', text: '• Keep a bottle within reach\n• Have a glass with each meal\n• Drink more in heat or during exercise\n• Eat water-rich foods — cucumber, watermelon, oranges\n• Watch hydration carefully in the elderly and young children' },
+      { type: 'list', items: [
+        'Keep a bottle within reach',
+        'Have a glass with each meal',
+        'Drink more in heat or during exercise',
+        'Eat water-rich foods — cucumber, watermelon, oranges',
+        'Watch hydration carefully in the elderly and young children'
+      ]},
       { type: 'heading', text: 'When It\'s a Medical Concern' },
-      { type: 'paragraph', text: 'Constant excessive thirst can sometimes signal high blood sugar or other issues — so if you\'re always thirsty no matter how much you drink, or urinating very frequently, see a doctor. An online consultation can quickly tell you whether it needs a test.' },
+      { type: 'paragraph', text: 'Constant **excessive thirst** can sometimes signal high blood sugar or other issues — so if you are always thirsty no matter how much you drink, or urinating very frequently, see a doctor. An **online consultation** can quickly tell you whether it needs a test.' },
     ]
   },
   {
@@ -1073,13 +1103,31 @@ export const articles = [
       { type: 'heading', text: 'What Iron Does' },
       { type: 'paragraph', text: 'Iron helps your blood carry oxygen to every part of your body. When iron is low, your organs and muscles get less oxygen — leaving you tired, weak, and short of breath even with light effort.' },
       { type: 'heading', text: 'Common Signs' },
-      { type: 'paragraph', text: '• Constant tiredness and weakness\n• Pale skin, lips, or inner eyelids\n• Breathlessness and fast heartbeat on mild exertion\n• Hair fall\n• Brittle nails\n• Frequent headaches or dizziness\n• Unusual cravings (like wanting to chew ice)' },
+      { type: 'list', items: [
+        'Constant tiredness and weakness',
+        'Pale skin, lips, or inner eyelids',
+        'Breathlessness and fast heartbeat on mild exertion',
+        'Hair fall and brittle nails',
+        'Frequent headaches or dizziness',
+        'Unusual cravings (like wanting to chew ice)'
+      ]},
       { type: 'heading', text: 'Who\'s Most at Risk' },
-      { type: 'paragraph', text: '• Women with heavy periods\n• Pregnant women\n• Teenagers during growth spurts\n• Vegetarians (plant iron is absorbed less easily)\n• People with gut conditions affecting absorption' },
+      { type: 'list', items: [
+        'Women with heavy periods',
+        'Pregnant women',
+        'Teenagers during growth spurts',
+        'Vegetarians (plant iron is absorbed less easily)',
+        'People with gut conditions affecting absorption'
+      ]},
       { type: 'heading', text: 'Iron-Rich Foods' },
-      { type: 'paragraph', text: '• Green leafy vegetables (palak, methi)\n• Dals, beans, and chickpeas\n• Jaggery, dates, and raisins\n• Eggs, and lean meat/liver for non-vegetarians\n\nTip: eating vitamin C (lemon, amla, oranges) with meals helps your body absorb iron; strong tea/coffee right after meals reduces absorption.' },
-      { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'Don\'t self-diagnose or take iron supplements blindly — too much iron is harmful, and the tiredness could be from something else (thyroid, B12, etc.). A simple blood test (CBC) confirms anaemia. Importantly, a doctor also checks WHY iron is low, since ongoing blood loss needs its own attention. An online consultation is a good first step to get the right test.' },
+      { type: 'list', items: [
+        'Green leafy vegetables (palak, methi)',
+        'Dals, beans, and chickpeas',
+        'Jaggery, dates, and raisins',
+        'Eggs, and lean meat/liver for non-vegetarians'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Eating **vitamin C** (lemon, amla, oranges) with meals boosts iron absorption. Strong tea or coffee **right after** meals reduces it — so keep them apart.' },
+      { type: 'callout', variant: 'warning', title: 'Don\'t self-prescribe iron', text: 'Too much iron is harmful, and your tiredness could be from something else (thyroid, B12). A simple blood test (CBC) confirms anaemia — and importantly, a doctor also checks **why** iron is low, since ongoing blood loss needs its own attention. An online consultation is a good first step.' },
     ]
   },
   {
@@ -1095,13 +1143,32 @@ export const articles = [
       { type: 'heading', text: 'What Is "Tech Neck"?' },
       { type: 'paragraph', text: 'Every time you bend your head forward to look down at a phone, the strain on your neck multiplies. Held for hours daily, this leads to neck stiffness, shoulder pain, headaches, and upper-back ache. Slouching at a desk adds lower-back pain to the mix.' },
       { type: 'heading', text: 'Signs Your Posture Is the Problem' },
-      { type: 'paragraph', text: '• Neck or shoulder stiffness by evening\n• Nagging upper-back ache\n• Frequent tension headaches\n• Pain that eases on holidays and returns at work\n• Rounded shoulders / hunched posture' },
+      { type: 'list', items: [
+        'Neck or shoulder stiffness by evening',
+        'A nagging upper-back ache',
+        'Frequent tension headaches',
+        'Pain that eases on holidays and returns at work',
+        'Rounded shoulders / hunched posture'
+      ]},
       { type: 'heading', text: 'Simple Fixes' },
-      { type: 'paragraph', text: '• Hold your phone up nearer eye level instead of bending your neck down\n• Raise your screen so the top is at eye level\n• Sit back in the chair with lower-back support, feet flat\n• Take a movement break every 30-45 minutes\n• Strengthen your back and core with regular activity\n• Set up your desk properly (ergonomics) if you work long hours' },
+      { type: 'list', items: [
+        'Hold your phone **up near eye level** instead of bending your neck down',
+        'Raise your screen so the top is at eye level',
+        'Sit back with lower-back support, feet flat',
+        'Take a movement break every 30–45 minutes',
+        'Strengthen your back and core with regular activity',
+        'Set up your desk ergonomically if you work long hours'
+      ]},
       { type: 'heading', text: 'Quick Stretches (Do Them Daily)' },
-      { type: 'paragraph', text: '• Gentle neck rolls and side stretches\n• Shoulder shrugs and rolls\n• Chin tucks (pull your chin gently back)\n• Standing back extension\n• Chest-opening stretch to counter hunching\n\nDo them slowly, never into sharp pain.' },
-      { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'See a doctor if pain is severe, persistent, or spreads down an arm or leg, or if you feel numbness, tingling, or weakness — these can signal nerve involvement. An orthopedic doctor or physiotherapist can assess you and guide targeted treatment. Many such issues can be reviewed online first to decide the next step.' },
+      { type: 'list', items: [
+        'Gentle neck rolls and side stretches',
+        'Shoulder shrugs and rolls',
+        'Chin tucks (pull your chin gently back)',
+        'Standing back extension',
+        'Chest-opening stretch to counter hunching'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Do stretches **slowly**, never into sharp pain — gentle and regular beats hard and occasional.' },
+      { type: 'callout', variant: 'warning', title: 'See a doctor if', text: 'Pain is severe or persistent, spreads down an arm or leg, or comes with **numbness, tingling, or weakness** — these can signal nerve involvement. An orthopedic doctor or physiotherapist can assess you; many such issues can be reviewed online first.' },
     ]
   },
   {
