@@ -797,13 +797,31 @@ export const articles = [
       { type: 'heading', text: 'Why Your Gut Matters So Much' },
       { type: 'paragraph', text: 'Your gut is home to a whole ecosystem of microbes (the "microbiome") that help digest food, make certain vitamins, train your immune system, and even communicate with your brain. When this balance is off, you may notice bloating, irregular digestion, low energy, or frequent illness.' },
       { type: 'heading', text: 'Signs Your Gut May Need Attention' },
-      { type: 'paragraph', text: '• Frequent bloating, gas, or acidity\n• Irregular bowel habits (constipation or loose motions)\n• Feeling sluggish after meals\n• Frequent infections or low immunity\n• Skin flare-ups\n\nOccasional issues are normal — but a persistent pattern is worth looking into.' },
+      { type: 'list', items: [
+        'Frequent bloating, gas, or acidity',
+        'Irregular bowel habits (constipation or loose motions)',
+        'Feeling sluggish after meals',
+        'Frequent infections or low immunity',
+        'Skin flare-ups'
+      ]},
+      { type: 'paragraph', text: 'Occasional issues are normal — a **persistent pattern** is what is worth looking into.' },
       { type: 'heading', text: 'Simple Ways to Support Your Gut' },
-      { type: 'paragraph', text: '• Eat more fibre — vegetables, fruits, whole grains, dals\n• Include fermented foods — curd, buttermilk, idli, dosa, pickles (traditional Indian probiotics!)\n• Stay hydrated\n• Don\'t rush meals; eat mindfully\n• Cut back on ultra-processed and very oily foods\n• Manage stress — the gut and brain are closely linked' },
-      { type: 'heading', text: 'The Traditional Indian Angle' },
-      { type: 'paragraph', text: 'Ayurveda has always emphasised "Agni" (digestive fire) — the idea that good digestion is the foundation of health. Warm, freshly cooked meals, regular meal timings, digestive spices like jeera and ajwain, and not overeating are traditional habits that align neatly with modern gut-health advice.' },
-      { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'Lifestyle covers most everyday gut concerns — but see a doctor for warning signs: blood in stool, unexplained weight loss, severe or persistent pain, or symptoms lasting more than a few weeks. These need proper evaluation, and a gastroenterologist can help. You can start with an online consultation to know if tests are needed.' },
+      { type: 'list', items: [
+        'Eat more **fibre** — vegetables, fruits, whole grains, dals',
+        'Include **fermented foods** — curd, buttermilk, idli, dosa (traditional Indian probiotics!)',
+        'Stay hydrated',
+        'Don\'t rush meals — eat mindfully',
+        'Cut back on ultra-processed and very oily foods',
+        'Manage stress — the gut and brain are closely linked'
+      ]},
+      { type: 'callout', variant: 'info', title: 'The traditional angle', text: 'Ayurveda has long emphasised **"Agni" (digestive fire)** — the idea that good digestion is the foundation of health. Warm, freshly cooked meals, regular timings, digestive spices like jeera and ajwain, and not overeating all line up neatly with modern gut-health advice.' },
+      { type: 'callout', variant: 'warning', title: 'See a doctor for', items: [
+        'Blood in the stool',
+        'Unexplained weight loss',
+        'Severe or persistent pain',
+        'Symptoms lasting more than a few weeks'
+      ]},
+      { type: 'paragraph', text: 'These need proper evaluation. You can start with an **online consultation** to know if tests are needed.' },
     ]
   },
   {
@@ -819,13 +837,18 @@ export const articles = [
       { type: 'heading', text: 'Why Sleep Matters More Than You Think' },
       { type: 'paragraph', text: 'Consistently poor sleep is linked to low energy, poor focus, weight gain, weaker immunity, mood problems, and higher risk of heart disease and diabetes over time. Fixing sleep is one of the highest-value things you can do for your health.' },
       { type: 'heading', text: 'Habits That Actually Help (Sleep Hygiene)' },
-      { type: 'paragraph', text: '• Keep a consistent sleep and wake time — even on weekends\n• No screens 30-60 minutes before bed (blue light delays sleep)\n• Keep the room dark, quiet, and cool\n• Avoid caffeine (tea/coffee) after late afternoon\n• Don\'t eat heavy meals right before bed\n• Get some daylight and movement during the day' },
-      { type: 'heading', text: 'Calming Traditional Practices' },
-      { type: 'paragraph', text: 'Time-tested wind-down rituals genuinely help: a warm glass of milk, a few minutes of slow breathing (pranayama), light stretching or gentle yoga, and dimming the lights. These calm the nervous system — a soothing routine, not a sleeping pill.' },
-      { type: 'heading', text: 'The Screen Trap' },
-      { type: 'paragraph', text: 'Scrolling in bed is the #1 modern sleep-wrecker. The light tricks your brain into "daytime," and the endless content keeps it alert. Try charging your phone outside the bedroom for a week — many people are surprised by the difference.' },
+      { type: 'list', items: [
+        'Keep a **consistent** sleep and wake time — even on weekends',
+        'No screens 30–60 minutes before bed (blue light delays sleep)',
+        'Keep the room dark, quiet, and cool',
+        'Avoid tea/coffee after late afternoon',
+        'Don\'t eat heavy meals right before bed',
+        'Get daylight and some movement during the day'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Calming wind-down rituals', text: 'A warm glass of milk, a few minutes of slow breathing (pranayama), gentle stretching, and dimming the lights all genuinely calm the nervous system — a soothing routine, not a sleeping pill.' },
+      { type: 'callout', variant: 'warning', title: 'The screen trap', text: 'Scrolling in bed is the #1 modern sleep-wrecker — the light tricks your brain into "daytime" and the content keeps it alert. Try charging your phone **outside the bedroom** for a week; many people are surprised by the difference.' },
       { type: 'heading', text: 'When Sleep Problems Need a Doctor' },
-      { type: 'paragraph', text: 'See a doctor if poor sleep lasts more than a few weeks despite good habits, if you snore loudly with breathing pauses (possible sleep apnoea), or if sleep issues come with low mood or anxiety. These are treatable — don\'t just live with exhaustion. An online consultation is an easy first step.' },
+      { type: 'paragraph', text: 'See a doctor if poor sleep lasts more than a few weeks despite good habits, if you **snore loudly with breathing pauses** (possible sleep apnoea), or if sleep issues come with low mood or anxiety. These are treatable — don\'t just live with exhaustion. An **online consultation** is an easy first step.' },
     ]
   },
   {
@@ -838,16 +861,20 @@ export const articles = [
     image: '🛡️',
     content: [
       { type: 'intro', text: 'Every season brings a wave of "immunity booster" products promising miracles. The honest truth? No pill instantly "boosts" immunity. But your daily habits genuinely shape how well your body defends itself. Here\'s what actually works — grounded in science and traditional wisdom.' },
-      { type: 'heading', text: 'First, an Honest Truth' },
-      { type: 'paragraph', text: 'You can\'t "supercharge" your immune system overnight, and mega-doses of random supplements can even do harm. Real immunity is built slowly through consistent, unglamorous habits — the same ones that keep the rest of you healthy.' },
+      { type: 'callout', variant: 'info', title: 'First, an honest truth', text: 'You cannot "supercharge" your immune system overnight, and mega-doses of random supplements can even **do harm**. Real immunity is built slowly through consistent, unglamorous habits — the same ones that keep the rest of you healthy.' },
       { type: 'heading', text: 'What Actually Supports Immunity' },
-      { type: 'paragraph', text: '• Sleep — your immune system does much of its work while you rest\n• A varied diet — plenty of vegetables, fruits, dals, and whole grains\n• Regular movement — even daily walking helps\n• Managing stress — chronic stress weakens immunity\n• Staying hydrated\n• Not smoking, and limiting alcohol' },
-      { type: 'heading', text: 'The Traditional Indian Kitchen' },
-      { type: 'paragraph', text: 'Many traditional Indian foods are naturally supportive: turmeric, ginger, garlic, tulsi, and fermented foods like curd and buttermilk. A classic "kadha" (herbal decoction) is a comforting seasonal ritual. Enjoy these as part of a balanced diet — wholesome everyday support, not a shield against every illness.' },
-      { type: 'heading', text: 'Be Careful of "Miracle" Claims' },
-      { type: 'paragraph', text: 'If a product promises to "cure" or "prevent" serious diseases, be skeptical. No food or supplement replaces vaccines, medicines, or medical care when you\'re actually ill. Good habits reduce your risk; they don\'t make you invincible.' },
+      { type: 'list', items: [
+        '**Sleep** — your immune system does much of its work while you rest',
+        'A varied diet — plenty of vegetables, fruits, dals, whole grains',
+        'Regular movement — even daily walking helps',
+        'Managing stress — chronic stress weakens immunity',
+        'Staying hydrated',
+        'Not smoking, and limiting alcohol'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'The traditional Indian kitchen', text: 'Turmeric, ginger, garlic, tulsi, and fermented foods like curd and buttermilk are naturally supportive, and a warm "kadha" is a comforting seasonal ritual. Enjoy them as part of a balanced diet — wholesome everyday support, not a shield against every illness.' },
+      { type: 'callout', variant: 'warning', title: 'Be wary of "miracle" claims', text: 'If a product promises to "**cure**" or "**prevent**" serious diseases, be sceptical. No food or supplement replaces vaccines, medicines, or medical care when you are actually ill. Good habits reduce your risk; they do not make you invincible.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'If you fall sick frequently, take a long time to recover, or feel run-down for weeks, see a doctor — it could point to something treatable like a deficiency or an underlying condition. A quick online consultation can help you figure out the cause instead of guessing with supplements.' },
+      { type: 'paragraph', text: 'If you fall sick often, take a long time to recover, or feel run-down for weeks, see a doctor — it can point to something treatable like a deficiency or an underlying condition. A quick **online consultation** helps you find the cause instead of guessing with supplements.' },
     ]
   },
   {
