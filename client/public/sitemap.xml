@@ -61,16 +61,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.promedicoz.in/register</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.promedicoz.in/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://www.promedicoz.in/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

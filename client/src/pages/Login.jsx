@@ -86,7 +86,7 @@ function Login() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <SEO title="Login" description="Sign in to your ProMedicoz account. Manage appointments, view prescriptions, and book doctors." path="/login" />
+      <SEO title="Login" description="Sign in to your ProMedicoz account. Manage appointments, view prescriptions, and book doctors." path="/login" noindex />
 
       <div className="w-full max-w-md">
         {/* max-w-md = max width ~448px (keeps form from being too wide) */}

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 // Reusable SEO component — sets unique title, description, and Open Graph tags per page
-function SEO({ title, description, path = '/', type = 'website' }) {
+function SEO({ title, description, path = '/', type = 'website', noindex = false }) {
   const siteName = 'ProMedicoz';
   const baseUrl = 'https://www.promedicoz.in';
   const fullTitle = title ? `${title} | ${siteName}` : `${siteName} - Find & Book Doctors Online`;
@@ -12,6 +12,9 @@ function SEO({ title, description, path = '/', type = 'website' }) {
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
+      {/* Keep utility pages (login, register, dashboards) out of search results
+          so they don't compete with or dilute the brand's real content pages. */}
+      {noindex && <meta name="robots" content="noindex, follow" />}
       <link rel="canonical" href={url} />
 
       {/* Open Graph — for WhatsApp, Facebook, LinkedIn sharing */}
