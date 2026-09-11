@@ -1776,13 +1776,36 @@ export const articles = [
       { type: 'heading', text: 'Why the Pain Is So Intense' },
       { type: 'paragraph', text: 'When a stone lodges in the narrow tube from the kidney to the bladder, urine backs up and the tube goes into spasm. That produces the classic "renal colic": severe pain in the back or side that comes in waves, often spreading down towards the groin, and frequently with nausea. It is genuinely one of the sharper pains in medicine — so if you have felt it, you were not exaggerating.' },
       { type: 'heading', text: 'Signs to Watch For' },
-      { type: 'paragraph', text: '• Severe, wave-like pain in the back, side, or lower tummy\n• Pain spreading towards the groin\n• Blood in the urine (pink, red, or brownish)\n• Nausea and vomiting\n• A frequent, urgent need to pee, or pain when passing urine\n• Cloudy or foul-smelling urine' },
+      { type: 'list', items: [
+        'Severe, wave-like pain in the back, side, or lower tummy',
+        'Pain spreading towards the groin',
+        'Blood in the urine (pink, red, or brownish)',
+        'Nausea and vomiting',
+        'A frequent, urgent need to pee, or pain passing urine',
+        'Cloudy or foul-smelling urine'
+      ]},
       { type: 'heading', text: 'What Helps When You Have One' },
-      { type: 'paragraph', text: 'Many small stones pass on their own with time and plenty of fluids. Supportive steps include:\n\n• Drinking lots of water to help flush the stone along\n• Staying gently mobile rather than lying rigid\n• Using pain relief as advised by a doctor\n\nLarger stones, or ones that get stuck, sometimes need a procedure such as shock-wave treatment or a minor operation — but a doctor decides that based on the stone\'s size and position, so it is worth getting assessed rather than just enduring it.' },
+      { type: 'list', items: [
+        'Drink lots of water to help flush the stone along',
+        'Stay gently mobile rather than lying rigid',
+        'Use pain relief as advised by a doctor'
+      ]},
+      { type: 'paragraph', text: 'Larger or stuck stones sometimes need shock-wave treatment or a minor procedure — a doctor decides based on the stone\'s size and position, so it is worth getting assessed rather than just enduring it.' },
       { type: 'heading', text: 'How to Stop Them Coming Back' },
-      { type: 'paragraph', text: 'Prevention is genuinely powerful here, because people who have had one stone often get another:\n\n• Drink plenty of water every day — the single most important step, especially in hot weather\n• Go easy on salt, which drives stone formation\n• Do not overdo high-oxalate and certain other foods if you are prone — a doctor can guide you based on your stone type\n• Keep a healthy weight and stay active\n\nInterestingly, cutting calcium is usually NOT the answer and can backfire — a common myth worth clearing up.' },
+      { type: 'list', items: [
+        '**Drink plenty of water** every day — the single most important step, especially in heat',
+        'Go easy on salt, which drives stone formation',
+        'Do not overdo high-oxalate foods if you are prone (a doctor guides by stone type)',
+        'Keep a healthy weight and stay active'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Myth: cut out calcium', text: 'Cutting calcium is usually **NOT** the answer and can backfire. It is a common myth — your doctor advises based on your actual stone type.' },
       { type: 'heading', text: 'When to See a Doctor (and When It\'s Urgent)' },
-      { type: 'paragraph', text: 'See a doctor for any suspected kidney stone so the cause can be confirmed and future stones prevented. Treat it as urgent — go straight for care — if you have fever and chills with the pain (a possible dangerous infection), you cannot pass urine, the pain is unbearable, or you have relentless vomiting. Short of those, an online consultation is a convenient way to review your symptoms, decide what scan or test you need, and build a prevention plan so you never feel that pain again.' },
+      { type: 'callout', variant: 'warning', title: 'Go straight for care if you have', items: [
+        'Fever and chills with the pain (a possible dangerous infection)',
+        'An inability to pass urine',
+        'Unbearable pain, or relentless vomiting'
+      ]},
+      { type: 'paragraph', text: 'Short of those, an **online consultation** is a convenient way to review symptoms, decide what scan you need, and build a prevention plan so you never feel that pain again.' },
     ]
   },
   {
@@ -1844,15 +1867,36 @@ export const articles = [
       { type: 'heading', text: 'Why Monsoon Means More Fevers' },
       { type: 'paragraph', text: 'Stagnant rainwater — in coolers, pots, tyres, and clogged drains — is a breeding ground for mosquitoes. That is why dengue, malaria, and chikungunya all rise together after the rains. Add waterborne infections like typhoid, and "fever season" is in full swing. The good news: nearly all of it is preventable and treatable when caught early.' },
       { type: 'heading', text: 'Dengue: The One to Watch' },
-      { type: 'paragraph', text: 'Dengue fever classically brings:\n\n• Sudden high fever\n• Severe body and joint aches (it is nicknamed "breakbone fever")\n• Pain behind the eyes\n• Headache, nausea, and sometimes a rash\n\nMost people recover with rest and fluids. But dengue has a dangerous phase — often as the fever DROPS around day 4–6 — when a small number of people deteriorate. That is exactly when to stay alert, not relax.' },
+      { type: 'paragraph', text: 'Dengue fever classically brings:' },
+      { type: 'list', items: [
+        'Sudden high fever',
+        'Severe body and joint aches (nicknamed "**breakbone fever**")',
+        'Pain behind the eyes',
+        'Headache, nausea, and sometimes a rash'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Watch the day 4–6 window', text: 'Most people recover with rest and fluids. But dengue has a dangerous phase — often **as the fever DROPS around day 4–6** — when a small number deteriorate. That is exactly when to stay alert, not relax.' },
       { type: 'heading', text: 'The Danger Signs — Seek Care Immediately' },
-      { type: 'paragraph', text: 'Go to a doctor or hospital urgently if there is:\n\n• Severe tummy pain or persistent vomiting\n• Bleeding — from gums or nose, blood in vomit or stool, or tiny red spots on the skin\n• Restlessness, drowsiness, or confusion\n• Cold, clammy skin or a sharp drop in urine\n• Difficulty breathing\n\nThese can signal severe dengue, which is a medical emergency. Do not wait it out.' },
-      { type: 'heading', text: 'The Painkiller Trap (Very Important)' },
-      { type: 'paragraph', text: 'This one matters: in a suspected dengue fever, avoid painkillers like ibuprofen, aspirin, and similar anti-inflammatory drugs — they can worsen bleeding risk. Paracetamol is the safer choice for fever and aches, taken as directed. Because it is hard to tell fevers apart yourself, do not self-medicate blindly — a doctor will guide you and may advise a simple blood test to confirm the cause.' },
+      { type: 'callout', variant: 'warning', title: 'Go to hospital urgently for', items: [
+        'Severe tummy pain or persistent vomiting',
+        'Bleeding — gums/nose, blood in vomit or stool, or tiny red skin spots',
+        'Restlessness, drowsiness, or confusion',
+        'Cold, clammy skin or a sharp drop in urine',
+        'Difficulty breathing'
+      ]},
+      { type: 'paragraph', text: 'These can signal **severe dengue**, a medical emergency. Do not wait it out.' },
+      { type: 'callout', variant: 'warning', title: 'The painkiller trap (very important)', text: 'In a suspected dengue fever, **avoid ibuprofen, aspirin, and similar anti-inflammatory painkillers** — they can worsen bleeding risk. **Paracetamol** is the safer choice, as directed. Because fevers are hard to tell apart, do not self-medicate blindly — a doctor may advise a blood test to confirm the cause.' },
       { type: 'heading', text: 'Safe Home Care' },
-      { type: 'paragraph', text: '• Rest and drink plenty of fluids — water, ORS, soups, coconut water — to prevent dehydration\n• Paracetamol for fever, as directed\n• Monitor the fever and watch for any danger sign above\n• Do not ignore a fever that lasts more than 2–3 days' },
-      { type: 'heading', text: 'Prevention Beats Treatment' },
-      { type: 'paragraph', text: '• Empty and scrub water containers, coolers, and pots weekly — mosquitoes breed in clean standing water\n• Use repellents, nets, and full-sleeve clothing, especially at dawn and dusk\n• Keep surroundings free of water-collecting junk' },
+      { type: 'list', items: [
+        'Rest and drink plenty of fluids — water, ORS, soups, coconut water',
+        'Paracetamol for fever, as directed',
+        'Monitor the fever and watch for any danger sign above',
+        'Do not ignore a fever lasting more than 2–3 days'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Prevention beats treatment', items: [
+        'Empty and scrub water containers, coolers, and pots weekly (mosquitoes breed in *clean* standing water)',
+        'Use repellents, nets, and full-sleeve clothing, especially at dawn and dusk',
+        'Keep surroundings free of water-collecting junk'
+      ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a doctor for any high fever in mosquito season, especially with severe body ache — early testing tells you whether it is dengue, malaria, typhoid, or a simple viral fever, and each is managed differently. If any danger sign appears, treat it as an emergency. For an early fever with no red flags, an online consultation is a quick way to decide what test you need and how to care for it safely at home.' },
     ]
