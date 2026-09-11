@@ -1508,17 +1508,45 @@ export const articles = [
     readTime: '5 min',
     image: '🧠',
     content: [
-      { type: 'intro', text: 'A stroke is one of the few health emergencies where knowing a simple set of signs — and acting within minutes — can literally save a life or prevent lifelong disability. Yet many people lose precious time because they are unsure what they are seeing or hope it will pass. This short guide could one day help you save someone. Please read it, and share it.' },
+      { type: 'intro', text: 'A stroke is one of the few health emergencies where knowing a simple set of signs — and acting within minutes — can literally save a life or prevent lifelong disability. Yet people lose precious time because they are unsure what they are seeing, or hope it will pass. This short guide could one day help you save someone. Please read it, and share it.' },
+      { type: 'callout', variant: 'warning', title: 'If you suspect a stroke — act NOW', text: 'Do the **F.A.S.T.** check below. If **any** sign is present, call an ambulance or rush to the nearest hospital immediately. Note the time symptoms started. **Do not wait to see if it improves.**' },
       { type: 'heading', text: 'What a Stroke Is' },
-      { type: 'paragraph', text: 'A stroke happens when blood flow to part of the brain is suddenly cut off — usually by a clot, sometimes by a bleed. Starved of oxygen, brain cells begin to die within minutes. That is why stroke care is a race against time: the faster blood flow is restored, the more brain is saved. "Time is brain" is the phrase doctors use.' },
-      { type: 'heading', text: 'Remember F.A.S.T.' },
-      { type: 'paragraph', text: 'The easiest way to spot a stroke:\n\n• F — Face drooping. Ask them to smile; is one side of the face drooping or numb?\n• A — Arm weakness. Ask them to raise both arms; does one drift down or feel weak?\n• S — Speech difficulty. Ask them to repeat a simple sentence; is it slurred or strange?\n• T — Time to call for help. If you see ANY of these, act immediately.\n\nOther sudden signs: numbness on one side, confusion, trouble seeing, severe unexplained headache, or loss of balance.' },
+      { type: 'paragraph', text: 'A stroke happens when blood flow to part of the brain is suddenly cut off — usually by a **clot**, sometimes by a **bleed**. Starved of oxygen, brain cells begin to die within minutes. That is why stroke care is a race against time: the faster blood flow is restored, the more brain is saved. Doctors have a phrase for it — **"time is brain."**' },
+      { type: 'heading', text: 'The F.A.S.T. Check' },
+      { type: 'paragraph', text: 'The easiest way to spot a stroke is to remember four letters — **F.A.S.T.**:' },
+      { type: 'steps', items: [
+        '**F — Face drooping.** Ask them to smile. Is one side of the face drooping or numb?',
+        '**A — Arm weakness.** Ask them to raise both arms. Does one drift down or feel weak?',
+        '**S — Speech difficulty.** Ask them to repeat a simple sentence. Is it slurred or strange?',
+        '**T — Time to call for help.** If you see ANY of these signs, act immediately — every minute counts.'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Other sudden warning signs', items: [
+        'Sudden numbness or weakness on one side of the body',
+        'Sudden confusion or trouble understanding',
+        'Sudden trouble seeing in one or both eyes',
+        'A severe headache with no known cause',
+        'Sudden dizziness or loss of balance'
+      ]},
       { type: 'heading', text: 'What to Do Immediately' },
-      { type: 'paragraph', text: '• Call emergency services / rush to the nearest hospital with a stroke facility RIGHT AWAY — note the time symptoms started\n• Do NOT wait to "see if it improves"\n• Do not give food, drink, or medicine — they could choke\n• Keep the person calm and lying safely on their side if drowsy\n\nMany effective stroke treatments only work within a few hours of onset — every minute of delay costs brain cells. This is never a "let us watch it at home" situation.' },
-      { type: 'heading', text: 'Reducing the Risk' },
-      { type: 'paragraph', text: 'Most strokes are preventable. The big levers: control blood pressure (the single most important one), manage diabetes and cholesterol, do not smoke, stay active, eat well, and limit alcohol. If you have an irregular heartbeat or have had a "mini-stroke" (TIA), see a doctor — these raise stroke risk and can be managed.' },
+      { type: 'steps', items: [
+        'Call an ambulance or get to the nearest hospital with a stroke facility **right away** — and note the time symptoms started.',
+        'Do **not** wait to "see if it improves."',
+        'Do **not** give food, drink, or medicine — a stroke can affect swallowing and cause choking.',
+        'Keep the person calm; if drowsy, lay them safely on their side.'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Many effective stroke treatments only work within a few hours of onset — every minute of delay costs brain cells. This is **never** a "let us watch it at home" situation.' },
+      { type: 'heading', text: 'The Good News: Most Strokes Are Preventable' },
+      { type: 'paragraph', text: 'The risk factors are largely the ones you can act on. The biggest levers:' },
+      { type: 'list', items: [
+        '**Control your blood pressure** — the single most important factor',
+        'Manage **diabetes** and **cholesterol**',
+        '**Don\'t smoke**, and limit alcohol',
+        'Stay **active** and eat well',
+        'Get an **irregular heartbeat** checked — it raises stroke risk and is treatable'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Had a "mini-stroke" (TIA)?', text: 'If you have ever had stroke-like symptoms that passed within minutes or hours, do not brush it off — a TIA is a serious warning sign that a bigger stroke could follow. See a doctor; it can be managed.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'A stroke itself is an emergency — call for help, do not book an appointment. But for PREVENTION — managing blood pressure, diabetes, cholesterol, or after a warning "mini-stroke" — a doctor or neurologist is exactly who to see, and much of that ongoing care can be handled through online consultations. The best time to lower your stroke risk is long before an emergency ever happens.' },
+      { type: 'paragraph', text: 'A stroke itself is an **emergency** — call for help, do not book an appointment. But for **prevention** — managing blood pressure, diabetes, cholesterol, or after a warning "mini-stroke" — a doctor or neurologist is exactly who to see, and much of that ongoing care can be handled through online consultations. The best time to lower your stroke risk is long before an emergency ever happens.' },
     ]
   }
 ];

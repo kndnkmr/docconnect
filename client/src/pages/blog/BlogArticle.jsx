@@ -5,6 +5,127 @@ import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { articles } from './blogData';
 
+// Parse simple **bold** markers inside a text string into React nodes, so
+// writers can emphasise key phrases without any HTML. Everything else stays
+// plain text (safe — no dangerouslySetInnerHTML).
+function renderInline(text) {
+  if (!text) return null;
+  const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="font-semibold text-gray-800">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
+// Callout box styling by variant — a colored, icon-led box that makes tips,
+// warnings, and takeaways pop out of the page.
+const CALLOUT_STYLES = {
+  tip: { box: 'bg-blue-50 border-blue-200', icon: '💡', label: 'text-blue-800' },
+  warning: { box: 'bg-red-50 border-red-200', icon: '⚠️', label: 'text-red-800' },
+  success: { box: 'bg-green-50 border-green-200', icon: '✅', label: 'text-green-800' },
+  info: { box: 'bg-primary-50 border-primary-200', icon: 'ℹ️', label: 'text-primary-800' },
+};
+
+// Renders one content block. Supported types (all backward-compatible — the
+// original intro/heading/paragraph still work exactly as before):
+//   intro      — lead paragraph (accent bar)
+//   heading    — section title
+//   paragraph  — body text (supports **bold**, and \n line breaks)
+//   list       — { items: [] } styled bullet list (supports **bold**)
+//   callout    — { variant:'tip|warning|success|info', title?, text? , items?[] }
+//   table      — { headers: [], rows: [[]] } comparison table
+//   steps      — { items: [] } numbered visual step flow
+function renderBlock(block, idx) {
+  switch (block.type) {
+    case 'intro':
+      return <p key={idx} className="text-gray-700 text-lg leading-relaxed mb-6 border-l-4 border-primary-400 pl-4 italic">{renderInline(block.text)}</p>;
+
+    case 'heading':
+      return <h2 key={idx} className="text-2xl font-bold text-gray-800 mt-10 mb-4">{renderInline(block.text)}</h2>;
+
+    case 'paragraph':
+      return <p key={idx} className="text-gray-700 leading-relaxed mb-5 whitespace-pre-line text-[1.05rem]">{renderInline(block.text)}</p>;
+
+    case 'list':
+      return (
+        <ul key={idx} className="mb-6 space-y-2">
+          {(block.items || []).map((item, i) => (
+            <li key={i} className="flex gap-3 text-gray-700 leading-relaxed">
+              <span className="text-primary-500 mt-1 flex-shrink-0">●</span>
+              <span>{renderInline(item)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+
+    case 'callout': {
+      const s = CALLOUT_STYLES[block.variant] || CALLOUT_STYLES.info;
+      return (
+        <div key={idx} className={`my-6 rounded-xl border p-4 sm:p-5 ${s.box}`}>
+          <div className="flex items-start gap-3">
+            <span className="text-xl flex-shrink-0">{s.icon}</span>
+            <div className="flex-1">
+              {block.title && <p className={`font-semibold mb-1 ${s.label}`}>{renderInline(block.title)}</p>}
+              {block.text && <p className="text-gray-700 leading-relaxed whitespace-pre-line">{renderInline(block.text)}</p>}
+              {block.items && (
+                <ul className="space-y-1.5 mt-1">
+                  {block.items.map((item, i) => (
+                    <li key={i} className="flex gap-2 text-gray-700 leading-relaxed">
+                      <span className="flex-shrink-0">{s.icon === '⚠️' ? '•' : '•'}</span>
+                      <span>{renderInline(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    case 'table':
+      return (
+        <div key={idx} className="my-6 overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-primary-50">
+                {(block.headers || []).map((h, i) => (
+                  <th key={i} className="text-left font-semibold text-gray-800 p-3 border border-gray-200">{renderInline(h)}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(block.rows || []).map((row, r) => (
+                <tr key={r} className={r % 2 ? 'bg-gray-50' : 'bg-white'}>
+                  {row.map((cell, c) => (
+                    <td key={c} className={`p-3 border border-gray-200 text-gray-700 align-top ${c === 0 ? 'font-medium text-gray-800' : ''}`}>{renderInline(cell)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+
+    case 'steps':
+      return (
+        <ol key={idx} className="my-6 space-y-3">
+          {(block.items || []).map((item, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+              <span className="text-gray-700 leading-relaxed pt-0.5">{renderInline(item)}</span>
+            </li>
+          ))}
+        </ol>
+      );
+
+    default:
+      return null;
+  }
+}
+
 function BlogArticle() {
   const { slug } = useParams();
   const article = articles.find(a => a.slug === slug);
@@ -96,19 +217,8 @@ function BlogArticle() {
         </div>
 
         {/* Content */}
-        <div className="prose max-w-none">
-          {article.content.map((block, idx) => {
-            if (block.type === 'intro') {
-              return <p key={idx} className="text-gray-700 text-lg leading-relaxed mb-6 border-l-4 border-primary-300 pl-4 italic">{block.text}</p>;
-            }
-            if (block.type === 'heading') {
-              return <h2 key={idx} className="text-xl font-semibold text-gray-800 mt-6 mb-3">{block.text}</h2>;
-            }
-            if (block.type === 'paragraph') {
-              return <p key={idx} className="text-gray-600 leading-relaxed mb-4 whitespace-pre-line">{block.text}</p>;
-            }
-            return null;
-          })}
+        <div className="max-w-none">
+          {article.content.map((block, idx) => renderBlock(block, idx))}
         </div>
 
         {/* CTA */}
