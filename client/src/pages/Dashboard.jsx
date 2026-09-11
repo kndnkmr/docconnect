@@ -22,6 +22,7 @@ import toast from 'react-hot-toast';
 import DoctorAvailability from './dashboard/DoctorAvailability';
 import DoctorPatientReports from './dashboard/DoctorPatientReports';
 import PatientFamilyMembers from './dashboard/PatientFamilyMembers';
+import PatientHealthTimeline from './dashboard/PatientHealthTimeline';
 import PatientPrescriptions from './dashboard/PatientPrescriptions';
 import PatientReports from './dashboard/PatientReports';
 import PatientComplaints from './dashboard/PatientComplaints';
@@ -31,7 +32,7 @@ import RescheduleModal from './dashboard/RescheduleModal';
 // Every tab key the dashboard supports. Used to validate a deep-link
 // (?tab=familyMembers) so other pages can send patients straight to the
 // right place instead of a generic "go check your dashboard" message.
-const VALID_TAB_KEYS = ['appointments', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
+const VALID_TAB_KEYS = ['appointments', 'timeline', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
 
 // "When" quick filter for the Appointments tab — Today/Tomorrow/This Week/
 // Next Week, all computed in IST (same calendar-day boundary logic as
@@ -88,6 +89,7 @@ const PATIENT_TXT = {
     welcome: (name) => `Welcome, ${name}!`,
     welcomeSub: 'View your appointments and find doctors',
     tabAppointments: 'My Appointments',
+    tabTimeline: 'Health History',
     tabFamily: 'Family Members',
     tabPrescriptions: 'Prescriptions',
     tabReports: 'My Reports',
@@ -99,6 +101,7 @@ const PATIENT_TXT = {
     welcome: (name) => `नमस्ते, ${name}!`,
     welcomeSub: 'अपनी अपॉइंटमेंट देखें और डॉक्टर खोजें',
     tabAppointments: 'मेरी अपॉइंटमेंट',
+    tabTimeline: 'स्वास्थ्य इतिहास',
     tabFamily: 'परिवार के सदस्य',
     tabPrescriptions: 'प्रिस्क्रिप्शन',
     tabReports: 'मेरी रिपोर्ट',
@@ -1138,6 +1141,7 @@ function Dashboard() {
       <div ref={tabSectionRef} className="flex border-b mb-6 overflow-x-auto">
         {[
           { key: 'appointments', label: pt.tabAppointments, show: true },
+          { key: 'timeline', label: pt.tabTimeline, show: isPatient },
           { key: 'profile', label: 'Edit Profile', show: isDoctor },
           { key: 'availability', label: 'Availability', show: isDoctor },
           { key: 'patientReports', label: 'Patient Reports', show: isDoctor },
@@ -1705,6 +1709,7 @@ function Dashboard() {
       {/* Sub-component tabs */}
       {activeTab === 'availability' && isDoctor && <DoctorAvailability onScheduleChange={setHasAvailability} />}
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
+      {activeTab === 'timeline' && isPatient && <PatientHealthTimeline onNavigateTab={goToTab} />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
       {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
       {activeTab === 'prescriptions' && isDoctor && (
