@@ -1414,13 +1414,30 @@ export const articles = [
       { type: 'heading', text: 'Anxiety Is Not a Weakness — It\'s a Wiring' },
       { type: 'paragraph', text: 'Anxiety is your body\'s ancient alarm system doing its job — just at the wrong moment. That same "fight or flight" response that once helped humans escape danger can misfire in modern life: during a meeting, in traffic, or lying in bed at night. So when your body reacts as if there is a threat when there is none, that is not you being dramatic or weak. It is a very human system being a little too sensitive.' },
       { type: 'heading', text: 'What a Panic Attack Feels Like' },
-      { type: 'paragraph', text: 'A panic attack is a sudden, intense surge of fear that peaks within minutes, often with very physical symptoms:\n\n• A pounding or racing heart\n• Tight chest or trouble breathing\n• Dizziness or feeling faint\n• Trembling, sweating, or chills\n• Tingling in the hands\n• A frightening sense of losing control or that something terrible is about to happen\n\nThey are genuinely terrifying — many people rush to a hospital certain they are having a heart attack. That fear is completely understandable, and getting chest symptoms checked at least once is sensible. But panic attacks themselves, while awful to experience, are not dangerous, and they do pass.' },
+      { type: 'paragraph', text: 'A panic attack is a sudden, intense surge of fear that peaks within minutes, often with very physical symptoms:' },
+      { type: 'list', items: [
+        'A pounding or racing heart',
+        'Tight chest or trouble breathing',
+        'Dizziness or feeling faint',
+        'Trembling, sweating, or chills',
+        'Tingling in the hands',
+        'A frightening sense of losing control, or that something terrible is about to happen'
+      ]},
+      { type: 'callout', variant: 'info', text: 'They are genuinely terrifying — many people rush to hospital certain it is a heart attack, and getting chest symptoms checked once is sensible. But panic attacks themselves, while awful, are **not dangerous, and they do pass**.' },
       { type: 'heading', text: 'The Vicious Cycle' },
-      { type: 'paragraph', text: 'Here is what keeps anxiety going: you have a panic attack, it frightens you, and then you start fearing the next one. That fear itself raises your baseline anxiety, making another attack more likely. Understanding this loop is powerful, because it shows that a big part of recovery is learning that the sensations, however unpleasant, are not going to harm you.' },
+      { type: 'paragraph', text: 'Here is what keeps anxiety going: you have a panic attack, it frightens you, and you start **fearing the next one**. That fear itself raises your baseline anxiety, making another attack more likely. Understanding this loop is powerful — a big part of recovery is learning that the sensations, however unpleasant, will not harm you.' },
       { type: 'heading', text: 'Things That Can Genuinely Help' },
-      { type: 'paragraph', text: 'These are supportive tools, not a replacement for care — but many people find them steadying:\n\n• Slow breathing — breathe out for longer than you breathe in; it calms the alarm system\n• Grounding — name five things you can see, four you can hear, and so on, to pull yourself back to the present\n• Regular movement, decent sleep, and easing off excess caffeine, which fuels anxiety\n• Cutting back on doom-scrolling and late-night news\n• Talking to someone you trust rather than carrying it alone' },
+      { type: 'paragraph', text: 'These are supportive tools, not a replacement for care — but many people find them steadying:' },
+      { type: 'list', items: [
+        '**Slow breathing** — breathe out for longer than you breathe in; it calms the alarm system',
+        '**Grounding** — name five things you can see, four you can hear, and so on, to return to the present',
+        'Regular movement, decent sleep, and easing off excess caffeine (which fuels anxiety)',
+        'Cutting back on doom-scrolling and late-night news',
+        'Talking to someone you trust rather than carrying it alone'
+      ]},
       { type: 'heading', text: 'When to Reach Out for Support' },
-      { type: 'paragraph', text: 'Please consider talking to a professional if anxiety is interfering with your work, sleep, relationships, or daily life; if you are avoiding places or situations out of fear; or if panic attacks keep recurring. This is not an overreaction — it is exactly what the support exists for. And if you ever have thoughts of harming yourself, treat that as urgent and reach out immediately to a doctor or a helpline; you deserve help right now, not later.' },
+      { type: 'paragraph', text: 'Consider talking to a professional if anxiety is interfering with your work, sleep, relationships, or daily life; if you are avoiding places out of fear; or if panic attacks keep recurring. This is not an overreaction — it is exactly what the support exists for.' },
+      { type: 'callout', variant: 'warning', title: 'If you ever have thoughts of harming yourself', text: 'Treat it as **urgent** — reach out right now to a doctor or a helpline (in India, Tele-MANAS: **14416**). You deserve help this moment, not someday.' },
       { type: 'heading', text: 'A Kind, Private First Step' },
       { type: 'paragraph', text: 'Anxiety and panic respond really well to treatment — talking therapies, practical techniques, and where appropriate, medical support, all tailored to you. Mental health is also one of the areas where online consultations shine, because you can speak openly from the safety of your own home, with none of the stigma of walking into a clinic. Reaching out is not weakness. It is one of the bravest, most self-respecting things you can do.' },
     ]
@@ -1491,13 +1508,32 @@ export const articles = [
       { type: 'heading', text: 'Your Knees Do a Huge Job' },
       { type: 'paragraph', text: 'Your knee is a remarkable hinge that carries your whole body weight, absorbs shock, and bends thousands of times a day. Inside, smooth cartilage cushions the bones and lets them glide. Over years, or after injury, that cushioning and the surrounding muscles and ligaments can take a beating — and that is when pain shows up.' },
       { type: 'heading', text: 'Common Causes of Knee Pain' },
-      { type: 'paragraph', text: '• Osteoarthritis — gradual "wear and tear" of the cushioning cartilage, common with age\n• Being overweight — every extra kilo multiplies the load through the knee\n• Injuries — twists, ligament or cartilage tears, often from sport\n• Overuse — too much, too soon, especially running or climbing\n• Weak thigh muscles — when the muscles do not support the joint, the knee takes the strain\n• Old habits like deep squatting or sitting cross-legged for long periods on hard floors' },
+      { type: 'list', items: [
+        '**Osteoarthritis** — gradual "wear and tear" of the cushioning cartilage, common with age',
+        '**Being overweight** — every extra kilo multiplies the load through the knee',
+        '**Injuries** — twists, ligament or cartilage tears, often from sport',
+        '**Overuse** — too much, too soon, especially running or climbing',
+        '**Weak thigh muscles** — when they do not support the joint, the knee takes the strain',
+        'Old habits like long periods of deep squatting or sitting cross-legged on hard floors'
+      ]},
       { type: 'heading', text: 'Simple Ways to Ease and Protect Your Knees' },
-      { type: 'paragraph', text: 'A lot of knee care is beautifully low-tech:\n\n• Strengthen your thigh muscles — strong quadriceps are like a natural knee brace, and this is one of the most effective things you can do\n• Keep your weight in a healthy range to lighten the load\n• Stay active with gentle, knee-friendly movement — walking, swimming, cycling\n• Warm up before exercise and do not ramp up intensity too fast\n• Use good footwear\n• Avoid long periods of deep squatting or sitting on the floor if it hurts' },
-      { type: 'heading', text: 'A Word on "Bone on Bone" Fear' },
-      { type: 'paragraph', text: 'Many people hear "arthritis" and imagine inevitable surgery. In reality, most knee arthritis is managed well for years without an operation — through targeted exercise, weight management, physiotherapy, and other measures. Strengthening and staying active, done properly, often reduces pain more than resting the knee completely. Surgery is usually a last resort, not a first step.' },
+      { type: 'list', items: [
+        '**Strengthen your thigh muscles** — strong quads act like a natural knee brace (one of the most effective things you can do)',
+        'Keep your weight in a healthy range to lighten the load',
+        'Stay active with gentle, knee-friendly movement — walking, swimming, cycling',
+        'Warm up before exercise; do not ramp up intensity too fast',
+        'Use good footwear',
+        'Avoid long deep squatting or floor-sitting if it hurts'
+      ]},
+      { type: 'callout', variant: 'info', title: 'On the "bone on bone" fear', text: 'Many hear "arthritis" and imagine inevitable surgery. In reality, most knee arthritis is managed **well for years without an operation** — through targeted exercise, weight management, and physiotherapy. Strengthening and staying active often reduces pain more than resting completely. Surgery is usually a last resort, not a first step.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'See a doctor if the pain is severe, does not settle within a couple of weeks, or keeps coming back — and sooner if you have significant swelling, the knee gives way or locks, you cannot put weight on it, or it followed a clear injury. An orthopedic doctor or physiotherapist can find the cause and set up the right exercise and treatment plan for your knees specifically. Many knee problems can be assessed online first to decide whether an X-ray or in-person visit is needed.' },
+      { type: 'callout', variant: 'warning', title: 'See a doctor sooner if', items: [
+        'Pain is severe or does not settle within a couple of weeks',
+        'There is significant swelling',
+        'The knee gives way or locks',
+        'You cannot put weight on it, or it followed a clear injury'
+      ]},
+      { type: 'paragraph', text: 'An orthopedic doctor or physiotherapist can find the cause and set up the right plan. Many knee problems can be **assessed online first** to decide whether an X-ray or in-person visit is needed.' },
     ]
   },
   {
