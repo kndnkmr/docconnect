@@ -1,7 +1,16 @@
 User-agent: *
 Allow: /
+
+# Utility / auth / account pages — no value in search results.
+# (login and register are intentionally NOT disallowed: they carry a
+#  noindex meta tag instead, so Google can crawl them, see the tag, and
+#  drop them from the index cleanly.)
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /booking-confirmation
+Disallow: /book-appointment
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
 
 Sitemap: https://www.promedicoz.in/sitemap.xml

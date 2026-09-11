@@ -178,14 +178,19 @@ function BlogArticle() {
     .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
   const relatedArticles = [...sameSpecialty, ...rest].slice(0, 3);
 
-  // Article structured data for Google
+  // Article structured data for Google. Richer fields (image, dateModified,
+  // mainEntityOfPage) improve eligibility for article rich results. We reuse
+  // the site's OG image since articles use an emoji, not a photo.
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
     description: article.description,
+    image: 'https://www.promedicoz.in/og-image.png',
     datePublished: article.publishedDate,
-    author: { '@type': 'Organization', name: 'ProMedicoz' },
+    dateModified: article.publishedDate,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
+    author: { '@type': 'Organization', name: 'ProMedicoz', url: 'https://www.promedicoz.in' },
     publisher: { '@type': 'Organization', name: 'ProMedicoz', logo: { '@type': 'ImageObject', url: 'https://www.promedicoz.in/icons/icon-512.png' } }
   };
 
