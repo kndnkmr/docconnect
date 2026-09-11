@@ -1950,13 +1950,28 @@ export const articles = [
       { type: 'heading', text: 'What Asthma Actually Is' },
       { type: 'paragraph', text: 'In asthma, the airways in your lungs are extra-sensitive. When triggered, they tighten and swell and produce mucus — making it hard to breathe, with wheezing, coughing, chest tightness, or breathlessness. It can start in childhood or in adulthood, and it can be mild or serious. The key point: it is very manageable when treated properly.' },
       { type: 'heading', text: 'Common Triggers' },
-      { type: 'paragraph', text: '• Dust, mites, and pollen\n• Cold air, smoke, and strong smells\n• Pollution\n• Respiratory infections (a cold can set it off)\n• Exercise, in some people\n• Pet dander\n\nKnowing and avoiding your triggers is half the battle.' },
+      { type: 'list', items: [
+        'Dust, mites, and pollen',
+        'Cold air, smoke, and strong smells',
+        'Pollution',
+        'Respiratory infections (a cold can set it off)',
+        'Exercise, in some people',
+        'Pet dander'
+      ]},
+      { type: 'paragraph', text: 'Knowing and avoiding **your** triggers is half the battle.' },
       { type: 'heading', text: 'The Inhaler Myths — Cleared Up' },
-      { type: 'paragraph', text: '• "Inhalers are addictive." No. Inhalers deliver medicine directly to the lungs — they are not habit-forming. You use them because the asthma needs treating, not because your body becomes "hooked."\n• "Inhalers are a last resort / only for severe cases." The opposite — inhalers are usually the FIRST and best treatment, because sending medicine straight to the lungs means a tiny dose works, with fewer side effects than tablets.\n• "Once I start, I can never stop." Treatment is adjusted over time; some people step down as their asthma settles, always guided by a doctor.\n• "It is just a child\'s illness." Adults get asthma too, sometimes for the first time.' },
+      { type: 'table', headers: ['The myth', 'The reality'], rows: [
+        ['"Inhalers are addictive"', 'No — they deliver medicine to the lungs; not habit-forming'],
+        ['"Only for severe cases / a last resort"', 'The opposite — usually the FIRST and best treatment'],
+        ['"Once I start I can never stop"', 'Treatment is adjusted; some step down as asthma settles'],
+        ['"It is just a child\'s illness"', 'Adults get asthma too, sometimes for the first time'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Why inhalers are preferred: sending a **tiny dose straight to the lungs** works fast with far fewer side effects than tablets. Fear of them keeps people wheezing needlessly.' },
       { type: 'heading', text: 'Why Getting It Right Matters' },
-      { type: 'paragraph', text: 'Well-controlled asthma means you can run, sleep, work, and play normally. Poorly controlled asthma — often because someone avoids their inhaler out of fear — leads to repeated attacks and, occasionally, dangerous ones. There is usually no reason to just "live with" breathlessness.' },
-      { type: 'heading', text: 'When to See a Doctor (and When It\'s Urgent)' },
-      { type: 'paragraph', text: 'See a doctor if you have frequent wheezing, cough, or breathlessness, if you are using a reliever inhaler often, or if asthma disturbs your sleep or activity — your treatment may need adjusting. Treat it as an EMERGENCY if breathing is severe, the reliever inhaler is not helping, you cannot speak in full sentences, or lips/face turn bluish — get to a hospital immediately. For ongoing management and inhaler technique, an online consultation with a doctor is a convenient way to get properly controlled.' },
+      { type: 'paragraph', text: 'Well-controlled asthma means you can run, sleep, work, and play normally. Poorly controlled asthma — often because someone avoids their inhaler out of fear — leads to repeated and occasionally dangerous attacks. There is usually **no reason to just "live with" breathlessness**.' },
+      { type: 'callout', variant: 'warning', title: 'Treat as an EMERGENCY if', text: 'Breathing is severe, the reliever inhaler is not helping, you cannot speak in full sentences, or lips/face turn bluish — get to a hospital immediately.' },
+      { type: 'heading', text: 'When to See a Doctor' },
+      { type: 'paragraph', text: 'See a doctor for frequent wheezing/cough/breathlessness, if you use a reliever inhaler often, or if asthma disturbs your sleep or activity — your treatment may need adjusting. For ongoing management and inhaler technique, an **online consultation** is a convenient way to get properly controlled.' },
     ]
   },
   {
@@ -1969,16 +1984,32 @@ export const articles = [
     image: '🤰',
     content: [
       { type: 'intro', text: 'Pregnancy comes with a flood of food advice from everyone — eat this, avoid that, "you\'re eating for two now." It is confusing, and a lot of it is myth. The truth is reassuringly simple: you need good nutrition, not double the food. Here is a warm, practical guide to eating well through pregnancy, what to genuinely avoid, and the old sayings you can safely ignore.' },
-      { type: 'heading', text: '"Eating for Two" — the Biggest Myth' },
-      { type: 'paragraph', text: 'You are not eating for two adults. Especially in early pregnancy, your calorie needs barely change; they rise only modestly later on. What matters far more than quantity is quality — getting enough of the right nutrients for you and your baby, from balanced meals rather than simply eating more.' },
+      { type: 'callout', variant: 'info', title: '"Eating for two" — the biggest myth', text: 'You are **not** eating for two adults. Early on, calorie needs barely change; they rise only modestly later. What matters far more than quantity is **quality** — the right nutrients from balanced meals, not simply more food.' },
       { type: 'heading', text: 'The Nutrients That Matter Most' },
-      { type: 'paragraph', text: '• Folic acid — crucial early on for the baby\'s development; usually started even before or as soon as pregnancy is known (your doctor advises this)\n• Iron — to prevent anaemia, common in pregnancy; from leafy greens, dals, jaggery, and supplements if prescribed\n• Calcium — dairy, ragi, sesame — for the baby\'s bones and yours\n• Protein — dals, eggs, dairy, paneer, chicken, fish\n• Plenty of fruits, vegetables, and fibre to ease constipation' },
-      { type: 'heading', text: 'A Simple, Balanced Plate' },
-      { type: 'paragraph', text: 'You do not need exotic or expensive foods. A homely thali — roti or rice, dal, sabzi, curd, a little salad, and fruit — covers most needs. Small, frequent meals help with nausea and heartburn. Stay well hydrated. Simple and consistent beats fancy and occasional.' },
+      { type: 'list', items: [
+        '**Folic acid** — crucial early for the baby\'s development (often started even before pregnancy; your doctor advises)',
+        '**Iron** — to prevent anaemia; leafy greens, dals, jaggery, and supplements if prescribed',
+        '**Calcium** — dairy, ragi, sesame — for the baby\'s bones and yours',
+        '**Protein** — dals, eggs, dairy, paneer, chicken, fish',
+        'Plenty of fruits, vegetables, and fibre to ease constipation'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'A simple, balanced plate', text: 'No exotic or expensive foods needed — a homely **thali** (roti/rice, dal, sabzi, curd, salad, fruit) covers most needs. Small frequent meals help with nausea; stay well hydrated. Simple and consistent beats fancy and occasional.' },
       { type: 'heading', text: 'Foods to Avoid' },
-      { type: 'paragraph', text: '• Raw or undercooked eggs, meat, and fish\n• Unpasteurised milk and soft/unripened cheeses\n• Excess caffeine — keep tea/coffee modest\n• Alcohol — best avoided completely\n• Unwashed fruits and vegetables, and roadside food where hygiene is uncertain (infection risk)\n• Very high-mercury fish\n\nWhen in doubt about a specific food, ask your doctor rather than a WhatsApp forward.' },
+      { type: 'list', items: [
+        'Raw or undercooked eggs, meat, and fish',
+        'Unpasteurised milk and soft/unripened cheeses',
+        'Excess caffeine — keep tea/coffee modest',
+        'Alcohol — best avoided completely',
+        'Unwashed produce and roadside food where hygiene is uncertain',
+        'Very high-mercury fish'
+      ]},
       { type: 'heading', text: 'Myths You Can Ignore' },
-      { type: 'paragraph', text: '• "Papaya or certain foods will harm the baby" — ripe papaya in normal amounts is fine; many such food fears are cultural, not medical. Ask your doctor about specifics rather than fearing everything.\n• "You must eat ghee/sweets for a healthy baby" — good overall nutrition matters, not force-feeding rich foods.\n• "Craving means the baby needs it" — cravings are normal but not medical instructions.' },
+      { type: 'list', items: [
+        '**"Papaya will harm the baby"** — ripe papaya in normal amounts is fine; many such fears are cultural, not medical',
+        '**"Eat ghee/sweets for a healthy baby"** — good overall nutrition matters, not force-feeding rich foods',
+        '**"A craving means the baby needs it"** — cravings are normal but not medical instructions'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'When in doubt about a specific food, ask your **doctor** — not a WhatsApp forward. And take supplements only **as prescribed**; more is not better.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'Every pregnancy is different, and your ideal diet and supplements depend on your health, weight, and any conditions like gestational diabetes or anaemia. Please take supplements only as prescribed — more is not better. Your gynaecologist will guide your nutrition at each antenatal visit, and an online consultation is a comfortable way to ask the food questions you are unsure about, without relying on well-meaning but conflicting advice from around you.' },
     ]
