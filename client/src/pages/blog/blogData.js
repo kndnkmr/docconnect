@@ -742,12 +742,16 @@ export const articles = [
       { type: 'intro', text: 'We\'ve all done it — a strange ache at midnight, and within minutes Google has convinced us it\'s something terrifying. Studies show most people search their symptoms online, and many do it even after seeing a doctor. Here\'s why that habit often does more harm than good — and what actually helps.' },
       { type: 'heading', text: 'Why "Dr. Google" Misleads You' },
       { type: 'paragraph', text: 'Search engines show the most dramatic or most-clicked results, not the most likely one for YOU. A common headache can surface scary results. The internet doesn\'t know your age, history, or the full picture — so it can\'t weigh what\'s actually probable.' },
-      { type: 'heading', text: 'The Anxiety Spiral' },
-      { type: 'paragraph', text: 'There\'s even a name for it — "cyberchondria": the anxiety that builds from searching symptoms. One search leads to another, each scarier, until a minor issue feels like an emergency. That stress can genuinely make you feel worse.' },
+      { type: 'callout', variant: 'warning', title: 'The anxiety spiral ("cyberchondria")', text: 'There is even a name for it — the anxiety that builds from searching symptoms. One search leads to another, each scarier, until a minor issue feels like an emergency. That stress can genuinely make you feel worse.' },
       { type: 'heading', text: 'When Online Info IS Useful' },
-      { type: 'paragraph', text: 'Reading from trusted sources to understand a condition, prepare questions for your doctor, or learn general prevention is genuinely helpful. The problem is self-diagnosing and self-medicating based on it.' },
+      { type: 'paragraph', text: 'Reading trusted sources to understand a condition, prepare questions for your doctor, or learn general prevention is genuinely helpful. The problem is **self-diagnosing and self-medicating** based on it.' },
       { type: 'heading', text: 'A Calmer, Smarter Approach' },
-      { type: 'paragraph', text: '• Note your actual symptoms — when they started, how bad, what makes them better/worse\n• Don\'t start medicines based on a search\n• For anything persistent, worsening, or worrying — ask a real doctor\n• Use online reading to prepare questions, not to conclude' },
+      { type: 'list', items: [
+        'Note your actual symptoms — when they started, how bad, what helps or worsens them',
+        'Don\'t start medicines based on a search',
+        'For anything persistent, worsening, or worrying — ask a real doctor',
+        'Use online reading to prepare questions, not to conclude'
+      ]},
       { type: 'heading', text: 'The 2 AM Fix' },
       { type: 'paragraph', text: 'Instead of spiralling through search results, you can now consult a real, verified doctor from home in a couple of minutes. A short conversation with someone who can actually assess you beats an hour of frightening search results — and gives you a clear, personalised answer and a plan.' },
       { type: 'heading', text: 'The Bottom Line' },
@@ -778,10 +782,9 @@ export const articles = [
       { type: 'paragraph', text: 'Tulsi tea, ginger, ajwain, jeera — these traditional digestives are soothing and comforting. Enjoy them as part of a balanced diet; think of them as gentle everyday support, not medicine for a real illness.' },
       { type: 'heading', text: '7. Yoga and Breathing (Pranayama)' },
       { type: 'paragraph', text: 'Perhaps India\'s greatest wellness export. Regular yoga and breathing practice is now backed by strong evidence for reducing stress, improving flexibility, blood pressure, and sleep. Even 15 minutes a day helps.' },
-      { type: 'heading', text: 'An Honest Word of Balance' },
-      { type: 'paragraph', text: 'These habits support a healthy lifestyle — but they are NOT treatments for medical conditions. If you have diabetes, high blood pressure, an infection, or any ongoing symptom, please see a doctor. The smartest approach blends good daily habits with proper medical care — not one instead of the other.' },
+      { type: 'callout', variant: 'warning', title: 'An honest word of balance', text: 'These habits **support** a healthy lifestyle — but they are **NOT treatments** for medical conditions. If you have diabetes, high blood pressure, an infection, or any ongoing symptom, please see a doctor. The smartest approach blends good daily habits with proper medical care — not one instead of the other.' },
       { type: 'heading', text: 'When to Consult a Doctor' },
-      { type: 'paragraph', text: 'Use these habits to stay well, but for anything that persists, worsens, or worries you, talk to a qualified doctor. A quick online consultation can tell you whether a symptom needs real attention.' },
+      { type: 'paragraph', text: 'Use these habits to stay well, but for anything that persists, worsens, or worries you, talk to a qualified doctor. A quick **online consultation** can tell you whether a symptom needs real attention.' },
     ]
   },
   {
@@ -928,16 +931,26 @@ export const articles = [
     image: '🩺',
     content: [
       { type: 'intro', text: 'Most of us only see a doctor when something hurts. But some of the most serious conditions build up silently for years — no pain, no warning — until they cause real damage. A simple yearly health check-up catches these early, when they\'re easiest to fix. Here\'s why it\'s one of the best health habits you can build.' },
-      { type: 'heading', text: 'The "Silent" Conditions' },
-      { type: 'paragraph', text: 'High blood pressure, high blood sugar (diabetes), high cholesterol, and fatty liver often have NO symptoms in their early stages. You can feel perfectly healthy while they quietly raise your risk of heart attack, stroke, and kidney damage. By the time symptoms appear, damage may already be done.' },
+      { type: 'callout', variant: 'warning', title: 'The "silent" conditions', text: 'High blood pressure, high blood sugar, high cholesterol, and fatty liver often have **NO symptoms** early on. You can feel perfectly healthy while they quietly raise your risk of heart attack, stroke, and kidney damage — and by the time symptoms show, damage may already be done.' },
       { type: 'heading', text: 'What a Basic Check-Up Usually Includes' },
-      { type: 'paragraph', text: '• Blood pressure\n• Blood sugar (fasting / HbA1c)\n• Cholesterol / lipid profile\n• Complete blood count (CBC)\n• Vitamin D and B12 (commonly low)\n• Thyroid, liver, and kidney function\n• BMI / weight review' },
+      { type: 'list', items: [
+        'Blood pressure',
+        'Blood sugar (fasting / HbA1c)',
+        'Cholesterol / lipid profile',
+        'Complete blood count (CBC)',
+        'Vitamin D and B12 (commonly low)',
+        'Thyroid, liver, and kidney function',
+        'BMI / weight review'
+      ]},
       { type: 'heading', text: 'Who Should Get Checked, and How Often' },
-      { type: 'paragraph', text: '• Healthy adults under 40: every 1-2 years\n• Over 40, or with a family history of diabetes/heart disease: yearly\n• Anyone with existing conditions (diabetes, BP): as your doctor advises\n\nThe younger you catch a trend, the easier it is to reverse with simple lifestyle changes — often without medication.' },
-      { type: 'heading', text: 'The Real Value: Early = Easy' },
-      { type: 'paragraph', text: 'Catching "pre-diabetes" or "borderline" numbers early means diet and exercise can often bring them back to normal. Ignore them for years and they become full conditions needing lifelong medication. Prevention genuinely is cheaper, simpler, and safer than treatment.' },
+      { type: 'table', headers: ['You are…', 'How often'], rows: [
+        ['A healthy adult under 40', 'Every 1–2 years'],
+        ['Over 40, or family history of diabetes/heart disease', 'Every year'],
+        ['Living with a condition (diabetes, BP)', 'As your doctor advises'],
+      ]},
+      { type: 'callout', variant: 'success', title: 'Early = easy', text: 'Catching "**pre-diabetes**" or "borderline" numbers early means diet and exercise can often bring them back to normal. Ignore them for years and they become full conditions needing lifelong medication. Prevention really is cheaper, simpler, and safer than treatment.' },
       { type: 'heading', text: 'How to Start' },
-      { type: 'paragraph', text: 'You don\'t need to guess which tests to do. Book a consultation, and a doctor will recommend the right check-up for your age and risk factors, then review your results and explain what they mean. You can do this from home — an online consultation is a simple first step to a preventive plan.' },
+      { type: 'paragraph', text: 'You do not need to guess which tests to do. Book a consultation and a doctor will recommend the right check-up for your age and risk, then explain the results. An **online consultation** is a simple first step to a preventive plan.' },
     ]
   },
   {
