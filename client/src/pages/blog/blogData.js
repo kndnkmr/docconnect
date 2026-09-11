@@ -11,7 +11,8 @@ export const articles = [
     readTime: '5 min',
     image: '🧴',
     content: [
-      { type: 'intro', text: 'Your skin is your body\'s largest organ, and changes in it can signal underlying health issues. While minor skin concerns often resolve on their own, certain symptoms require professional attention. Here are 10 signs you should consult a dermatologist.' },
+      { type: 'intro', text: 'Your skin is the body\'s largest organ, and it often shows the first signs of what is happening beneath the surface. Most minor skin niggles settle on their own — but some are worth a specialist\'s eye, both for your comfort and, occasionally, your health. Here are 10 signs it is time to see a dermatologist.' },
+      { type: 'callout', variant: 'warning', title: 'Check moles with the ABCDE rule', text: 'See a doctor promptly for a mole that shows any of these — **A**symmetry, **B**order irregularity, **C**olour changes, **D**iameter over ~6mm, or **E**volving/changing. Early checks rule out skin cancer, which is highly treatable when caught early.' },
       { type: 'heading', text: '1. Persistent Acne That Won\'t Clear' },
       { type: 'paragraph', text: 'If over-the-counter products haven\'t helped after 2-3 months, a dermatologist can prescribe stronger treatments like retinoids, antibiotics, or hormonal therapy. Severe acne left untreated can cause permanent scarring.' },
       { type: 'heading', text: '2. Sudden or Excessive Hair Loss' },
@@ -33,7 +34,8 @@ export const articles = [
       { type: 'heading', text: '10. Chronic Dandruff or Scalp Issues' },
       { type: 'paragraph', text: 'Persistent dandruff that doesn\'t respond to medicated shampoos may be seborrheic dermatitis or scalp psoriasis, requiring prescription treatment.' },
       { type: 'heading', text: 'When to Book a Consultation' },
-      { type: 'paragraph', text: 'Don\'t wait for skin problems to worsen. Early diagnosis and treatment prevents scarring, spreading, and complications. Most skin conditions are highly treatable when caught early.' },
+      { type: 'paragraph', text: 'Don\'t wait for skin problems to worsen — early diagnosis prevents scarring, spreading, and complications, and most skin conditions are highly treatable when caught early.' },
+      { type: 'callout', variant: 'tip', text: 'Skin issues are ideal for **online consultation**: a few clear, well-lit photos let a dermatologist assess most concerns and prescribe treatment from home. Only a few conditions need an in-person look.' },
     ]
   },
   {
@@ -45,19 +47,25 @@ export const articles = [
     readTime: '6 min',
     image: '🤰',
     content: [
-      { type: 'intro', text: 'Many women delay gynaecologist visits due to embarrassment or uncertainty about when it\'s necessary. Regular check-ups and timely consultations are crucial for reproductive health. Here\'s your complete guide.' },
-      { type: 'heading', text: 'You Should Visit a Gynaecologist If You Have:' },
-      { type: 'paragraph', text: '• Irregular, heavy, or painful periods\n• Missed periods (when not pregnant)\n• Unusual vaginal discharge or odor\n• Pelvic pain or pressure\n• Pain during intercourse\n• Planning pregnancy or need contraception advice\n• Reached age 21 (routine screening recommended)' },
-      { type: 'heading', text: 'Common Conditions a Gynaecologist Treats' },
-      { type: 'paragraph', text: 'PCOD/PCOS is one of the most common conditions affecting Indian women, causing irregular periods, weight gain, acne, and fertility issues. Early management with lifestyle changes and medication can prevent complications.' },
-      { type: 'paragraph', text: 'Endometriosis affects 1 in 10 women and causes severe period pain, heavy bleeding, and fertility problems. Many women suffer for years before diagnosis — don\'t normalize extreme pain.' },
-      { type: 'paragraph', text: 'Fibroids are non-cancerous growths in the uterus that can cause heavy periods, pelvic pressure, and frequent urination. Treatment ranges from medication to minimally invasive procedures.' },
-      { type: 'heading', text: 'Pregnancy and Prenatal Care' },
-      { type: 'paragraph', text: 'If you\'re planning pregnancy, a pre-conception visit helps identify and address any issues beforehand. Once pregnant, regular antenatal visits monitor both mother and baby\'s health.' },
-      { type: 'heading', text: 'What to Expect During Your Visit' },
-      { type: 'paragraph', text: 'A typical visit includes discussion of your symptoms, medical history, and possibly a physical examination. Many concerns can be addressed through consultation alone — not every visit requires an examination.' },
-      { type: 'heading', text: 'Can You Consult Online?' },
-      { type: 'paragraph', text: 'Yes! Many gynaecological concerns — period problems, PCOD management, contraception advice, pregnancy queries — can be effectively addressed through video consultation. Physical examination is only needed for specific cases.' },
+      { type: 'intro', text: 'Many women put off seeing a gynaecologist — out of embarrassment, or simply not being sure when it is "necessary." But your reproductive health is health, full stop, and timely check-ups catch problems early and bring real peace of mind. Here is a clear, judgement-free guide to when to go and what they help with.' },
+      { type: 'heading', text: 'See a Gynaecologist If You Have:' },
+      { type: 'list', items: [
+        'Irregular, heavy, or painful periods',
+        'Missed periods (when not pregnant)',
+        'Unusual vaginal discharge or odour',
+        'Pelvic pain or pressure',
+        'Pain during intercourse',
+        'Plans for pregnancy, or need contraception advice',
+        'Reached age 21 — routine screening is recommended'
+      ]},
+      { type: 'heading', text: 'Common Conditions They Treat' },
+      { type: 'paragraph', text: '**PCOD/PCOS** is one of the most common conditions in Indian women — irregular periods, weight gain, acne, and fertility issues. Early management with lifestyle changes and treatment prevents complications.' },
+      { type: 'paragraph', text: '**Endometriosis** affects about 1 in 10 women, causing severe period pain, heavy bleeding, and fertility problems. Many suffer for years before diagnosis.' },
+      { type: 'callout', variant: 'warning', title: 'Do not normalise extreme period pain', text: 'Painful periods are common, but pain that stops you functioning, month after month, is **not** something to just endure. It can point to conditions like endometriosis that are far better managed early.' },
+      { type: 'paragraph', text: '**Fibroids** are non-cancerous growths in the uterus that can cause heavy periods, pelvic pressure, and frequent urination. Treatment ranges from medication to minor procedures.' },
+      { type: 'heading', text: 'Planning or Expecting a Baby' },
+      { type: 'paragraph', text: 'A **pre-conception visit** helps spot and address anything before pregnancy. Once pregnant, regular antenatal visits keep an eye on both mother and baby.' },
+      { type: 'callout', variant: 'tip', text: 'Many gynae concerns — period problems, PCOD management, contraception, pregnancy queries — can be handled through a private **online consultation**. A physical examination is only needed for specific cases, and the doctor will tell you if so.' },
     ]
   },
   {
@@ -432,17 +440,43 @@ export const articles = [
     readTime: '5 min',
     image: '🤕',
     content: [
-      { type: 'intro', text: 'Almost everyone gets headaches, but frequent or severe ones can disrupt your life — and occasionally signal something serious. Here\'s how to understand your headaches and know when it\'s time to see a doctor.' },
+      { type: 'intro', text: 'Almost everyone gets headaches — but when they become frequent or severe, they can quietly steal your days, and just occasionally they signal something that needs attention. The good news: most headaches have simple, findable causes. Here is how to understand yours and know when it is time to see a doctor.' },
       { type: 'heading', text: 'Common Causes of Frequent Headaches' },
-      { type: 'paragraph', text: '• Stress and tension (the most common cause)\n• Dehydration and skipping meals\n• Poor sleep or too much screen time\n• Eye strain or an outdated spectacle prescription\n• Caffeine (too much, or withdrawal)\n• Sinus problems\n• Migraine' },
+      { type: 'list', items: [
+        'Stress and tension — the most common cause by far',
+        'Dehydration and skipping meals',
+        'Poor sleep or too much screen time',
+        'Eye strain or an outdated spectacle prescription',
+        'Caffeine — too much, or withdrawal',
+        'Sinus problems',
+        'Migraine'
+      ]},
       { type: 'heading', text: 'Tension Headache vs Migraine' },
-      { type: 'paragraph', text: 'A tension headache feels like a tight band around your head — dull and on both sides. A migraine is usually one-sided, throbbing, and often comes with nausea, and sensitivity to light or sound. Migraines need proper treatment, not just painkillers.' },
+      { type: 'table', headers: ['', 'Tension Headache', 'Migraine'], rows: [
+        ['Feels like', 'Tight band, dull', 'Throbbing, pulsing'],
+        ['Location', 'Both sides', 'Often one side'],
+        ['With it', 'Little else', 'Nausea, light/sound sensitivity'],
+        ['Needs', 'Rest, stress relief', 'Proper treatment, not just painkillers'],
+      ]},
       { type: 'heading', text: 'Simple Remedies to Try First' },
-      { type: 'paragraph', text: '• Drink water — dehydration is an underrated cause\n• Take regular screen breaks (20-20-20 rule)\n• Keep regular sleep and meal times\n• Manage stress with short walks or breathing\n• Limit painkillers to a few days a week — overusing them causes "rebound" headaches' },
-      { type: 'heading', text: 'Warning Signs — See a Doctor' },
-      { type: 'paragraph', text: '• A sudden, severe "worst headache of my life"\n• Headache with fever, stiff neck, or confusion\n• Headache after a head injury\n• Headaches that keep getting worse over days/weeks\n• Headache with vision loss, weakness, or difficulty speaking\n• New headaches after age 50\n\nThe first three can be emergencies — seek care immediately.' },
-      { type: 'heading', text: 'Can a Doctor Help Online?' },
-      { type: 'paragraph', text: 'Yes. For recurring or chronic headaches (not the emergency signs above), a doctor can review your pattern, identify triggers, treat migraine properly, and advise when a scan is needed — all through a video consultation.' },
+      { type: 'list', items: [
+        'Drink water — dehydration is an underrated cause',
+        'Take regular screen breaks (the 20-20-20 rule)',
+        'Keep regular sleep and meal times',
+        'Manage stress with short walks or slow breathing',
+        'Limit painkillers to a few days a week — overuse causes "rebound" headaches'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Warning signs — see a doctor', items: [
+        'A sudden, severe "worst headache of my life"',
+        'Headache with fever, stiff neck, or confusion',
+        'Headache after a head injury',
+        'Headaches that keep worsening over days or weeks',
+        'Headache with vision loss, weakness, or trouble speaking',
+        'A new type of headache after age 50'
+      ]},
+      { type: 'paragraph', text: 'The first three can be **emergencies** — seek care immediately, do not wait.' },
+      { type: 'heading', text: 'When to See a Doctor' },
+      { type: 'paragraph', text: 'For recurring or chronic headaches (short of the emergency signs above), a doctor can review your pattern, pin down triggers, treat migraine properly, and advise whether a scan is needed — all through an **online consultation**.' },
     ]
   },
   {
