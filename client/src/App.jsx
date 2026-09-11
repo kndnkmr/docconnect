@@ -11,6 +11,10 @@
 // In React (SPA), clicking a link just SWAPS the component shown — no reload!
 // This makes navigation instant and smooth.
 
+import { lazy, Suspense } from 'react';
+// lazy + Suspense = load a page's code only when it's first visited
+// (code-splitting), instead of shipping it in the initial bundle.
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 // Routes = container for all route definitions
 // Route = defines one path → component mapping
@@ -38,8 +42,12 @@ import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import SpecializationPage from './pages/SpecializationPage';
 import VerifyEmail from './pages/VerifyEmail';
-import BlogList from './pages/blog/BlogList';
-import BlogArticle from './pages/blog/BlogArticle';
+// Blog pages are lazy-loaded: they (and the ~210 KB of article content in
+// blogData.js) split into their own chunk that only downloads when a visitor
+// actually opens /blog or an article — so the rest of the app stays lean no
+// matter how many articles we add.
+const BlogList = lazy(() => import('./pages/blog/BlogList'));
+const BlogArticle = lazy(() => import('./pages/blog/BlogArticle'));
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import MedicalDisclaimer from './pages/MedicalDisclaimer';
@@ -117,6 +125,9 @@ function App() {
           Routes = "Look at the current URL and render the matching component"
           Each Route maps a path to a page component
         */}
+        {/* Suspense boundary for lazy-loaded pages (e.g. the blog). Shows a
+            tiny loader for the brief moment a page's chunk is fetched. */}
+        <Suspense fallback={<div className="flex-grow flex items-center justify-center py-20 text-gray-500">Loading…</div>}>
         <Routes>
           {/* ---- Public Routes (anyone can access) ---- */}
           <Route path="/" element={<Home />} />
@@ -202,6 +213,7 @@ function App() {
           />
           {/* path="*" matches any URL that didn't match above */}
         </Routes>
+        </Suspense>
       </main>
 
       {/* Footer */}

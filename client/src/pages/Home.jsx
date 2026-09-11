@@ -6,7 +6,10 @@ import { reviewAPI } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
 import { Helmet } from 'react-helmet-async';
-import { articles } from './blog/blogData';
+// NOTE: blogData is NOT imported statically here — that would pull the entire
+// ~210 KB of article content into the main app bundle just for the daily-tip
+// card. Instead we load it dynamically after mount (see useEffect below), so
+// the home page stays lean regardless of how many articles exist.
 
 // Bilingual UI strings for the patient-facing home page (Phase 1).
 // Only fixed UI labels are translated. Brand name, Login/Register, and
@@ -123,17 +126,23 @@ function Home() {
   const t = TXT[lang];
   const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
-  // "Health Tip of the Day" — pick one article deterministically from the
-  // date, so it's the same for everyone on a given day and rotates daily.
-  // This gives casual visitors a fresh reason to come back and read.
-  // Article text (title/description) stays in English on purpose — the same
-  // rule we apply to all doctor/medical content, which we don't machine-translate.
-  const dailyTip = (() => {
-    if (!articles.length) return null;
-    const now = new Date();
-    const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
-    return articles[dayNumber % articles.length];
-  })();
+  // "Health Tip of the Day" — one article, chosen deterministically from the
+  // date (same for everyone on a given day, rotates daily). Article content is
+  // loaded lazily (dynamic import) after the page renders, so it never weighs
+  // down the initial home-page load. The tip card simply appears a moment
+  // later once the data is fetched (and is hidden until then).
+  const [dailyTip, setDailyTip] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    import('./blog/blogData').then(({ articles }) => {
+      if (cancelled || !articles || !articles.length) return;
+      const now = new Date();
+      const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+      setDailyTip(articles[dayNumber % articles.length]);
+    }).catch(() => { /* non-critical — just skip the tip if it fails to load */ });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const fetchTopReviews = async () => {
