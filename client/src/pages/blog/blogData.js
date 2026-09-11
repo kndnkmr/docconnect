@@ -217,19 +217,39 @@ export const articles = [
     readTime: '5 min',
     image: '🤢',
     content: [
-      { type: 'intro', text: 'Digestive problems are incredibly common in India — from acidity and bloating to more serious conditions like IBS and liver disease. While occasional stomach issues are normal, persistent symptoms need professional evaluation.' },
-      { type: 'heading', text: 'See a Gastroenterologist If You Experience:' },
-      { type: 'paragraph', text: '• Acidity/heartburn more than twice a week\n• Blood in stool or black-colored stools\n• Unexplained weight loss\n• Persistent abdominal pain\n• Difficulty swallowing\n• Chronic diarrhea or constipation (>3 weeks)\n• Jaundice (yellowing of skin/eyes)\n• Bloating that doesn\'t improve with diet changes' },
-      { type: 'heading', text: 'Common Conditions' },
-      { type: 'paragraph', text: 'GERD (acid reflux) affects millions. While antacids provide temporary relief, chronic GERD can damage the food pipe. A gastroenterologist provides long-term solutions beyond over-the-counter medication.' },
-      { type: 'paragraph', text: 'IBS (Irritable Bowel Syndrome) causes alternating constipation and diarrhea, bloating, and cramps. It\'s manageable with the right diet, medication, and stress management — but needs proper diagnosis first.' },
-      { type: 'paragraph', text: 'Fatty liver disease is silently affecting 30-40% of urban Indians. Often discovered accidentally during tests, untreated fatty liver can progress to liver failure. Lifestyle changes can reverse it if caught early.' },
-      { type: 'heading', text: 'When Stomach Problems Are Serious' },
-      { type: 'paragraph', text: 'Most stomach issues are benign, but these signs need urgent attention:\n• Blood in vomit or stool\n• Sudden severe abdominal pain\n• High fever with abdominal pain\n• Inability to keep any food/water down for 24 hours\n• Significant unexplained weight loss' },
-      { type: 'heading', text: 'Lifestyle Changes That Help' },
-      { type: 'paragraph', text: '• Eat smaller, more frequent meals\n• Avoid spicy, oily food late at night\n• Don\'t lie down within 2 hours of eating\n• Reduce stress (yoga, meditation help)\n• Stay hydrated\n• Include fiber in your diet\n• Limit alcohol and caffeine' },
-      { type: 'heading', text: 'Online Consultation for Digestive Issues' },
-      { type: 'paragraph', text: 'Gastroenterology consultations work well online — the doctor can assess symptoms, review test reports, prescribe medication, and recommend dietary changes through video call. Procedures like endoscopy require in-person visits.' },
+      { type: 'intro', text: 'Acidity after dinner, bloating that won\'t quit, a stomach that seems to have a mind of its own — digestive troubles are among the most common complaints in India, and most are harmless. But some are your gut waving a flag that deserves attention. Here is how to tell everyday indigestion from the signs that mean it is time to see a gastroenterologist — the specialist for the digestive system.' },
+      { type: 'heading', text: 'See a Gastroenterologist If You Have:' },
+      { type: 'list', items: [
+        'Acidity or heartburn **more than twice a week**',
+        'Blood in the stool, or black-coloured stools',
+        'Unexplained weight loss',
+        'Persistent abdominal pain',
+        'Difficulty or pain when swallowing',
+        'Diarrhoea or constipation lasting more than 3 weeks',
+        'Jaundice (yellowing of the skin or eyes)',
+        'Bloating that does not improve with diet changes'
+      ]},
+      { type: 'heading', text: 'Common Conditions They Treat' },
+      { type: 'paragraph', text: '**GERD (acid reflux)** affects millions. Antacids give temporary relief, but chronic reflux can damage the food pipe over time — a gastroenterologist finds longer-term solutions beyond over-the-counter tablets.' },
+      { type: 'paragraph', text: '**IBS (Irritable Bowel Syndrome)** brings alternating constipation and diarrhoea, bloating, and cramps. It is very manageable with the right diet, treatment, and stress management — but needs a proper diagnosis first.' },
+      { type: 'paragraph', text: '**Fatty liver** is silently common in urban India, often found by accident on a scan. Caught early, lifestyle changes can reverse it — which is exactly why not ignoring it matters.' },
+      { type: 'callout', variant: 'warning', title: 'Seek urgent care for', items: [
+        'Blood in vomit or stool',
+        'Sudden, severe abdominal pain',
+        'High fever with abdominal pain',
+        'Not being able to keep any food or water down for 24 hours',
+        'Significant, unexplained weight loss'
+      ]},
+      { type: 'heading', text: 'Everyday Habits That Help Your Gut' },
+      { type: 'list', items: [
+        'Eat smaller, more frequent meals',
+        'Avoid spicy, oily food late at night',
+        'Don\'t lie down within 2 hours of eating',
+        'Manage stress — yoga and slow breathing genuinely help the gut',
+        'Stay hydrated and include enough fibre',
+        'Limit alcohol and caffeine'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Gastroenterology works well **online** — the doctor can assess symptoms, review your test reports, prescribe treatment, and guide diet through a video call. Only procedures like endoscopy need an in-person visit.' },
     ]
   },
   {
@@ -516,7 +536,8 @@ export const articles = [
     readTime: '6 min',
     image: '😴',
     content: [
-      { type: 'intro', text: '"I\'m tired all the time" is one of the most common things people tell their doctor — and one of the most ignored. If you\'re exhausted despite sleeping enough, your body may be signalling something treatable. Here are 8 common reasons, most of which are easy to test for.' },
+      { type: 'intro', text: '"I\'m tired all the time" is one of the most common things people tell their doctor — and one of the most ignored. If you are exhausted despite sleeping enough, your body may be signalling something treatable. Here are 8 common reasons, most of which are easy to test for.' },
+      { type: 'callout', variant: 'info', title: 'The reassuring part', text: 'Most causes of constant tiredness show up on a handful of **simple, cheap blood tests** — iron, thyroid, sugar, vitamin D and B12. You do not have to just "live with" being exhausted.' },
       { type: 'heading', text: '1. Low Iron (Anaemia)' },
       { type: 'paragraph', text: 'Extremely common in India, especially in women. Low iron means less oxygen reaching your muscles and brain — leaving you tired, breathless, and pale. A simple blood test confirms it, and it\'s very treatable.' },
       { type: 'heading', text: '2. Thyroid Problems' },
@@ -533,8 +554,14 @@ export const articles = [
       { type: 'paragraph', text: 'Skipping meals, too much tea/coffee, and not enough water leave your body running on empty. Sometimes the fix is as simple as regular meals and hydration.' },
       { type: 'heading', text: '8. Doing Too Much, Resting Too Little' },
       { type: 'paragraph', text: 'Sometimes fatigue is genuinely your body asking for rest. But if you\'ve rested and it hasn\'t helped, don\'t just push through — get it checked.' },
+      { type: 'callout', variant: 'warning', title: 'Don\'t ignore fatigue that comes with', items: [
+        'Unexplained weight loss',
+        'Breathlessness or a racing heart',
+        'Persistent low mood or loss of interest',
+        'Tiredness that keeps worsening despite rest'
+      ]},
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'If tiredness lasts more than 2-3 weeks despite rest, or comes with weight loss, breathlessness, or low mood, see a doctor. A few basic blood tests (iron, thyroid, sugar, vitamin D/B12) usually reveal the cause. You can start with an online consultation — the doctor will tell you which tests to do and review the results with you.' },
+      { type: 'paragraph', text: 'If tiredness lasts more than 2–3 weeks despite rest, or comes with any of the signs above, see a doctor. A few basic blood tests usually reveal the cause. You can start with an **online consultation** — the doctor will tell you which tests to do and review the results with you.' },
     ]
   },
   {
@@ -546,19 +573,29 @@ export const articles = [
     readTime: '5 min',
     image: '🩺',
     content: [
-      { type: 'intro', text: 'High blood pressure (hypertension) affects a huge share of Indian adults — and most don\'t know they have it. It\'s called the "silent killer" because it quietly damages your heart, brain, and kidneys for years without a single symptom. Here\'s what you need to know.' },
-      { type: 'heading', text: 'Why "Silent"?' },
-      { type: 'paragraph', text: 'Most people with high BP feel completely normal. There\'s usually no headache, no dizziness — nothing. That\'s exactly why it\'s dangerous: by the time symptoms appear, damage may already be done. The only way to know is to measure it.' },
+      { type: 'intro', text: 'High blood pressure affects a huge share of Indian adults — and most do not know they have it. It is called the **"silent killer"** because it quietly damages your heart, brain, and kidneys for years, without a single symptom to warn you. The good news: it is easy to check and very controllable. Here is what every adult should know.' },
+      { type: 'callout', variant: 'warning', title: 'Why "silent"?', text: 'Most people with high BP feel completely normal — no headache, no dizziness, nothing. By the time symptoms appear, damage may already be done. The **only** way to know is to measure it.' },
       { type: 'heading', text: 'What the Numbers Mean' },
-      { type: 'paragraph', text: '• Normal: below 120/80\n• Elevated: 120-129 / below 80\n• High (Stage 1): 130-139 / 80-89\n• High (Stage 2): 140/90 or above\n\nA single high reading isn\'t a diagnosis — it should be confirmed on more than one occasion.' },
+      { type: 'table', headers: ['Reading', 'Category'], rows: [
+        ['Below 120/80', 'Normal ✅'],
+        ['120–129 / below 80', 'Elevated'],
+        ['130–139 / 80–89', 'High — Stage 1'],
+        ['140/90 or above', 'High — Stage 2'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'A single high reading is **not** a diagnosis — it should be confirmed on more than one occasion, at rest.' },
       { type: 'heading', text: 'What Untreated High BP Can Cause' },
-      { type: 'paragraph', text: '• Heart attack and heart failure\n• Stroke\n• Kidney damage\n• Vision loss\n\nThe scary part: all of this can happen without any warning symptoms first.' },
+      { type: 'list', items: [
+        'Heart attack and heart failure',
+        'Stroke',
+        'Kidney damage',
+        'Vision loss'
+      ]},
+      { type: 'paragraph', text: 'The frightening part: all of this can develop **without any warning symptoms** beforehand.' },
       { type: 'heading', text: 'Who Should Get Checked' },
-      { type: 'paragraph', text: 'Every adult should know their numbers. Check more often if you\'re over 30, overweight, have diabetes, a family history, a salty diet, high stress, or a desk-bound lifestyle. It takes 2 minutes at any clinic or pharmacy.' },
-      { type: 'heading', text: 'The Good News: It\'s Very Controllable' },
-      { type: 'paragraph', text: 'High BP can\'t always be "cured," but it\'s easily controlled — reducing salt, regular walking, losing a little weight, cutting alcohol/smoking, managing stress, and medication where needed. Controlled BP dramatically lowers your risk of heart attack and stroke.' },
-      { type: 'heading', text: 'Talk to a Doctor' },
-      { type: 'paragraph', text: 'If your readings are high, or you have risk factors, consult a doctor. Blood pressure is one of the easiest conditions to manage online — the doctor reviews your readings, advises lifestyle changes, and adjusts medication over video calls. Don\'t wait for a symptom that may never come until it\'s too late.' },
+      { type: 'paragraph', text: 'Every adult should know their numbers. Check more often if you are over 30, overweight, have diabetes, a family history, a salty diet, high stress, or a desk-bound lifestyle. It takes **2 minutes** at any clinic or pharmacy.' },
+      { type: 'callout', variant: 'success', title: 'The good news: very controllable', text: 'High BP can rarely be "cured," but it is easily **controlled** — less salt, regular walking, losing a little weight, cutting alcohol and smoking, managing stress, and medication where needed. Controlled BP dramatically lowers your risk of heart attack and stroke.' },
+      { type: 'heading', text: 'When to See a Doctor' },
+      { type: 'paragraph', text: 'If your readings are high, or you have risk factors, consult a doctor. Blood pressure is one of the **easiest conditions to manage online** — the doctor reviews your readings, advises lifestyle changes, and adjusts medication over video calls. Do not wait for a symptom that may never come until it is too late.' },
     ]
   },
   {
