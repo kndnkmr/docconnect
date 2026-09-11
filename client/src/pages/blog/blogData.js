@@ -2027,13 +2027,28 @@ export const articles = [
       { type: 'heading', text: 'Why We Snore' },
       { type: 'paragraph', text: 'During sleep, the muscles in your throat relax. In some people the airway narrows enough that tissues vibrate as air passes — that is the snoring sound. Occasional snoring (a cold, a drink, sleeping on your back) is usually harmless. It is the loud, habitual, night-after-night snoring — especially with pauses in breathing — that deserves attention.' },
       { type: 'heading', text: 'When Snoring Might Be Sleep Apnea' },
-      { type: 'paragraph', text: 'Warning signs that snoring is more than a nuisance:\n\n• Loud snoring most nights\n• A partner noticing you stop breathing, gasp, or choke in your sleep\n• Waking unrefreshed however long you slept\n• Daytime sleepiness — dozing off at work, while watching TV, even driving\n• Morning headaches or a dry throat\n• Irritability, poor concentration, low mood\n\nIf several of these ring true, it is worth checking — this is not just "bad sleep."' },
+      { type: 'callout', variant: 'warning', title: 'Warning signs it is more than a nuisance', items: [
+        'Loud snoring most nights',
+        'A partner noticing you stop breathing, gasp, or choke in sleep',
+        'Waking unrefreshed however long you slept',
+        'Daytime sleepiness — dozing off at work, watching TV, even driving',
+        'Morning headaches or a dry throat',
+        'Irritability, poor concentration, low mood'
+      ]},
+      { type: 'paragraph', text: 'If several ring true, it is worth checking — this is not just "bad sleep."' },
       { type: 'heading', text: 'Why It Matters More Than People Think' },
-      { type: 'paragraph', text: 'Each time breathing pauses, your body is briefly starved of oxygen and jolted out of deep sleep — often dozens of times an hour, without you knowing. Over time, untreated sleep apnea is linked to high blood pressure, heart problems, diabetes, and accidents from daytime drowsiness. So it is not vanity or noise — it is a genuine health issue worth taking seriously.' },
+      { type: 'paragraph', text: 'Each time breathing pauses, your body is briefly starved of oxygen and jolted out of deep sleep — often **dozens of times an hour**, without you knowing. Over time, untreated sleep apnea is linked to high BP, heart problems, diabetes, and accidents from drowsiness. It is not vanity or noise — it is a genuine health issue.' },
       { type: 'heading', text: 'Things That Help' },
-      { type: 'paragraph', text: '• Lose excess weight — one of the most effective steps, as neck fat narrows the airway\n• Sleep on your side rather than your back\n• Avoid alcohol and sedatives near bedtime — they over-relax the throat\n• Treat nasal congestion and allergies\n• Quit smoking\n\nThese ease mild snoring and support treatment for apnea — but they are not a substitute for proper diagnosis if apnea is suspected.' },
+      { type: 'list', items: [
+        '**Lose excess weight** — one of the most effective steps, as neck fat narrows the airway',
+        'Sleep on your side rather than your back',
+        'Avoid alcohol and sedatives near bedtime — they over-relax the throat',
+        'Treat nasal congestion and allergies',
+        'Quit smoking'
+      ]},
+      { type: 'callout', variant: 'info', text: 'These ease mild snoring, but they are **not a substitute** for proper diagnosis if apnea is suspected.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'See a doctor — often an ENT specialist — if your snoring is loud and habitual, if anyone has seen you stop breathing in your sleep, or if you are exhausted during the day despite sleeping enough. Sleep apnea is very treatable once identified, and treating it can transform your energy, mood, and long-term health. An online consultation is an easy first step to describe your symptoms and find out whether a sleep assessment is needed.' },
+      { type: 'paragraph', text: 'See a doctor — often an **ENT specialist** — if snoring is loud and habitual, if anyone has seen you stop breathing in your sleep, or if you are exhausted by day despite sleeping enough. Sleep apnea is very treatable, and treating it can transform your energy, mood, and long-term health. An **online consultation** is an easy first step.' },
     ]
   },
   {
@@ -2049,13 +2064,20 @@ export const articles = [
       { type: 'heading', text: 'What a Cataract Is' },
       { type: 'paragraph', text: 'Inside your eye is a clear lens that focuses light so you see sharply. With age, the proteins in that lens can clump and cloud — like a clear window slowly frosting over. That cloudiness is a cataract, and it usually develops gradually over years, most often in both eyes (though not always at the same pace).' },
       { type: 'heading', text: 'Common Signs' },
-      { type: 'paragraph', text: '• Blurry, cloudy, or "misty" vision\n• Colours looking faded or yellowed\n• Glare and halos around lights, especially at night\n• Trouble driving after dark\n• Needing brighter light to read\n• Frequently changing your spectacle number' },
+      { type: 'list', items: [
+        'Blurry, cloudy, or "misty" vision',
+        'Colours looking faded or yellowed',
+        'Glare and halos around lights, especially at night',
+        'Trouble driving after dark',
+        'Needing brighter light to read',
+        'Frequently changing your spectacle number'
+      ]},
       { type: 'heading', text: 'Who Gets Them' },
-      { type: 'paragraph', text: 'Age is the main factor, but risk rises with diabetes, long-term sun exposure, smoking, certain medicines (like long-term steroids), and eye injuries. Protecting your eyes from strong sunlight and managing diabetes well can help slow things down.' },
-      { type: 'heading', text: 'The Good News About Treatment' },
-      { type: 'paragraph', text: 'Early on, stronger glasses and better lighting may be enough. When a cataract starts interfering with daily life — reading, driving, work — the definitive treatment is a short, safe, very common operation that replaces the cloudy lens with a clear artificial one. It is one of the most frequently performed and most successful surgeries worldwide, usually restoring clear vision. There is no need to fear it or to "wait until it is fully ripe" out of old habit — timing is a decision to make with your eye doctor.' },
+      { type: 'paragraph', text: 'Age is the main factor, but risk rises with **diabetes**, long-term sun exposure, smoking, some medicines (like long-term steroids), and eye injuries. Protecting your eyes from strong sun and managing diabetes well can help slow things down.' },
+      { type: 'callout', variant: 'success', title: 'The good news about treatment', text: 'Early on, stronger glasses and better lighting may be enough. When a cataract interferes with daily life, the treatment is a **short, safe, very common operation** that replaces the cloudy lens with a clear one — among the most successful surgeries in all of medicine, usually restoring clear vision.' },
+      { type: 'callout', variant: 'info', text: 'You do **not** need to "wait until it is fully ripe" out of old habit — the timing is a decision to make with your eye doctor, based on how much it affects your life.' },
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'See an ophthalmologist if your vision is gradually clouding, glare is troubling you at night, or your spectacle number keeps changing — and promptly if vision drops suddenly, which is a different, more urgent problem. Regular eye check-ups after 40 catch cataracts (and other conditions like glaucoma) early. An online consultation can help you understand your symptoms and decide whether an in-person eye exam is the right next step.' },
+      { type: 'paragraph', text: 'See an ophthalmologist if vision is gradually clouding, night glare troubles you, or your spectacle number keeps changing — and **promptly if vision drops suddenly**, which is a different, more urgent problem. Regular eye check-ups after 40 catch cataracts and other conditions like glaucoma early. An **online consultation** can help you decide whether an in-person exam is the next step.' },
     ]
   },
   {
