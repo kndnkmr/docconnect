@@ -1158,8 +1158,15 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 ### SEO blog articles (growth)
 
 - `blog/blogData.js` holds static articles (`{slug,title,description,
-  specialization,publishedDate,readTime,image,content:[{type,text}]}`; content
-  types intro/heading/paragraph). Grew to ~25 articles across three kinds:
+  specialization,publishedDate,readTime,image,content:[{type,...}]}`). The
+  renderer (`BlogArticle.jsx`) supports rich block types beyond plain prose:
+  `intro`, `heading`, `paragraph`, `list` (`{items:[]}`), `callout`
+  (`{variant:'tip'|'warning'|'success'|'info', title?, text?, items?}`), `table`
+  (`{headers:[], rows:[[]]}`), and `steps` (`{items:[]}`), plus inline
+  `**bold**` via `renderInline()`. All 63 articles use these so reads are
+  scannable (tables/callouts/step-lists), not walls of text; adding a new block
+  type means extending the renderer's switch, and old `{type,text}` blocks still
+  render (backward-compatible). Grew to ~25 articles across three kinds:
   per-specialty "when to see a [specialist]", symptom/question explainers
   (frequent-headaches, fever-home-care, is-online-consultation-safe, silent-
   signs-high-blood-sugar, always-tired, high-bp, stop-googling-symptoms), and
@@ -1192,10 +1199,14 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 ### Blog growth: categories, Start Here, health tip, related articles
 
-- **Blog grew to ~55 original articles** (from ~25). Same `blogData.js` schema
+- **Blog grew to 63 original articles** (from ~25). Same `blogData.js` schema
   and content rules as above (original text, wellness framed as lifestyle
   support never cures, every article's `specialization` maps to a real
-  specialty for the CTA, new slugs added to `client/public/sitemap.xml`).
+  specialty for the CTA, new slugs added to `client/public/sitemap.xml`). All
+  articles were later reformatted into the rich block types (tables/callouts/
+  step-lists/bold) noted above — visible on-screen text only; slugs,
+  specializations, `<SEO>` tags, and JSON-LD schema were left untouched so SEO
+  and links are unchanged.
 - **Category browsing (`BlogList.jsx`):** the raw ~15 specialization chips are
   grouped into broad, icon-labelled categories (Heart & BP, Women's Health,
   Mental Health, Digestion, Diabetes & Hormones, Bones & Joints, Skin & Hair,
@@ -1206,7 +1217,7 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   (safe fallback — nothing disappears).
 - **"Start Here" strip:** a hand-picked shortlist (`START_HERE_SLUGS`) of
   broadly-useful reads shown ONLY on the default view (no search, "All"
-  selected), so first-timers aren't faced with 55 articles at once. Disappears
+  selected), so first-timers aren't faced with 60+ articles at once. Disappears
   the moment someone searches or picks a category.
 - **Smarter related articles (`BlogArticle.jsx`):** each article now suggests
   up to 3 others — SAME specialty first (most relevant to what the reader is
