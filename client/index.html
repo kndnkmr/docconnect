@@ -51,6 +51,34 @@
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <meta name="msapplication-TileImage" content="/icons/icon-192.png" />
     <meta name="msapplication-TileColor" content="#2563eb" />
+
+    <!-- Brand identity for Google (Organization + WebSite JSON-LD).
+         Placed in the STATIC HTML so Google reliably reads it without running
+         JS. This tells Google that "ProMedicoz" is a real, named brand (name +
+         alternateName), which helps stop the "Did you mean: promedica"
+         spell-correction over time. Add owned social profile URLs to `sameAs`
+         once they exist — those are among the strongest brand signals. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ProMedicoz",
+      "alternateName": ["Pro Medicoz", "ProMedicoz India", "Promedicoz"],
+      "url": "https://www.promedicoz.in/",
+      "logo": "https://www.promedicoz.in/icons/icon-512.png",
+      "description": "ProMedicoz is an India-based online doctor consultation platform to find verified doctors and book video, phone, or in-person appointments.",
+      "areaServed": "IN"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ProMedicoz",
+      "alternateName": "ProMedicoz - Find & Book Doctors Online",
+      "url": "https://www.promedicoz.in/"
+    }
+    </script>
   </head>
   <body>
     <!--
