@@ -599,7 +599,7 @@ export const articles = [
       { type: 'paragraph', text: 'Ayurveda has long recommended eating what\'s fresh and local for the season. It naturally means more variety, fewer processed foods, and produce at its most nutritious — advice nutrition science broadly agrees with.' },
       { type: 'heading', text: '5. Oil Massage (Abhyanga)' },
       { type: 'paragraph', text: 'A warm oil self-massage before a bath is deeply relaxing and good for the skin. Its biggest benefit is arguably stress relief — and lower stress genuinely supports overall health.' },
-      { type: 'heading', text: '6. Tulsi, Ginger &amp; Digestive Spices' },
+      { type: 'heading', text: '6. Tulsi, Ginger & Digestive Spices' },
       { type: 'paragraph', text: 'Tulsi tea, ginger, ajwain, jeera — these traditional digestives are soothing and comforting. Enjoy them as part of a balanced diet; think of them as gentle everyday support, not medicine for a real illness.' },
       { type: 'heading', text: '7. Yoga and Breathing (Pranayama)' },
       { type: 'paragraph', text: 'Perhaps India\'s greatest wellness export. Regular yoga and breathing practice is now backed by strong evidence for reducing stress, improving flexibility, blood pressure, and sleep. Even 15 minutes a day helps.' },
@@ -767,7 +767,7 @@ export const articles = [
   },
   {
     slug: 'acidity-heartburn-causes-relief',
-    title: 'Acidity &amp; Heartburn: Why It Happens and How to Get Relief',
+    title: 'Acidity & Heartburn: Why It Happens and How to Get Relief',
     description: 'Burning chest, sour burps, bloating after meals? Understand what really causes acidity, simple habits that help, and when frequent heartburn needs a doctor.',
     specialization: 'Gastroenterologist',
     publishedDate: '2026-07-18',
@@ -835,7 +835,7 @@ export const articles = [
   },
   {
     slug: 'neck-back-pain-phone-posture-guide',
-    title: '"Tech Neck": How Your Phone and Desk Are Hurting Your Neck &amp; Back',
+    title: '"Tech Neck": How Your Phone and Desk Are Hurting Your Neck & Back',
     description: 'Constant neck, shoulder, or back pain from phones and desk work? Learn what "tech neck" is, simple fixes, and stretches to undo the damage.',
     specialization: 'Orthopedic',
     publishedDate: '2026-07-21',
@@ -857,7 +857,7 @@ export const articles = [
   },
   {
     slug: 'pcos-pcod-irregular-periods-guide',
-    title: 'PCOS/PCOD Explained: Irregular Periods, Weight &amp; What Really Helps',
+    title: 'PCOS/PCOD Explained: Irregular Periods, Weight & What Really Helps',
     description: 'Irregular periods, unwanted hair, acne, weight gain? PCOS/PCOD is very common in young women — and very manageable. Here\'s a clear, honest guide.',
     specialization: 'Gynaecologist',
     publishedDate: '2026-07-22',
@@ -1117,7 +1117,7 @@ export const articles = [
   },
   {
     slug: 'thyroid-explained-hypo-hyper-guide',
-    title: 'Your Thyroid, Explained: The Tiny Gland Behind Fatigue, Weight &amp; Mood',
+    title: 'Your Thyroid, Explained: The Tiny Gland Behind Fatigue, Weight & Mood',
     description: 'Unexplained tiredness, weight changes, hair fall, or mood swings? Your thyroid might be involved. A clear guide to hypo- and hyperthyroidism and what to do.',
     specialization: 'Endocrinologist',
     publishedDate: '2026-08-02',
@@ -1333,7 +1333,7 @@ export const articles = [
   },
   {
     slug: 'dengue-mosquito-fever-warning-signs-guide',
-    title: 'Dengue &amp; Monsoon Fevers: The Warning Signs You Must Not Ignore',
+    title: 'Dengue & Monsoon Fevers: The Warning Signs You Must Not Ignore',
     description: 'High fever, body ache, and it is mosquito season? Learn to spot dengue, malaria and typhoid early, care for a fever safely at home, and the danger signs that need a doctor now.',
     specialization: 'General Physician',
     publishedDate: '2026-09-11',
@@ -1383,7 +1383,7 @@ export const articles = [
   },
   {
     slug: 'asthma-inhaler-myths-breathing-guide',
-    title: 'Asthma &amp; Inhalers: Busting the Myths That Keep People Wheezing',
+    title: 'Asthma & Inhalers: Busting the Myths That Keep People Wheezing',
     description: 'Scared of inhalers? Think asthma is "just childhood"? Myths stop many people from breathing easy. A clear guide to asthma, why inhalers are safe, and when to see a doctor.',
     specialization: 'Pulmonologist',
     publishedDate: '2026-09-11',
