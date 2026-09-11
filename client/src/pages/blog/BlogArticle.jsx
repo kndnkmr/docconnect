@@ -53,8 +53,8 @@ function renderBlock(block, idx) {
         <ul key={idx} className="mb-6 space-y-2">
           {(block.items || []).map((item, i) => (
             <li key={i} className="flex gap-3 text-gray-700 leading-relaxed">
-              <span className="text-primary-500 mt-1 flex-shrink-0">●</span>
-              <span>{renderInline(item)}</span>
+              <span className="text-primary-500 flex-shrink-0 leading-relaxed select-none" aria-hidden="true">•</span>
+              <span className="flex-1">{renderInline(item)}</span>
             </li>
           ))}
         </ul>
@@ -73,8 +73,8 @@ function renderBlock(block, idx) {
                 <ul className="space-y-1.5 mt-1">
                   {block.items.map((item, i) => (
                     <li key={i} className="flex gap-2 text-gray-700 leading-relaxed">
-                      <span className="flex-shrink-0">{s.icon === '⚠️' ? '•' : '•'}</span>
-                      <span>{renderInline(item)}</span>
+                      <span className="flex-shrink-0 leading-relaxed select-none" aria-hidden="true">•</span>
+                      <span className="flex-1">{renderInline(item)}</span>
                     </li>
                   ))}
                 </ul>
