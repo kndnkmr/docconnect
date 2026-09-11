@@ -890,11 +890,30 @@ export const articles = [
       { type: 'heading', text: 'Why It Matters' },
       { type: 'paragraph', text: 'Vitamin D helps your body absorb calcium (for strong bones), supports your immune system, and affects mood and energy. Low levels are linked to fatigue, bone and muscle aches, frequent infections, and low mood.' },
       { type: 'heading', text: 'Why Are We Deficient Despite the Sun?' },
-      { type: 'paragraph', text: '• We live and work indoors most of the day\n• We (sensibly) cover up or use sunscreen against strong sun\n• Air pollution in cities blocks UVB rays\n• Darker skin needs more sun exposure to make the same vitamin D\n• Diets are often low in vitamin D-rich foods\n\nSo despite the sunshine, most of us simply don\'t get enough of the right sun on our skin.' },
+      { type: 'list', items: [
+        'We live and work **indoors** most of the day',
+        'We (sensibly) cover up or use sunscreen against strong sun',
+        'City air pollution blocks the UVB rays that make vitamin D',
+        'Darker skin needs more sun to make the same amount',
+        'Diets are often low in vitamin D-rich foods'
+      ]},
+      { type: 'paragraph', text: 'So despite all the sunshine, most of us simply do not get enough of the right sun on our skin.' },
       { type: 'heading', text: 'Common Signs of Low Vitamin D' },
-      { type: 'paragraph', text: '• Constant tiredness\n• Bone, back, or muscle aches\n• Frequent colds and infections\n• Low mood, especially in winter\n• Hair fall\n• Slow healing\n\nThese are non-specific (many things cause them), which is exactly why a simple blood test is the only way to know for sure.' },
+      { type: 'list', items: [
+        'Constant tiredness',
+        'Bone, back, or muscle aches',
+        'Frequent colds and infections',
+        'Low mood, especially in winter',
+        'Hair fall and slow healing'
+      ]},
+      { type: 'paragraph', text: 'These are **non-specific** (many things cause them) — which is exactly why a simple blood test is the only way to know for sure.' },
       { type: 'heading', text: 'How to Improve It' },
-      { type: 'paragraph', text: '• Get 15-20 minutes of direct sunlight on your arms/face a few times a week (morning sun is gentler)\n• Eat more vitamin D foods — egg yolk, fatty fish, fortified milk, mushrooms\n• If your levels are low, a doctor may prescribe a supplement dose\n\nImportant: don\'t self-prescribe high-dose vitamin D. Too much can be harmful — the right dose depends on your blood levels.' },
+      { type: 'list', items: [
+        'Get 15–20 minutes of direct sun on arms/face a few times a week (morning sun is gentler)',
+        'Eat more vitamin D foods — egg yolk, fatty fish, fortified milk, mushrooms',
+        'If your levels are low, a doctor may prescribe a supplement dose'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Do not self-prescribe **high-dose** vitamin D. Too much can be harmful — the right dose depends on your actual blood levels.' },
       { type: 'heading', text: 'When to Get Tested' },
       { type: 'paragraph', text: 'If you have ongoing tiredness, body aches, or frequent infections, ask your doctor for a vitamin D test (often along with B12 and iron). It\'s simple, and correcting a deficiency can make a real difference to how you feel. An online consultation is an easy way to find out which tests you need and review the results.' },
     ]
@@ -935,14 +954,18 @@ export const articles = [
       { type: 'paragraph', text: 'Indians tend to develop higher body fat and metabolic problems (like type 2 diabetes and heart disease) at a lower BMI and younger age than many Western populations. That means even a "normal" weight can carry hidden risk — which is why waist size and blood tests matter, not just the scale.' },
       { type: 'heading', text: 'Belly Fat Is the Dangerous Kind' },
       { type: 'paragraph', text: 'Fat around your organs (visceral fat, the "belly" fat) is metabolically active — it drives insulin resistance, high sugar, high cholesterol, and inflammation. Fat under the skin elsewhere is far less harmful. So a growing waistline is a genuine warning sign, even without much weight gain.' },
-      { type: 'heading', text: 'A Simple Home Check' },
-      { type: 'paragraph', text: 'Measure your waist at the navel. As a rough guide for Indians, extra caution is warranted above roughly 90 cm (35 in) for men and 80 cm (31 in) for women. It\'s not a diagnosis — just a nudge to pay attention and get checked.' },
-      { type: 'heading', text: 'Obesity Isn\'t Just "Eat Less, Move More"' },
-      { type: 'paragraph', text: 'Weight is influenced by genetics, hormones, sleep, stress, medications, and more — not just willpower. Shaming yourself doesn\'t work and isn\'t fair. What helps is a sustainable approach: realistic changes you can keep, not extreme crash diets that rebound.' },
+      { type: 'callout', variant: 'tip', title: 'A simple home check', text: 'Measure your waist at the navel. As a rough guide for Indians, pay extra attention above roughly **90 cm (35 in) for men** and **80 cm (31 in) for women**. It is not a diagnosis — just a nudge to get checked.' },
+      { type: 'callout', variant: 'info', title: 'It is not just "eat less, move more"', text: 'Weight is shaped by genetics, hormones, sleep, stress, and medications — not just willpower. Shaming yourself does not work and is not fair. What helps is a **sustainable** approach: realistic changes you can keep, not crash diets that rebound.' },
       { type: 'heading', text: 'Practical, Sustainable Steps' },
-      { type: 'paragraph', text: '• Move daily — even a 30-minute walk makes a real difference\n• Build meals around protein, fibre, vegetables and whole grains\n• Cut back on sugary drinks, refined carbs, and ultra-processed snacks\n• Prioritise sleep and manage stress (both affect weight)\n• Aim for slow, steady change — not rapid loss' },
+      { type: 'list', items: [
+        'Move daily — even a 30-minute walk makes a real difference',
+        'Build meals around protein, fibre, vegetables and whole grains',
+        'Cut back on sugary drinks, refined carbs, and ultra-processed snacks',
+        'Prioritise sleep and manage stress — both affect weight',
+        'Aim for slow, steady change — not rapid loss'
+      ]},
       { type: 'heading', text: 'When to See a Doctor' },
-      { type: 'paragraph', text: 'If your waist is rising, weight isn\'t budging despite effort, or you have a family history of diabetes/heart disease, get your sugar, cholesterol, and other levels checked. An endocrinologist or physician can look at the full metabolic picture and build a realistic plan with you. An online consultation is a good, judgment-free place to start.' },
+      { type: 'paragraph', text: 'If your waist is rising, weight is not budging despite effort, or you have a family history of diabetes/heart disease, get your sugar, cholesterol, and other levels checked. A doctor can look at the full metabolic picture and build a realistic plan with you — an **online consultation** is a good, judgement-free place to start.' },
     ]
   },
   {
@@ -958,13 +981,24 @@ export const articles = [
       { type: 'heading', text: 'Why It\'s a Growing Concern' },
       { type: 'paragraph', text: 'Long hours of close-up screen work, less time outdoors, and poor lighting are linked to more children becoming near-sighted, and at younger ages. Once myopia sets in, it tends to progress through childhood — so early habits really matter.' },
       { type: 'heading', text: 'Signs Your Child May Have an Eye Problem' },
-      { type: 'paragraph', text: '• Sitting very close to the TV or holding books/phones close\n• Squinting or tilting the head to see\n• Frequent eye rubbing or headaches\n• Complaining of blurry or tired eyes\n• Difficulty reading the board at school (falling grades can be a clue)' },
+      { type: 'list', items: [
+        'Sitting very close to the TV, or holding books/phones close',
+        'Squinting or tilting the head to see',
+        'Frequent eye rubbing or headaches',
+        'Complaining of blurry or tired eyes',
+        'Trouble reading the board at school (falling grades can be a clue)'
+      ]},
       { type: 'heading', text: 'Simple Habits That Protect Their Eyes' },
-      { type: 'paragraph', text: '• The 20-20-20 rule: every 20 minutes of screen time, look 20 feet away for 20 seconds\n• Encourage 1-2 hours of outdoor play daily — daylight genuinely protects against myopia\n• Keep screens at a comfortable distance, in a well-lit room\n• No screens right before bed (protects both eyes and sleep)\n• Set reasonable daily screen limits by age' },
-      { type: 'heading', text: 'Don\'t Skip the Eye Check-Up' },
-      { type: 'paragraph', text: 'Children often don\'t realise their vision is blurry — they assume everyone sees the way they do. That\'s why regular eye check-ups matter: the first around age 3-4, and before starting school. Catching and correcting vision early helps both their eyes and their learning.' },
+      { type: 'list', items: [
+        '**The 20-20-20 rule:** every 20 minutes of screen, look 20 feet away for 20 seconds',
+        '**1–2 hours of outdoor play daily** — daylight genuinely protects against myopia',
+        'Keep screens at a comfortable distance, in a well-lit room',
+        'No screens right before bed (protects eyes and sleep)',
+        'Set reasonable daily screen limits by age'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Kids rarely say their vision is blurry', text: 'Children assume everyone sees the way they do, so they do not complain. That is why routine eye check-ups matter — the first around **age 3–4** and before starting school. Catching vision issues early helps both their eyes and their learning.' },
       { type: 'heading', text: 'When to Consult' },
-      { type: 'paragraph', text: 'If you notice any of the signs above, don\'t wait — get your child\'s eyes checked. An initial consultation can be done online to assess symptoms and decide if a full eye exam is needed. Protecting vision early sets your child up for life.' },
+      { type: 'paragraph', text: 'If you notice any of the signs above, do not wait — get your child\'s eyes checked. An initial **online consultation** can assess symptoms and decide if a full eye exam is needed. Protecting vision early sets your child up for life.' },
     ]
   },
   {
