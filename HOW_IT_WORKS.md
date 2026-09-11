@@ -1307,6 +1307,39 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 ---
 
+### Patient "Health History" timeline
+
+- **What:** a patient-only dashboard tab (`Health History`) that shows a
+  single chronological, newest-first, month-grouped timeline merging the
+  patient's consultations, prescriptions, and uploaded reports — the
+  "see my whole health story in one place" view larger platforms have.
+  Component: `client/src/pages/dashboard/PatientHealthTimeline.jsx`, wired
+  into `Dashboard.jsx` (import, `VALID_TAB_KEYS`, `PATIENT_TXT` EN/HI labels,
+  a patient-only tab button, and the tab render — all `isPatient`-gated).
+- **Purely client-side aggregation — deliberately no new backend/schema.** It
+  reuses the three existing "get mine" endpoints in one `Promise.all`:
+  `appointmentAPI.getMine({limit:100})`, `prescriptionAPI.getMine({limit:100})`,
+  `reportAPI.getMine()`. Each result is mapped to a common
+  `{ id, type, date, data }` entry (appointment→`date`, prescription/report→
+  `createdAt`), merged, sorted newest-first, then grouped by month for
+  scannable headers. This is why it couldn't break anything the rest of the
+  app relies on — it only READS data that already exists and never mutates.
+- **Field dependencies (verified against the controllers):** appointments
+  populate `doctor.name/specialization` (+ `date/timeSlot/reason/status/
+  consultationType/bookedFor/familyMemberName`); prescriptions populate
+  `doctor` and return `diagnosis/medicines/createdAt`; reports return
+  `title/doctor.name/isReviewed/createdAt`. If any of those populate lists
+  change, re-check this component.
+- **Type filter** (All / Consultations / Prescriptions / Reports) with live
+  counts; **jump-to-detail** links call `onNavigateTab` (`goToTab`) to switch
+  to the full Prescriptions/Reports tab. **Realtime:** listens to the same
+  `prescription-updated` / `report-updated` socket events the individual tabs
+  use, and refetches so the timeline stays current. Bilingual tab label
+  (`tabTimeline`); the record content itself is not machine-translated (same
+  rule as the rest of the app).
+
+---
+
 ## Complete File Reference
 
 ### Backend (server/)
@@ -1346,6 +1379,7 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 | `pages/DoctorProfile.jsx` | Full profile, book button, WhatsApp "Message" button |
 | `pages/BookAppointment.jsx` | Date picker → dynamic free slots → consultation type → reason → book |
 | `pages/Dashboard.jsx` | Tabs: Appointments (both), Edit Profile (doctor), Availability (doctor) |
+| `pages/dashboard/PatientHealthTimeline.jsx` | Patient "Health History" tab — client-side merge of appointments + prescriptions + reports into one chronological, month-grouped timeline (read-only) |
 
 ---
 
