@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -66,5 +66,10 @@ router.post('/users/:id/setup-reminder', sendDoctorSetupReminder);
 // POST /api/admin/users/:id/verify-email - admin bypass for a doctor whose
 // verification email landed in spam: marks their email verified so they go live
 router.post('/users/:id/verify-email', markEmailVerified);
+
+// PUT /api/admin/users/:id/contact - edit a doctor's phone / WhatsApp number
+// on their behalf (support case where the doctor can't/won't do it in Edit
+// Profile). Validates + normalizes the number and guards against duplicates.
+router.put('/users/:id/contact', updateDoctorContact);
 
 module.exports = router;

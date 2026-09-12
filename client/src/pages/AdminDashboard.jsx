@@ -391,6 +391,42 @@ function AdminDashboard() {
     }
   };
 
+  // Edit a doctor's phone / WhatsApp on their behalf (support requests).
+  // Uses simple prompts to stay consistent with the other admin actions here.
+  // Pre-fills current values; an unchanged value is skipped, so you can edit
+  // just one. Cancelling either prompt aborts the whole thing.
+  const handleEditContact = async (user) => {
+    const newPhone = window.prompt(
+      `Edit phone number for "${user.name}".\n\nThis is their main contact / login number. Leave as-is to keep it unchanged.`,
+      user.phone || ''
+    );
+    if (newPhone === null) return; // cancelled
+
+    const newWhatsApp = window.prompt(
+      `Edit WhatsApp number for "${user.name}" (optional).\n\nThis powers the public "Message on WhatsApp" button on their profile. Clear it to remove that button. Leave as-is to keep it unchanged.`,
+      user.whatsappNumber || ''
+    );
+    if (newWhatsApp === null) return; // cancelled
+
+    // Only send fields that actually changed from what's on record.
+    const payload = {};
+    if (newPhone.trim() !== (user.phone || '')) payload.phone = newPhone.trim();
+    if (newWhatsApp.trim() !== (user.whatsappNumber || '')) payload.whatsappNumber = newWhatsApp.trim();
+
+    if (Object.keys(payload).length === 0) {
+      toast('No changes made.', { icon: 'ℹ️' });
+      return;
+    }
+
+    try {
+      const response = await adminAPI.updateDoctorContact(user._id, payload);
+      toast.success(response.data.message, { duration: 5000 });
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update contact details');
+    }
+  };
+
   const handleSearchUsers = (e) => {
     e.preventDefault();
     fetchUsers();
@@ -792,6 +828,15 @@ function AdminDashboard() {
                                 title={user.email ? 'Password recovery: emails this user a link to set a new password (keeps their account)' : 'Password recovery: no email on file, copies a link for you to send manually (keeps their account)'}
                               >
                                 Send Password Reset
+                              </button>
+                            )}
+                            {!user.isDeleted && user.role === 'doctor' && (
+                              <button
+                                onClick={() => handleEditContact(user)}
+                                className="text-sm font-medium text-teal-600 hover:text-teal-800"
+                                title="Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
+                              >
+                                Edit Contact
                               </button>
                             )}
                             <button

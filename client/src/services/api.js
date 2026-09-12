@@ -339,6 +339,10 @@ export const adminAPI = {
   // Admin bypass: mark a doctor's email as verified (for when the
   // verification email landed in spam and they can't self-verify)
   markEmailVerified: (id) => API.post(`/admin/users/${id}/verify-email`),
+
+  // Edit a doctor's phone / WhatsApp number on their behalf (support case).
+  // Body: { phone?, whatsappNumber? } — send only the field(s) being changed.
+  updateDoctorContact: (id, data) => API.put(`/admin/users/${id}/contact`, data),
 };
 
 // ============================================

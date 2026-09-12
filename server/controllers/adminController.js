@@ -803,4 +803,87 @@ const backfillDoctorLanguages = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified };
+// ============================================
+// UPDATE DOCTOR CONTACT - Admin edits a doctor's phone / WhatsApp on their behalf
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/contact
+// Body: { phone?: string, whatsappNumber?: string }
+//
+// For the common support case where a doctor asks to change their contact
+// number but can't (or would rather not) do it themselves in Edit Profile.
+// Only these two fields; nothing else on the account is touched. Both are
+// optional in the body — send only the one being changed. Passing an empty
+// string clears WhatsApp (turns off the public "Message on WhatsApp" button);
+// phone cannot be blanked (it's a required contact/onboarding field).
+const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
+
+const updateDoctorContact = async (req, res) => {
+  try {
+    const { phone, whatsappNumber } = req.body;
+
+    // Nothing to change?
+    if (phone === undefined && whatsappNumber === undefined) {
+      return res.status(400).json({ message: 'Provide a phone and/or whatsappNumber to update' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'This action is only for doctor accounts' });
+    }
+
+    // ---- Phone (main contact / login number) ----
+    if (phone !== undefined) {
+      const raw = String(phone).trim();
+      if (!raw) {
+        return res.status(400).json({ message: 'Phone number cannot be empty. Leave it out of the request to keep it unchanged.' });
+      }
+      if (!isValidIndianPhone(raw)) {
+        return res.status(400).json({ message: 'Please enter a valid Indian mobile number (10 digits, starting 6-9).' });
+      }
+      const formatted = formatIndianPhone(raw);
+
+      // Phone has no unique index, so guard against handing this doctor a
+      // number that already belongs to a DIFFERENT active account — that
+      // would create exactly the duplicate-phone situation the admin panel
+      // otherwise has to clean up.
+      const clash = await User.findOne({
+        phone: formatted,
+        _id: { $ne: user._id },
+        isDeleted: { $ne: true }
+      }).select('_id name role');
+      if (clash) {
+        return res.status(400).json({
+          message: `That number is already in use by another account (${clash.name}). Use a different number, or resolve the existing account first.`
+        });
+      }
+      user.phone = formatted;
+    }
+
+    // ---- WhatsApp (public "Message on WhatsApp" button; may be cleared) ----
+    if (whatsappNumber !== undefined) {
+      const raw = String(whatsappNumber).trim();
+      if (!raw) {
+        user.whatsappNumber = ''; // clearing turns the public button off
+      } else if (!isValidIndianPhone(raw)) {
+        return res.status(400).json({ message: 'Please enter a valid Indian WhatsApp number, or leave it blank to remove it.' });
+      } else {
+        user.whatsappNumber = formatIndianPhone(raw);
+      }
+    }
+
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: `Updated contact details for "${user.name}".`,
+      user: { _id: user._id, name: user.name, phone: user.phone, whatsappNumber: user.whatsappNumber }
+    });
+  } catch (error) {
+    console.error('Update doctor contact error:', error.message);
+    res.status(500).json({ message: 'Error updating contact details' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact };
