@@ -5,18 +5,82 @@ import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { articles } from './blogData';
 import { blogViewAPI } from '../../services/api';
+import { INTERNAL_LINKS } from './linkMap';
+
+// ---- Internal auto-linking ----
+// Turn key topic phrases in the body into links to their article (big SEO win
+// + keeps readers moving between articles). See linkMap.js for the rationale
+// and the curated phrase→slug map.
+//
+// We precompile the phrase list once: sorted LONGEST-first so a specific phrase
+// ("high blood pressure") wins over a shorter overlapping one, and escaped for
+// safe use in a regex. Matching is whole-word and case-insensitive.
+const LINK_PHRASES = Object.keys(INTERNAL_LINKS).sort((a, b) => b.length - a.length);
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// One combined regex with word boundaries; \b keeps us from linking inside a
+// larger word (e.g. "stroke" inside "strokes" still matches on the word, but
+// not inside unrelated letters).
+const LINK_REGEX = LINK_PHRASES.length
+  ? new RegExp(`\\b(${LINK_PHRASES.map(escapeRegex).join('|')})\\b`, 'gi')
+  : null;
+
+// Turn a plain string into an array of text + <Link> nodes. `ctx` carries the
+// current article slug (so we never self-link) and a shared `used` Set (so each
+// target article is linked at most once per article — no spammy repeats).
+function linkifyText(text, ctx, keyPrefix) {
+  if (!text || !LINK_REGEX || !ctx) return text;
+
+  const out = [];
+  let lastIndex = 0;
+  let match;
+  let n = 0;
+  LINK_REGEX.lastIndex = 0;
+
+  while ((match = LINK_REGEX.exec(text)) !== null) {
+    const phrase = match[0];
+    const slug = INTERNAL_LINKS[phrase.toLowerCase()];
+
+    // Skip if: no mapping, it's the current article, or we've already linked
+    // this target once in this article.
+    if (!slug || slug === ctx.currentSlug || ctx.used.has(slug)) {
+      continue;
+    }
+
+    ctx.used.add(slug);
+
+    // Push the text before the match, then the link.
+    if (match.index > lastIndex) out.push(text.slice(lastIndex, match.index));
+    out.push(
+      <Link
+        key={`${keyPrefix}-lnk-${n++}`}
+        to={`/blog/${slug}`}
+        className="text-primary-600 underline decoration-primary-300 underline-offset-2 hover:text-primary-700"
+      >
+        {phrase}
+      </Link>
+    );
+    lastIndex = match.index + phrase.length;
+  }
+
+  if (lastIndex === 0) return text; // no links added — return original string
+  if (lastIndex < text.length) out.push(text.slice(lastIndex));
+  return out;
+}
 
 // Parse simple **bold** markers inside a text string into React nodes, so
 // writers can emphasise key phrases without any HTML. Everything else stays
 // plain text (safe — no dangerouslySetInnerHTML).
-function renderInline(text) {
+//
+// `ctx` (optional) enables internal auto-linking of the non-bold segments.
+// Bold segments are left as-is (not linked) to keep emphasis clean.
+function renderInline(text, ctx) {
   if (!text) return null;
   const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={i} className="font-semibold text-gray-800">{part.slice(2, -2)}</strong>;
     }
-    return part;
+    return <span key={i}>{ctx ? linkifyText(part, ctx, `i${i}`) : part}</span>;
   });
 }
 
@@ -38,7 +102,10 @@ const CALLOUT_STYLES = {
 //   callout    — { variant:'tip|warning|success|info', title?, text? , items?[] }
 //   table      — { headers: [], rows: [[]] } comparison table
 //   steps      — { items: [] } numbered visual step flow
-function renderBlock(block, idx) {
+// `ctx` = { currentSlug, used } enables internal auto-linking. We link the body
+// prose (paragraph, list, callout text/items) but deliberately NOT headings,
+// the intro, tables, or step labels — those read best clean.
+function renderBlock(block, idx, ctx) {
   switch (block.type) {
     case 'intro':
       return <p key={idx} className="text-gray-700 text-lg leading-relaxed mb-6 border-l-4 border-primary-400 pl-4 italic">{renderInline(block.text)}</p>;
@@ -47,7 +114,7 @@ function renderBlock(block, idx) {
       return <h2 key={idx} className="text-2xl font-bold text-gray-800 mt-10 mb-4">{renderInline(block.text)}</h2>;
 
     case 'paragraph':
-      return <p key={idx} className="text-gray-700 leading-relaxed mb-5 whitespace-pre-line text-[1.05rem]">{renderInline(block.text)}</p>;
+      return <p key={idx} className="text-gray-700 leading-relaxed mb-5 whitespace-pre-line text-[1.05rem]">{renderInline(block.text, ctx)}</p>;
 
     case 'list':
       return (
@@ -55,7 +122,7 @@ function renderBlock(block, idx) {
           {(block.items || []).map((item, i) => (
             <li key={i} className="flex gap-3 text-gray-700 leading-relaxed">
               <span className="text-primary-500 flex-shrink-0 leading-relaxed select-none" aria-hidden="true">•</span>
-              <span className="flex-1">{renderInline(item)}</span>
+              <span className="flex-1">{renderInline(item, ctx)}</span>
             </li>
           ))}
         </ul>
@@ -69,13 +136,13 @@ function renderBlock(block, idx) {
             <span className="text-xl flex-shrink-0">{s.icon}</span>
             <div className="flex-1">
               {block.title && <p className={`font-semibold mb-1 ${s.label}`}>{renderInline(block.title)}</p>}
-              {block.text && <p className="text-gray-700 leading-relaxed whitespace-pre-line">{renderInline(block.text)}</p>}
+              {block.text && <p className="text-gray-700 leading-relaxed whitespace-pre-line">{renderInline(block.text, ctx)}</p>}
               {block.items && (
                 <ul className="space-y-1.5 mt-1">
                   {block.items.map((item, i) => (
                     <li key={i} className="flex gap-2 text-gray-700 leading-relaxed">
                       <span className="flex-shrink-0 leading-relaxed select-none" aria-hidden="true">•</span>
-                      <span className="flex-1">{renderInline(item)}</span>
+                      <span className="flex-1">{renderInline(item, ctx)}</span>
                     </li>
                   ))}
                 </ul>
@@ -286,9 +353,14 @@ function BlogArticle() {
           <p className="text-lg text-gray-600">{article.description}</p>
         </div>
 
-        {/* Content */}
+        {/* Content — `linkCtx` is created fresh per render so internal
+            auto-links are deduped across the whole article (each target linked
+            once) and never link back to this same article. */}
         <div className="max-w-none">
-          {article.content.map((block, idx) => renderBlock(block, idx))}
+          {(() => {
+            const linkCtx = { currentSlug: slug, used: new Set() };
+            return article.content.map((block, idx) => renderBlock(block, idx, linkCtx));
+          })()}
         </div>
 
         {/* CTA */}
