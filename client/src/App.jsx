@@ -35,6 +35,7 @@ import Navbar from './components/Navbar';
 import WhatsAppButton from './components/WhatsAppButton';
 import BottomNav from './components/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
+import Analytics from './components/Analytics';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -111,6 +112,11 @@ function App() {
           this automatically — otherwise a page opened from a link clicked at
           the bottom of another page starts scrolled to the bottom). */}
       <ScrollToTop />
+
+      {/* Sends a GA4 page_view on every route change — essential for a SPA,
+          otherwise only the first page a visitor lands on gets counted (see
+          Analytics.jsx). Renders nothing. */}
+      <Analytics />
 
       {/* Navbar appears on ALL pages */}
       <Navbar />

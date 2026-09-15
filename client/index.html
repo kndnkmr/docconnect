@@ -33,13 +33,21 @@
     <meta name="twitter:description" content="Find and book verified doctors across India — video, phone, or in-person. Book in under 2 minutes." />
     <meta name="twitter:image" content="https://www.promedicoz.in/og-image.png" />
 
-    <!-- Google Analytics -->
+    <!-- Google Analytics (GA4).
+         This is a Single Page App: the browser only loads a real page once,
+         then React swaps "pages" via client-side routing. GA4's default config
+         would therefore count only the FIRST page a visitor lands on, missing
+         every article they click through to afterwards.
+         Fix: we disable the automatic page_view here (send_page_view:false) and
+         instead fire one page_view on every route change from React
+         (see src/components/Analytics.jsx). That way each blog article view is
+         counted correctly. -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-28BZZQPPXF"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-28BZZQPPXF');
+      gtag('config', 'G-28BZZQPPXF', { send_page_view: false });
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <!-- PWA -->
