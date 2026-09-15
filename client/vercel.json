@@ -1,5 +1,13 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(login|register|dashboard|admin|book-appointment|booking-confirmation|forgot-password|reset-password|verify-email)(/.*)?",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, follow" }
+      ]
+    }
   ]
 }

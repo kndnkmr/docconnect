@@ -2,9 +2,11 @@ User-agent: *
 Allow: /
 
 # Utility / auth / account pages — no value in search results.
-# (login and register are intentionally NOT disallowed: they carry a
-#  noindex meta tag instead, so Google can crawl them, see the tag, and
-#  drop them from the index cleanly.)
+# (login and register are intentionally NOT disallowed: they are served with
+#  an "X-Robots-Tag: noindex" HTTP header (see vercel.json) that crawlers see
+#  in the response itself — no JavaScript needed — so Google can crawl them,
+#  read the header, and drop them from the index cleanly. The pages below are
+#  fully blocked from crawling instead.)
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /booking-confirmation
