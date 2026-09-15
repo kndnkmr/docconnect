@@ -426,5 +426,20 @@ export const reviewAPI = {
   getAll: (params) => API.get('/reviews/all', { params }),
 };
 
+// ============================================
+// BLOG VIEW API calls (public per-article read counter)
+// ============================================
+
+export const blogViewAPI = {
+  // Current view count for one article (no increment)
+  get: (slug) => API.get(`/blog-views/${slug}`),
+
+  // Record one view; returns the new count
+  increment: (slug) => API.post(`/blog-views/${slug}`),
+
+  // Counts for all articles (for a "most read" list) → { counts: { slug: n } }
+  getAll: () => API.get('/blog-views'),
+};
+
 export { getUploadUrl };
 export default API;

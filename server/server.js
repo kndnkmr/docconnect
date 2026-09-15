@@ -261,6 +261,11 @@ app.use('/api/announcements', announcementRoutes);
 const pushRoutes = require('./routes/push');
 app.use('/api/push', pushRoutes);
 
+// Blog view routes — public per-article read counter (our own numbers,
+// shown on each article, independent of Google Analytics)
+const blogViewRoutes = require('./routes/blogView');
+app.use('/api/blog-views', blogViewRoutes);
+
 // ---- STEP 7: Handle 404 (route not found) ----
 // If none of the routes above matched, this catches it
 // Must be AFTER all other routes!

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 import { articles } from './blogData';
+import { blogViewAPI } from '../../services/api';
 
 // Parse simple **bold** markers inside a text string into React nodes, so
 // writers can emphasise key phrases without any HTML. Everything else stays
@@ -143,6 +144,62 @@ function BlogArticle() {
     toast.success('Thanks for your feedback!');
   };
 
+  // ---- Public "reads" counter (our own numbers, stored in our DB) ----
+  // Shows how many times this article has been read, as light social proof.
+  // Behaviour:
+  //   - On open, fetch the current count to display.
+  //   - Record ONE view per browser per article at most once every few hours
+  //     (throttled via localStorage) so a refresh or quick re-open doesn't
+  //     inflate the number. The increment endpoint returns the fresh count,
+  //     which we then show (so the reader sees their own view included).
+  //   - Fully non-blocking: if the API is unreachable, we just don't show a
+  //     number — the article renders exactly as before.
+  const [views, setViews] = useState(null);
+
+  useEffect(() => {
+    if (!slug) return;
+    let cancelled = false;
+
+    const VIEW_THROTTLE_MS = 4 * 60 * 60 * 1000; // 4 hours per browser per article
+    const throttleKey = `blog_viewed_${slug}`;
+
+    const shouldCount = () => {
+      try {
+        const last = Number(localStorage.getItem(throttleKey) || 0);
+        return !last || Date.now() - last > VIEW_THROTTLE_MS;
+      } catch {
+        return true;
+      }
+    };
+
+    const run = async () => {
+      try {
+        if (shouldCount()) {
+          // Record a view and use the returned fresh count.
+          const { data } = await blogViewAPI.increment(slug);
+          if (!cancelled && data) setViews(data.count);
+          try { localStorage.setItem(throttleKey, String(Date.now())); } catch { /* ignore */ }
+        } else {
+          // Already counted recently — just read the current count to display.
+          const { data } = await blogViewAPI.get(slug);
+          if (!cancelled && data) setViews(data.count);
+        }
+      } catch {
+        // Silent: counter is a nice-to-have, never block the article.
+      }
+    };
+
+    run();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  // Format a count compactly: 1240 -> "1.2k", 980 -> "980".
+  const formatViews = (n) => {
+    if (n == null) return null;
+    if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
+    return String(n);
+  };
+
   // Share the article (grows reach via word of mouth — the safe alternative
   // to a public comment section on a health blog).
   const articleUrl = `https://www.promedicoz.in/blog/${slug}`;
@@ -216,6 +273,14 @@ function BlogArticle() {
             <span className="text-xs text-gray-400">{article.readTime} read</span>
             <span className="text-xs text-gray-400">•</span>
             <span className="text-xs text-gray-400">{new Date(article.publishedDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            {/* Public read counter — only shown once we have a number, so the
+                header doesn't flash an empty element while it loads. */}
+            {views != null && (
+              <>
+                <span className="text-xs text-gray-400">•</span>
+                <span className="text-xs text-gray-400">👁 {formatViews(views)} {views === 1 ? 'read' : 'reads'}</span>
+              </>
+            )}
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">{article.title}</h1>
           <p className="text-lg text-gray-600">{article.description}</p>
