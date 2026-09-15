@@ -63,19 +63,42 @@
     <!-- Brand identity for Google (Organization + WebSite JSON-LD).
          Placed in the STATIC HTML so Google reliably reads it without running
          JS. This tells Google that "ProMedicoz" is a real, named brand (name +
-         alternateName), which helps stop the "Did you mean: promedica"
-         spell-correction over time. Add owned social profile URLs to `sameAs`
-         once they exist — those are among the strongest brand signals. -->
+         alternateName + contact + logo), which helps stop the
+         "Did you mean: promedica" spell-correction over time.
+         IMPORTANT: when you create official social profiles (Instagram,
+         Facebook, LinkedIn, YouTube, X), add their FULL URLs to the "sameAs"
+         array below. Verified, owned social profiles are among the STRONGEST
+         brand signals Google uses to recognise a distinct brand — this is the
+         single most effective fix for the "did you mean" issue. Only add real
+         profiles you own; do not add placeholder or guessed URLs. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "ProMedicoz",
+      "legalName": "ProMedicoz",
       "alternateName": ["Pro Medicoz", "ProMedicoz India", "Promedicoz"],
       "url": "https://www.promedicoz.in/",
-      "logo": "https://www.promedicoz.in/icons/icon-512.png",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.promedicoz.in/icons/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://www.promedicoz.in/og-image.png",
       "description": "ProMedicoz is an India-based online doctor consultation platform to find verified doctors and book video, phone, or in-person appointments.",
-      "areaServed": "IN"
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "support@promedicoz.in",
+        "areaServed": "IN",
+        "availableLanguage": ["English", "Hindi"]
+      },
+      "sameAs": []
     }
     </script>
     <script type="application/ld+json">
@@ -84,7 +107,15 @@
       "@type": "WebSite",
       "name": "ProMedicoz",
       "alternateName": "ProMedicoz - Find & Book Doctors Online",
-      "url": "https://www.promedicoz.in/"
+      "url": "https://www.promedicoz.in/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.promedicoz.in/doctors?specialization={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
   </head>
