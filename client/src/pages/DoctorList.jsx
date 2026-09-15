@@ -342,6 +342,46 @@ function DoctorList() {
         </div>
       </form>
 
+      {/* ---- Always-present intro + browse-by-specialty ----
+          Real, crawlable content that shows regardless of loading/empty state.
+          WHY: this page's doctor cards load from an API, so a crawler (or a
+          first-time visitor on a slow connection) could otherwise see only a
+          "Loading…" spinner or an empty list — which made Google flag /doctors
+          as a "Soft 404" (a thin/empty page). This block guarantees the page
+          always has substantial, useful content and internal links to the
+          specialization pages, for both readers and search engines. */}
+      <section className="mb-8">
+        <p className="text-gray-600 max-w-3xl">
+          Find and book verified doctors across India on ProMedicoz — consult by
+          video, phone, or in person. Browse by specialty below, or use the
+          search filters above to find a doctor by name, city, fee, language, or
+          availability.
+        </p>
+        <h2 className="text-lg font-semibold text-gray-800 mt-6 mb-3">Browse doctors by specialty</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { slug: 'general-physician', label: 'General Physician' },
+            { slug: 'gynaecologist', label: 'Gynaecologist' },
+            { slug: 'dermatologist', label: 'Dermatologist' },
+            { slug: 'cardiologist', label: 'Cardiologist' },
+            { slug: 'pediatrician', label: 'Pediatrician' },
+            { slug: 'orthopedic', label: 'Orthopedic' },
+            { slug: 'neurologist', label: 'Neurologist' },
+            { slug: 'psychiatrist', label: 'Psychiatrist' },
+            { slug: 'ent-specialist', label: 'ENT Specialist' },
+            { slug: 'dentist', label: 'Dentist' },
+          ].map((s) => (
+            <Link
+              key={s.slug}
+              to={`/specialization/${s.slug}`}
+              className="px-3.5 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors"
+            >
+              {s.label}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ---- Results ---- */}
       {loading ? (
         // Loading state
