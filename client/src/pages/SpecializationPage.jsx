@@ -13,7 +13,10 @@ const cityToSlug = (city) => city.trim().toLowerCase().replace(/\s+/g, '-').repl
 const slugToCityName = (slug) =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
-// Data for each specialization — SEO content, FAQs, conditions
+// Data for each specialization — SEO content, FAQs, conditions.
+// NOTE: the same title/description for these slugs is mirrored in
+// scripts/prerender.mjs (SPECIALIZATIONS) so the build can bake per-page meta
+// into static HTML. If you change a title/description here, update it there too.
 const specializationData = {
   'gynaecologist': {
     title: 'Gynaecologist',
