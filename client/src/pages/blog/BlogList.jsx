@@ -1,7 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { articles } from './blogData';
+import { blogViewAPI } from '../../services/api';
+
+// Format a read count compactly: 1240 -> "1.2k", 980 -> "980".
+function formatViews(n) {
+  if (n == null) return null;
+  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
+  return String(n);
+}
 
 // Broad, friendly categories so ~55 articles feel browsable instead of
 // overwhelming. Each maps to one or more of the underlying `specialization`
@@ -39,6 +47,22 @@ function BlogList() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
 
+  // Read counts for all articles, as a { slug: count } map. Fetched once on
+  // load. Powers the per-card "reads" badge and the "Most Read" section.
+  // Non-blocking: if it fails, the page just renders without any numbers.
+  const [views, setViews] = useState({});
+  useEffect(() => {
+    let cancelled = false;
+    blogViewAPI.getAll()
+      .then(({ data }) => { if (!cancelled && data?.counts) setViews(data.counts); })
+      .catch(() => { /* counter is a nice-to-have; ignore errors */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Total reads across all articles — a headline "X,XXX reads" number that
+  // shows the blog is actively read (social proof). Only shown once > 0.
+  const totalReads = Object.values(views).reduce((sum, n) => sum + (Number(n) || 0), 0);
+
   // Client-side filtering — all articles are already loaded, so we filter
   // instantly by category (a group of specializations) and search text.
   const q = query.trim().toLowerCase();
@@ -56,6 +80,17 @@ function BlogList() {
     ? START_HERE_SLUGS.map((s) => articles.find((a) => a.slug === s)).filter(Boolean)
     : [];
 
+  // "Most Read" — the genuinely most-viewed articles, ranked by real read
+  // counts. Shown only on the default view, and only once we actually have
+  // some views (so it doesn't show noise on a fresh counter). Top 6.
+  const mostRead = showStartHere
+    ? [...articles]
+        .map((a) => ({ article: a, count: views[a.slug] || 0 }))
+        .filter((x) => x.count > 0)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 6)
+    : [];
+
   return (
     <div>
       <SEO
@@ -70,6 +105,13 @@ function BlogList() {
         <div className="container mx-auto px-4 pt-10 pb-20 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold">Health Blog</h1>
           <p className="text-primary-100 mt-2 text-sm sm:text-base">Expert articles to help you make informed health decisions</p>
+          {/* Social proof: total reads across the blog + article count. Shows
+              the blog is trusted and actively read across India. Only shows the
+              reads figure once there's real data. */}
+          <p className="text-primary-100/90 mt-2 text-xs sm:text-sm">
+            {articles.length}+ articles
+            {totalReads > 0 && <> · <span className="font-semibold text-white">{formatViews(totalReads)}</span> reads and counting</>}
+          </p>
 
           {/* Search box — filters instantly as you type (no button needed).
               The live result line + clear button make that obvious. */}
@@ -124,6 +166,35 @@ function BlogList() {
             </button>
           ))}
         </div>
+
+        {/* Most Read — the actually most-viewed articles (by real read counts),
+            ranked. A "what everyone's reading" list that both helps readers
+            find popular content and encourages more reading. Shown only on the
+            default view, and only once we have real view data. */}
+        {mostRead.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-8">
+            <h2 className="text-lg font-semibold text-gray-800 mb-1">🔥 Most Read</h2>
+            <p className="text-gray-500 text-sm mb-4">The articles readers across India are reading most right now.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {mostRead.map(({ article: a, count }, i) => (
+                <Link
+                  key={a.slug}
+                  to={`/blog/${a.slug}`}
+                  className="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-primary-200 transition-all flex gap-3 items-start"
+                >
+                  {/* Rank badge — a subtle "#1, #2…" that makes it feel like a
+                      chart of popular reads. */}
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                  <div className="min-w-0">
+                    <span className="block text-xs text-primary-600 font-medium">{a.specialization}</span>
+                    <h3 className="font-medium text-gray-800 mt-0.5 text-sm line-clamp-2">{a.title}</h3>
+                    <span className="text-xs text-gray-400 mt-1 inline-block">👁 {formatViews(count)} {count === 1 ? 'read' : 'reads'}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Start Here — a friendly on-ramp for first-time visitors, shown only
             on the default view so it never gets in the way of searching. */}
@@ -185,9 +256,17 @@ function BlogList() {
                   <span className="text-5xl">{article.image}</span>
                 </div>
                 <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <span className="px-2 py-0.5 bg-primary-50 text-primary-700 rounded text-xs font-medium">{article.specialization}</span>
                     <span className="text-xs text-gray-400">{article.readTime} read</span>
+                    {/* Per-card read count — only shown for articles that have
+                        been read, so fresh articles don't display "0 reads". */}
+                    {views[article.slug] > 0 && (
+                      <>
+                        <span className="text-xs text-gray-400">•</span>
+                        <span className="text-xs text-gray-400">👁 {formatViews(views[article.slug])}</span>
+                      </>
+                    )}
                   </div>
                   <h2 className="font-semibold text-gray-800 mb-2 line-clamp-2">{article.title}</h2>
                   <p className="text-gray-500 text-sm line-clamp-2">{article.description}</p>
