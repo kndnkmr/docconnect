@@ -47,14 +47,20 @@ function BlogList() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
 
-  // Read counts for all articles, as a { slug: count } map. Fetched once on
-  // load. Powers the per-card "reads" badge and the "Most Read" section.
-  // Non-blocking: if it fails, the page just renders without any numbers.
+  // Read counts and likes for all articles, as { slug: n } maps. Fetched once
+  // on load. Powers the per-card "reads" badge, the "Most Read" section, and
+  // the "Most Loved" section. Non-blocking: if it fails, the page just renders
+  // without any numbers.
   const [views, setViews] = useState({});
+  const [likes, setLikes] = useState({});
   useEffect(() => {
     let cancelled = false;
     blogViewAPI.getAll()
-      .then(({ data }) => { if (!cancelled && data?.counts) setViews(data.counts); })
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        if (data.counts) setViews(data.counts);
+        if (data.likes) setLikes(data.likes);
+      })
       .catch(() => { /* counter is a nice-to-have; ignore errors */ });
     return () => { cancelled = true; };
   }, []);
@@ -86,6 +92,16 @@ function BlogList() {
   const mostRead = showStartHere
     ? [...articles]
         .map((a) => ({ article: a, count: views[a.slug] || 0 }))
+        .filter((x) => x.count > 0)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 6)
+    : [];
+
+  // "Most Loved" — the most ❤️-liked articles, ranked by like count. Same
+  // rules: default view only, and only once there are real likes. Top 6.
+  const mostLoved = showStartHere
+    ? [...articles]
+        .map((a) => ({ article: a, count: likes[a.slug] || 0 }))
         .filter((x) => x.count > 0)
         .sort((a, b) => b.count - a.count)
         .slice(0, 6)
@@ -189,6 +205,32 @@ function BlogList() {
                     <span className="block text-xs text-primary-600 font-medium">{a.specialization}</span>
                     <h3 className="font-medium text-gray-800 mt-0.5 text-sm line-clamp-2">{a.title}</h3>
                     <span className="text-xs text-gray-400 mt-1 inline-block">👁 {formatViews(count)} {count === 1 ? 'read' : 'reads'}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Most Loved — the most ❤️-liked articles, ranked. Reader-chosen
+            favourites (vs Most Read which is just traffic). Shown only on the
+            default view, and only once there are real likes. */}
+        {mostLoved.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-8">
+            <h2 className="text-lg font-semibold text-gray-800 mb-1">❤️ Most Loved</h2>
+            <p className="text-gray-500 text-sm mb-4">The articles readers loved most — hand-picked by our readers, not us.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {mostLoved.map(({ article: a, count }, i) => (
+                <Link
+                  key={a.slug}
+                  to={`/blog/${a.slug}`}
+                  className="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-red-200 transition-all flex gap-3 items-start"
+                >
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                  <div className="min-w-0">
+                    <span className="block text-xs text-primary-600 font-medium">{a.specialization}</span>
+                    <h3 className="font-medium text-gray-800 mt-0.5 text-sm line-clamp-2">{a.title}</h3>
+                    <span className="text-xs text-gray-400 mt-1 inline-block">❤️ {formatViews(count)} {count === 1 ? 'like' : 'likes'}</span>
                   </div>
                 </Link>
               ))}

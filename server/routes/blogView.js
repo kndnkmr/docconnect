@@ -11,15 +11,18 @@
 const express = require('express');
 const router = express.Router();
 
-const { incrementView, getView, getAllViews } = require('../controllers/blogViewController');
+const { incrementView, getView, getAllViews, setLike } = require('../controllers/blogViewController');
 
 // All counts (for a future "most read" list). Literal route before '/:slug'.
 router.get('/', getAllViews);
 
-// One article's count (no increment)
+// One article's count + likes (no increment)
 router.get('/:slug', getView);
 
 // Record a view for one article
 router.post('/:slug', incrementView);
+
+// Like / unlike one article — body { liked: true|false }
+router.post('/:slug/like', setLike);
 
 module.exports = router;

@@ -43,7 +43,7 @@ const incrementView = async (req, res) => {
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
-    return res.json({ slug, count: doc.count });
+    return res.json({ slug, count: doc.count, likes: doc.likes || 0 });
   } catch (error) {
     // A duplicate-key race on first insert is harmless — treat as success-ish
     // by returning the current count if we can read it.
@@ -65,10 +65,52 @@ const getView = async (req, res) => {
     }
 
     const doc = await BlogView.findOne({ slug }).lean();
-    return res.json({ slug, count: doc ? doc.count : 0 });
+    return res.json({ slug, count: doc ? doc.count : 0, likes: doc ? (doc.likes || 0) : 0 });
   } catch (error) {
     console.error('[blog-views] get error:', error.message);
     return res.status(500).json({ message: 'Could not fetch view count' });
+  }
+};
+
+// ============================================
+// LIKE / UNLIKE - adjust the like count for an article
+// Endpoint: POST /api/blog-views/:slug/like   body: { liked: true|false }
+// ============================================
+// The client remembers whether THIS browser has liked the article (so a person
+// can toggle their own like on/off). We simply move the aggregate by +1 / -1
+// accordingly, clamped at zero. This is a soft engagement counter, not a
+// per-user record — matching the lightweight, privacy-friendly view counter.
+const setLike = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const liked = req.body && req.body.liked === true;
+
+    if (!slug || !SLUG_RE.test(slug)) {
+      return res.status(400).json({ message: 'Invalid article slug' });
+    }
+
+    if (liked) {
+      // Add a like (create the doc if needed).
+      const doc = await BlogView.findOneAndUpdate(
+        { slug },
+        { $inc: { likes: 1 } },
+        { new: true, upsert: true, setDefaultsOnInsert: true }
+      );
+      return res.json({ slug, likes: doc.likes });
+    }
+
+    // Remove a like, but never below zero. Only decrement if there's a doc with
+    // likes > 0; otherwise just report 0.
+    const doc = await BlogView.findOneAndUpdate(
+      { slug, likes: { $gt: 0 } },
+      { $inc: { likes: -1 } },
+      { new: true }
+    );
+    const likes = doc ? doc.likes : 0;
+    return res.json({ slug, likes });
+  } catch (error) {
+    console.error('[blog-views] like error:', error.message);
+    return res.status(500).json({ message: 'Could not update like' });
   }
 };
 
@@ -78,15 +120,20 @@ const getView = async (req, res) => {
 // ============================================
 const getAllViews = async (req, res) => {
   try {
-    const docs = await BlogView.find({}, 'slug count -_id').lean();
-    // Return as a { slug: count } map — easy for the client to look up.
+    const docs = await BlogView.find({}, 'slug count likes -_id').lean();
+    // Return two { slug: n } maps — views and likes — easy for the client to
+    // look up for the per-card badges and the "Most Read"/"Most Loved" lists.
     const counts = {};
-    for (const d of docs) counts[d.slug] = d.count;
-    return res.json({ counts });
+    const likes = {};
+    for (const d of docs) {
+      counts[d.slug] = d.count || 0;
+      likes[d.slug] = d.likes || 0;
+    }
+    return res.json({ counts, likes });
   } catch (error) {
     console.error('[blog-views] getAll error:', error.message);
     return res.status(500).json({ message: 'Could not fetch view counts' });
   }
 };
 
-module.exports = { incrementView, getView, getAllViews };
+module.exports = { incrementView, getView, getAllViews, setLike };

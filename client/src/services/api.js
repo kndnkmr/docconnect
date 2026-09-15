@@ -431,14 +431,17 @@ export const reviewAPI = {
 // ============================================
 
 export const blogViewAPI = {
-  // Current view count for one article (no increment)
+  // Current view count + likes for one article (no increment) → { count, likes }
   get: (slug) => API.get(`/blog-views/${slug}`),
 
-  // Record one view; returns the new count
+  // Record one view; returns the new count (and likes)
   increment: (slug) => API.post(`/blog-views/${slug}`),
 
   // Counts for all articles (for a "most read" list) → { counts: { slug: n } }
   getAll: () => API.get('/blog-views'),
+
+  // Like / unlike one article → { likes }
+  setLike: (slug, liked) => API.post(`/blog-views/${slug}/like`, { liked }),
 };
 
 export { getUploadUrl };

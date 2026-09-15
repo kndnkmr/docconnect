@@ -31,6 +31,16 @@ const blogViewSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: 0
+  },
+
+  // Total number of "❤️ likes" for this article. A friendly, low-risk
+  // engagement signal (there is deliberately no "dislike" on a health blog).
+  // Like/unlike is toggled once per browser (the client remembers its own
+  // like state); this is the aggregate shown on the article.
+  likes: {
+    type: Number,
+    default: 0,
+    min: 0
   }
 
 }, {

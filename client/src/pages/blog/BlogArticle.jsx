@@ -198,17 +198,32 @@ function BlogArticle() {
   const { slug } = useParams();
   const article = articles.find(a => a.slug === slug);
 
-  // Private "was this helpful?" feedback — local only (no backend, no public
-  // counter). Just lets a reader give a quick reaction and remembers it on
-  // this device so we don't nag them again. No spam/moderation/misinfo risk.
-  const feedbackKey = `blog_feedback_${slug}`;
-  const [feedback, setFeedback] = useState(() => {
-    try { return localStorage.getItem(feedbackKey) || ''; } catch { return ''; }
+  // ---- ❤️ Like ----
+  // A friendly heart "like" backed by our DB (no dislike — deliberately, on a
+  // health blog). This browser remembers whether IT has liked the article, so
+  // the reader can toggle their own like on/off; the visible number is the
+  // aggregate like count across everyone. Powers the "Most Loved" section too.
+  const likedKey = `blog_liked_${slug}`;
+  const [liked, setLiked] = useState(() => {
+    try { return localStorage.getItem(likedKey) === '1'; } catch { return false; }
   });
-  const giveFeedback = (value) => {
-    setFeedback(value);
-    try { localStorage.setItem(feedbackKey, value); } catch { /* ignore */ }
-    toast.success('Thanks for your feedback!');
+  const [likeCount, setLikeCount] = useState(null);
+
+  const toggleLike = async () => {
+    const next = !liked;
+    // Optimistic update so the heart feels instant.
+    setLiked(next);
+    setLikeCount((c) => Math.max(0, (c ?? 0) + (next ? 1 : -1)));
+    try { localStorage.setItem(likedKey, next ? '1' : '0'); } catch { /* ignore */ }
+    try {
+      const { data } = await blogViewAPI.setLike(slug, next);
+      if (data && typeof data.likes === 'number') setLikeCount(data.likes);
+    } catch {
+      // Roll back the optimistic change if the server call failed.
+      setLiked(!next);
+      setLikeCount((c) => Math.max(0, (c ?? 0) + (next ? -1 : 1)));
+      toast.error('Could not save your like. Please try again.');
+    }
   };
 
   // ---- Public "reads" counter (our own numbers, stored in our DB) ----
@@ -242,14 +257,20 @@ function BlogArticle() {
     const run = async () => {
       try {
         if (shouldCount()) {
-          // Record a view and use the returned fresh count.
+          // Record a view and use the returned fresh counts.
           const { data } = await blogViewAPI.increment(slug);
-          if (!cancelled && data) setViews(data.count);
+          if (!cancelled && data) {
+            setViews(data.count);
+            if (typeof data.likes === 'number') setLikeCount(data.likes);
+          }
           try { localStorage.setItem(throttleKey, String(Date.now())); } catch { /* ignore */ }
         } else {
-          // Already counted recently — just read the current count to display.
+          // Already counted recently — just read the current counts to display.
           const { data } = await blogViewAPI.get(slug);
-          if (!cancelled && data) setViews(data.count);
+          if (!cancelled && data) {
+            setViews(data.count);
+            if (typeof data.likes === 'number') setLikeCount(data.likes);
+          }
         }
       } catch {
         // Silent: counter is a nice-to-have, never block the article.
@@ -393,17 +414,27 @@ function BlogArticle() {
           <button onClick={copyLink} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50">🔗 Copy link</button>
         </div>
 
-        {/* Was this helpful? — private feedback (local only), not a public counter */}
-        <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-wrap items-center gap-3">
-          {feedback ? (
-            <p className="text-sm text-gray-600">Thanks for your feedback! 🙏</p>
-          ) : (
-            <>
-              <span className="text-sm font-medium text-gray-700">Was this article helpful?</span>
-              <button onClick={() => giveFeedback('up')} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-white" aria-label="Helpful">👍 Yes</button>
-              <button onClick={() => giveFeedback('down')} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm hover:bg-white" aria-label="Not helpful">👎 No</button>
-            </>
-          )}
+        {/* ❤️ Like — a friendly heart backed by our DB, with a visible count.
+            Toggles this browser's own like on/off; the number is the total
+            across all readers. Feeds the "Most Loved" section on the blog list. */}
+        <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-700">{liked ? 'Glad you loved it!' : 'Enjoyed this article?'}</span>
+          <button
+            onClick={toggleLike}
+            aria-pressed={liked}
+            aria-label={liked ? 'Unlike this article' : 'Like this article'}
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+              liked
+                ? 'bg-red-50 border-red-200 text-red-600'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-red-50 hover:border-red-200 hover:text-red-600'
+            }`}
+          >
+            <span className={`text-lg leading-none ${liked ? '' : 'grayscale'}`}>{liked ? '❤️' : '🤍'}</span>
+            <span>{liked ? 'Liked' : 'Like'}</span>
+            {likeCount != null && likeCount > 0 && (
+              <span className={`ml-1 ${liked ? 'text-red-600' : 'text-gray-500'}`}>{formatViews(likeCount)}</span>
+            )}
+          </button>
         </div>
 
         {/* Related articles — prefer the SAME specialty first (so a reader on
