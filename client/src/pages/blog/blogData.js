@@ -13098,5 +13098,51 @@ export const articles = [
       { type: 'paragraph', text: 'Everyday back care prevents a great deal of trouble, but see a **doctor or orthopedic specialist** for the situations above — nerve symptoms and the red flags in particular need proper assessment. An **online consultation** is a convenient way to get advice on back pain and posture and find out if you need to be seen in person. Look after your spine with movement and sensible habits, and it will carry you well. (See our guides on back pain, slipped disc, sciatica, cervical spondylosis, and physiotherapy.)' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and orthopedic/ergonomic guidance (NHS, NIH). It does not replace an assessment by a doctor for persistent or concerning back pain.' },
     ]
+  },
+  {
+    slug: 'physiotherapy-exercises-for-scoliosis-guide',
+    title: 'Physiotherapy and Exercises for Scoliosis: What Really Helps',
+    description: 'Can exercises and physiotherapy help scoliosis? Honestly, yes — for strength, posture, breathing, and comfort, and as part of managing a curve. A clear guide to what physiotherapy can and can\'t do.',
+    specialization: 'Physiotherapist',
+    publishedDate: '2026-08-06',
+    readTime: '7 min',
+    image: '🧘',
+    content: [
+      { type: 'intro', text: 'If you or your child has scoliosis, one of the first questions is usually: "can exercises fix it?" It\'s a great question, and the honest answer is nuanced — physiotherapy and exercise genuinely help in important ways, but it\'s vital to understand what they can and can\'t do so you have realistic expectations and don\'t skip other needed care. This is a clear, honest guide to physiotherapy and exercises for scoliosis. (For scoliosis itself — types, and bracing/surgery — see our main scoliosis guide.)' },
+      { type: 'heading', text: 'The Honest Headline First' },
+      { type: 'callout', variant: 'warning', title: 'What physiotherapy can and can\'t do', text: 'Exercises and physiotherapy genuinely help with **strength, flexibility, posture awareness, breathing, muscle balance, and pain/comfort**, and specialised scoliosis physiotherapy can be a real part of managing a curve. But they do **not** "straighten out" or cure an established structural curve on their own — a significant curve is a change in the spine\'s structure, not just weak muscles. So think of physiotherapy as a valuable part of the plan, alongside (not instead of) the monitoring, bracing, or specialist care your doctor advises. Be wary of anything promising a full "cure" through exercise alone.' },
+      { type: 'heading', text: 'How Physiotherapy Genuinely Helps' },
+      { type: 'list', items: [
+        '**Strengthens** the core and back muscles that support the spine',
+        'Improves **flexibility and mobility**, easing stiffness',
+        'Builds **posture awareness** and better everyday movement',
+        'Helps with **breathing** (a large curve can affect it) through specific techniques',
+        'Reduces **pain and discomfort** and improves function and confidence',
+        'For some, as part of a specialist programme, may help **manage or slow** a curve during growth (used alongside bracing where advised)',
+      ]},
+      { type: 'heading', text: 'Scoliosis-Specific Physiotherapy (e.g. the Schroth Method)' },
+      { type: 'paragraph', text: 'Beyond general exercise, there are **scoliosis-specific physiotherapy approaches** — the best known is the **Schroth method** — which use tailored, curve-specific exercises, posture correction, and breathing techniques designed for the individual\'s particular curve. These should be taught and supervised by a physiotherapist **trained in scoliosis** (not generic exercises), and are used as part of an overall plan guided by the treating doctor. They can be valuable, especially for growing adolescents and for symptom management, but again work best as part of, not instead of, medical care.' },
+      { type: 'heading', text: 'Why "Curve-Specific" Matters' },
+      { type: 'paragraph', text: 'A key point: scoliosis exercises are **not one-size-fits-all**. The right exercises depend on the direction and location of *your* curve — the wrong generic routine can be unhelpful or even counterproductive. This is exactly why a proper assessment and a physiotherapist experienced in scoliosis matter, rather than following random online exercise videos.' },
+      { type: 'heading', text: 'General Activity Still Helps Too' },
+      { type: 'list', items: [
+        'Staying **active and fit** is good for the spine and overall health',
+        'Activities that build **core strength and flexibility** (like swimming, yoga, Pilates) are often enjoyable and helpful — with guidance appropriate to the curve',
+        'Keeping a **healthy weight** and good general posture supports the back',
+        'Regular movement also helps **mood and confidence**, which matter with scoliosis',
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Do it under guidance, not from a video', text: 'The single most useful advice: get your exercise programme from a **physiotherapist who has assessed your specific curve**, ideally one experienced in scoliosis. Personalised, curve-specific exercises done correctly are far more useful (and safer) than generic "scoliosis exercises" from the internet, which may not suit — or could aggravate — your particular curve.' },
+      { type: 'heading', text: 'It\'s Part of a Team Approach' },
+      { type: 'paragraph', text: 'The best outcomes come from **combining** approaches under your doctor\'s guidance: the orthopedic specialist monitors the curve and advises on bracing or surgery if needed, while the physiotherapist supports strength, mobility, breathing, posture, and comfort. Physiotherapy complements medical management — it doesn\'t replace the need to monitor and treat the curve itself. Keeping up both, consistently, gives the best results.' },
+      { type: 'heading', text: 'When to See a Doctor or Physiotherapist' },
+      { type: 'callout', variant: 'warning', title: 'Seek professional guidance', items: [
+        'Before starting scoliosis exercises — get a **proper assessment** so the programme fits your curve',
+        'If a curve is **worsening**, or you\'re a **growing child/teen** (timing matters most then)',
+        'For **pain, stiffness, or breathing** concerns',
+        'If you\'ve been offered "miracle cure" exercise programmes — check with your doctor first',
+      ]},
+      { type: 'paragraph', text: 'See a **physiotherapist** (ideally one experienced in scoliosis) for a tailored exercise programme, and keep up regular reviews with your **orthopedic specialist** to monitor the curve — the two work together. An **online consultation** is a good way to discuss your scoliosis, understand where physiotherapy fits for you, and be guided to the right in-person care and assessment. Physiotherapy is a genuinely valuable, empowering part of living well with scoliosis — with realistic expectations. (See our guides on scoliosis, physiotherapy and pain management, and protecting your spine.)' },
+      { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and physiotherapy sources (NHS, NIH). It does not replace an assessment by a doctor or a scoliosis-experienced physiotherapist, who tailor a programme to your specific curve; exercise alone does not cure a structural curve.' },
+    ]
   }
 ];

@@ -2850,5 +2850,14 @@ export const articleMeta = [
     "publishedDate": "2026-08-06",
     "readTime": "6 min",
     "image": "🧍"
+  },
+  {
+    "slug": "physiotherapy-exercises-for-scoliosis-guide",
+    "title": "Physiotherapy and Exercises for Scoliosis: What Really Helps",
+    "description": "Can exercises and physiotherapy help scoliosis? Honestly, yes — for strength, posture, breathing, and comfort, and as part of managing a curve. A clear guide to what physiotherapy can and can't do.",
+    "specialization": "Physiotherapist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🧘"
   }
 ];
