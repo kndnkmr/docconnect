@@ -2796,5 +2796,14 @@ export const articleMeta = [
     "publishedDate": "2026-08-06",
     "readTime": "6 min",
     "image": "👂"
+  },
+  {
+    "slug": "scoliosis-curved-spine-causes-treatment-guide",
+    "title": "Scoliosis: Understanding a Curved Spine and How It's Treated",
+    "description": "Scoliosis is a sideways curve of the spine, often noticed in growing children and teens. A clear guide to what causes it, how it's spotted, and the real treatment options — from watching to bracing to surgery.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🦴"
   }
 ];

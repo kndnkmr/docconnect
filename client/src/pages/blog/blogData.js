@@ -12820,5 +12820,63 @@ export const articles = [
       { type: 'paragraph', text: 'See a **doctor or ENT specialist** for recurring vertigo with ear symptoms and hearing changes — proper diagnosis helps, and management can reduce attacks. Get **sudden hearing loss** checked promptly, and treat vertigo with stroke-like neurological symptoms as an **emergency**. An **online consultation** is a good way to describe the pattern and be guided toward the right assessment (which may need in-person ear and hearing tests). Meniere\'s is manageable, and understanding it takes away some of the fear. (See our guides on vertigo/dizziness, tinnitus, and ear problems.)' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health sources (NHS, NIH). It does not replace an assessment by a doctor or ENT specialist, who diagnoses and manages Meniere\'s disease.' },
     ]
+  },
+  {
+    slug: 'scoliosis-curved-spine-causes-treatment-guide',
+    title: 'Scoliosis: Understanding a Curved Spine and How It\'s Treated',
+    description: 'Scoliosis is a sideways curve of the spine, often noticed in growing children and teens. A clear guide to what causes it, how it\'s spotted, and the real treatment options — from watching to bracing to surgery.',
+    specialization: 'Orthopedic',
+    publishedDate: '2026-08-06',
+    readTime: '7 min',
+    image: '🦴',
+    content: [
+      { type: 'intro', text: 'Scoliosis is a condition where the spine curves sideways instead of running straight down the back. It\'s most often noticed during the growth spurts of childhood and the teenage years, and understandably worries parents when they first spot it. The reassuring reality: many curves are mild and simply monitored, and there are well-established treatments for those that need them. This is a clear, plain-language guide to what scoliosis is, how it\'s spotted, and the real ways it\'s treated — with an honest look at what does and doesn\'t "fix" it.' },
+      { type: 'heading', text: 'What Is Scoliosis?' },
+      { type: 'paragraph', text: 'Scoliosis is a **sideways curvature of the spine** — often shaped like a "C" or "S" when seen from behind. It\'s different from the ordinary rounding of the upper back. The size of the curve is measured (in degrees, called the Cobb angle) on an X-ray, and that measurement largely guides how it\'s managed. Most commonly it appears in **children and adolescents** during growth, but it can also occur in adults (often from spinal ageing/degeneration).' },
+      { type: 'heading', text: 'What Causes It?' },
+      { type: 'list', items: [
+        '**Idiopathic** — by far the most common type, where no clear cause is found (especially in adolescents); it is NOT caused by heavy schoolbags, bad posture, or sleeping position, despite common myths',
+        '**Congenital** — the spine didn\'t form normally before birth',
+        '**Neuromuscular** — linked to conditions affecting nerves/muscles (e.g. cerebral palsy)',
+        '**Degenerative** — from wear-and-tear of the spine in older adults',
+      ]},
+      { type: 'callout', variant: 'tip', title: 'It\'s usually not caused by anything the child did', text: 'A common source of guilt and myth: scoliosis (the usual adolescent type) is **not** caused by heavy backpacks, poor posture, or how a child sits or sleeps. It most often has no identifiable cause. Knowing this spares families a lot of misplaced blame — and there\'s nothing a parent did wrong.' },
+      { type: 'heading', text: 'How It\'s Spotted' },
+      { type: 'list', items: [
+        '**Uneven shoulders** or shoulder blades (one sticking out more)',
+        'One **hip higher** than the other, or an uneven waist',
+        'The body **leaning** slightly to one side',
+        'When bending forward, one side of the back looks **higher** (a "rib hump")',
+        'Usually **not painful** in adolescents — which is why it\'s often noticed by sight rather than symptoms',
+      ]},
+      { type: 'paragraph', text: 'Because early scoliosis often causes no pain, it\'s frequently first spotted by a parent, at a school check, or by a doctor. A doctor confirms it with an examination and an **X-ray** to measure the curve.' },
+      { type: 'heading', text: 'How It\'s Treated — The Honest Picture' },
+      { type: 'paragraph', text: 'Treatment depends mainly on the **size of the curve**, the person\'s **age and remaining growth**, and whether the curve is worsening. The three established approaches are:' },
+      { type: 'table', headers: ['Approach', 'When it\'s used'], rows: [
+        ['Observation (monitoring)', 'Mild curves — regular check-ups/X-rays to watch for worsening, especially during growth'],
+        ['Bracing', 'Moderate curves in a still-growing child — a brace aims to STOP the curve worsening (not straighten it)'],
+        ['Surgery', 'Severe or rapidly worsening curves — to correct and stabilise the spine'],
+      ]},
+      { type: 'callout', variant: 'warning', title: 'An honest word on "fixing" scoliosis', text: 'Be cautious of anything (exercises, therapies, gadgets, or online programmes) promising to "cure" or fully straighten an established structural curve without medical treatment. A true structural curve is not reversed by exercise alone. Physiotherapy and specific exercises genuinely help with **strength, flexibility, posture, and comfort**, and are a valuable part of care — but for moderate/severe curves, the proven ways to stop progression or correct the spine are **bracing and surgery**, guided by a specialist. Beware unproven "miracle cure" claims.' },
+      { type: 'heading', text: 'Where Exercise and Physiotherapy Fit' },
+      { type: 'paragraph', text: 'Exercise and physiotherapy are helpful and often recommended alongside medical care — they build core and back **strength**, improve **flexibility and posture**, ease **discomfort**, and support overall spine health. Some specialised scoliosis-specific physiotherapy approaches exist and can be part of a plan under expert guidance. Staying active is good for the spine generally. Just approach it as **support and management**, not a standalone cure for a significant structural curve.' },
+      { type: 'heading', text: 'Living Well with Scoliosis' },
+      { type: 'list', items: [
+        'Keep up **regular monitoring** as advised, especially during a child\'s growth',
+        'Follow the **brace plan** consistently if one is prescribed — consistency is what makes it work',
+        'Stay **active** and keep the back/core strong',
+        'Look after **emotional wellbeing** — appearance concerns and bracing can affect a teenager\'s confidence; support matters',
+        'For adults, manage any **pain** and stay active with guidance',
+      ]},
+      { type: 'heading', text: 'When to See a Doctor' },
+      { type: 'callout', variant: 'warning', title: 'See a doctor if', items: [
+        'You notice **uneven shoulders, hips, or waist**, a leaning posture, or a rib hump on bending — especially in a growing child/teen',
+        'A known curve seems to be **worsening**',
+        'There is **back pain, numbness, weakness, or changes in the legs/bladder/bowel** (needs prompt assessment)',
+        'Scoliosis affects **breathing** (with a very large curve) — seek care',
+      ]},
+      { type: 'paragraph', text: 'See a **doctor or orthopedic specialist** if you spot the signs of scoliosis, particularly in a growing child, or if a known curve is changing — early assessment means milder options (monitoring or bracing) are more likely to work, before a curve becomes severe. An **online consultation** is a good first step to describe or show the concern and be guided toward an in-person examination and X-ray, which are needed to measure the curve and plan treatment. Most scoliosis is very manageable — the key is catching and monitoring it. (See our guides on back pain, neck/back pain and posture, and physiotherapy.)' },
+      { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and orthopedic sources (NHS, NIH). It does not replace an assessment by a doctor or orthopedic specialist, who diagnoses scoliosis (with an X-ray) and guides treatment.' },
+    ]
   }
 ];
