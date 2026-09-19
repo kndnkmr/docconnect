@@ -249,6 +249,30 @@ appointmentSchema.index({ doctor: 1, date: -1 });
 appointmentSchema.index({ doctor: 1, date: 1, timeSlot: 1 });
 // ^ Makes it fast to check "is this time slot already taken?"
 
+// ---- Prevent double-booking at the DATABASE level ----
+// The booking controller checks "is this slot free?" then creates the
+// appointment — but two patients booking the same slot at the same instant can
+// both pass that check and both get created (a race condition). This UNIQUE
+// index makes the database itself reject a second active booking for the same
+// doctor+date+timeSlot, closing the race for good: the second create fails and
+// the controller can report the slot as taken.
+//
+// It's a PARTIAL index (only enforced while status is not 'cancelled'), so a
+// cancelled slot can be re-booked normally.
+//
+// NOTE: this index only builds if there are no existing duplicate active
+// bookings in the data. If the build ever fails, Mongoose logs it and the app
+// keeps running (the application-level check still guards bookings); any real
+// duplicates would need cleaning up first. Safe to add.
+appointmentSchema.index(
+  { doctor: 1, date: 1, timeSlot: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: { $ne: 'cancelled' } },
+    name: 'unique_active_slot'
+  }
+);
+
 const Appointment = mongoose.model('Appointment', appointmentSchema);
 
 module.exports = Appointment;

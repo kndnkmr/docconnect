@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
 function ResetPassword() {
@@ -68,6 +69,7 @@ function ResetPassword() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <SEO title="Reset Password" description="Set a new password for your ProMedicoz account." path="/reset-password" noindex />
       <div className="w-full max-w-md">
 
         {/* Header */}

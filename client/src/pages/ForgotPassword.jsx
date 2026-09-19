@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
 function ForgotPassword() {
@@ -55,6 +56,7 @@ function ForgotPassword() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <SEO title="Forgot Password" description="Reset your ProMedicoz account password." path="/forgot-password" noindex />
       <div className="w-full max-w-md">
 
         {/* Header */}

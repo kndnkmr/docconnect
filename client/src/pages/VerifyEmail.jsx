@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../services/api';
+import SEO from '../components/SEO';
 
 function VerifyEmail() {
   const { token } = useParams();
@@ -23,6 +24,7 @@ function VerifyEmail() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <SEO title="Verify Email" description="Verify your ProMedicoz account email." path="/verify-email" noindex />
       <div className="max-w-md w-full text-center">
         {status === 'verifying' && (
           <>

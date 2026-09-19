@@ -114,10 +114,16 @@ const register = async (req, res) => {
       }
     }
 
-    // Step 4: Validate role
-    if (!['doctor', 'patient', 'admin'].includes(role)) {
+    // Step 4: Validate role.
+    // SECURITY: public registration may ONLY create a 'doctor' or 'patient'.
+    // 'admin' must never be self-assignable from this open, unauthenticated
+    // endpoint — otherwise anyone could POST { role: "admin" } and gain full
+    // admin access (delete/suspend users, etc.). Admin accounts are created
+    // only via the server-side bootstrap (ADMIN_EMAIL/ADMIN_PASSWORD env vars
+    // in server.js), never through this route.
+    if (!['doctor', 'patient'].includes(role)) {
       return res.status(400).json({
-        message: 'Role must be "doctor", "patient", or "admin"'
+        message: 'Role must be "doctor" or "patient"'
       });
     }
 

@@ -276,6 +276,7 @@ function Home() {
                   value={symptomSearch}
                   onChange={(e) => setSymptomSearch(e.target.value)}
                   placeholder={t.searchPlaceholder}
+                  aria-label={t.searchPlaceholder}
                   className="w-full pl-5 pr-28 py-3.5 rounded-full text-gray-800 text-sm sm:text-base outline-none focus:ring-4 focus:ring-white/30 shadow-lg"
                 />
                 <Link
@@ -455,7 +456,10 @@ function Home() {
             <div className="flex animate-scroll gap-6 px-4">
               {[...topReviews, ...topReviews].map((review, idx) => (
                 <div key={idx} className="min-w-[280px] max-w-[280px] bg-gray-50 border border-gray-100 rounded-xl p-4 flex-shrink-0">
-                  <div className="text-yellow-400 text-sm mb-2">{'⭐'.repeat(review.rating)}</div>
+                  {/* Clamp rating to a safe 0–5 integer — a bad/undefined value
+                      from the API would otherwise make String.repeat throw and
+                      crash the whole testimonials carousel. */}
+                  <div className="text-yellow-400 text-sm mb-2" aria-label={`${Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)))} out of 5 stars`}>{'⭐'.repeat(Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0))))}</div>
                   <p className="text-gray-700 text-sm line-clamp-3">"{review.comment}"</p>
                   <div className="mt-3 flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-800">{review.patient?.name}</span>

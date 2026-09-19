@@ -27,53 +27,46 @@ const protect = async (req, res, next) => {
   // "next" is a function that says "ok, move on to the next step"
   // If we DON'T call next(), the request stops here (blocked!)
 
-  let token;
+  // Step 1: Extract a Bearer token from the Authorization header.
+  // Rewritten as a single early-return flow so there is exactly ONE response
+  // on every path — the previous split-if structure could, for an odd header
+  // (e.g. "Bearer" with nothing after it, or a non-Bearer scheme), leave the
+  // request without a clear single response. This guarantees we always either
+  // call next() once or send exactly one error response.
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7).trim()   // everything after "Bearer "
+    : '';
 
-  // Step 1: Check if the Authorization header exists and starts with "Bearer"
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    try {
-      // Step 2: Extract the token (remove "Bearer " prefix)
-      // "Bearer abc123" → split by space → ["Bearer", "abc123"] → take index [1]
-      token = req.headers.authorization.split(' ')[1];
-
-      // Step 3: Verify the token
-      // jwt.verify() checks: is this token real? was it created with our secret key?
-      // If someone tampered with it, this will throw an error
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // "decoded" now contains the data we put inside the token when we created it
-      // (we'll put the user's ID in there — see authController.js)
-
-      // Step 4: Find the user in the database using the ID from the token
-      // .select('-password') means "give me everything EXCEPT the password"
-      // We don't need the password here, and it's safer not to pass it around
-      req.user = await User.findById(decoded.id).select('-password');
-
-      // Step 5: If user not found (maybe they deleted their account?)
-      if (!req.user) {
-        return res.status(401).json({
-          message: 'User no longer exists'
-        });
-      }
-
-      // Step 6: All good! Let the request continue to the actual route handler
-      next();
-
-    } catch (error) {
-      // Token verification failed (expired, tampered, or invalid)
-      console.error('Auth middleware error:', error.message);
-      return res.status(401).json({
-        message: 'Not authorized - invalid token'
-      });
-    }
-  }
-
-  // If no token was provided at all
+  // No (usable) token provided → not authorized.
   if (!token) {
     return res.status(401).json({
       message: 'Not authorized - no token provided'
+    });
+  }
+
+  try {
+    // Step 2: Verify the token (real? signed with our secret? not expired?).
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Step 3: Load the user (minus the password) and attach to the request.
+    req.user = await User.findById(decoded.id).select('-password');
+
+    // Step 4: If the user no longer exists (e.g. account deleted).
+    if (!req.user) {
+      return res.status(401).json({
+        message: 'User no longer exists'
+      });
+    }
+
+    // All good — continue to the route handler.
+    return next();
+
+  } catch (error) {
+    // Token verification failed (expired, tampered, or invalid).
+    console.error('Auth middleware error:', error.message);
+    return res.status(401).json({
+      message: 'Not authorized - invalid token'
     });
   }
 };

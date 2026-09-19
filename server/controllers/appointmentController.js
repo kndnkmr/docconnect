@@ -153,6 +153,14 @@ const bookAppointment = async (req, res) => {
     });
 
   } catch (error) {
+    // If two people booked the same slot at once, the unique index rejects the
+    // second create with a duplicate-key error (code 11000). Turn that into the
+    // same friendly "slot taken" message the pre-check uses, not a 500.
+    if (error && error.code === 11000) {
+      return res.status(400).json({
+        message: 'This time slot was just booked by someone else. Please choose another time.'
+      });
+    }
     console.error('Book appointment error:', error.message);
     res.status(500).json({
       message: 'Error booking appointment'

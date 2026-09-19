@@ -19,6 +19,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI, getUploadUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 
 // Any one of the medical info fields being set is enough to consider it
@@ -334,6 +335,7 @@ function BookAppointment() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO title="Book Appointment" description="Book your appointment on ProMedicoz." path="/book-appointment" noindex />
       <div className="flex items-center justify-between mb-6 max-w-2xl mx-auto">
         <Link to={`/doctors/${doctorId}`} className="text-primary-600 hover:underline inline-block">
           {t.back}

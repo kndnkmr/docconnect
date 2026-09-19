@@ -25,10 +25,29 @@ const path = require('path');
 
 const cors = require('cors');
 const dotenv = require('dotenv');
+const helmet = require('helmet');
+// helmet sets sensible security-related HTTP response headers (e.g.
+// X-Content-Type-Options, HSTS, X-Frame-Options) — a standard baseline for
+// any public web server.
+const rateLimit = require('express-rate-limit');
 
 // ---- STEP 2: Load environment variables ----
 // This reads the .env file and makes its values available via process.env
 dotenv.config();
+
+// ---- Process-level safety net ----
+// Several places fire off "best effort" async work (email/push notifications)
+// without awaiting it. If one of those rejects with no local catch, Node can
+// treat it as an unhandled rejection and, on modern versions, crash the whole
+// server. These handlers log the problem instead of letting a stray background
+// rejection take the process down. We deliberately do NOT exit — a failed
+// notification should never bring the API down for everyone.
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason && reason.message ? reason.message : reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err && err.message ? err.message : err);
+});
 
 // ---- STEP 3: Create the Express app ----
 const app = express();
@@ -38,6 +57,26 @@ app.set('trust proxy', 1);
 
 // ---- STEP 4: Set up middleware ----
 // Middleware = functions that run on EVERY request before reaching routes
+
+// Security headers. crossOriginResourcePolicy is relaxed because this API
+// serves uploaded images from /uploads that the frontend (a different origin
+// on Vercel) needs to load; the strict default would block them.
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
+// Global rate limit — a safety net against abuse/scraping on EVERY endpoint.
+// Auth routes already have their own stricter limiter (see routes/auth.js);
+// this is a generous ceiling for normal browsing so it won't affect real
+// users, while stopping runaway scripted traffic. Health check is exempt so
+// uptime pings/monitors don't get throttled.
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 600,                 // ~40 requests/min per IP — ample for real use
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests. Please slow down and try again shortly.' },
+  skip: (req) => req.path === '/api/health'
+});
+app.use(globalLimiter);
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
