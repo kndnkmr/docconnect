@@ -500,6 +500,17 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// ---- Indexes ----
+// The public doctor listing (GET /api/doctors) filters by
+// { role: 'doctor', isVerified, isDeleted, isSuspended } on EVERY page load,
+// and often also by specialization. Without an index, MongoDB scans every user
+// document (patients included) on each request — which is the main reason the
+// doctors page was slow, and it gets worse as the user base grows.
+// This compound index lets that query use an index lookup instead of a full
+// collection scan. `role` leads because it splits doctors from everyone else;
+// specialization is included because it's the most common extra filter.
+userSchema.index({ role: 1, specialization: 1 });
+
 // ---- Create and Export the Model ----
 // mongoose.model('User', userSchema) creates a "User" collection in MongoDB
 // A collection is like a table in a spreadsheet — it holds all user documents
