@@ -1163,10 +1163,12 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   `intro`, `heading`, `paragraph`, `list` (`{items:[]}`), `callout`
   (`{variant:'tip'|'warning'|'success'|'info', title?, text?, items?}`), `table`
   (`{headers:[], rows:[[]]}`), and `steps` (`{items:[]}`), plus inline
-  `**bold**` via `renderInline()`. All 63 articles use these so reads are
+  `**bold**` via `renderInline()`. All 320+ articles use these so reads are
   scannable (tables/callouts/step-lists), not walls of text; adding a new block
   type means extending the renderer's switch, and old `{type,text}` blocks still
-  render (backward-compatible). Grew to ~25 articles across three kinds:
+  render (backward-compatible). `renderInline()` also auto-links key topic
+  phrases to their article (internal linking, see `linkMap.js`). Grew to 320+
+  articles across many kinds:
   per-specialty "when to see a [specialist]", symptom/question explainers
   (frequent-headaches, fever-home-care, is-online-consultation-safe, silent-
   signs-high-blood-sugar, always-tired, high-bp, stop-googling-symptoms), and
@@ -1190,10 +1192,24 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
   `specialization` values (so they stay in sync as articles are added). Topic +
   search combine; the no-results state resets both.
 - **Per-article engagement (`BlogArticle.jsx`):** share buttons (WhatsApp/
-  Facebook/native/copy) to grow reach, and a private "Was this helpful?" 👍/👎
-  stored in localStorage only (no backend, no public counter). We deliberately
-  do NOT have public likes/comments — on a health blog they invite spam and
-  medical misinformation, and an empty counter at low traffic hurts trust.
+  Facebook/native/copy) to grow reach, a "👁 reads" badge, and a ❤️ "like"
+  button backed by our own DB (`/api/blog-views`, `BlogView` model). Each
+  browser can toggle its own like; the number shown is the aggregate, and view
+  counts + likes power the "🔥 Most Read" and "❤️ Most Loved" lists on the blog
+  list page. There is deliberately NO "dislike" and NO open comments — on a
+  health blog those invite spam and medical misinformation. Views are recorded
+  once per browser per article (throttled ~4h) so a refresh doesn't inflate the
+  count.
+- **Blog data split for performance:** `blogData.js` holds full article bodies;
+  a build step (`scripts/gen-blog-meta.mjs`, run via `prebuild`) generates a
+  lightweight `blogMeta.js` (metadata only). `BlogList` and the homepage
+  daily-tip import `blogMeta` (small); `BlogArticle` imports `blogData` (full
+  content) — so opening the blog list no longer downloads every article's text.
+- **Build-time prerendering (`scripts/prerender.mjs`, run via `postbuild`):**
+  writes a static HTML file per public route with correct per-page
+  title/description/canonical/OG baked in, so crawlers/social scrapers see the
+  right tags without running JS (a client-only SPA otherwise serves the same
+  generic homepage tags on every route).
 - The floating WhatsApp button is hidden on `/blog` and `/blog/<slug>` (see
   `WhatsAppButton.jsx`) so it doesn't distract readers or get mis-tapped.
 

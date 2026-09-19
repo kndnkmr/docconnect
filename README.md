@@ -10,6 +10,20 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 ---
 
+## Recent Updates
+
+Notable improvements layered on since the core build:
+
+- **Blog scaled to 320+ articles** — comprehensive coverage of conditions, symptoms, first aid, life stages, tests/procedures, lifestyle, public health, and everyday "why does this happen?" explainers. Internal auto-linking connects related articles.
+- **Blog performance split** — `blogMeta.js` (light metadata) is generated from `blogData.js` at build time so the blog LIST page no longer downloads every article's full text; article bodies load only when an article is opened.
+- **Blog view/like counter** — per-article read counts + ❤️ likes stored in our own DB (`BlogView` model, `/api/blog-views`), surfaced as "Most Read"/"Most Loved" and per-article badges.
+- **SEO: build-time prerendering** — `scripts/prerender.mjs` bakes correct per-route title/description/canonical/OG into static HTML for every public page (crawlers no longer see generic homepage tags on every route). Auth/utility pages get an `X-Robots-Tag: noindex` header.
+- **Security hardening** — `helmet`, global rate limiting, `express-mongo-sanitize` (NoSQL-injection protection), public registration can't self-assign `admin`, `protect` middleware tightened, upload filenames sanitized.
+- **Reliability** — process-level unhandledRejection/uncaughtException handlers; a partial UNIQUE index on Appointment(doctor, date, timeSlot) prevents double-booking races at the DB level.
+- **Performance** — a `User { role, specialization }` index speeds up the doctor listing; doctor-list loading skeletons for better perceived speed.
+
+---
+
 ## Table of Contents
 
 1. [Features](#features)
@@ -47,7 +61,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Show/hide password toggle on login and registration pages (crisp SVG icon, not emoji — renders consistently across platforms)
 - Login/Register UX polish: autocomplete attributes (password manager support), autofocus on first field, numeric keypad + 10-digit cap for phone input, loading spinner on submit (the brand logo shows once in the navbar, not repeated on the auth card, to avoid a duplicate-logo look)
 - JWT token authentication (login persists across sessions)
-- Rate limiting on auth endpoints (prevents brute force attacks)
+- Security hardening: `helmet` security headers (HSTS, nosniff, X-Frame-Options), a stricter rate limiter on auth endpoints plus a generous global rate limiter on all routes (prevents brute force + abuse/scraping), and `express-mongo-sanitize` to strip `$`/`.` operators from request data (blocks NoSQL operator injection). Public registration cannot self-assign the `admin` role (admins are created only via the server bootstrap)
 - Password reset with secure token — works via email OR phone (patients can register with phone only); phone-only accounts with no email on file are guided to WhatsApp support, and admin can generate/relay a reset link manually as an account-recovery assist
 - Doctor profile management with photo upload
 - Phone number and WhatsApp contact for doctors — a "Message on WhatsApp" button appears on the doctor's public profile once they've set a WhatsApp number in Edit Profile; UPI ID can also be set there as a text fallback next to the payment QR code, for when a patient can't scan it
@@ -71,7 +85,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Patient medical information (optional): blood group, allergies, current medications, medical history, emergency contact, and insurance details — set once in Account Settings, shown automatically to the doctor on every appointment (allergies always visible, the rest behind an expander) instead of being asked every visit; also surfaced as a reminder on the booking form itself
 - Structured symptom tags on the booking form (Fever, Cough, Headache, etc.) — an optional, fast-glance supplement to the free-text "Reason for Visit"
 - Floating WhatsApp emergency button (configurable via env var) — shown to guests only; hidden once a user logs in (they already have in-app chat/booking/footer support) and on blog pages (a reader focused on an article doesn't need it, and it avoids accidental taps while scrolling)
-- Health blog with discovery built in: an instant client-side search box (by symptom/keyword, e.g. "toothache"), broad category filter chips (Heart & BP, Women's Health, Mental Health, Digestion, Kids, etc. — each grouping one or more specialties, so 60+ articles feel browsable), a hand-picked "Start Here" strip for first-time visitors (shown only on the default unfiltered view), newest-first ordering, smarter related-article suggestions on each article (same-specialty first, then recent), per-article share buttons (WhatsApp/Facebook/native/copy) and a private "Was this helpful?" 👍/👎 (local-only, no public counter — deliberately no open comments/likes to avoid spam + medical-misinformation risk on a health blog). 63 original SEO articles — each written in a rich, scannable format (short intro, headings, tables, tip/warning/success callouts, step lists, and bold key terms rendered by a shared article renderer, not walls of plain text) — spanning "when to see a [specialist]", symptom/question explainers (frequent headaches, fever care, migraine, UTI, acidity, PCOS, cholesterol, piles, kidney stones, hair fall, knee pain, thyroid, etc.), and responsibly-framed wellness/traditional-habit pieces (gut health, sleep, immunity, ancient Indian wellness) — all framed as lifestyle support, never as cures, always pointing to a doctor
+- Health blog with discovery built in: an instant client-side search box (by symptom/keyword, e.g. "toothache"), broad category filter chips (Heart & BP, Women's Health, Mental Health, Digestion, Kids, etc. — each grouping one or more specialties, so the large library feels browsable), a hand-picked "Start Here" strip for first-time visitors, plus real-data "🔥 Most Read" and "❤️ Most Loved" sections and a per-article "👁 reads" badge (driven by view/like counts stored in our own DB — see the blog-views API below), newest-first ordering, smarter related-article suggestions on each article (same-specialty first, then recent), automatic internal linking between related articles, per-article share buttons (WhatsApp/Facebook/native/copy), and a ❤️ "like" (backed by our DB, no dislike — deliberately no open comments to avoid spam + medical-misinformation risk on a health blog). **320+ original SEO articles** — each written in a rich, scannable format (short intro, headings, tables, tip/warning/success callouts, step lists, and bold key terms rendered by a shared article renderer, not walls of plain text) — spanning "when to see a [specialist]", symptom/question explainers (frequent headaches, fever care, migraine, UTI, acidity, PCOS, cholesterol, piles, kidney stones, hair fall, knee pain, thyroid, etc.), named conditions (diabetes, TB, hepatitis, HIV, Parkinson's, epilepsy, glaucoma, scoliosis, and many more), everyday "why does my body do this?" explainers, lifestyle/daily-routine guides, first aid, and responsibly-framed wellness pieces — all framed as lifestyle support/awareness, never as cures, always pointing to a doctor
+- Blog data is split for performance: a build step (`scripts/gen-blog-meta.mjs`) generates a lightweight `blogMeta.js` (titles/descriptions only, no article bodies) from `blogData.js`, so the blog LIST page and homepage daily-tip load only the light metadata while the full article content downloads only when a specific article is opened
+- Blog view & like counter: a public `/api/blog-views` API (backed by a `BlogView` model) records per-article read counts and ❤️ likes in our own database (independent of Google Analytics), shown on articles and powering the "Most Read"/"Most Loved" lists
 - Health Tip of the Day on the Home page: one article, rotating daily (deterministic by date — same for everyone on a given day, changes each day), linking to the full read — a gentle reason for casual visitors to come back. Bilingual UI labels; the article title/description stay English (medical content is never machine-translated)
 - Email notifications: doctor notified on new booking, patient notified on confirmation (via Resend)
 - In-app notification banner: doctor sees pending appointment count on Dashboard
@@ -96,7 +112,7 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 - Free phone-reach without a paid SMS/WhatsApp API: Web Push delivers booking/confirmation/message/call alerts to phones automatically (a prominent, benefit-driven enable prompt drives opt-in), and doctors get an optional one-tap "message on WhatsApp" button on a confirmed appointment (opens WhatsApp with a pre-filled note; the doctor sends it — the appointment is already confirmed in-app)
 - Doctor names are cleaned for display everywhere (strips a doctor-typed "Dr"/"Dr." prefix and title-cases the name, so "Dr akash verma" shows as "Dr. Akash Verma") — display only; the stored name is unchanged
 - Auto-update PWA: service worker serves HTML network-first and auto-refreshes to the latest version on each deploy (no manual cache clearing needed), with an "Updating to the latest version…" toast
-- SEO optimized: unique page titles, meta descriptions, Open Graph tags per page
+- SEO optimized: unique page titles, meta descriptions, Open Graph tags per page (via react-helmet-async at runtime), PLUS build-time prerendering — a post-build script (`scripts/prerender.mjs`) writes a static HTML file per public route (home, blog list, every article, specialization pages, static pages) with the correct title/description/canonical/OG baked into the raw HTML. This is critical for a client-only SPA: it means crawlers and social scrapers see the correct per-page tags immediately without running JavaScript (previously every route served the same generic homepage tags in raw HTML). Auth/utility pages are excluded and instead served an `X-Robots-Tag: noindex` header (via vercel.json)
 - Structured data (Schema.org): MedicalBusiness, Physician, FAQPage schemas
 - 10 dedicated specialization landing pages with FAQs (targets long-tail keywords)
 - Homepage FAQ section with expandable questions and structured data
@@ -595,6 +611,14 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/push/public-key | Public | VAPID public key (needed before subscribing) |
 | POST | /api/push/subscribe | Protected | Save a browser push subscription for the logged-in user |
 | POST | /api/push/unsubscribe | Protected | Remove a browser push subscription |
+
+### Blog Views & Likes (public)
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | /api/blog-views | Public | Read counts + likes for all articles (as { slug: n } maps) — powers "Most Read"/"Most Loved" |
+| GET | /api/blog-views/:slug | Public | Current read count + likes for one article |
+| POST | /api/blog-views/:slug | Public | Record one view; returns the new count (frontend throttles to once per browser per ~4h) |
+| POST | /api/blog-views/:slug/like | Public | Like/unlike one article — body { liked: true\|false } |
 
 ---
 
