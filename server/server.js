@@ -30,6 +30,10 @@ const helmet = require('helmet');
 // X-Content-Type-Options, HSTS, X-Frame-Options) — a standard baseline for
 // any public web server.
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+// mongoSanitize strips any keys containing "$" or "." from request data, so a
+// crafted payload like { "email": { "$gt": "" } } can't be turned into a
+// MongoDB operator query (NoSQL injection). It runs after the body parsers.
 
 // ---- STEP 2: Load environment variables ----
 // This reads the .env file and makes its values available via process.env
@@ -88,6 +92,11 @@ app.use(cors({
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Strip MongoDB operators ($, .) from all incoming request data (body, query,
+// params) to prevent NoSQL operator injection. Runs after the parsers so the
+// data is populated. `replaceWith: '_'` keeps the key but neutralises it.
+app.use(mongoSanitize({ replaceWith: '_' }));
 
 // Serve uploaded files as static assets
 // This means: if someone requests /uploads/photo.jpg,

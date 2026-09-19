@@ -235,6 +235,15 @@ const login = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
 
+    // Step 0: Type-guard the inputs. Credentials must be plain strings — this
+    // stops a crafted object (e.g. { "$gt": "" }) from ever reaching a Mongo
+    // query as an operator, even independently of the global sanitizer.
+    if ((email && typeof email !== 'string') ||
+        (phone && typeof phone !== 'string') ||
+        (password && typeof password !== 'string')) {
+      return res.status(400).json({ message: 'Invalid credentials format' });
+    }
+
     // Step 1: Validate input — need either email or phone + password
     if ((!email && !phone) || !password) {
       return res.status(400).json({

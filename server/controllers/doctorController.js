@@ -550,7 +550,10 @@ const updateDoctorProfile = async (req, res) => {
     console.error('Update doctor profile error:', error.message);
     res.status(500).json({
       message: 'Error updating profile',
-      error: process.env.NODE_ENV !== 'production' ? error.message : undefined
+      // Only expose internal error details in explicit development — matches
+      // the global error handler. The previous "!== 'production'" check leaked
+      // details whenever NODE_ENV was unset (e.g. staging), which is unsafe.
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

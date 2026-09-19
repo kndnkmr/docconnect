@@ -27,13 +27,32 @@ if (!fs.existsSync(uploadsDir)) {
 // ---- Memory storage for base64 conversion (profile photos, QR codes) ----
 const memoryStorage = multer.memoryStorage();
 
+// Map an accepted MIME type to a safe file extension. We derive the stored
+// filename's extension from the (validated) MIME type rather than trusting the
+// user-supplied original filename — so a crafted originalname can't inject an
+// unexpected/dangerous extension or path characters into the stored file.
+const MIME_TO_EXT = {
+  'image/jpeg': '.jpg', 'image/jpg': '.jpg', 'image/png': '.png',
+  'image/gif': '.gif', 'image/webp': '.webp',
+  'image/heic': '.heic', 'image/heif': '.heif',
+  'application/pdf': '.pdf'
+};
+
 // ---- Disk storage for larger files (reports, documents) ----
 const diskStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadsDir);
   },
   filename: function (req, file, cb) {
-    const uniqueName = `${req.user._id}-${Date.now()}${path.extname(file.originalname)}`;
+    // Prefer a safe extension derived from the validated MIME type. Fall back
+    // to the original extension but strip anything that isn't a simple
+    // alphanumeric ext (defence against names like "..%2f" or "x.php.jpg").
+    let ext = MIME_TO_EXT[file.mimetype];
+    if (!ext) {
+      const raw = path.extname(file.originalname || '').toLowerCase();
+      ext = /^\.[a-z0-9]{1,5}$/.test(raw) ? raw : '';
+    }
+    const uniqueName = `${req.user._id}-${Date.now()}${ext}`;
     cb(null, uniqueName);
   }
 });

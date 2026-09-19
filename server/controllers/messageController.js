@@ -51,7 +51,10 @@ const sendMessage = async (req, res) => {
     if (isPatient) {
       const User = require('../models/User');
       const doctor = await User.findById(appointment.doctor);
-      if (doctor.blockedPatients && doctor.blockedPatients.includes(req.user._id.toString())) {
+      // Guard against a deleted doctor account (doctor could be null) — the
+      // optional chaining stops a null-deref crash and safely treats "no
+      // doctor record" as "not blocked".
+      if (doctor?.blockedPatients?.includes(req.user._id.toString())) {
         return res.status(403).json({ message: 'You are blocked from messaging this doctor' });
       }
     }
