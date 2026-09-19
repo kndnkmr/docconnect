@@ -2805,5 +2805,50 @@ export const articleMeta = [
     "publishedDate": "2026-08-06",
     "readTime": "7 min",
     "image": "🦴"
+  },
+  {
+    "slug": "slipped-herniated-disc-symptoms-relief-guide",
+    "title": "Slipped (Herniated) Disc: Why It Happens and How to Recover",
+    "description": "A \"slipped disc\" can cause back pain and nerve symptoms like sciatica — but most people recover without surgery. A clear guide to what a herniated disc is, the symptoms, and how it's treated.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🦴"
+  },
+  {
+    "slug": "kyphosis-rounded-upper-back-hunchback-guide",
+    "title": "Kyphosis: Understanding a Rounded or Hunched Upper Back",
+    "description": "Kyphosis is an excessive forward rounding of the upper back — from posture habits in the young to bone changes in older age. A clear guide to the types, causes, and how it's managed.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🧍"
+  },
+  {
+    "slug": "cervical-spondylosis-neck-arthritis-guide",
+    "title": "Cervical Spondylosis: Neck Pain and Stiffness From Wear and Tear",
+    "description": "Cervical spondylosis is age-related wear of the neck spine — very common, and increasingly seen earlier with phone and desk use. A clear guide to the symptoms, relief, and when neck pain needs a doctor.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🦴"
+  },
+  {
+    "slug": "ankylosing-spondylitis-inflammatory-back-pain-guide",
+    "title": "Ankylosing Spondylitis: The Back Pain That's Often Missed",
+    "description": "Ankylosing spondylitis is an inflammatory arthritis of the spine — often mistaken for ordinary back pain and diagnosed late, especially in young men. A clear guide to the tell-tale signs and why early care matters.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🦴"
+  },
+  {
+    "slug": "protect-your-spine-back-care-posture-guide",
+    "title": "Protecting Your Spine: Everyday Back Care and Good Posture",
+    "description": "Your spine carries you through life — and a few simple daily habits protect it from pain and problems. A practical guide to good posture, safe lifting, and keeping your back healthy at any age.",
+    "specialization": "Orthopedic",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🧍"
   }
 ];
