@@ -384,9 +384,26 @@ function DoctorList() {
 
       {/* ---- Results ---- */}
       {loading ? (
-        // Loading state
-        <div className="text-center py-12">
-          <div className="text-lg text-gray-600">{t.loading}</div>
+        // Loading state — skeleton cards that mirror the real doctor-card grid.
+        // Showing greyed placeholder shapes (instead of a "Loading..." line)
+        // makes the wait feel faster and avoids a jarring empty screen while
+        // the doctors load from the API.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-hidden="true">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-xl shadow-md p-5 flex gap-4 items-start animate-pulse">
+              <div className="w-20 h-20 rounded-full bg-gray-200 flex-shrink-0" />
+              <div className="flex-1 min-w-0 space-y-2.5">
+                <div className="h-4 bg-gray-200 rounded w-2/3" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <div className="h-3 bg-gray-200 rounded w-1/3" />
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="flex gap-2 pt-1">
+                  <div className="h-5 bg-gray-100 rounded w-16" />
+                  <div className="h-5 bg-gray-100 rounded w-16" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : doctors.length === 0 ? (
         // No results — make it specific to what they searched for, capture

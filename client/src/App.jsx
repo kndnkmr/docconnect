@@ -43,10 +43,12 @@ import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import SpecializationPage from './pages/SpecializationPage';
 import VerifyEmail from './pages/VerifyEmail';
-// Blog pages are lazy-loaded: they (and the ~210 KB of article content in
-// blogData.js) split into their own chunk that only downloads when a visitor
-// actually opens /blog or an article — so the rest of the app stays lean no
-// matter how many articles we add.
+// Blog pages are lazy-loaded so they only download when a visitor opens /blog.
+// Data is also split for weight: the LIST page (BlogList) loads only the light
+// article metadata (blogMeta.js), while the heavy full article content
+// (blogData.js) is bundled with the ARTICLE page (BlogArticle) and only
+// downloads when someone actually opens an article — so browsing the blog list
+// stays lightweight no matter how many articles we add.
 const BlogList = lazy(() => import('./pages/blog/BlogList'));
 const BlogArticle = lazy(() => import('./pages/blog/BlogArticle'));
 import TermsAndConditions from './pages/TermsAndConditions';

@@ -135,7 +135,9 @@ function Home() {
 
   useEffect(() => {
     let cancelled = false;
-    import('./blog/blogData').then(({ articles }) => {
+    // Load only the lightweight article metadata (not the full article bodies)
+    // for the daily-tip card — it just needs slug/title/description/image.
+    import('./blog/blogMeta').then(({ articleMeta: articles }) => {
       if (cancelled || !articles || !articles.length) return;
       const now = new Date();
       const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);

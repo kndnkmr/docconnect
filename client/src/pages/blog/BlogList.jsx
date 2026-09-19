@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
-import { articles } from './blogData';
+// Use the lightweight, auto-generated metadata (titles/descriptions only, no
+// article bodies) so the blog LIST page doesn't download every article's full
+// text. blogMeta.js is generated from blogData.js at build time — same data,
+// just without the heavy `content`. The article PAGE still uses blogData.
+import { articleMeta as articles } from './blogMeta';
 import { blogViewAPI } from '../../services/api';
 
 // Format a read count compactly: 1240 -> "1.2k", 980 -> "980".

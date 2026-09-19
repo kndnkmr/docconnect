@@ -1557,7 +1557,7 @@ function Dashboard() {
                       )}
                       {/* Block patient — doctor only */}
                       {isDoctor && apt.patient && (
-                        <button onClick={async () => { try { await (await import('../services/api')).messageAPI.blockPatient(apt.patient._id || apt.patient); toast.success('Patient blocked'); } catch(e) { toast.error('Failed to block'); } }} className="px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs hover:bg-red-50">Block</button>
+                        <button onClick={async () => { try { await messageAPI.blockPatient(apt.patient._id || apt.patient); toast.success('Patient blocked'); } catch(e) { toast.error('Failed to block'); } }} className="px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs hover:bg-red-50">Block</button>
                       )}
                     </div>
                   </div>

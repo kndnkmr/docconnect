@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "gen:blog-meta": "node scripts/gen-blog-meta.mjs",
+    "prebuild": "node scripts/gen-blog-meta.mjs",
     "build": "vite build",
     "postbuild": "node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
