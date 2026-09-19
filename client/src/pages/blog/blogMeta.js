@@ -2859,5 +2859,59 @@ export const articleMeta = [
     "publishedDate": "2026-08-06",
     "readTime": "7 min",
     "image": "🧘"
+  },
+  {
+    "slug": "gastritis-stomach-inflammation-causes-relief-guide",
+    "title": "Gastritis: When Your Stomach Lining Is Inflamed",
+    "description": "Burning stomach pain, nausea, and bloating after meals could be gastritis — inflammation of the stomach lining. A clear guide to the causes, relief, and when stomach symptoms need a doctor.",
+    "specialization": "Gastroenterologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🔥"
+  },
+  {
+    "slug": "melasma-dark-spots-pigmentation-skin-guide",
+    "title": "Melasma and Dark Spots: Understanding Skin Pigmentation",
+    "description": "Brown patches on the face, dark spots, or uneven skin tone — pigmentation problems like melasma are very common, especially in Indian skin. A clear guide to why they happen and what actually helps.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🧴"
+  },
+  {
+    "slug": "breast-lump-breast-pain-when-to-worry-guide",
+    "title": "Breast Lump or Breast Pain: When to Worry",
+    "description": "Found a breast lump or have breast pain? Most breast changes are NOT cancer — but any new lump should always be checked. A clear, reassuring guide to breast changes and when to see a doctor.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🎗️"
+  },
+  {
+    "slug": "bedwetting-in-children-causes-help-guide",
+    "title": "Bedwetting in Children: Why It Happens and How to Help",
+    "description": "Bedwetting is common, rarely a cause for worry, and almost never the child's fault. A calm, supportive guide for parents on why it happens, what helps, and when to see a doctor.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🛏️"
+  },
+  {
+    "slug": "sleep-paralysis-why-it-happens-guide",
+    "title": "Sleep Paralysis: Why You Wake Up Unable to Move",
+    "description": "Waking up briefly unable to move or speak — sometimes with a sense of dread — is sleep paralysis. It's frightening but harmless. A clear guide to why it happens and how to reduce it.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "5 min",
+    "image": "😰"
+  },
+  {
+    "slug": "child-growth-height-concerns-parents-guide",
+    "title": "Is My Child Growing Normally? Height and Growth Concerns",
+    "description": "Worried your child is shorter than their peers, or not growing well? A calm, practical guide for parents on how children grow, what's normal, the signs worth checking, and when to see a doctor.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "📏"
   }
 ];
