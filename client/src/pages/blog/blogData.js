@@ -1467,6 +1467,42 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If your periods are irregular, if the signs above sound familiar, or if you are planning a pregnancy, this is worth a proper conversation — not another anxious late-night search. A gynaecologist can confirm PCOS with a few simple tests and, just as importantly, build a plan around what matters most to you, whether that is regular cycles, clearer skin, or starting a family. There is nothing embarrassing here, and an online consultation is a comfortable, private first step. The kindest thing you can do is stop guessing and start getting real answers.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Agar aapke periods kabhi samay par nahi aate, agar acne aapke teenage ke bahut baad aaya, ya wajan aapki har koshish ke baad bhi badhta ja raha hai — to aap sust (lazy) nahi hain, aur akeli nahi hain. India mein laakhon auraton ke liye, is sab ke peeche ki chupchaap wajah PCOS hai. Yeh hamare samay ki sabse common hormonal conditions mein se ek hai, aur sabse zyada galat samjhi jaane wali bhi. Yeh ek shaant, sachchi baat hai ki yeh asal mein kya hai, kyun hota hai, aur woh bahut real cheezein jo help karti hain.' },
+      { type: 'heading', text: 'PCOS Asal Mein Kya Hai (Saral Bhaasha Mein)' },
+      { type: 'paragraph', text: 'PCOS ka matlab hai Polycystic Ovary Syndrome — rozana ki baat-cheet mein ise aksar PCOD kaha jaata hai. Is daraawne naam ke peeche ek kaafi simple baat hai: hormones ka woh naazuk balance jo aapka monthly cycle chalata hai, gadbad ho jaata hai. Body thode zyada male-type hormones bana sakti hai (jo har aurat mein thodi maatra mein hote hain), aur ovaries utni regularly egg release nahi karti jitni karni chahiye.\n\nYeh kya NAHI hai: yeh koi cheez nahi jo aapko "lag" gayi, na aapne khud ise laaya, aur na yeh umar-bhar ki saza hai. PCOS wali auratein har roz padhti, kaam karti, ghoomti, shaadi karti, aur bachche paati hain. Ise ek bimaari se zyada ek signal samjhein — aapka body thodi zyada dhyaan aur care maang raha hai.' },
+      { type: 'heading', text: 'Sanket — Aur Yeh Kyun Hote Hain' },
+      { type: 'paragraph', text: 'PCOS ke kai chehre hain, isiliye yeh itni baar miss hota hai. Aap mein inme se kuch ho sakte hain, kai, ya kisi saheli se bilkul alag mix jise bhi PCOS hai:' },
+      { type: 'list', items: [
+        'Irregular, chhoote hue, ya asaadhaaran roop se zyada periods — classic sanket',
+        'Wajan badhna, khaaskar pet ke aaspaas, jo aapki aam koshishon se nahi ghatta',
+        'Acne ya oily skin, aksar jaw aur thodi par',
+        'Chehre, thodi, ya body par extra baal (hirsutism)',
+        'Scalp par patle hote baal',
+        'Gardan ya bagal par kaali, velvety skin patches',
+        'Bachche ki koshish karte samay conceive karne mein dikkat'
+      ]},
+      { type: 'paragraph', text: 'Yeh bikhre hue lagte hain kyunki hormones lagbhag har cheez ko chhoote hain — skin, baal, mood, bhookh, aur cycles ek saath. Agar yeh kai alag-alag problems jaisa padhta hai, to yahi baat hai: inki **ek hi jad (root cause)** ho sakti hai.' },
+      { type: 'callout', variant: 'info', title: 'Ise gambhirta se lena kyun zaroori hai', text: 'Kyunki PCOS ka sambandh is se hai ki aapka body insulin aur sugar ko kaise handle karta hai, bina manage kiye yeh diabetes, high BP, aur cholesterol ki problem ka long-term khatra badha sakta hai. Achhi baat: **wahi rozana ki aadatein** jo un khatron ko kam karti hain, wahi aaj PCOS ko bhi aasaan karti hain — ek cheez manage karo, kai faayde.' },
+      { type: 'heading', text: 'Kya Sach Mein Help Karta Hai (Chamatkaari Ilaaj Nahi)' },
+      { type: 'paragraph', text: 'Woh sachchi baat jo reels aur "detox" bechne wale nahi batayenge: koi **jaadui chai, koi secret beej, koi raat-o-raat fix nahi** hai. Jo sach mein fark laata hai woh zyada shaant aur kahin zyada powerful hai:' },
+      { type: 'list', items: [
+        'Zyadatar dinon body ko chalayein — brisk walks bhi ginti hain, mehnga gym zaroori nahi',
+        'Asli, balanced meals khayein; sugary, ultra-processed khaana kam karein',
+        'Apni neend bachayein — kharab neend unhi hormones ko bigaadti hai',
+        'Stress manage karein — yahaan yeh treatment ka hissa hai, luxury nahi',
+        'Crash diets ke bajaye steady changes — thoda, tikau wajan kam hona bhi periods wapas la sakta hai aur fertility behtar kar sakta hai'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Apne saath naram rahein. PCOS pehle se wajan ghatana mushkil kar deta hai, isliye guilt aur extreme diets ulta padte hain. **Dheera aur dayalu, tez aur harsh se behtar hai**, har baar.' },
+      { type: 'heading', text: 'Kuch Myths Todte Hue' },
+      { type: 'list', items: [
+        '**"PCOS ka matlab main kabhi maa nahi ban sakti."** Galat — PCOS wali kai auratein conceive karti hain, naturally ya thodi madad se.',
+        '**"Sirf motapey wali auraton ko PCOS hota hai."** Galat — patli auraton ko bhi hota hai.',
+        '**"Periods aa gaye to main theek ho gayi."** Symptoms kaafi behtar ho sakte hain, par PCOS aksar aisi cheez hai jispar aap saalon tak nazar rakhte hain.'
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar aapke periods irregular hain, agar upar ke sanket jaane-pehchaane lagein, ya aap pregnancy plan kar rahi hain, to yeh ek theek baat-cheet layak hai — ek aur pareshaan raat ki search nahi. Gynaecologist kuch simple tests se PCOS confirm kar sakte hain aur, utna hi zaroori, aapke liye jo sabse maayne rakhta hai uske aaspaas plan bana sakte hain — chaahe woh regular cycles ho, saaf skin, ya ek parivaar shuru karna. Yahaan sharm ki koi baat nahi, aur online consultation ek aaraamdayak, niji pehla kadam hai. Sabse dayalu cheez jo aap kar sakti hain woh hai andaaza lagana band karna aur asli jawaab lena shuru karna.' },
     ]
   },
   {
@@ -1779,6 +1815,38 @@ export const articles = [
       { type: 'callout', variant: 'warning', title: 'If you ever have thoughts of harming yourself', text: 'Treat it as **urgent** — reach out right now to a doctor or a helpline (in India, Tele-MANAS: **14416**). You deserve help this moment, not someday.' },
       { type: 'heading', text: 'A Kind, Private First Step' },
       { type: 'paragraph', text: 'Anxiety and panic respond really well to treatment — talking therapies, practical techniques, and where appropriate, medical support, all tailored to you. Mental health is also one of the areas where online consultations shine, because you can speak openly from the safety of your own home, with none of the stigma of walking into a clinic. Reaching out is not weakness. It is one of the bravest, most self-respecting things you can do.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Ho sakta hai aapka dil achanak bina kisi wajah ke zor se dhadakne laga. Ho sakta hai seena jakad gaya, haath thande ho gaye, aur ek dar ki lehar itni tez aayi ki aapko laga aapke dil mein kuch gambhir gadbad hai. Agar kisi ne kabhi aapse "bas relax karo" ya "zyada mat socho" kaha hai, to yeh article uska ulta hai. Jo aapne mehsoos kiya woh real tha, uska ek naam hai, aur — yeh zaroori baat hai — yeh sach mein theek ho sakta hai. Chaliye ispar shaanti se baat karein.' },
+      { type: 'heading', text: 'Anxiety Kamzori Nahi — Ek "Wiring" Hai' },
+      { type: 'paragraph', text: 'Anxiety aapke body ka purana alarm system hai jo apna kaam kar raha hai — bas galat samay par. Wahi "fight or flight" response jo kabhi insaanon ko khatre se bachata tha, aaj ki zindagi mein galat waqt par chal padta hai: meeting ke dauraan, traffic mein, ya raat ko bistar par. Isliye jab aapka body aise react karta hai jaise koi khatra hai jabki koi nahi, to yeh aapka drama ya kamzori nahi hai. Yeh ek bahut insaani system hai jo thoda zyada sensitive ho gaya hai.' },
+      { type: 'heading', text: 'Panic Attack Kaisa Lagta Hai' },
+      { type: 'paragraph', text: 'Panic attack dar ki ek achanak, teevra lehar hai jo minaton mein apne charam par pahunchti hai, aksar bahut physical symptoms ke saath:' },
+      { type: 'list', items: [
+        'Dil ka zor se ya tez dhadakna',
+        'Seena jakadna ya saans lene mein dikkat',
+        'Chakkar ya behosh hone jaisa lagna',
+        'Kaanpna, paseena, ya thand',
+        'Haathon mein jhunjhuni',
+        'Control khone ka ya kuch bura hone wala hai — aisa darawna ehsaas'
+      ]},
+      { type: 'callout', variant: 'info', text: 'Yeh sach mein bahut darawne hote hain — bahut se log yeh soch kar hospital bhaagte hain ki yeh heart attack hai, aur chest symptoms ko ek baar check karwana samajhdaari hai. Par panic attacks khud, chaahe kitne bhi bure lagein, **khatarnaak nahi hote, aur yeh guzar jaate hain**.' },
+      { type: 'heading', text: 'Yeh Vicious Cycle (Chakkar)' },
+      { type: 'paragraph', text: 'Anxiety ko jo cheez chalati rehti hai woh yeh hai: aapko ek panic attack aata hai, woh aapko darata hai, aur aap **agle attack se darne** lagte hain. Yeh dar khud aapki baseline anxiety badha deta hai, jisse ek aur attack ki sambhavna badh jaati hai. Is loop ko samajhna bahut powerful hai — recovery ka bada hissa yeh seekhna hai ki yeh sansanahat, chaahe kitni bhi bekaar ho, aapko nuksaan nahi pahunchayegi.' },
+      { type: 'heading', text: 'Cheezein Jo Sach Mein Help Kar Sakti Hain' },
+      { type: 'paragraph', text: 'Yeh supportive tools hain, care ka replacement nahi — par bahut log inhe steadying (sthir karne wala) paate hain:' },
+      { type: 'list', items: [
+        '**Dheere saans lein** — saans andar lene se zyada der tak baahar chhodein; yeh alarm system ko shaant karta hai',
+        '**Grounding** — paanch cheezein jo aap dekh sakte hain, chaar jo sun sakte hain… aise ginkar vartaman mein wapas aayein',
+        'Regular movement, theek neend, aur zyada caffeine kam karna (jo anxiety badhati hai)',
+        'Raat-raat bhar doom-scrolling aur news dekhna kam karein',
+        'Ise akele dhone ke bajaye kisi bharosemand se baat karein'
+      ]},
+      { type: 'heading', text: 'Support Ke Liye Kab Sampark Karein' },
+      { type: 'paragraph', text: 'Kisi professional se baat karne par vichaar karein agar anxiety aapke kaam, neend, rishton, ya rozana ki zindagi mein dakhal de rahi hai; agar aap dar ki wajah se jagahon se bach rahe hain; ya panic attacks baar-baar aate rehte hain. Yeh overreaction nahi hai — support isiliye to hai.' },
+      { type: 'callout', variant: 'warning', title: 'Agar kabhi khud ko nuksaan pahunchane ke vichaar aayein', text: 'Ise **urgent** samjhein — abhi kisi doctor ya helpline se sampark karein (India mein, Tele-MANAS: **14416**). Aap madad ke haqdaar hain isi pal, kisi din nahi.' },
+      { type: 'heading', text: 'Ek Dayalu, Niji Pehla Kadam' },
+      { type: 'paragraph', text: 'Anxiety aur panic ilaaj par bahut achha response dete hain — talking therapies, practical techniques, aur zaroorat par medical support, sab aapke hisaab se. Mental health un kshetron mein se ek hai jahaan online consultations bahut achhe hain, kyunki aap apne ghar ki safety se khulkar baat kar sakte hain, clinic jaane ki koi jhijhak nahi. Madad maangna kamzori nahi hai. Yeh sabse bahaduri aur khud ki izzat karne wale kaamon mein se ek hai.' },
     ]
   },
   {
@@ -1845,6 +1913,32 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a dermatologist if you are shedding a lot more than usual for more than a few weeks, if you notice distinct bald patches, a widening parting, or a receding hairline, or if there is redness, itching, or scaling on the scalp. A dermatologist can pin down the actual cause — often with a couple of simple blood tests — and offer treatments that genuinely work, rather than leaving you to guess with products. Catching it earlier gives the best results. An online consultation, with a few clear photos of your scalp, is a convenient first step.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap baalon mein ungliyaan ferte hain aur ek chhota gucha haath mein aa jaata hai. Phir wahi takiye par, kanghi mein uljha, shower drain mein ghoomta hua. Kam cheezein baalon ko patla hote dekhne jaisi chupchaap ghabrahat deti hain. Ek gehri saans lein — rozana thode baal girna bilkul normal hai, zyadatar hair fall ki ek dhoondhi jaane wali wajah hoti hai, aur iska bahut hissa theek ho sakta hai. Chaliye chamatkaari tel aur shampoo ke vaadon ke sailaab se sach alag karein.' },
+      { type: 'callout', variant: 'info', title: 'Pehle — thode baal girna bilkul normal hai', text: 'Roz lagbhag **50 se 100 baal** girna bilkul normal hai. Baal cycles mein ugte, aaram karte, aur girte hain. Isliye kanghi par baal ka matlab yeh nahi ki aap ganje ho rahe hain — asli sawaal yeh hai ki kya aap *saaf taur par zyada* baal kho rahe hain, ya hafton-mahinon mein dikhne layak patle ho rahe hain.' },
+      { type: 'heading', text: 'Asli Wajah (Aapke Soch Se Zyada)' },
+      { type: 'paragraph', text: 'Hair fall shaayad hi aapke shampoo ki wajah se hota hai — common wajah aksar **body ke andar** ya aapke routine mein hoti hain:' },
+      { type: 'list', items: [
+        '**Genetics** — dheere-dheere patla hone ki sabse common wajah, mardon aur auraton dono mein',
+        '**Nutrition ki kami** — kam iron, vitamin D, ya B12, aur crash diets',
+        '**Thyroid aur hormonal badlaav** — pregnancy ke baad ya PCOS ke saath bhi',
+        '**Koi bada stress** — bimaari, surgery, tez bukhaar, ya emotional stress kuch mahine baad zyada baal gira sakta hai',
+        '**Harsh styling** — tight hairstyles, zyada heat, strong chemical treatments',
+        'Scalp ki problem jaise dandruff ya infection'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Tel ka myth, halke se tudwaate hue', text: 'Ek relaxing tel maalish achhi lagti hai aur baalon ke *ehsaas* ko behtar karti hai — ismein kuch galat nahi. Par tel baal "dobara nahi ugata" na thyroid, kam iron, ya genetics se hone wale hair fall ko theek karta hai. Agar wajah body ke andar hai, to koi bhi tel, chaahe kitna hi traditional ya mehnga ho, use theek nahi karega — woh sirf oopar ka ilaaj karta hai jabki asli wajah andar chalti rehti hai.' },
+      { type: 'heading', text: 'Kya Sach Mein Help Karta Hai' },
+      { type: 'list', items: [
+        'Kaafi protein, iron, aur balanced diet lein — baal usi se bante hain jo aap khilate hain',
+        'Agar baal kaafi gir rahe hain to iron, vitamin D, B12, aur thyroid **check** karwayein',
+        'Naram rahein — tight styles, zyada heat, harsh treatments se bachein',
+        'Stress aur neend manage karein — dono hair cycle par asar daalte hain',
+        'Dandruff ya scalp ki problem ko ignore karne ke bajaye ilaaj karein',
+        'Sabar rakhein — sudhaar kuch **mahinon** mein dikhta hai, dinon mein nahi'
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Dermatologist ko dikhayein agar aap kuch hafton se aam se kaafi zyada baal kho rahe hain, agar aapko saaf ganje patch, chaudi hoti maang, ya peeche hatti hairline dikhe, ya scalp par laali, khujli, ya papdi (scaling) ho. Dermatologist asli wajah pakad sakte hain — aksar kuch simple blood tests se — aur aise treatments de sakte hain jo sach mein kaam karte hain, na ki aapko products ke saath andaaza lagane par chhod dete hain. Jaldi pakadne par sabse achhe results milte hain. Apne scalp ki kuch saaf photos ke saath online consultation ek suvidhajanak pehla kadam hai.' },
     ]
   },
   {
@@ -2385,6 +2479,44 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a doctor for any high fever in mosquito season, especially with severe body ache — early testing tells you whether it is dengue, malaria, typhoid, or a simple viral fever, and each is managed differently. If any danger sign appears, treat it as an emergency. For an early fever with no red flags, an online consultation is a quick way to decide what test you need and how to care for it safely at home.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Har monsoon, wahi chinta lautti hai: achanak tez bukhaar, haddiyon mein dard, aur woh sawaal — "yeh bas viral hai, ya dengue hai?" Machhar se failne wale bukhaar jaise dengue, malaria, aur chikungunya baarish ke mausam mein badhte hain, aur zyadatar log theek ho jaate hain, par kuch cases jaldi gambhir ho jaate hain. Kya dhyaan rakhna hai — aur kya NAHI karna hai — yeh jaanna sach mein aapko ya aapke parivaar ko safe rakh sakta hai. Yahaan ek shaant, practical guide hai.' },
+      { type: 'heading', text: 'Monsoon Mein Zyada Bukhaar Kyun' },
+      { type: 'paragraph', text: 'Ruka hua baarish ka paani — coolers, gamlon, tyres, aur band naaliyon mein — machharon ke panapne ki jagah hai. Isiliye dengue, malaria, aur chikungunya sab baarish ke baad ek saath badhte hain. Isme typhoid jaise paani se failne wale infection jodein, aur "fever season" poore zor par hota hai. Achhi baat: jaldi pakad lein to iska lagbhag saara hissa roka aur theek kiya jaa sakta hai.' },
+      { type: 'heading', text: 'Dengue: Jispar Nazar Rakhein' },
+      { type: 'paragraph', text: 'Dengue bukhaar classically laata hai:' },
+      { type: 'list', items: [
+        'Achanak tez bukhaar',
+        'Body aur jodon mein tez dard (isliye ise "**breakbone fever**" kaha jaata hai)',
+        'Aankhon ke peeche dard',
+        'Sir dard, ghabrahat, aur kabhi-kabhi rash'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Din 4–6 ki khidki par dhyaan', text: 'Zyadatar log aaram aur fluids se theek ho jaate hain. Par dengue ka ek khatarnaak phase hota hai — aksar **jab bukhaar din 4–6 ke aaspaas UTARTA hai** — jab kuch logon ki halat bigadti hai. Yahi woh samay hai jab alert rehna hai, relax nahi karna.' },
+      { type: 'heading', text: 'Danger Signs — Turant Care Lein' },
+      { type: 'callout', variant: 'warning', title: 'In ke liye turant hospital jaayein', items: [
+        'Pet mein tez dard ya lagatar ulti',
+        'Khoon behna — masoodon/naak se, ulti ya mal mein khoon, ya chhote laal skin spots',
+        'Bechaini, zyada neend/sust, ya confusion',
+        'Thandi, chipchipi skin ya peshaab ka tezi se kam hona',
+        'Saans lene mein dikkat'
+      ]},
+      { type: 'paragraph', text: 'Yeh **severe dengue** ka sanket ho sakte hain, ek medical emergency. Ise taalte mat rahein.' },
+      { type: 'callout', variant: 'warning', title: 'Painkiller ka jaal (bahut zaroori)', text: 'Dengue ke shak wale bukhaar mein, **ibuprofen, aspirin, aur aise anti-inflammatory painkillers se bachein** — yeh khoon behne ka khatra badha sakte hain. **Paracetamol** zyada safe choice hai, jaisa bataya jaaye. Kyunki bukhaar alag pehchaanna mushkil hai, aankh band karke khud dawa mat lein — doctor wajah confirm karne ke liye blood test kehte sakte hain.' },
+      { type: 'heading', text: 'Safe Ghar Par Care' },
+      { type: 'list', items: [
+        'Aaram karein aur kaafi fluids piyein — paani, ORS, soup, naariyal paani',
+        'Bukhaar ke liye paracetamol, jaisa bataya jaaye',
+        'Bukhaar par nazar rakhein aur upar diye kisi bhi danger sign par dhyaan dein',
+        '2–3 din se zyada rehne wale bukhaar ko ignore mat karein'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Bachaav ilaaj se behtar', items: [
+        'Paani ke bartan, coolers, aur gamle hafte mein khaali karke ragdein (machhar *saaf* ruke paani mein panapte hain)',
+        'Repellents, machhardaani, aur poori baazu ke kapde use karein, khaaskar subah aur shaam',
+        'Aaspaas paani jama karne wala kabaad na rakhein'
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Machhar ke mausam mein kisi bhi tez bukhaar par doctor ko dikhayein, khaaskar tez body ache ke saath — jaldi testing batati hai ki yeh dengue hai, malaria, typhoid, ya ek simple viral bukhaar, aur har ek ka ilaaj alag hota hai. Koi danger sign dikhe to ise emergency samjhein. Bina red flags wale shuruaati bukhaar ke liye, online consultation yeh tay karne ka jaldi tareeka hai ki kaunsa test chahiye aur ghar par safe kaise care karein.' },
     ]
   },
   {
