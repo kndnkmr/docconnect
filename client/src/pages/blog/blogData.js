@@ -1549,6 +1549,43 @@ export const articles = [
       { type: 'callout', variant: 'info', title: 'A word for the ghee-lovers', text: 'The old fear that a little home-cooked traditional fat will single-handedly ruin your heart is far too simple. It is your **overall pattern** of eating and living that matters — not one ingredient.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If your cholesterol comes back high, resist two temptations: **do not panic**, and **do not quietly start or stop any medicine on your own**. Cholesterol only makes sense in the context of your whole risk — blood pressure, sugar, family history, and lifestyle all matter, and a doctor weighs them together. If you are holding a report you do not fully understand, an **online consultation** is a calm, easy way to have someone walk you through your own numbers and tell you exactly what to do next.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap ek lab report uthate hain, page par nazar daudate hain, aur wahaan hai — "cholesterol" ke aage ek number, shaayad daraane wale laal rang mein chhapa. Achanak ghee, ande, aur har pasandeeda fried snack dushman lagne lagte hain. Ek gehri saans lein. Cholesterol sehat ke sabse galat samjhe jaane wale shabdon mein se ek hai, aur poori kahaani us ghabrahat se kahin zyada aashwasan wali hai. Chaliye ise theek se suljhate hain, taaki agli baar jab aap woh report dekhein, to aap sach mein samjhein ki woh kya keh rahi hai.' },
+      { type: 'heading', text: 'Pehle, Cholesterol Villain Nahi Hai' },
+      { type: 'paragraph', text: 'Ek baat jo zyadatar logon ko chaunkati hai: aapke body ko cholesterol chahiye. Yeh ise cells banane, hormones banane, aur digestion mein madad ke liye use karta hai. Aapka liver ise har roz jaan-boojh kar banata hai. Isliye lakshya kabhi "zero cholesterol" nahi tha — woh namumkin aur unhealthy hota. Asli sawaal balance ka hai, aur is baat ka ki kaunsa type kya kar raha hai.' },
+      { type: 'heading', text: '"Achha", "Bura", Aur Woh Jise Sab Bhool Jaate Hain' },
+      { type: 'paragraph', text: 'Cholesterol ko apne bloodstream mein chhoti **delivery vans** dwaara le jaate hue samjhein. Van ka type saamaan se zyada maayne rakhta hai:' },
+      { type: 'table', headers: ['Type', 'Nickname', 'Yeh kya karta hai', 'Aap chahte hain'], rows: [
+        ['LDL', 'Woh "bura"', 'Artery ki deewaron par cholesterol chhodta hai — pipe mein chikni si jam jaata hai', 'Kam'],
+        ['HDL', 'Woh "achha"', 'Safai wali team — extra cholesterol wapas liver le jaata hai', 'Zyada'],
+        ['Triglycerides', 'Bhula diya gaya', 'Ek blood fat jo sugar, refined carbs aur alcohol se badhta hai', 'Kam'],
+      ]},
+      { type: 'paragraph', text: 'Isliye jab doctor aapki report padhte hain, woh ek number nahi dekhte — woh in ke beech ka **balance** padhte hain. Kam LDL aur triglycerides, healthy HDL: yahi tasveer aap chahte hain.' },
+      { type: 'callout', variant: 'warning', title: '"Main to bilkul theek mehsoos karta hoon" jaal kyun hai', text: 'High cholesterol se **koi dard aur koi warning sign nahi** hota. Saalon tak yeh chupchaap aapki arteries ko sankuchit aur kada kar sakta hai — jaise purane pipe mein limescale jam jaata hai — us din tak jab ek blockage heart attack ya stroke kar de. Theek mehsoos karna badhiya hai, par yeh saboot nahi ki aapki arteries theek hain.' },
+      { type: 'heading', text: 'Kya Aapko Test Karwana Chahiye?' },
+      { type: 'paragraph', text: 'Yeh check bade aaraam se simple hai — ek akela blood test jise **lipid profile** kehte hain. Yeh khaaskar karwana chahiye agar aap:' },
+      { type: 'list', items: [
+        '30 se upar hain, ya family mein heart disease ki history hai',
+        'Extra weight rakhte hain, khaaskar pet ke aaspaas',
+        'Diabetes ya high blood pressure hai',
+        'Smoke karte hain, ya aksar peete hain',
+        'Bahut fried aur processed khaana khaate hain'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Chaahe in mein se koi laagu na ho, lipid profile ko **saalana health check** mein jodna aapke bhavishya ke liye sabse samajhdaar, saste kaamon mein se ek hai.' },
+      { type: 'heading', text: 'Achhi Khabar: Aapke Paas Asli Control Hai' },
+      { type: 'paragraph', text: 'Cholesterol rozana ke choices par bahut achha response deta hai. Aapko apni zindagi raat-o-raat badalni nahi hai — chhote, tikau badlaav sach mein numbers ko hilate hain:' },
+      { type: 'list', items: [
+        'Apni plate mein zyada **fibre** bharein — sabziyan, phal, dal, whole grains — jo sach mein cholesterol ko baahar sweep karne mein madad karte hain',
+        'Deep-fried khaana, bakery items, aur trans fats kam karein',
+        'Triglycerides kam karne ke liye sugar aur refined carbs ghatayein',
+        'Tel ko samajhdaari se maatra mein use karein, khaane ko usme dubo na dein',
+        'Zyadatar dinon body ko chalayein — ek rozana walk bhi "achha" HDL badhati hai',
+        'Smoking chhodein aur alcohol modest rakhein'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Ghee-premiyon ke liye ek baat', text: 'Yeh purana dar ki thoda ghar ka bana traditional fat akele hi aapka dil barbaad kar dega, bahut hi saral hai. Aapka **overall pattern** — kaise khaate aur jeete hain — maayne rakhta hai, na ki ek ingredient.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar aapka cholesterol high aaye, do lalach se bachein: **ghabrayein mat**, aur **koi dawa apne aap chupchaap shuru ya band na karein**. Cholesterol sirf aapke poore risk ke sandarbh mein samajh aata hai — blood pressure, sugar, family history, aur lifestyle sab maayne rakhte hain, aur doctor inhe saath mein tolte hain. Agar aapke haath mein ek report hai jo aap poori tarah nahi samajhte, to ek **online consultation** ek shaant, aasaan tareeka hai ki koi aapko aapke apne numbers samjhaaye aur theek-theek bataaye ki aage kya karna hai.' },
     ]
   },
   {
@@ -1774,6 +1811,40 @@ export const articles = [
       ]},
       { type: 'heading', text: 'Getting Help the Easy Way' },
       { type: 'paragraph', text: 'A UTI is exactly the kind of thing that is quick to sort with a doctor — and if the burning has you dreading a trip out, an online consultation is a private, comfortable way to describe your symptoms, get the right treatment, and understand how to reduce future episodes. The sooner you start, the sooner the relief.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Kam cheezein din ko itna kharab karti hain jitna har baar toilet jaate waqt woh achanak jalan, aur saath mein woh pareshaan karne wala ehsaas ki paanch minute baad phir se jaana hai. Agar abhi aapke saath yahi ho raha hai, to himmat rakhein: urinary tract infection un sabse common problems mein se ek hai jinka doctor ilaaj karte hain, yeh bilkul aapki galti nahi hai, aur ise theek karna aksar seedha hota hai. Yahaan ek saaf, sachchi, bina sharm wali guide hai.' },
+      { type: 'heading', text: 'UTI Asal Mein Kya Hai' },
+      { type: 'paragraph', text: 'UTI bas aapke urinary system mein kahin ek infection hai — sabse aksar bladder mein. Bacteria jo aam taur par body ke aaspaas rehte hain, andar pahunch kar badh jaate hain, aur aapka bladder aapko saaf-saaf bata deta hai. Yeh bahut common hai, khaaskar auraton mein, aur ek baar hone ka matlab yeh nahi ki aapne kuch galat ya ganda kiya.' },
+      { type: 'heading', text: 'Pehchaan Ke Sanket' },
+      { type: 'list', items: [
+        'Peshaab karte waqt jalan ya chubhan',
+        'Baar-baar aur turant jaane ki zaroorat, chaahe thoda hi aaye',
+        'Dhundhla, tez badbudaar, ya gehra rang wala peshaab',
+        'Pet ke neeche kheenchne jaisa bechaini',
+        'Aam taur par thaka ya theek na lagna'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Auraton ko zyada kyun hota hai', text: 'Yeh poori tarah **anatomy hai, hygiene nahi** — auraton ka urinary passage chhota hota hai, isliye bacteria bladder tak zyada aasaani se pahunchte hain. Isliye koi guilt na rakhein. Peshaab rokna, paani ki kami, aur intimacy ke baad na jaana inhe thoda zyada sambhav banate hain.' },
+      { type: 'heading', text: 'Kya Sach Mein Help Karta Hai' },
+      { type: 'list', items: [
+        'Bacteria ko flush karne mein madad ke liye kaafi paani piyein',
+        'Roke nahi — jab zaroorat ho tab jaayein',
+        'Ek-do din aaram karein aur apne saath naram rahein',
+        'Toilet ke baad aage se peeche ki taraf poochein (wipe front to back)',
+        'Intimacy ke baad toilet jaayein'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Myth: cranberry juice UTI theek karta hai', text: 'Cranberry juice aur gharelu nuskhe popular hain, par is baat ke saboot kamzor hain ki yeh ek **active infection ka ilaaj** karte hain. Yeh ek asli UTI ko bharose se theek nahi karenge — sirf inpar nirbhar mat rahein.' },
+      { type: 'callout', variant: 'warning', title: 'Bachi hui antibiotics mat lein', text: 'Galat antibiotic ya dose infection ko theek karne mein fail ho sakti hai aur bacteria ko resistant banati hai. UTI ko aksar sahi antibiotic chahiye — par kaunsi, aur kitne din ke liye, yeh **doctor ka faisla** hai. Pehli baar sahi karna hi jalan ko hamesha ke liye rokta hai.' },
+      { type: 'heading', text: 'Doctor Ko Jaldi Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'Zyada urgent agar aapko ho', items: [
+        'Bukhaar, thand lagna, ya kamar/side mein dard (infection kidney tak pahunch raha ho sakta hai)',
+        'Peshaab mein khoon',
+        'Pregnancy mein, mardon mein, ya bachchon mein symptoms',
+        'UTI jo baar-baar laut aaye',
+        'Ek-do din mein koi sudhaar na ho'
+      ]},
+      { type: 'heading', text: 'Aasaan Tareeke Se Madad Lena' },
+      { type: 'paragraph', text: 'UTI aisi hi cheez hai jo doctor ke saath jaldi sort ho jaati hai — aur agar jalan ki wajah se aap bahar jaane se dar rahe hain, to online consultation apne symptoms batane, sahi ilaaj lene, aur aage ke episodes kam karne ka ek niji, aaraamdayak tareeka hai. Jitni jaldi shuru karenge, utni jaldi rahat.' },
     ]
   },
   {
@@ -2027,6 +2098,44 @@ export const articles = [
       ]},
       { type: 'heading', text: 'The Easy First Step' },
       { type: 'paragraph', text: 'If you are unsure which side of the line you are on — ride it out, or get seen — that uncertainty is exactly what a quick consultation solves. Without the warning signs above, an **online consultation** lets you describe your symptoms, get the right advice and medication, and know precisely what to watch for — without dragging yourself out of bed into a crowded waiting room.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Chheenkein shuru hoti hain, phir khich-khich wala gala, aur jald hi aap bistar par yeh sochte hain: kya yeh bas ek cold hai jise main jhel loonga, ya kuch aisa jise doctor chahiye? Yeh sach mein confusing sawaal hai, kyunki in bimaariyon ke bahut se symptoms milte-julte hain. Yahaan inhe alag pehchaanne, apna achhe se khayaal rakhne, aur woh sanket jaanne ke liye ek saaf, shaant guide hai jo batate hain ki ab check karwane ka samay hai.' },
+      { type: 'heading', text: 'Ye Ek Jaise Dikhte Hain — Par Alag Behave Karte Hain' },
+      { type: 'paragraph', text: 'Common cold aur flu dono viruses se hote hain aur symptoms share karte hain, par woh kaise **aate** hain yeh bada sanket hai. Cold aksar **dheere-dheere aata hai** aur zyadatar naak aur gale mein rehta hai. Flu aksar **achanak aur zor se hamla karta hai**, aapko bukhaar aur poore body ke dard ke saath bistar par gira deta hai.' },
+      { type: 'heading', text: 'Cold vs Flu — Ek Nazar Mein' },
+      { type: 'table', headers: ['', 'Common Cold', 'Flu'], rows: [
+        ['Shuruaat', 'Dheere, kuch dinon mein', 'Achanak, ghanton mein'],
+        ['Bukhaar', 'Halka ya bilkul nahi', 'Tez, common'],
+        ['Body ache', 'Halka', 'Tez'],
+        ['Thakan', 'Halki', 'Bahut zyada, kai din reh sakti hai'],
+        ['Mukhya symptoms', 'Behti naak, chheenk, gala kharaab', 'Bukhaar, dard, sir dard, sookhi khaansi'],
+        ['Kaam kar sakte hain?', 'Aksar haan', 'Aksar nahi — bistar par gire'],
+        ['Theek hona', 'Lagbhag ek hafta', 'Zyada lamba, kabhi 2 hafte'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Bukhaar, khaansi aur body ache **doosre infections** se bhi ho sakte hain — jaise machhar ke mausam mein dengue. Isliye pattern, aapka aaspaas, aur neeche diye warning signs ek theek label andaazne se zyada maayne rakhte hain.' },
+      { type: 'heading', text: 'Achhi Ghar Par Care (Zyadatar Halke Cases Ke Liye)' },
+      { type: 'paragraph', text: 'Bahut zyada tadaad mein cold aur halke flu ghar par aaraam se manage ho jaate hain:' },
+      { type: 'list', items: [
+        '**Theek se aaram karein** — yahi woh samay hai jab aapka body healing karta hai',
+        'Kaafi fluids piyein: paani, soup, garam drinks',
+        'Bukhaar aur dard ke liye pack par diye anusaar paracetamol',
+        'Band naak ya kharaab gale ke liye bhaap ya garam namak-paani ke gargle',
+        'Garam, aaraamdayak khaana — saada khichdi bekaar mein nahi hai',
+        'Khaansi aur chheenk dhak lein aur haath dhoyein taaki aaspaas walon ko bachayein'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Antibiotic ka jaal', text: 'Cold aur flu **viruses** se hote hain, aur antibiotics viruses ke khilaaf **kuch nahi** karti. Inhe "bas ehtiyaat ke liye" lena recovery tez nahi karega, side effects kar sakta hai, aur antibiotic resistance badhata hai. Antibiotic ki zaroorat hai ya nahi, yeh doctor tay karta hai — medical shop nahi.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'In par turant doctor ko dikhayein', items: [
+        'Tez bukhaar jo 3 din se zyada rahe, ya badhta jaaye',
+        'Saans lene mein dikkat, chest pain, ya tez saans',
+        'Tez sir dard, akadi gardan, ya rash jo nahi jaata',
+        'Khaansi jo badhe ya khoon laaye',
+        'Paani ki kami ke sanket, confusion, ya asaadhaaran zyada neend',
+        'Kisi high-risk vyakti mein symptoms — bachche, budhe, pregnant auratein, ya diabetes, heart, ya lung wali problem wale log'
+      ]},
+      { type: 'heading', text: 'Aasaan Pehla Kadam' },
+      { type: 'paragraph', text: 'Agar aap unsure hain ki aap kis taraf hain — jhel lein, ya dikhwayein — to yahi uljhan ek jaldi consultation suljhata hai. Upar diye warning signs na hon to, ek **online consultation** aapko apne symptoms batane, sahi salah aur dawa lene, aur theek-theek jaanne deta hai ki kis par nazar rakhni hai — bina bistar se uthkar bheed wale waiting room mein jaaye.' },
     ]
   },
   {
@@ -2353,6 +2462,44 @@ export const articles = [
         'Unbearable pain, or relentless vomiting'
       ]},
       { type: 'paragraph', text: 'Short of those, an **online consultation** is a convenient way to review symptoms, decide what scan you need, and build a prevention plan so you never feel that pain again.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Kisi se bhi poochein jise kidney stone hua ho, woh batayenge: yeh aisa dard hai jo aap kabhi nahi bhoolte. Yeh kahin se bhi aa sakta hai — kamar ya side mein ek teevra, marodne wala dard jo lehron mein aata hai aur ek bade adult ko ghutnon par la sakta hai. Rahat ki baat yeh hai ki kidney stones bahut common hain, zyadatar apne aap nikal jaate hain, aur inhe dobara aane se rokne ke liye aap bahut kuch kar sakte hain. Yahaan poori tasveer, shaanti se samjhayi gayi.' },
+      { type: 'heading', text: 'Kidney Stones Asal Mein Kya Hain' },
+      { type: 'paragraph', text: 'Aapki kidneys aapke blood se waste filter karti hain aur use peshaab ke roop mein bahar bhejti hain. Kabhi-kabhi us peshaab mein kuch minerals bahut concentrated hokar crystal ban jaate hain, aur aapas mein judkar ek kadi si patthri (stone) ban jaate hain. Jab tak yeh sthir rehti hai, aapko kuch mehsoos nahi hota. Pareshaani — aur woh mashhoor dard — aksar tab shuru hota hai jab stone hilne lagta hai aur nikalte samay atak jaata hai.' },
+      { type: 'heading', text: 'Dard Itna Teevra Kyun Hota Hai' },
+      { type: 'paragraph', text: 'Jab stone kidney se bladder tak ki patli nali mein atak jaata hai, to peshaab peeche jama ho jaata hai aur nali mein ainthan (spasm) ho jaati hai. Isse classic "renal colic" hota hai: kamar ya side mein tez dard jo lehron mein aata hai, aksar groin ki taraf failta hai, aur baar-baar ghabrahat ke saath. Yeh sach mein medicine ke sabse tez dardon mein se ek hai — isliye agar aapne ise mehsoos kiya, to aap badha-chadha kar nahi keh rahe the.' },
+      { type: 'heading', text: 'Dhyaan Rakhne Wale Sanket' },
+      { type: 'list', items: [
+        'Kamar, side, ya pet ke neeche tez, lehron jaisa dard',
+        'Dard jo groin ki taraf faile',
+        'Peshaab mein khoon (gulaabi, laal, ya bhoora)',
+        'Ghabrahat aur ulti',
+        'Baar-baar, turant peshaab ki zaroorat, ya peshaab karte waqt dard',
+        'Dhundhla ya badbudaar peshaab'
+      ]},
+      { type: 'heading', text: 'Jab Ho Jaaye Tab Kya Help Karta Hai' },
+      { type: 'list', items: [
+        'Stone ko aage bahane mein madad ke liye kaafi paani piyein',
+        'Akadkar letne ke bajaye halke-halke chalte-firte rahein',
+        'Doctor ki salah anusaar dard ki dawa lein'
+      ]},
+      { type: 'paragraph', text: 'Bade ya atke hue stones ko kabhi shock-wave treatment ya ek chhoti procedure ki zaroorat hoti hai — doctor stone ke size aur jagah ke hisaab se faisla karte hain, isliye sirf sehne ke bajaye assess karwana behtar hai.' },
+      { type: 'heading', text: 'Inhe Dobara Aane Se Kaise Rokein' },
+      { type: 'list', items: [
+        '**Roz kaafi paani piyein** — sabse zaroori kadam, khaaskar garmi mein',
+        'Namak kam karein, jo stone banne ko badhata hai',
+        'Agar aap prone hain to high-oxalate foods zyada na lein (doctor stone type ke hisaab se guide karte hain)',
+        'Healthy weight rakhein aur active rahein'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Myth: calcium band kar do', text: 'Calcium band karna aksar **jawaab NAHI** hai aur ulta pad sakta hai. Yeh ek common myth hai — aapke doctor aapke actual stone type ke hisaab se salah dete hain.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein (Aur Kab Urgent Hai)' },
+      { type: 'callout', variant: 'warning', title: 'Seedhe care ke liye jaayein agar aapko ho', items: [
+        'Dard ke saath bukhaar aur thand (ek sambhavit khatarnaak infection)',
+        'Peshaab bilkul na nikal paana',
+        'Asahay dard, ya lagatar ulti'
+      ]},
+      { type: 'paragraph', text: 'In ke alaawa, ek **online consultation** symptoms review karne, yeh tay karne ki kaunsa scan chahiye, aur ek prevention plan banane ka suvidhajanak tareeka hai taaki aap woh dard phir kabhi mehsoos na karein.' },
     ]
   },
   {
