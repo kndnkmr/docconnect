@@ -2858,6 +2858,32 @@ export const articles = [
       { type: 'paragraph', text: 'There is a lot of noise online about vaccines. The honest, evidence-based position is straightforward: for the vast majority of people, recommended vaccines are safe, well-studied, and vastly safer than the diseases they prevent. Mild, short-lived soreness or a low fever afterwards is normal and a sign your body is responding. If you have specific concerns or a particular health condition, the right move is to raise them with a doctor, who can address your actual situation.' },
       { type: 'heading', text: 'How to Get Sorted' },
       { type: 'paragraph', text: 'You do not need to memorise any of this. The easiest approach is to ask a doctor to review your history and tell you which vaccines you are due for, based on your age, health, and plans. An online consultation is a simple way to get that personalised list and a plan — a small, one-time effort that quietly protects you for years to come.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Hum apne bachchon ko vaccine lagwaane mein bahut achhe hain — har naye parent ke dimaag mein schedule bitha diya jaata hai. Par kahin raaste mein, hum mein se zyadatar maan lete hain ki vaccines bachpan ki cheez thi jise hum peeche chhod aaye. Aisa nahi hai. Adults ko bhi kuch vaccines chahiye, aur inhe skip karna aapki suraksha mein aasaani se bachne wale gaps chhod deta hai. Yahaan un shots ka ek friendly saaraansh hai jise bade log bhool jaate hain, aur yeh chupchaap kyun zaroori hain.' },
+      { type: 'heading', text: 'Adults Ko Bhi Vaccines Kyun Chahiye' },
+      { type: 'paragraph', text: 'Teen simple wajah hain. Pehla, kuch childhood vaccines ki suraksha saalon mein kam ho jaati hai aur use dobara badhana padta hai. Doosra, kuch vaccines sirf jawaani mein ya khaas haalaat ke liye recommend hote hain. Teesra, jaise-jaise umar badhti hai ya diabetes jaisi conditions aati hain, kuch infections zyada zor se maarte hain — isliye prevention aur bhi zaroori ho jaata hai. Vaccines sirf aapke liye nahi hain; yeh aaspaas ke kamzor logon ko bhi bachaate hain.' },
+      { type: 'heading', text: 'Woh Jinhe Adults Aksar Nazarandaaz Karte Hain' },
+      { type: 'paragraph', text: 'Yeh general awareness hai, personal prescription nahi — par yeh aam suspects hain:' },
+      { type: 'table', headers: ['Vaccine', 'Adults ke liye kyun maayne rakhta hai'], rows: [
+        ['Tetanus booster', 'Har kuch saal mein, aur gande zakhm ke baad dobara lena chahiye — zyadatar adults overdue hain'],
+        ['Saalana flu vaccine', 'Khaaskar zaroori agar aap budhe hain, pregnant hain, ya diabetes, heart, ya lung ki problem hai'],
+        ['Hepatitis B', 'Kai adults ke liye zaroori, khaaskar healthcare workers aur zyada risk wale'],
+        ['Budhon ke vaccines', 'Umar badhne par kuch recommend hote hain, un infections ko rokne ke liye jo baad ki zindagi mein zyada khatarnaak ho jaate hain'],
+        ['Catch-up shots', 'Agar aapne bachpan mein koi chhoda ho, to aksar ab bhi der nahi hui'],
+      ]},
+      { type: 'heading', text: 'Khaas Haalaat Ke Liye Vaccines' },
+      { type: 'paragraph', text: 'Kuch sabke liye nahi, balki aapke haalaat ke hisaab se recommend hote hain:' },
+      { type: 'list', items: [
+        '**Pregnancy plan kar rahi hain, ya pehle se pregnant hain** — kuch vaccines aapko aur bachche dono ko bachaate hain',
+        'Khaas ilaakon mein **safar** — kuch jagahein khaas vaccines maangti hain',
+        'Kuch **jobs ya health conditions** jo aapka risk badhati hain',
+      ]},
+      { type: 'callout', variant: 'info', text: 'Kyunki yeh aapke vyaktigat haalaat par depend karte hain, isliye andaaza lagane ke bajaye ek **doctor se chhoti baat** karna behtar hai.' },
+      { type: 'heading', text: 'Vaccine Ki Chintaon Par Ek Baat' },
+      { type: 'paragraph', text: 'Vaccines ke baare mein online bahut shor hai. Imaandaar, evidence-based baat seedhi hai: zyadatar logon ke liye, recommend kiye gaye vaccines safe hain, achhe se studied hain, aur un bimaariyon se kahin zyada safe hain jinhe woh rokte hain. Baad mein halki, kuch der ki soojan ya halka bukhaar normal hai aur is baat ka sanket ki aapka body response kar raha hai. Agar aapki koi khaas chinta ya health condition hai, to sahi kadam yeh hai ki use doctor se uthayein, jo aapki asli sthiti par baat kar sakte hain.' },
+      { type: 'heading', text: 'Ise Kaise Sort Karein' },
+      { type: 'paragraph', text: 'Aapko yeh sab yaad karne ki zaroorat nahi. Sabse aasaan tareeka hai ki doctor se apni history review karne aur batane ko kahein ki aapki umar, sehat, aur plans ke hisaab se aapko kaunse vaccines lene hain. Ek online consultation woh personalised list aur plan paane ka simple tareeka hai — ek chhoti, ek-baar ki mehnat jo aane wale saalon tak aapko chupchaap bachaati hai.' },
     ]
   },
   {
@@ -3155,6 +3181,37 @@ export const articles = [
       { type: 'callout', variant: 'warning', text: 'When in doubt about a specific food, ask your **doctor** — not a WhatsApp forward. And take supplements only **as prescribed**; more is not better.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'Every pregnancy is different, and your ideal diet and supplements depend on your health, weight, and any conditions like gestational diabetes or anaemia. Please take supplements only as prescribed — more is not better. Your gynaecologist will guide your nutrition at each antenatal visit, and an online consultation is a comfortable way to ask the food questions you are unsure about, without relying on well-meaning but conflicting advice from around you.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Pregnancy ke saath har kisi se khaane ki salah ki baadh aati hai — yeh khao, woh mat khao, "ab tum do ke liye kha rahi ho." Yeh confusing hai, aur iska bahut hissa myth hai. Sach aashwasan-bhari saral baat hai: aapko achhi nutrition chahiye, dugna khaana nahi. Yahaan pregnancy mein achha khaane, sach mein kya avoid karne, aur woh purani kahawatein jinhe aap surakshit roop se ignore kar sakti hain, ki ek garam, practical guide hai.' },
+      { type: 'callout', variant: 'info', title: '"Do ke liye khaana" — sabse bada myth', text: 'Aap do adults ke liye **nahi** kha rahi hain. Shuru mein, calorie ki zaroorat shaayad hi badalti hai; baad mein yeh thodi hi badhti hai. Quantity se kahin zyada **quality** maayne rakhti hai — balanced meals se sahi nutrients, sirf zyada khaana nahi.' },
+      { type: 'heading', text: 'Sabse Zaroori Nutrients' },
+      { type: 'list', items: [
+        '**Folic acid** — bachche ke development ke liye shuru mein bahut zaroori (aksar pregnancy se pehle bhi shuru; doctor salah dete hain)',
+        '**Iron** — anaemia rokne ke liye; hari sabziyan, dal, gud, aur zaroorat par supplements',
+        '**Calcium** — dairy, ragi, til — bachche ki aur aapki haddiyon ke liye',
+        '**Protein** — dal, ande, dairy, paneer, chicken, fish',
+        'Kabz kam karne ke liye kaafi phal, sabziyan, aur fibre'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Ek simple, balanced plate', text: 'Koi exotic ya mehnge foods ki zaroorat nahi — ek gharelu **thali** (roti/chawal, dal, sabzi, curd, salad, phal) zyadatar zarooraton ko poora karti hai. Chhote baar-baar meals nausea mein help karte hain; achhe se hydrated rahein. Simple aur consistent, fancy aur kabhi-kabhi se behtar hai.' },
+      { type: 'heading', text: 'Kaunse Foods Avoid Karein' },
+      { type: 'list', items: [
+        'Kacche ya adhpake ande, meat, aur fish',
+        'Bina pasteurise kiya doodh aur soft/kacche cheese',
+        'Zyada caffeine — chai/coffee kam rakhein',
+        'Alcohol — bilkul avoid karna sabse behtar',
+        'Bina dhula produce aur roadside khaana jahaan hygiene pakki nahi',
+        'Bahut high-mercury fish'
+      ]},
+      { type: 'heading', text: 'Myths Jinhe Aap Ignore Kar Sakti Hain' },
+      { type: 'list', items: [
+        '**"Papeeta bachche ko nuksaan karega"** — normal maatra mein pakka papeeta theek hai; aise kai dar cultural hain, medical nahi',
+        '**"Healthy bachche ke liye ghee/mithai khao"** — achhi overall nutrition maayne rakhti hai, zabardasti rich foods khaana nahi',
+        '**"Craving ka matlab bachche ko iski zaroorat hai"** — cravings normal hain par medical nirdesh nahi'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Kisi khaas food ko lekar shak ho, to apne **doctor** se poochein — WhatsApp forward se nahi. Aur supplements sirf **jaisa prescribe ho** waise lein; zyada behtar nahi hota.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Har pregnancy alag hoti hai, aur aapki ideal diet aur supplements aapki sehat, wajan, aur gestational diabetes ya anaemia jaisi kisi condition par depend karte hain. Kripya supplements sirf jaisa prescribe ho waise lein — zyada behtar nahi hota. Aapki gynaecologist har antenatal visit par aapki nutrition guide karengi, aur ek online consultation un khaane ke sawaalon ko poochne ka aaraamdayak tareeka hai jinpar aap unsure hain, aaspaas ki achhi-neeyat par confusing salah par nirbhar hue bina.' },
     ]
   },
   {
@@ -7972,6 +8029,47 @@ export const articles = [
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'Small, superficial burns usually heal well with cool water and simple care. But get medical care for anything larger than a palm, deep burns, burns to the face/hands/feet/genitals/joints, chemical or electrical burns, any burn in a baby or elderly person, or signs of infection — and treat severe burns or smoke inhalation as an **emergency**. For a minor burn you are unsure about, an **online consultation** (with a photo) can help you decide whether home care is enough or you should be seen. The one thing to remember in the moment: **cool water, not toothpaste**.' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health sources (NHS, WHO, burn-care guidance). It does not replace medical care, which serious burns require.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Rasoi ke burns aur scalds sabse common gharelu choton mein se hain — garam tel ka chheenta, garam pan par haath, giri hui chai, ya bachche ka kuch garam pakad lena. Us pal, log aksar bilkul galat "nuskhon" (toothpaste, makkhan, barf) ki taraf haath badhate hain, jo chot ko aur bigaad sakte hain. Sahi first aid simple hai aur sach mein healing aur dard mein madad karti hai. Yahaan jaanein kya karna hai, kaunse myths se bachna hai, aur burn ko doctor kab chahiye.' },
+      { type: 'heading', text: 'Burn Ke Liye First Aid (Yeh Karein)' },
+      { type: 'steps', items: [
+        '**Behte paani ke neeche thanda karein** — burn ko thande (barf jaisa nahi) behte paani ke neeche lagbhag **20 minute** rakhein. Yeh sabse zaroori kadam hai aur burn ke thodi der baad tak bhi kaam karta hai.',
+        'Sujne se pehle us jagah se rings, watch, aur tight kapde **hata dein** (jab tak woh burn se chipke na hon).',
+        'Thanda karne ke baad, ek saaf, bina roye (non-fluffy) kapde ya cling film se **dheele se dhak dein** (kaskar na baandhein).',
+        'Zaroorat par simple **dard ki dawa** lein.',
+        'Vyakti ko overall garam rakhein (burn ko thanda karein, poore body ko nahi, khaaskar bachchon mein).',
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Yeh NA karein — yeh common "nuskhe" nuksaan karte hain', items: [
+        'Burn par **toothpaste, makkhan, ghee, tel, haldi, ya barf** **mat** lagayein',
+        '**Chhaale (blisters)** **mat** phodein',
+        'Burn se **chipke** kapde ko **mat** kheenchein',
+        'Us par seedhe roodaar cotton wool ya adhesive dressings **mat** use karein',
+      ]},
+      { type: 'paragraph', text: 'Behta thanda paani hi proven first aid hai — gharelu nuskhe garmi ko andar phansa dete hain, infection karte hain, ya baad mein dard se saaf karne padte hain.' },
+      { type: 'heading', text: 'Burn Kitna Bura Hai?' },
+      { type: 'table', headers: ['Gehraai', 'Kaisa dikhta hai', 'General tareeka'], rows: [
+        ['Superficial', 'Laal, dard, koi chhaale nahi (halke sunburn jaisa)', 'Aksar ghar par first aid se theek ho jaata hai'],
+        ['Partial thickness', 'Chhaale, bahut dard, geela', 'Thanda karein; aksar doctor ki zaroorat'],
+        ['Deep/severe', 'Safed/jhulsa/leathery, sunn ho sakta hai', 'Emergency — hospital care chahiye'],
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Turant/emergency care lein agar burn', items: [
+        '**Vyakti ki hatheli se bada** ho, ya deep ho (safed, jhulsa, ya leathery)',
+        '**Chehre, haath, pair, genitals, ya jodon** par ho',
+        'Kisi **bachche, chhote bachche, ya budhe** vyakti ko ho',
+        '**Chemicals ya bijli** se ho, ya vyakti ne **dhuaan/garam hawa** andar li ho',
+        'Kisi limb ke **chaaron taraf** ghoom gaya ho, ya vyakti bahut unwell ho',
+      ]},
+      { type: 'heading', text: 'Chhote Burn Ka Healing Ke Dauraan Khayaal' },
+      { type: 'list', items: [
+        'Ise ek saaf, non-stick dressing se **saaf aur dhaka** rakhein; dheere se badlein',
+        '**Chhaale** mat phodein (yeh neeche ki skin ki raksha karte hain)',
+        '**Infection** ke sanket dekhein — badhta dard, laali, soojan, pus, ya bukhaar',
+        'Doctor dressing par aur yeh review chahiye ya nahi ispar salah de sakte hain',
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Chhote, superficial burns aksar thande paani aur simple care se achhe se theek ho jaate hain. Par hatheli se bade kisi bhi burn, deep burns, chehre/haath/pair/genitals/jodon ke burns, chemical ya electrical burns, kisi bachche ya budhe vyakti ke burn, ya infection ke sanketon ke liye medical care lein — aur gambhir burns ya smoke inhalation ko **emergency** samjhein. Kisi chhote burn ko lekar aap unsure hon, to ek **online consultation** (photo ke saath) yeh tay karne mein madad kar sakta hai ki ghar ki care kaafi hai ya aapko dikhaana chahiye. Us pal yaad rakhne wali ek baat: **thanda paani, toothpaste nahi**.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health sources (NHS, WHO, burn-care guidance) par aadhaarit general shiksha. Yeh medical care ki jagah nahi leta, jo gambhir burns ko chahiye. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -8347,6 +8445,41 @@ export const articles = [
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a **general physician** for a high fever with severe joint pain in mosquito season — to confirm the diagnosis (and importantly rule out dengue/malaria, which need specific care) and guide safe treatment. Seek urgent care for warning signs like bleeding, persistent vomiting, severe abdominal pain, or breathlessness (which point more to complications/dengue). For lingering joint pain, a doctor can help manage it. Much of the initial assessment suits an **online consultation** well, with testing arranged locally.' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health sources (WHO, NIH, and national health guidance). It does not replace an examination by a doctor, who can diagnose and guide treatment.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Monsoon ke dauraan aur baad mein, dengue aur malaria ke saath, ek aur machhar se failne wali bimaari badhti hai: chikungunya. Iski pehchaan hai achanak tez bukhaar ke saath **tez jodon ka dard** — dard jo itna teevra ho sakta hai ki hilna mushkil ho jaaye, aur jo kabhi-kabhi bukhaar jaane ke baad hafton ya mahinon tak rehta hai. Yeh aam taur par jaanleva nahi hai, par yeh sach mein bahut kamzor kar deta hai. Yahaan ise pehchaanne, safe care karne, aur rokne ki ek saaf guide hai.' },
+      { type: 'heading', text: 'Chikungunya Kya Hai' },
+      { type: 'paragraph', text: 'Chikungunya ek viral infection hai jo sankramit machharon ke kaatne se failta hai (wahi din mein kaatne wale Aedes machhar jo dengue failaate hain). Naam ek aise shabd se aaya hai jiska matlab hai "murd ho jaana (contort hona)" — jo ise hone wale logon ki jhuki hui posture ko batata hai. Zyadatar log poori tarah theek ho jaate hain, par jodon ka dard iski sabse khaas aur zidddi feature hai.' },
+      { type: 'heading', text: 'Aam Symptoms' },
+      { type: 'list', items: [
+        '**Achanak tez bukhaar**',
+        '**Tez jodon ka dard**, aksar haathon, kalaai, takhne, aur ghutnon mein (hallmark)',
+        'Jodon mein **soojan aur akadan**',
+        'Muscle mein dard, sir dard, thakan, aur kabhi rash',
+        'Bukhaar aam taur par ek hafte mein settle ho jaata hai, par kuch logon mein **jodon ka dard hafton se mahinon tak** reh sakta hai',
+      ]},
+      { type: 'callout', variant: 'info', text: 'Kyunki chikungunya, dengue, aur malaria sab ek hi mausam aur ilaake mein bukhaar karte hain, inhe sirf symptoms se alag pehchaanna mushkil ho sakta hai — isiliye doctor test kar sakte hain ki yeh kaunsa hai, kyunki inki care alag hoti hai (dengue mein khaaskar khaas saavdhaani chahiye).' },
+      { type: 'heading', text: 'Safe Ghar Par Care' },
+      { type: 'list', items: [
+        '**Aaram** karein aur body ko samay dein — recovery, khaaskar jodon ki, sabar maangti hai',
+        'Hydrated rehne ke liye kaafi **fluids** piyein',
+        'Bukhaar aur dard ke liye jaisa bataya jaaye waisa **paracetamol**',
+        'Acute phase kam hone par halki movement/stretching akade jodon mein madad kar sakti hai',
+        'Diagnosis aur guidance ke liye doctor ko dikhayein, khaaskar ise dengue se alag karne ke liye',
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Ek zaroori saavdhaani (dengue overlap)', text: 'Kyunki chikungunya ko shuru mein **dengue** samajh liya jaa sakta hai, **ibuprofen/aspirin** jaise anti-inflammatory painkillers se bachein jab tak doctor na kahein — agar yeh dengue nikla to yeh khatarnaak ho sakte hain (bleeding risk). Jab tak doctor guide na karein tab tak bukhaar/dard ke liye paracetamol par hi rahein.' },
+      { type: 'heading', text: 'Der Tak Rehne Wala Jodon Ka Dard' },
+      { type: 'paragraph', text: 'Ek pareshaan karne wali baat yeh hai ki kai logon mein, bukhaar se theek hone ke baad **jodon ka dard aur akadan hafton ya mahinon tak** chalta rehta hai. Yeh jaani-pehchaani baat hai aur aam taur par samay, halki movement, aur doctor dwaara guide kiye pain management se behtar hoti hai. Agar jodon ka dard tez ya lagatar ho, to doctor ise manage karne mein madad kar sakte hain — aapko ise bas sehna nahi hai.' },
+      { type: 'heading', text: 'Ise Rokna' },
+      { type: 'list', items: [
+        '**Machhar ke kaatne se bachein** — repellents, skin dhakna, aur screens (yeh machhar zyadatar din mein kaatte hain)',
+        'Ghar ke aaspaas **ruka hua paani** hata dein (coolers, gamle, tyres) jahaan woh panapte hain',
+        'Nets/screens use karein, khaaskar bachchon, budhon, aur unwell logon ke liye',
+        'Breeding sites ki community safai sabki madad karti hai',
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Machhar ke mausam mein tez bukhaar ke saath tez jodon ke dard ke liye ek **general physician** ko dikhayein — diagnosis confirm karne (aur zaroori roop se dengue/malaria ko rule out karne, jinhe khaas care chahiye) aur safe treatment guide karne ke liye. Bleeding, lagatar ulti, tez pet dard, ya saans phoolne jaise warning signs ke liye turant care lein (jo zyada complications/dengue ki taraf ishaara karte hain). Der tak rehne wale jodon ke dard ke liye, doctor use manage karne mein madad kar sakte hain. Shuruaati assessment ka bahut hissa ek **online consultation** mein achhi tarah ho jaata hai, testing local roop se arrange karke.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health sources (WHO, NIH, aur national health guidance) par aadhaarit general shiksha. Yeh doctor ki jaanch ki jagah nahi leta, jo diagnose aur treatment guide kar sakte hain. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
