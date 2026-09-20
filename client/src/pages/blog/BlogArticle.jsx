@@ -198,6 +198,17 @@ function BlogArticle() {
   const { slug } = useParams();
   const article = articles.find(a => a.slug === slug);
 
+  // ---- Language (English | Hinglish) ----
+  // Some articles have a Hinglish version (contentHi) for readers who find
+  // English hard. The toggle only appears when contentHi exists; otherwise the
+  // article stays English exactly as before. Default is always English.
+  const hasHindi = Array.isArray(article?.contentHi) && article.contentHi.length > 0;
+  const [lang, setLang] = useState('en');
+  // If the reader navigates to a different article that has no Hinglish
+  // version, fall back to English so we never try to render a missing array.
+  useEffect(() => { setLang('en'); }, [slug]);
+  const activeContent = (lang === 'hi' && hasHindi) ? article.contentHi : article?.content;
+
   // ---- ❤️ Like ----
   // A friendly heart "like" backed by our DB (no dislike — deliberately, on a
   // health blog). This browser remembers whether IT has liked the article, so
@@ -387,13 +398,37 @@ function BlogArticle() {
           <p className="text-lg text-gray-600">{article.description}</p>
         </div>
 
+        {/* Language toggle — only shown for articles that have a Hinglish
+            version. Lets readers who find English hard switch to Hinglish
+            (Hindi in Roman letters). Defaults to English. */}
+        {hasHindi && (
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm text-gray-500">भाषा / Language:</span>
+            <div className="inline-flex rounded-lg border border-gray-300 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                aria-pressed={lang === 'en'}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors ${lang === 'en' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              >English</button>
+              <button
+                type="button"
+                onClick={() => setLang('hi')}
+                aria-pressed={lang === 'hi'}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors border-l border-gray-300 ${lang === 'hi' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              >हिंदी (Hinglish)</button>
+            </div>
+          </div>
+        )}
+
         {/* Content — `linkCtx` is created fresh per render so internal
             auto-links are deduped across the whole article (each target linked
-            once) and never link back to this same article. */}
+            once) and never link back to this same article. Renders either the
+            English content or, when the reader picks it, the Hinglish version. */}
         <div className="max-w-none">
           {(() => {
             const linkCtx = { currentSlug: slug, used: new Set() };
-            return article.content.map((block, idx) => renderBlock(block, idx, linkCtx));
+            return activeContent.map((block, idx) => renderBlock(block, idx, linkCtx));
           })()}
         </div>
 

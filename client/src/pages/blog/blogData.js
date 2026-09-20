@@ -723,6 +723,27 @@ export const articles = [
       { type: 'callout', variant: 'success', title: 'The good news', text: 'Caught early — at the "**pre-diabetes**" stage — high blood sugar can often be **reversed** with diet, exercise, and lifestyle changes, no medication needed. The earlier you know, the more you can do.' },
       { type: 'heading', text: 'When to Get Checked' },
       { type: 'paragraph', text: 'Get a sugar test if you have any of these signs, are over 35, are overweight, or have a family history of diabetes. An online consultation is a simple first step — a doctor can review your symptoms and reports and tell you exactly which tests to do.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'India ko aksar "duniya ki diabetes capital" kaha jaata hai — aur sabse darawni baat yeh hai ki high blood sugar chup-chaap aapke body ko **saalon** tak nuksaan pahuncha sakti hai, isse pehle ki aap sach mein bimaar mehsoos karein. Bahut se log tab pata lagate hain jab complications shuru ho jaati hain. Yahaan 7 chhupe hue signs hain jinpar dhyaan dena zaroori hai.' },
+      { type: 'callout', variant: 'info', text: 'Ek akela, sasta blood test (**fasting sugar** ya **HbA1c**) sab clear kar deta hai. Agar neeche diye koi bhi sign jaane-pehchaane lagein, to yeh test sabse aasaan cheez hai jo aap kar sakte hain.' },
+      { type: 'heading', text: '1. Hamesha Pyaas (aur Zyada Peshaab)' },
+      { type: 'paragraph', text: 'Jab blood sugar high hoti hai, aapke kidney extra sugar ko flush karne ke liye zyada kaam karte hain — saath mein paani bhi kheenchte hain. Nateeja: lagatar pyaas aur baar-baar peshaab, khaaskar raat ko. Yeh sabse pehle aur common signs mein se ek hai.' },
+      { type: 'heading', text: '2. Anokhi Thakan' },
+      { type: 'paragraph', text: 'Jab sugar theek se cells mein nahi jaa paati, to blood mein kaafi fuel hone ke baad bhi body energy ke liye tarasti hai. Khaane ke baad ya din bhar bina kisi wajah ke thake mehsoos karna — check karwane layak hai.' },
+      { type: 'heading', text: '3. Zakhm Dheere Bharna aur Baar-Baar Infection' },
+      { type: 'paragraph', text: 'High sugar circulation aur immune response ko kamzor karti hai. Aise zakhm jo bharne mein hafte lete hain, ya baar-baar skin, masoodon (gum), ya urinary infection — yeh red flag ho sakte hain.' },
+      { type: 'heading', text: '4. Haath-Pairon Mein Jhunjhuni ya Sunnapan' },
+      { type: 'paragraph', text: 'Zyada sugar dheere-dheere nerves ko nuksaan pahunchati hai (neuropathy). Shuruaat mein yeh pairon mein jhunjhuni, "pins and needles," ya sunnapan jaisa lagta hai — ignore karna aasaan, par jaldi pakadna zaroori hai.' },
+      { type: 'heading', text: '5. Dhundhla Dikhna' },
+      { type: 'paragraph', text: 'High sugar aapki aankh ke lens mein fluid kheench sakti hai, jisse dhundhla dikhta hai. Yeh aksar ghatta-badhta rehta hai. Lambe samay tak control na ki gayi diabetes andhepan ki badi wajah hai — par control se ise roka jaa sakta hai.' },
+      { type: 'heading', text: '6. Bina Wajah Wajan Kam Hona' },
+      { type: 'paragraph', text: 'Bina koshish ke wajan kam hona achha lagta hai, par jab body sugar ko energy ke liye use nahi kar paati, to woh muscle aur fat jalati hai. Achanak bina wajah wajan kam hona hamesha check karwana chahiye.' },
+      { type: 'heading', text: '7. Skin par Kaale Dhabbe' },
+      { type: 'paragraph', text: 'Gardan, bagal, ya knuckles par kaali velvety patches (acanthosis nigricans) insulin resistance ka dikhne wala sign hai — aksar poori diabetes se pehle ka stage.' },
+      { type: 'callout', variant: 'success', title: 'Achhi khabar', text: 'Jaldi pakad lein — "**pre-diabetes**" stage par — to high blood sugar ko aksar diet, exercise, aur lifestyle changes se **reverse** kiya jaa sakta hai, bina dawa ke. Jitni jaldi pata chalega, utna zyada aap kar sakte hain.' },
+      { type: 'heading', text: 'Check Kab Karwayein' },
+      { type: 'paragraph', text: 'Agar in mein se koi sign ho, aap 35 se upar hain, motape ka shikaar hain, ya family mein diabetes ki history hai, to sugar test karwayein. Online consultation ek aasaan pehla kadam hai — doctor aapke symptoms aur reports dekhkar bata sakte hain ki kaunse test karne hain.' },
     ]
   },
   {
@@ -760,6 +781,34 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If tiredness lasts more than 2–3 weeks despite rest, or comes with any of the signs above, see a doctor. A few basic blood tests usually reveal the cause. You can start with an **online consultation** — the doctor will tell you which tests to do and review the results with you.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: '"Main hamesha thaka rehta hoon" — yeh doctor ko batayi jaane wali sabse common baaton mein se ek hai, aur sabse zyada ignore ki jaane wali bhi. Agar aap poori neend lene ke baad bhi thake rehte hain, to shayad aapka body kisi aisi cheez ka signal de raha hai jo theek ho sakti hai. Yahaan 8 common wajah hain, jinme se zyadatar ka test aasaan hai.' },
+      { type: 'callout', variant: 'info', title: 'Rahat ki baat', text: 'Lagatar thakan ki zyadatar wajah kuch **simple, saste blood test** se pata chal jaati hain — iron, thyroid, sugar, vitamin D aur B12. Aapko thakan ke saath "aise hi jeena" nahi hai.' },
+      { type: 'heading', text: '1. Iron ki Kami (Anaemia)' },
+      { type: 'paragraph', text: 'India mein bahut common hai, khaaskar auraton mein. Iron kam hone se aapke muscles aur brain tak kam oxygen pahunchti hai — jisse aap thake, saans phoolte, aur pale (peela) dikhte hain. Ek simple blood test se confirm ho jaata hai, aur yeh aasaani se theek ho jaata hai.' },
+      { type: 'heading', text: '2. Thyroid ki Problem' },
+      { type: 'paragraph', text: 'Kam kaam karta thyroid (hypothyroidism) aapke poore body ko slow kar deta hai — thakan, wajan badhna, thand lagna, low mood. Yeh har 10 mein se 1 Indian ko hota hai aur diagnose hone ke baad aasaani se manage ho jaata hai.' },
+      { type: 'heading', text: '3. Vitamin D ya B12 ki Kami' },
+      { type: 'paragraph', text: 'Itni dhoop hone ke baad bhi, vitamin D ki kami aam hai (hum ghar ke andar rehte hain). B12 ki kami bhi common hai, khaaskar vegetarians mein. Dono se gehri thakan, body mein dard, aur low mood hota hai — aur dono supplements se theek ho jaate hain.' },
+      { type: 'heading', text: '4. Blood Sugar Control Mein Na Hona' },
+      { type: 'paragraph', text: 'High aur low dono tarah ki blood sugar se thakan hoti hai. Lagatar thakan ke saath pyaas ya baar-baar peshaab ho to sugar test karwana chahiye.' },
+      { type: 'heading', text: '5. Neend ki Quality Kharab (Sirf Ghante Nahi)' },
+      { type: 'paragraph', text: 'Aap 8 ghante so sakte hain aur phir bhi thake reh sakte hain agar neend tooti-tooti ho — aksar snoring/sleep apnoea, raat ko screen, ya stress ki wajah se. Ghanton jitni hi quality bhi maayne rakhti hai.' },
+      { type: 'heading', text: '6. Stress, Anxiety, ya Depression' },
+      { type: 'paragraph', text: 'Mental health physical energy ko kha jaati hai. Lagatar thakan ke saath kaam mein mann na lagna, kharab neend, ya udaasi — yeh sanket ho sakta hai ki aapke mann ko support chahiye, aur yeh bhi theek ho sakta hai.' },
+      { type: 'heading', text: '7. Paani ki Kami aur Kharab Diet' },
+      { type: 'paragraph', text: 'Meals skip karna, zyada chai/coffee, aur kam paani aapke body ko khaali chala dete hain. Kabhi-kabhi ilaaj bas itna hi hai — samay par khaana aur paani peena.' },
+      { type: 'heading', text: '8. Zyada Kaam, Kam Aaram' },
+      { type: 'paragraph', text: 'Kabhi-kabhi thakan sach mein aapke body ka aaram maangna hota hai. Lekin agar aap aaram kar chuke hain aur phir bhi faayda nahi hua, to zabardasti mat kheenchte rahiye — check karwa lijiye.' },
+      { type: 'callout', variant: 'warning', title: 'In ke saath aane wali thakan ko ignore mat karein', items: [
+        'Bina wajah wajan kam hona',
+        'Saans phoolna ya dil ka tez dhadakna',
+        'Lagatar low mood ya kisi cheez mein mann na lagna',
+        'Thakan jo aaram ke baad bhi badhti hi jaaye'
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar thakan aaram ke baad bhi 2–3 hafton se zyada rahe, ya upar diye kisi bhi sanket ke saath aaye, to doctor ko dikhayein. Kuch basic blood tests se aksar wajah pata chal jaati hai. Aap **online consultation** se shuru kar sakte hain — doctor aapko batayenge ki kaunse test karne hain aur results dekhkar samjhayenge.' },
     ]
   },
   {
@@ -794,6 +843,31 @@ export const articles = [
       { type: 'callout', variant: 'success', title: 'The good news: very controllable', text: 'High BP can rarely be "cured," but it is easily **controlled** — less salt, regular walking, losing a little weight, cutting alcohol and smoking, managing stress, and medication where needed. Controlled BP dramatically lowers your risk of heart attack and stroke.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If your readings are high, or you have risk factors, consult a doctor. Blood pressure is one of the **easiest conditions to manage online** — the doctor reviews your readings, advises lifestyle changes, and adjusts medication over video calls. Do not wait for a symptom that may never come until it is too late.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'High blood pressure bahut bade hisse ke Indian adults ko hota hai — aur zyadatar ko pata hi nahi hota ki unhe hai. Ise **"silent killer"** kaha jaata hai kyunki yeh chup-chaap saalon tak aapke dil, dimaag, aur kidney ko nuksaan pahunchata hai, bina kisi symptom ke jo aapko warn kare. Achhi baat: ise check karna aasaan hai aur yeh bahut control mein aata hai. Yahaan har adult ko jo pata hona chahiye.' },
+      { type: 'callout', variant: 'warning', title: '"Silent" kyun?', text: 'High BP wale zyadatar log bilkul normal mehsoos karte hain — na sir dard, na chakkar, kuch nahi. Jab tak symptoms aate hain, nuksaan ho chuka ho sakta hai. Ise jaanne ka **ekmatra** tareeka hai ise naapna.' },
+      { type: 'heading', text: 'Numbers Ka Matlab' },
+      { type: 'table', headers: ['Reading', 'Category'], rows: [
+        ['120/80 se neeche', 'Normal ✅'],
+        ['120–129 / 80 se neeche', 'Elevated (thoda badha)'],
+        ['130–139 / 80–89', 'High — Stage 1'],
+        ['140/90 ya usse zyada', 'High — Stage 2'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Ek baar ki high reading **diagnosis nahi** hai — ise ek se zyada baar, aaram ki halat mein confirm karna chahiye.' },
+      { type: 'heading', text: 'Bina Ilaaj High BP Kya Kar Sakta Hai' },
+      { type: 'list', items: [
+        'Heart attack aur heart failure',
+        'Stroke (falij)',
+        'Kidney ko nuksaan',
+        'Aankhon ki roshni jaana'
+      ]},
+      { type: 'paragraph', text: 'Darawni baat: yeh sab **bina kisi warning symptom** ke pehle se develop ho sakta hai.' },
+      { type: 'heading', text: 'Kise Check Karwana Chahiye' },
+      { type: 'paragraph', text: 'Har adult ko apne numbers pata hone chahiye. Zyada baar check karein agar aap 30 se upar hain, motape ka shikaar hain, diabetes hai, family history hai, namak zyada khaate hain, high stress hai, ya desk par baithe rehte hain. Kisi bhi clinic ya pharmacy par sirf **2 minute** lagta hai.' },
+      { type: 'callout', variant: 'success', title: 'Achhi khabar: bahut control mein aata hai', text: 'High BP kabhi-kabhi hi "cure" hota hai, par ise aasaani se **control** kiya jaa sakta hai — kam namak, regular walking, thoda wajan kam karna, alcohol aur smoking chhodna, stress manage karna, aur zaroorat par dawa. Control mein BP heart attack aur stroke ke khatre ko bahut kam kar deta hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar aapki readings high hain, ya aap mein risk factors hain, to doctor se consult karein. Blood pressure **online manage karne ke sabse aasaan** conditions mein se ek hai — doctor aapki readings dekhte hain, lifestyle changes batate hain, aur video call par dawa adjust karte hain. Us symptom ka intezaar mat karein jo shayad tab tak na aaye jab tak der na ho jaaye.' },
     ]
   },
   {
@@ -918,6 +992,24 @@ export const articles = [
       { type: 'callout', variant: 'warning', title: 'The screen trap', text: 'Scrolling in bed is the #1 modern sleep-wrecker — the light tricks your brain into "daytime" and the content keeps it alert. Try charging your phone **outside the bedroom** for a week; many people are surprised by the difference.' },
       { type: 'heading', text: 'When Sleep Problems Need a Doctor' },
       { type: 'paragraph', text: 'See a doctor if poor sleep lasts more than a few weeks despite good habits, if you **snore loudly with breathing pauses** (possible sleep apnoea), or if sleep issues come with low mood or anxiety. These are treatable — don\'t just live with exhaustion. An **online consultation** is an easy first step.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Achhi neend luxury nahi hai — yeh woh samay hai jab aapka body repair hota hai, dimaag reset hota hai, aur immunity recharge hoti hai. Phir bhi kharab neend ek badhti hui problem hai — raat ko screen, stress, aur bemel routine ki wajah se. Yahaan behtar neend ke liye ek practical guide hai, aaj raat se hi shuru karein.' },
+      { type: 'heading', text: 'Neend Aapke Soch Se Zyada Kyun Maayne Rakhti Hai' },
+      { type: 'paragraph', text: 'Lagatar kharab neend ka sambandh kam energy, dhyaan na lagna, wajan badhna, kamzor immunity, mood ki problem, aur samay ke saath heart disease aur diabetes ke zyada khatre se hai. Neend theek karna aapki sehat ke liye sabse faaydemand cheezon mein se ek hai.' },
+      { type: 'heading', text: 'Aadatein Jo Sach Mein Help Karti Hain (Sleep Hygiene)' },
+      { type: 'list', items: [
+        'Sone aur uthne ka samay **ek jaisa** rakhein — weekend par bhi',
+        'Sone se 30–60 minute pehle screen band (blue light neend ko delay karti hai)',
+        'Kamra andhera, shaant, aur thanda rakhein',
+        'Shaam ke baad chai/coffee se bachein',
+        'Sone se theek pehle bhaari khaana na khayein',
+        'Din mein dhoop lein aur thodi movement karein'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Shaant karne wale wind-down rituals', text: 'Ek glass garam doodh, kuch minute dheere saans lena (pranayama), halki stretching, aur lights dimm karna — yeh sab sach mein nervous system ko shaant karte hain, ek soothing routine, koi neend ki goli nahi.' },
+      { type: 'callout', variant: 'warning', title: 'Screen ka jaal', text: 'Bistar mein scroll karna aaj ka sabse bada neend-kharab karne wala hai — light aapke dimaag ko "din" ka dhoka deti hai aur content use alert rakhta hai. Ek hafte apna phone **bedroom ke bahar** charge karke dekhein; bahut se log fark dekhkar hairaan reh jaate hain.' },
+      { type: 'heading', text: 'Neend ki Problem Par Doctor Kab Zaroori Hai' },
+      { type: 'paragraph', text: 'Doctor ko dikhayein agar achhi aadaton ke baad bhi kharab neend kuch hafton se zyada rahe, agar aap **loud snoring ke saath saans rukti** mehsoos karein (sleep apnoea ho sakta hai), ya neend ki problem low mood ya anxiety ke saath aaye. Yeh theek ho sakti hain — thakan ke saath aise hi mat jiyein. **Online consultation** ek aasaan pehla kadam hai.' },
     ]
   },
   {
@@ -985,6 +1077,38 @@ export const articles = [
       { type: 'callout', variant: 'warning', text: 'Do not self-prescribe **high-dose** vitamin D. Too much can be harmful — the right dose depends on your actual blood levels.' },
       { type: 'heading', text: 'When to Get Tested' },
       { type: 'paragraph', text: 'If you have ongoing tiredness, body aches, or frequent infections, ask your doctor for a vitamin D test (often along with B12 and iron). It\'s simple, and correcting a deficiency can make a real difference to how you feel. An online consultation is an easy way to find out which tests you need and review the results.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Yeh ek contradiction lagta hai: India duniya ke sabse dhoop-wale deshon mein se ek hai, phir bhi vitamin D ki kami bahut zyada aam hai — shehron, har umar, aur khaaskar auraton mein. Blood test mein dikhne wali sabse common cheezon mein se ek yahi hai. Yahaan jaanein aisa kyun hota hai aur kaise theek karein.' },
+      { type: 'heading', text: 'Yeh Kyun Maayne Rakhta Hai' },
+      { type: 'paragraph', text: 'Vitamin D aapke body ko calcium absorb karne mein madad karta hai (majboot haddiyon ke liye), immune system ko support karta hai, aur mood aur energy par asar daalta hai. Kam level ka sambandh thakan, haddi aur muscle mein dard, baar-baar infection, aur low mood se hai.' },
+      { type: 'heading', text: 'Dhoop Ke Baad Bhi Kami Kyun?' },
+      { type: 'list', items: [
+        'Hum din ka zyadatar samay **ghar/office ke andar** rehte hain',
+        'Hum (samajhdaari se) tez dhoop se dhak lete hain ya sunscreen lagate hain',
+        'Shehar ka pollution un UVB rays ko rokta hai jo vitamin D banati hain',
+        'Gehri (darker) skin ko utni hi maatra banane ke liye zyada dhoop chahiye',
+        'Diet mein aksar vitamin D-wale foods kam hote hain'
+      ]},
+      { type: 'paragraph', text: 'Isliye itni dhoop hone ke baad bhi, hum mein se zyadatar ki skin par sahi dhoop kaafi nahi padti.' },
+      { type: 'heading', text: 'Vitamin D Kam Hone Ke Common Signs' },
+      { type: 'list', items: [
+        'Lagatar thakan',
+        'Haddi, kamar, ya muscle mein dard',
+        'Baar-baar zukaam aur infection',
+        'Low mood, khaaskar sardiyon mein',
+        'Baal jhadna aur zakhm dheere bharna'
+      ]},
+      { type: 'paragraph', text: 'Yeh signs **non-specific** hain (kai cheezon se ho sakte hain) — isiliye ek simple blood test hi sahi pata lagane ka ekmatra tareeka hai.' },
+      { type: 'heading', text: 'Ise Kaise Behtar Karein' },
+      { type: 'list', items: [
+        'Hafte mein kuch baar 15–20 minute seedhi dhoop haath/chehre par lein (subah ki dhoop halki hoti hai)',
+        'Zyada vitamin D wale foods khayein — anda (yolk), fatty fish, fortified milk, mushroom',
+        'Agar level kam hai, to doctor supplement ki dose likh sakte hain'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Apne aap **high-dose** vitamin D mat lein. Zyada hone par nuksaandeh ho sakta hai — sahi dose aapke actual blood level par depend karti hai.' },
+      { type: 'heading', text: 'Test Kab Karwayein' },
+      { type: 'paragraph', text: 'Agar aapko lagatar thakan, body mein dard, ya baar-baar infection ho, to doctor se vitamin D test ke liye kahein (aksar B12 aur iron ke saath). Yeh simple hai, aur kami theek karne se aapko kaafi behtar mehsoos ho sakta hai. Online consultation se aasaani se pata chal jaata hai ki kaunse test chahiye aur results kaise dekhein.' },
     ]
   },
   {
@@ -1118,6 +1242,37 @@ export const articles = [
         'Unexplained weight loss, vomiting, or black stools'
       ]},
       { type: 'paragraph', text: 'And take **chest pain** seriously — if you are ever unsure whether it is acidity or your heart, get urgent help. For ongoing acidity, an **online consultation** can sort out the cause and the right treatment.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Woh jalan jo spicy khaane ya late dinner ke baad aapke seene tak chadhti hai — India mein lagbhag har koi acidity ko jaanta hai. Yeh aksar harmless aur kabhi-kabhi hoti hai, par bahut logon ke liye yeh baar-baar hone wali, pareshaan karne wali problem hai. Yahaan jaanein iski asli wajah kya hai, aur behtar kaise mehsoos karein.' },
+      { type: 'heading', text: 'Asal Mein Hota Kya Hai' },
+      { type: 'paragraph', text: 'Aapka pet khaana pachane ke liye acid banata hai. Jab us acid ka kuch hissa wapas food pipe mein chadh jaata hai (reflux), to aap classic jalan, khatta swaad, ya seene mein bechaini mehsoos karte hain. Kabhi-kabhi reflux normal hai; baar-baar reflux ko GERD kehte hain aur ispar dhyaan dena zaroori hai.' },
+      { type: 'heading', text: 'Common Triggers' },
+      { type: 'list', items: [
+        'Spicy, tela hua, ya fried khaana',
+        'Zyada bhaari meals, ya raat ko der se khaana',
+        'Khaane ke turant baad let jaana',
+        'Chai, coffee, aur carbonated (fizzy) drinks',
+        'Smoking aur alcohol',
+        'Stress, aur zyada wajan'
+      ]},
+      { type: 'heading', text: 'Simple Aadatein Jo Help Karti Hain' },
+      { type: 'list', items: [
+        'Chhote meals khayein, dheere-dheere',
+        'Dinner sone se 2–3 ghante pehle khatam karein',
+        'Khaane ke turant baad na letein',
+        'Trigger wale foods aur drinks kam karein',
+        'Raat ke reflux ke liye bistar ka sirhaana thoda ooncha karein',
+        'Wajan aur stress manage karein'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Rozana antacid se bachein', text: 'Bina prescription wale antacid jaldi rahat dete hain, par unpar **hafton tak rozana** nirbhar rehna ek aisi problem ko chhupa deta hai jise sahi ilaaj chahiye — aur lambe samay tak acid food pipe ko soja (inflame) sakta hai. Baar-baar hone wali acidity ko hamesha khud dawa lekar nahi chalaana chahiye.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'In ke liye doctor ko dikhayein', items: [
+        'Hafte mein do baar se zyada heartburn',
+        'Nigalne mein dikkat ya dard',
+        'Bina wajah wajan kam hona, ulti, ya kaale rang ka mal (black stools)'
+      ]},
+      { type: 'paragraph', text: 'Aur **chest pain (seene ke dard)** ko gambhirta se lein — agar aapko kabhi shak ho ki yeh acidity hai ya aapka dil, to turant madad lein. Lagatar acidity ke liye ek **online consultation** wajah aur sahi ilaaj sort kar sakti hai.' },
     ]
   },
   {
@@ -1235,6 +1390,38 @@ export const articles = [
       ]},
       { type: 'callout', variant: 'tip', text: 'Do stretches **slowly**, never into sharp pain — gentle and regular beats hard and occasional.' },
       { type: 'callout', variant: 'warning', title: 'See a doctor if', text: 'Pain is severe or persistent, spreads down an arm or leg, or comes with **numbness, tingling, or weakness** — these can signal nerve involvement. An orthopedic doctor or physiotherapist can assess you; many such issues can be reviewed online first.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Ghanton phone, laptop, ya desk par jhuke rehna hamari gardan aur kamar par sach mein asar daal raha hai — young logon mein bhi. "Tech neck" aur posture se judi dard ab rozana ki shikaayat ban gayi hai. Achhi baat: iska zyadatar hissa simple changes se roka aur behtar kiya jaa sakta hai.' },
+      { type: 'heading', text: '"Tech Neck" Kya Hai?' },
+      { type: 'paragraph', text: 'Har baar jab aap phone dekhne ke liye sir aage jhukate hain, aapki gardan par zor kai guna badh jaata hai. Rozana ghanton aise rehne se gardan mein akadan, kandhon mein dard, sir dard, aur upper-back dard hota hai. Desk par jhukkar baithne se lower-back dard bhi jud jaata hai.' },
+      { type: 'heading', text: 'Sanket Ki Posture Hi Problem Hai' },
+      { type: 'list', items: [
+        'Shaam tak gardan ya kandhon mein akadan',
+        'Upper-back mein lagatar dard',
+        'Baar-baar tension headache',
+        'Dard jo chhutti par kam ho aur kaam par laut_e',
+        'Rounded shoulders / jhuki hui posture'
+      ]},
+      { type: 'heading', text: 'Simple Fixes' },
+      { type: 'list', items: [
+        'Gardan neeche jhukane ke bajaye phone **aankhon ki height par upar** pakdein',
+        'Screen itni oonchi karein ki uska top aankhon ke level par ho',
+        'Lower-back support ke saath peeche tikkar baithein, pair zameen par flat',
+        'Har 30–45 minute mein movement break lein',
+        'Regular activity se apni back aur core majboot karein',
+        'Agar lambe ghante kaam karte hain to desk ergonomically set karein'
+      ]},
+      { type: 'heading', text: 'Quick Stretches (Rozana Karein)' },
+      { type: 'list', items: [
+        'Halke neck rolls aur side stretches',
+        'Shoulder shrugs aur rolls',
+        'Chin tucks (thodi ko halke se peeche kheenchein)',
+        'Khade hokar back extension',
+        'Chest kholne wali stretch taaki jhukna kam ho'
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Stretches **dheere** karein, kabhi tez dard tak nahi — halka aur regular, tez aur kabhi-kabhi se behtar hai.' },
+      { type: 'callout', variant: 'warning', title: 'Doctor ko dikhayein agar', text: 'Dard tez ya lagatar ho, haath ya pair tak faile, ya **sunnapan, jhunjhuni, ya kamzori** ke saath aaye — yeh nerve ke involve hone ka sanket ho sakta hai. Orthopedic doctor ya physiotherapist aapko assess kar sakte hain; aisi kai problems pehle online bhi review ki jaa sakti hain.' },
     ]
   },
   {
@@ -1467,6 +1654,47 @@ export const articles = [
       { type: 'paragraph', text: 'The first few can be emergencies — do not try to sleep those off.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If headaches are frequent, disabling, or creeping up in number, you deserve better than surviving on painkillers. A **neurologist** can confirm whether it is migraine, pin down your triggers, and set up a proper plan — often dramatically cutting how often attacks come. With none of the emergency signs above, an **online consultation** is a comfortable way to start, review your pattern, and find out whether any scan is even needed. You do not have to just live with it.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Agar aapko kabhi parde band karke, phone off karke, andhere kamre mein bilkul shaant lete rehna pada hai jab aapka sir zor se dhad-dhad karta hai — to aap pehle se hi shak karte hain ki yeh "bas ek sir dard" se zyada hai. Aur aap sahi ho sakte hain. Migraine sabse common phir bhi sabse zyada taal diye jaane wali conditions mein se ek hai, jise stress ya kamzori keh kar chhod diya jaata hai jabki yeh asal mein ek real, theek hone wali neurological problem hai. Chaliye is confusion ko halke aur saaf tareeke se door karte hain.' },
+      { type: 'heading', text: 'Sabhi Sir Dard Ek Jaise Nahi Hote' },
+      { type: 'paragraph', text: 'Shabd "sir dard" mein sab kuch aata hai — ek halki dopahar ki khichkhich se lekar poora din chura lene wale gehre attack tak. Do jo aap sabse zyada milenge woh hain tension headache aur migraine — aur inhe alag pehchanana sach mein badalta hai ki aap unka ilaaj kaise karte hain.\n\nTension headache ko ek halka dabaav samjhein, aur migraine ko ek toofaan. Ek ko aap aksar sehkar chalte reh sakte hain; doosra aksar aapko rok deta hai.' },
+      { type: 'heading', text: 'Tension Headache vs Migraine' },
+      { type: 'table', headers: ['', 'Tension Headache', 'Migraine'], rows: [
+        ['Kaisa lagta hai', 'Halka, tight, sir ke chaaron taraf patti', 'Dhad-dhad, pulsing'],
+        ['Jagah', 'Dono taraf, poora sir', 'Aksar ek taraf'],
+        ['Teevrata', 'Halka se madhyam', 'Madhyam se tez'],
+        ['Saath mein', 'Zyada kuch nahi', 'Ghabrahat, roshni aur awaaz se pareshani'],
+        ['Chalne-firne par', 'Aksar theek', 'Aur badh jaata hai'],
+        ['Kaam kar sakte hain?', 'Aksar haan', 'Aksar nahi'],
+      ]},
+      { type: 'callout', variant: 'info', title: '"Aura" ka sanket', text: 'Kuch logon ko migraine se pehle warning signs milte hain — **jhilmilaati roshni, zig-zag lines, ya nazar mein blind spots**. Agar yeh jaana-pehchana lage, to yeh migraine ki classic pehchaan hai.' },
+      { type: 'heading', text: 'Migraine Kis Cheez Se Shuru Hota Hai' },
+      { type: 'paragraph', text: 'Migraine ke aksar **triggers** hote hain, aur apne triggers pehchanana aadhi ladai hai:' },
+      { type: 'list', items: [
+        'Meals skip karna ya paani ki kami',
+        'Kharab ya bemel neend',
+        'Stress — ya stress ke *baad* ka utaar (classic weekend migraine)',
+        'Tez roshni, tez awaaz, ya teevra gandh',
+        'Kuch khaas foods, aur bahut zyada ya bahut kam caffeine',
+        'Periods ke aaspaas hormonal badlaav',
+        'Ghanton screen par rehna'
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Ek headache diary rakhein', text: 'Likhein ki har sir dard kab hua, aapne kya khaya, aur kaise soye. Kuch hafton mein aksar ek pattern dikhne lagta hai — aur jab aap apne triggers dekh paate hain, to unse bachna shuru kar sakte hain.' },
+      { type: 'heading', text: 'Sirf Painkillers Ulta Kyun Pad Sakte Hain' },
+      { type: 'callout', variant: 'warning', text: 'Painkillers **bahut zyada** lena — zyadatar hafton mein do din se zyada — ek nayi, lagatar "medication-overuse headache" kar sakta hai. Isliye agar aap sirf kaam chalane ke liye baar-baar goli lete jaa rahe hain, to yeh **doctor ko dikhane** ka sanket hai, aur zyada lene ka nahi. Iske bahut behtar long-term options hain, jinme preventive treatments bhi hain jo migraine ki aavritti kam karte hain.' },
+      { type: 'heading', text: 'Red Flags — In Par Intezaar Na Karein' },
+      { type: 'callout', variant: 'warning', title: 'In ke liye turant care lein', items: [
+        'Achanak, blast jaisa "zindagi ka sabse tez sir dard"',
+        'Bukhaar, akadi gardan, ya confusion ke saath sir dard',
+        'Sir par chot lagne ke baad sir dard',
+        'Sir dard jo dinon ya hafton mein badhta hi jaaye',
+        'Kamzori, latakti (slurred) awaaz, ya nazar jaane ke saath sir dard',
+        '50 ki umar ke baad bilkul naye tarah ka sir dard'
+      ]},
+      { type: 'paragraph', text: 'Pehle kuch emergency ho sakte hain — unhe sokar taalne ki koshish mat karein.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar sir dard baar-baar ho, kaam rok de, ya inki sankhya badh rahi ho, to aap painkillers par gujaara karne se behtar ke haqdaar hain. Ek **neurologist** confirm kar sakte hain ki yeh migraine hai ya nahi, aapke triggers pakad sakte hain, aur ek theek plan bana sakte hain — aksar attacks ki aavritti bahut kam kar dete hain. Upar diye emergency signs na hon to, ek **online consultation** shuru karne, apna pattern dekhne, aur yeh jaanne ka aaraamdayak tareeka hai ki koi scan zaroori bhi hai ya nahi. Aapko isse aise hi jhelna nahi hai.' },
     ]
   },
   {
@@ -1737,6 +1965,29 @@ export const articles = [
       { type: 'callout', variant: 'warning', title: 'Do not self-treat', text: 'Please do not start, stop, or adjust thyroid medication on your own, and be wary of "natural thyroid cures" sold online. The dose must be matched to your body and rechecked over time — too much or too little both cause problems. This is very much a "work with a doctor" condition.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If several of the symptoms above sound like you — especially unexplained tiredness, weight changes, hair fall, or mood shifts — it is worth getting your thyroid checked rather than guessing. An endocrinologist or physician can order the right test, explain your results, and set up treatment if needed. Thyroid care is ideal for online consultation, since it largely revolves around reviewing blood reports and fine-tuning treatment — an easy first step to feeling like yourself again.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aapki gardan ke saamne ek chhoti, titli (butterfly) jaisi gland hoti hai jiske baare mein zyadatar log kabhi nahi sochte — jab tak woh gadbad na karne lage. Aapka thyroid chup-chaap aapke poore body ki raftaar tay karta hai, aur jab yeh bahut dheere ya bahut tez chalta hai, to asar har jagah dikhta hai: energy, wajan, mood, baal, aur dil. Thyroid ki problem kaafi common hai, khaaskar auraton mein, aur pata chalne par aasaani se manage ho jaati hai. Yahaan ek saaf, friendly samjhaawat hai.' },
+      { type: 'heading', text: 'Thyroid Asal Mein Karta Kya Hai' },
+      { type: 'paragraph', text: 'Apne thyroid ko body ka thermostat ya accelerator samjhein. Yeh aise hormones banata hai jo tay karte hain ki aapka body kitni tezi se energy use kare — yaani aapka metabolism. Jab yeh sahi maatra mein banata hai, sab theek chalta hai. Jab yeh bahut kam ya bahut zyada banata hai, aapka poora system waise hi tez ya dheere ho jaata hai — isiliye symptoms itne alag-alag aur confusing lag sakte hain.' },
+      { type: 'heading', text: 'Bahut Dheere vs Bahut Tez — Do Roop' },
+      { type: 'paragraph', text: 'Thyroid ki problem aksar do ulti dishaon mein se ek mein dikhti hai:' },
+      { type: 'table', headers: ['', 'Kam Active (Hypothyroidism)', 'Zyada Active (Hyperthyroidism)'], rows: [
+        ['Raftaar', 'Body bahut dheere chal rahi', 'Body bahut tez chal rahi'],
+        ['Wajan', 'Badhna, khaane mein badlaav ke bina', 'Kam hona, achhi bhookh ke baad bhi'],
+        ['Energy', 'Thaka, sust, dhundhla dimaag', 'Bechain, "wired", chain nahi'],
+        ['Temperature', 'Thand lagna', 'Garmi aur paseena'],
+        ['Dil', 'Dheere ho sakta hai', 'Tez ya zor se dhadakna'],
+        ['Mood', 'Low, slow', 'Anxious, chidchida'],
+        ['Aur', 'Sookhi skin, baal jhadna, kabz', 'Kaanpte haath, loose motions'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Hypothyroidism (kam active) dono mein zyada common hai — aur kyunki iske symptoms dheere-dheere aate hain, ise aasaani se "bas busy hoon" ya "umar ho rahi hai" keh kar taal diya jaata hai aur lambe samay tak miss ho jaata hai.' },
+      { type: 'heading', text: 'Yeh Itni Baar Kyun Nazarandaaz Hota Hai' },
+      { type: 'paragraph', text: 'Yahaan tricky baat: thyroid ke lagbhag har symptom ko kisi aur cheez par daala jaa sakta hai. **Thaka?** Kaam hoga. **Wajan badh raha?** Diet hogi. **Low mood?** Stress hoga. Alag-alag har symptom ko taalna aasaan hai — isiliye thyroid ki problem saamne hote hue bhi mahinon ya saalon tak chhupi rehti hai. Rahat ki baat: ek **simple blood test** ise saaf kar deta hai.' },
+      { type: 'callout', variant: 'success', title: 'Achhi khabar: bahut manageable', text: 'Ek seedha blood test (aksar **TSH** se shuru) dikhata hai ki aapka thyroid kaise kaam kar raha hai. Diagnose hone ke baad, thyroid ki conditions poori medicine mein sabse zyada manage hone wali cheezon mein se hain — sahi ilaaj aur monitoring se zyadatar log dobara khud jaisa mehsoos karte hain. Isse darne ki zaroorat nahi; ise dhoondhne aur manage karne ki zaroorat hai.' },
+      { type: 'callout', variant: 'warning', title: 'Khud ilaaj na karein', text: 'Kripya thyroid ki dawa apne aap shuru, band, ya adjust na karein, aur online biki "natural thyroid cures" se saavdhaan rahein. Dose aapke body ke hisaab se honi chahiye aur samay-samay par dobara check honi chahiye — zyada ya kam dono problem karte hain. Yeh poori tarah se "doctor ke saath kaam karne" wali condition hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar upar ke kai symptoms aapke jaise lagein — khaaskar bina wajah thakan, wajan mein badlaav, baal jhadna, ya mood mein badlaav — to andaaza lagane ke bajaye thyroid check karwana behtar hai. Endocrinologist ya physician sahi test likh sakte hain, results samjha sakte hain, aur zaroorat par ilaaj shuru kar sakte hain. Thyroid ki care online consultation ke liye ekdum sahi hai, kyunki ismein zyadatar blood reports dekhna aur ilaaj fine-tune karna hota hai — khud jaisa mehsoos karne ki taraf ek aasaan pehla kadam.' },
     ]
   },
   {
