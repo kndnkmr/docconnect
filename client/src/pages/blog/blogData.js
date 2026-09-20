@@ -1949,6 +1949,28 @@ export const articles = [
       { type: 'paragraph', text: 'Slow and steady wins — crash diets are not the answer, **consistency is**.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If a report has mentioned fatty liver, or you have diabetes, obesity, or high cholesterol, it is worth a proper conversation rather than a shrug. A doctor can check how your liver is doing with simple tests, look at the whole metabolic picture, and build a realistic plan with you. This is one of those conditions where acting early genuinely changes the outcome — and an online consultation is an easy, judgement-free way to understand your report and take the first step.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap ek routine health check ya kisi aur cheez ke liye ultrasound karwate hain, aur report yun hi "fatty liver" ka zikr kar deti hai. Koi symptom nahi, koi dard nahi — isliye ise kandha uchakaakar bhoolne ka mann karta hai. Kripya aisa mat karein. Fatty liver chupchaap India ki sabse common health conditions mein se ek banta ja raha hai, yeh aksar koi warning nahi deta, aur yahaan sach mein ummeed wali baat hai: jaldi pakad lein to yeh aksar reversible hota hai. Chaliye ise theek se samjhte hain.' },
+      { type: 'heading', text: 'Fatty Liver Asal Mein Kya Hai' },
+      { type: 'paragraph', text: 'Aapka liver ek mehnati organ hai jo digestion, filtering, aur energy storage sambhaalta hai. "Fatty liver" ka matlab bas yeh hai ki uski cells ke andar fat jamna shuru ho gaya hai — jitna hona chahiye usse zyada. Thoda harmless hai, par jaise-jaise yeh jamta hai, yeh soja (inflame) sakta hai aur, saalon mein, dheere-dheere liver par scar bana sakta hai. Aaj sabse common type alcohol se hota hi nahi, jo bahut logon ko chaunkata hai.' },
+      { type: 'heading', text: 'Yeh Itni Tezi Se Kyun Badh Raha — Patle Logon Mein Bhi' },
+      { type: 'paragraph', text: 'Hamari modern zindagi lagbhag ise banane ke liye hi bani hai: zyada sugar aur refined carbs, zyada fried aur ultra-processed khaana, zyada baithna, aur kam movement. Aur yahaan woh baat jo logon ko chaunkati hai — ise hone ke liye aapka dikhne mein mota hona zaroori nahi. Jis tarah kai Indians organs ke aaspaas fat store karte hain, iski wajah se patle dikhne wale log bhi fatty liver rakh sakte hain. Isliye "par main to mota nahi hoon" ise nazarandaaz karne ki wajah nahi hai.' },
+      { type: 'callout', variant: 'warning', title: 'Tricky baat: yeh aksar silent hota hai', text: 'Shuruaati fatty liver aam taur par **koi symptom nahi** deta — kuch log halki thakan ya upper-right pet mein halki bechaini notice karte hain, par zyadatar bilkul theek mehsoos karte hain. Isiliye yeh aksar scan par galti se milta hai, aur isiliye ise itni aasaani se ignore kar diya jaata hai.' },
+      { type: 'heading', text: 'Ise Gambhirta Se Lena Kyun Zaroori Hai' },
+      { type: 'paragraph', text: 'Saalon tak badhne diya jaaye to fatty liver inflammation aur scarring tak badh sakta hai. Yeh saath mein aur cheezein bhi laata hai — **diabetes, high cholesterol, high BP, aur heart disease** se gehra juda hua. Yeh aksar ek shuruaati sanket hai ki aapki overall metabolic health par dhyaan chahiye. Ghabrane ki wajah nahi — balki jab tak yeh aasaani se reversible hai tab tak act karne ki wajah.' },
+      { type: 'callout', variant: 'success', title: 'Achhi khabar: aksar reversible', text: 'Kai conditions ke ulat, shuruaati fatty liver aksar behtar ho jaata hai — kabhi poori tarah saaf ho jaata hai — rozana ke badlaav se. Aisi **koi goli nahi** jo liver fat pighla de; liver is baat par response karta hai ki aap kaise jeete hain.' },
+      { type: 'list', items: [
+        '**Sugar, meethe drinks, aur refined carbs** tezi se kam karein (sabse bade kaaran)',
+        'Fried aur ultra-processed foods ghatayein',
+        'Zyadatar dinon body chalayein — brisk walking bhi help karti hai',
+        'Agar extra wajan hai to dheere, tikau weight loss ki koshish karein',
+        'Alcohol kam se kam rakhein ya bilkul chhodein',
+        'Diabetes, cholesterol, aur BP check aur manage karwayein'
+      ]},
+      { type: 'paragraph', text: 'Dheera aur steady jeetta hai — crash diets jawaab nahi hain, **consistency hai**.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Agar kisi report ne fatty liver ka zikr kiya hai, ya aapko diabetes, motapa, ya high cholesterol hai, to kandha uchakane ke bajaye ek theek baat-cheet layak hai. Doctor simple tests se dekh sakte hain ki aapka liver kaisa hai, poori metabolic tasveer dekh sakte hain, aur aapke saath ek realistic plan bana sakte hain. Yeh un conditions mein se ek hai jahaan jaldi act karna sach mein nateeja badalta hai — aur ek online consultation apni report samajhne aur pehla kadam uthane ka aasaan, bina judgement wala tareeka hai.' },
     ]
   },
   {
@@ -2051,6 +2073,38 @@ export const articles = [
         'You cannot put weight on it, or it followed a clear injury'
       ]},
       { type: 'paragraph', text: 'An orthopedic doctor or physiotherapist can find the cause and set up the right plan. Many knee problems can be **assessed online first** to decide whether an X-ray or in-person visit is needed.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Yeh shuru ho sakta hai seedhi chadhte waqt ek chhoti si tees se, palti maar kar (cross-legged) baithne ke baad uthte waqt akadan se, ya lambi walk ke baad ek halke dard se. Knee pain sabse common shikaayaton mein se ek hai — aur yeh sirf "budhaape" ki problem nahi; young, active log bhi ise paate hain. Utsaah wali baat yeh hai ki zyadatar knee pain ko kam kiya jaa sakta hai aur, usse behtar, roka jaa sakta hai. Yahaan jaanein aapke ghutne kaise kaam karte hain, kya gadbad hoti hai, aur kya sach mein help karta hai.' },
+      { type: 'heading', text: 'Aapke Ghutne Bahut Bada Kaam Karte Hain' },
+      { type: 'paragraph', text: 'Aapka ghutna ek kamaal ka hinge hai jo aapke poore body ka wajan uthata hai, shock absorb karta hai, aur din mein hazaaron baar mudta hai. Andar, chikni cartilage haddiyon ko cushion deti hai aur unhe glide karne deti hai. Saalon mein, ya chot ke baad, woh cushioning aur aaspaas ke muscles aur ligaments par maar padti hai — aur tabhi dard aata hai.' },
+      { type: 'heading', text: 'Knee Pain Ke Common Kaaran' },
+      { type: 'list', items: [
+        '**Osteoarthritis** — cushioning cartilage ka dheere-dheere "wear and tear", umar ke saath common',
+        '**Zyada wajan** — har extra kilo ghutne par load kai guna badha deta hai',
+        '**Chotein** — twist, ligament ya cartilage tears, aksar sport se',
+        '**Overuse** — bahut zyada, bahut jaldi, khaaskar running ya climbing',
+        '**Kamzor thigh muscles** — jab woh joint ko support nahi karte, ghutna zor jhelta hai',
+        'Purani aadatein jaise lambe samay tak deep squatting ya kadi farsh par palti maar kar baithna'
+      ]},
+      { type: 'heading', text: 'Ghutnon Ko Aaram Aur Bachaav Dene Ke Simple Tareeke' },
+      { type: 'list', items: [
+        '**Apni thigh muscles majboot karein** — majboot quads ek natural knee brace ki tarah kaam karte hain (sabse asardaar cheezon mein se ek)',
+        'Load halka karne ke liye apna wajan healthy range mein rakhein',
+        'Halki, knee-friendly movement se active rahein — walking, swimming, cycling',
+        'Exercise se pehle warm up karein; intensity bahut jaldi na badhayein',
+        'Achhe footwear use karein',
+        'Agar dard ho to lambi deep squatting ya farsh par baithne se bachein'
+      ]},
+      { type: 'callout', variant: 'info', title: '"Bone on bone" ke dar par', text: 'Bahut log "arthritis" sunkar zaroori surgery ki kalpana kar lete hain. Asal mein, zyadatar knee arthritis **saalon tak bina operation ke achhe se** manage hota hai — targeted exercise, weight management, aur physiotherapy se. Majboot banana aur active rehna aksar poora aaram karne se zyada dard kam karta hai. Surgery aksar aakhri raasta hai, pehla kadam nahi.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'Jaldi doctor ko dikhayein agar', items: [
+        'Dard tez ho ya ek-do hafte mein na ghate',
+        'Kaafi soojan (swelling) ho',
+        'Ghutna jawaab de de ya lock ho jaaye',
+        'Aap uspar wajan na daal sakein, ya yeh kisi saaf chot ke baad hua ho'
+      ]},
+      { type: 'paragraph', text: 'Ek orthopedic doctor ya physiotherapist wajah dhoondh sakte hain aur sahi plan bana sakte hain. Kai knee problems ko **pehle online assess** kiya jaa sakta hai taaki tay ho ki X-ray ya in-person visit chahiye ya nahi.' },
     ]
   },
   {
@@ -2239,6 +2293,45 @@ export const articles = [
         'Constipation alternating with diarrhoea',
       ]},
       { type: 'paragraph', text: 'These deserve proper evaluation. A **gastroenterologist** can find the cause, and an **online consultation** is a private, easy first step to sort it out and stop guessing.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Yeh un cheezon mein se ek hai jise koi dining table par nahi uthata, phir bhi lagbhag har koi kabhi na kabhi ise jhelta hai: kabz (constipation). Woh phulaav, zor lagana, aur kai din "na jaane" ka halka bhaaripan. Yeh asuvidhajanak hai aur hairaani se aapke mood ko thakane wala — aur achhi baat yeh hai ki zyadatar logon ke liye kuch sachche badlaav se yeh aasaani se theek ho jaata hai. Chaliye ispar saaf-saaf baat karein, bina kisi sharm ke.' },
+      { type: 'heading', text: 'Asal Mein Kabz Kya Maana Jaata Hai?' },
+      { type: 'paragraph', text: 'Pehle, ek aashwasan: aisa koi niyam nahi ki aapko din mein ek baar jaana hi hai. "Normal" din mein teen baar se lekar hafte mein teen baar tak hota hai — har body alag hai. Kabz kisi jaadui number se zyada is baat par hai ki yeh kaisa mehsoos hota hai: kada, sookha mal, zor lagana, poora khaali na hone ka ehsaas, ya apne aam se saaf taur par kam jaana.' },
+      { type: 'heading', text: 'Yeh Kyun Hota Hai (Aksar Kuch Simple)' },
+      { type: 'paragraph', text: 'Zyadatar rozana ki kabz kuch aam wajah tak jaati hai:' },
+      { type: 'list', items: [
+        '**Kaafi fibre na hona** — classic modern-diet problem',
+        '**Kaafi paani na peena**, jisse mal kada aur sookha ho jaata hai',
+        'Bahut zyada baithna aur body ko **na chalana**',
+        'Jaane ki **hajat ko ignore karna** (rokna cheezein aur bigaadta hai)',
+        'Safar aur routine mein badlaav',
+        'Stress',
+        'Kuch dawaiyan aur iron ya calcium supplements',
+      ]},
+      { type: 'callout', variant: 'info', text: 'Pattern dikha? Inme se zyadatar **lifestyle** se judi hain — isiliye simple badlaav itne achhe se kaam karte hain.' },
+      { type: 'heading', text: 'Kya Sach Mein Cheezein Chalata Hai' },
+      { type: 'list', items: [
+        '**Fibre dheere-dheere** badhayein — sabziyan, phal (papeeta aur naashpaati halke helpers hain), whole grains, aur dal',
+        'Din bhar **zyada paani** piyein, khaaskar jaise-jaise fibre badhayein',
+        '**Body ko chalayein** — ek rozana walk bhi gut ko aage badhata hai',
+        'Hajat ko ignore na karein; jab aaye tab **prakriti ki pukaar ka jawaab dein**',
+        'Khud ko **binaa jaldi, relaxed** toilet time dein (aur phone bahar chhodein)',
+        'Subah ek **garam drink** bahut logon ko shuru hone mein madad karta hai',
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Fibre **dheere** badhayein — raat-o-raat zyada daalne se gas aur phulaav ho sakta hai.' },
+      { type: 'heading', text: 'Laxatives Se Bachke Rahein' },
+      { type: 'paragraph', text: 'Short-term rahat ke liye kabhi-kabhaar laxative aksar theek hai, par din-ba-din strong laxatives par nirbhar rehna ulta pad sakta hai — bowel un par nirbhar ho sakti hai aur samay ke saath aur sust ho sakti hai. Agar aapko lagta hai ki jaane ke liye regular kuch chahiye hi, to yeh doctor ko dikhane aur asli wajah dhoondhne ka sanket hai, dose badhate rehne ka nahi.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Zyadatar kabz upar diye kadmon se theek ho jaati hai, par doctor ko dikhayein agar yeh nayi aur lagatar ho, khaaskar ek umar ke baad, ya in mein se kisi red flag ke saath aaye:' },
+      { type: 'callout', variant: 'warning', title: 'Red flags — inhe check karwayein', items: [
+        'Mal mein khoon, ya kaale rang ka mal',
+        'Bina wajah wajan kam hona',
+        'Lagatar pet dard',
+        'Aapki aam bowel habits mein saaf, tikau badlaav',
+        'Kabz jo diarrhoea ke saath baari-baari se aaye',
+      ]},
+      { type: 'paragraph', text: 'Yeh theek se jaanch ke haqdaar hain. Ek **gastroenterologist** wajah dhoondh sakte hain, aur ek **online consultation** ise suljhane aur andaaza lagana band karne ka niji, aasaan pehla kadam hai.' },
     ]
   },
   {
@@ -2284,6 +2377,42 @@ export const articles = [
       { type: 'callout', variant: 'warning', title: 'Emergency — a severe reaction cannot wait', text: 'Get **immediate** medical help if a reaction comes with swelling of the lips, tongue, or face, difficulty breathing, tightness in the throat, wheezing, dizziness, or fainting. That combination can be **life-threatening**. When in doubt, treat breathing trouble with a rash as an emergency.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'Short of an emergency, see a dermatologist if hives keep coming back or last more than a few weeks, if a rash is spreading, painful, or blistering, or if the itch is disrupting your sleep and daily life. A doctor can help pin down the trigger and settle the reaction properly rather than leaving you guessing. Skin problems are well suited to online consultation — clear photos of the rash let a doctor assess it and guide you from home.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap apna din bita rahe hain ki achanak aapki skin par khujli wale, ubhre hue welts nikal aate hain — ya ek patch bina kisi wajah ke laal, ubhra, aur pareshaan karne wali khujli wala ho jaata hai. Skin allergies aur hives bahut common hain, aksar harmless, phir bhi jab khujli rukti nahi to sach mein pareshaan karti hain. Yahaan ek shaant guide hai ki aapki skin kyun react karti hai, ise kaise shaant karein, aur woh sanket jo batate hain ki aapko jaldi madad leni chahiye.' },
+      { type: 'heading', text: 'Aapki Skin Ek Sensitive Alarm Hai' },
+      { type: 'paragraph', text: 'Aapki skin sirf ek covering nahi — yeh aapke immune system ka ek active hissa hai, aur jab ise koi cheez pasand nahi aati to yeh react karti hai. Kabhi yeh reaction ek rash hota hai jahaan kisi cheez ne aapko chhua; kabhi yeh hives (ubhre, khujli wale welts) hote hain jo body ke andar kisi cheez se shuru hote hain. Dono taraf, khujli aur laali aapki skin ka jhanda hilana hai, is baat ka sanket nahi ki kuch bahut gambhir hai.' },
+      { type: 'heading', text: 'Hives vs Ek Contact Rash' },
+      { type: 'paragraph', text: 'Yeh jaanna help karta hai ki aap mote taur par kis se nipat rahe hain:' },
+      { type: 'table', headers: ['', 'Hives (urticaria)', 'Contact rash'], rows: [
+        ['Kaise dikhta hai', 'Ubhre, gulaabi ya pale khujli wale welts', 'Laali, daane, ya khujli'],
+        ['Kahaan', 'Kahin bhi; aksar jagah badalta hai', 'Theek wahaan jahaan skin ne kuch chhua'],
+        ['Timing', 'Ek jagah ghanton mein mit jaata, kahin aur nikal aata', 'Wahin rehta hai jahaan contact hua'],
+        ['Common triggers', 'Foods, dawaiyan, infections, garmi, stress', 'Naya soap, metal, paudha, cosmetic, chemical'],
+      ]},
+      { type: 'heading', text: 'Common Triggers' },
+      { type: 'list', items: [
+        'Kuch **foods** (nuts, shellfish, ande, aur doosre)',
+        '**Dawaiyan**',
+        'Keede ke kaatne ya dank',
+        '**Soap, detergent, cosmetics**, aur fragrances',
+        'Metals (jaise jewellery mein **nickel**)',
+        'Garmi, paseena, aur kabhi stress',
+        'Infections bhi hives shuru kar sakte hain',
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Trigger aksar saaf nahi hota — flare se pehle aapne kya khaya, use kiya, ya kiya, iska ek chhota **diary** rakhna sach mein useful ho sakta hai.' },
+      { type: 'heading', text: 'Apni Skin Ko Kaise Shaant Karein' },
+      { type: 'list', items: [
+        'Agar aap trigger pehchaan lein, to use **rokein ya usse bachein**',
+        'Ek **thanda compress** khujli aur welts ko shaant karta hai',
+        '**Dheele, naram cotton** kapde pehnein',
+        'Ek naram, **fragrance-free** moisturiser use karein',
+        '**Na khujaane** ki poori koshish karein — yeh khujli badhata hai aur skin phaad sakta hai',
+        'Thanda rahein; garmi aur paseena aksar khujli badha dete hain',
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Emergency — ek gambhir reaction intezaar nahi kar sakta', text: 'Agar reaction ke saath hoth, jeebh, ya chehre par soojan, saans lene mein dikkat, gale mein jakadan, wheezing, chakkar, ya behoshi aaye to **turant** medical madad lein. Yeh combination **jaanleva** ho sakta hai. Shak ho to rash ke saath saans ki dikkat ko emergency samjhein.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Emergency ke alaawa, dermatologist ko dikhayein agar hives baar-baar aayein ya kuch hafton se zyada rahein, agar rash phail raha ho, dard bhara ho, ya chhaale ho, ya khujli aapki neend aur rozana zindagi kharab kar rahi ho. Doctor trigger pakadne aur reaction ko theek se shaant karne mein madad kar sakte hain, aapko andaaza lagane par chhodne ke bajaye. Skin problems online consultation ke liye achhi tarah suited hain — rash ki saaf photos se doctor ise assess kar sakte hain aur aapko ghar se guide kar sakte hain.' },
     ]
   },
   {
@@ -2737,6 +2866,34 @@ export const articles = [
       { type: 'callout', variant: 'warning', title: 'Treat as an EMERGENCY if', text: 'Breathing is severe, the reliever inhaler is not helping, you cannot speak in full sentences, or lips/face turn bluish — get to a hospital immediately.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a doctor for frequent wheezing/cough/breathlessness, if you use a reliever inhaler often, or if asthma disturbs your sleep or activity — your treatment may need adjusting. For ongoing management and inhaler technique, an **online consultation** is a convenient way to get properly controlled.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Kam hi conditions asthma jitni myths se ghiri hain. "Inhaler ki lat lag jaati hai." "Ek baar shuru kiya to kabhi band nahi kar sakte." "Yeh sirf bachchon ki problem hai." Yeh maanyataayein common hain — aur yeh logon ko wheezing karte, ilaaj se bachte, aur zaroorat se chhoti zindagi jeete rakhti hain. Chaliye sach saaf karein, imaandaari se.' },
+      { type: 'heading', text: 'Asthma Asal Mein Kya Hai' },
+      { type: 'paragraph', text: 'Asthma mein, aapke phephdon (lungs) ki airways extra-sensitive hoti hain. Trigger hone par woh jakad jaati hain, sujj jaati hain aur mucus banati hain — jisse saans lena mushkil ho jaata hai, wheezing, khaansi, chest tightness, ya saans phoolne ke saath. Yeh bachpan mein ya jawaani mein shuru ho sakta hai, aur halka ya gambhir ho sakta hai. Mukhya baat: theek se ilaaj hone par yeh bahut manageable hai.' },
+      { type: 'heading', text: 'Common Triggers' },
+      { type: 'list', items: [
+        'Dhool, mites, aur pollen',
+        'Thandi hawa, dhuaan, aur teevra gandh',
+        'Pollution',
+        'Respiratory infections (ek cold ise shuru kar sakta hai)',
+        'Kuch logon mein exercise',
+        'Pet dander (jaanwaron ke baal/roosi)'
+      ]},
+      { type: 'paragraph', text: '**Apne** triggers jaanna aur unse bachna aadhi ladai hai.' },
+      { type: 'heading', text: 'Inhaler Ke Myths — Saaf Kiye Gaye' },
+      { type: 'table', headers: ['Myth', 'Haqeeqat'], rows: [
+        ['"Inhaler ki lat lagti hai"', 'Nahi — yeh lungs tak dawa pahunchate hain; koi lat nahi'],
+        ['"Sirf gambhir cases / aakhri raasta"', 'Ulta — aksar PEHLA aur sabse achha ilaaj'],
+        ['"Ek baar shuru to kabhi band nahi"', 'Ilaaj adjust hota hai; asthma settle hone par kuch kam kar dete hain'],
+        ['"Yeh sirf bachchon ki bimaari hai"', 'Adults ko bhi asthma hota hai, kabhi pehli baar'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Inhaler kyun pasand kiye jaate hain: **seedhe lungs tak ek chhoti dose** bhejna jaldi kaam karta hai, tablets se kahin kam side effects ke saath. Inka dar logon ko bekaar mein wheezing karte rakhta hai.' },
+      { type: 'heading', text: 'Ise Theek Karna Kyun Maayne Rakhta Hai' },
+      { type: 'paragraph', text: 'Achhe se control kiya asthma matlab aap normal roop se daud sakte, so sakte, kaam kar sakte, aur khel sakte hain. Kharaab control wala asthma — aksar isliye ki koi dar se apna inhaler nahi leta — baar-baar aur kabhi khatarnaak attacks tak le jaata hai. Aam taur par saans phoolne ke saath **aise hi "jeene" ki koi wajah nahi**.' },
+      { type: 'callout', variant: 'warning', title: 'EMERGENCY samjhein agar', text: 'Saans lena bahut mushkil ho, reliever inhaler help na kar raha ho, aap poore vaakya na bol paa rahe ho, ya hoth/chehra neela padne lage — to turant hospital jaayein.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Baar-baar wheezing/khaansi/saans phoolne par doctor ko dikhayein, agar aap reliever inhaler aksar use karte hain, ya asthma aapki neend ya activity mein khalal daale — aapke ilaaj ko adjust karne ki zaroorat ho sakti hai. Ongoing management aur inhaler technique ke liye, ek **online consultation** theek se control paane ka suvidhajanak tareeka hai.' },
     ]
   },
   {
