@@ -21,8 +21,11 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-// Your GA4 Measurement ID (matches the snippet in index.html).
-const GA_MEASUREMENT_ID = 'G-28BZZQPPXF';
+// Your GA4 Measurement ID. Configurable via a VITE_ env var (so it can be
+// swapped per environment or rotated without a code change), with the current
+// production ID as the fallback — this also matches the hardcoded snippet in
+// index.html, so both stay in sync by default.
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-28BZZQPPXF';
 
 function Analytics() {
   // Keyed on the full location (path + query) so a genuine navigation is

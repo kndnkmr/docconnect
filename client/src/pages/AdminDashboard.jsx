@@ -3,7 +3,8 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
-import { adminAPI, announcementAPI, complaintAPI, reviewAPI } from '../services/api';
+import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from '../services/api';
+import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
 
 function AdminDashboard() {
@@ -37,6 +38,47 @@ function AdminDashboard() {
   // Reviews moderation state
   const [reviews, setReviews] = useState([]);
   const [reviewHiddenFilter, setReviewHiddenFilter] = useState(''); // '' = all, 'true' = hidden, 'false' = visible
+
+  // Blog analytics state. These are OUR OWN aggregate numbers (from the
+  // BlogView collection): total reads and ❤️ likes per article. Deliberately
+  // anonymous — we never track *who* read what (privacy, and a health site).
+  // For visitor-level stats (how many people, from where, device), that's
+  // Google Analytics, not this table.
+  const [blogStats, setBlogStats] = useState(null);
+
+  // Build a slug → {title, specialization, image} lookup once from the
+  // lightweight article metadata, so we can show human-readable titles next
+  // to the view counts (which are keyed by slug).
+  const articleBySlug = Object.fromEntries(
+    articleMeta.map((a) => [a.slug, a])
+  );
+
+  const fetchBlogStats = async () => {
+    try {
+      const { data } = await blogViewAPI.getAll(); // { counts: {slug:n}, likes: {slug:n} }
+      const counts = data?.counts || {};
+      const likes = data?.likes || {};
+      // Merge every slug that has either a view or a like into one ranked list.
+      const slugs = new Set([...Object.keys(counts), ...Object.keys(likes)]);
+      const rows = [...slugs].map((slug) => {
+        const meta = articleBySlug[slug];
+        return {
+          slug,
+          title: meta?.title || slug,
+          specialization: meta?.specialization || '—',
+          image: meta?.image || '📄',
+          views: counts[slug] || 0,
+          likes: likes[slug] || 0,
+        };
+      }).sort((a, b) => b.views - a.views || b.likes - a.likes);
+
+      const totalViews = rows.reduce((s, r) => s + r.views, 0);
+      const totalLikes = rows.reduce((s, r) => s + r.likes, 0);
+      setBlogStats({ rows, totalViews, totalLikes, articlesTracked: rows.length });
+    } catch (error) {
+      toast.error('Failed to load blog analytics');
+    }
+  };
 
   const fetchReviews = async () => {
     try {
@@ -521,6 +563,14 @@ function AdminDashboard() {
           }`}
         >
           Reviews
+        </button>
+        <button
+          onClick={() => { setActiveTab('blog'); fetchBlogStats(); }}
+          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'blog' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Blog Analytics
         </button>
       </div>
 
@@ -1358,6 +1408,80 @@ function AdminDashboard() {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* === BLOG ANALYTICS TAB === */}
+      {activeTab === 'blog' && (
+        <div>
+          {/* A short, honest note so it's clear what this does and does not show. */}
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+            These are our own anonymous read & like counts per article. They show <strong>which content performs best</strong>, not who read it — blog readers are anonymous by design. For visitor numbers, traffic sources, and devices, use <strong>Google Analytics</strong>.
+          </div>
+
+          {blogStats ? (
+            <>
+              {/* Summary cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                  <div className="text-3xl font-bold text-primary-600">{blogStats.totalViews.toLocaleString()}</div>
+                  <div className="text-gray-600 mt-1">Total Reads</div>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                  <div className="text-3xl font-bold text-rose-600">{blogStats.totalLikes.toLocaleString()}</div>
+                  <div className="text-gray-600 mt-1">Total Likes ❤️</div>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                  <div className="text-3xl font-bold text-purple-600">{blogStats.articlesTracked.toLocaleString()}</div>
+                  <div className="text-gray-600 mt-1">Articles With Activity</div>
+                </div>
+              </div>
+
+              {/* Ranked table */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Articles Ranked by Reads</h3>
+                {blogStats.rows.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No reads or likes recorded yet. Numbers appear here as people read your articles.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-4 py-3 text-sm font-medium text-gray-600">#</th>
+                          <th className="px-4 py-3 text-sm font-medium text-gray-600">Article</th>
+                          <th className="px-4 py-3 text-sm font-medium text-gray-600">Specialization</th>
+                          <th className="px-4 py-3 text-sm font-medium text-gray-600 text-right">Reads</th>
+                          <th className="px-4 py-3 text-sm font-medium text-gray-600 text-right">Likes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {blogStats.rows.map((row, i) => (
+                          <tr key={row.slug} className="border-b last:border-0 hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm text-gray-500">{i + 1}</td>
+                            <td className="px-4 py-3 text-sm text-gray-800">
+                              <a
+                                href={`/blog/${row.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-primary-600 hover:underline"
+                              >
+                                <span className="mr-1" aria-hidden="true">{row.image}</span>{row.title}
+                              </a>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-500">{row.specialization}</td>
+                            <td className="px-4 py-3 text-sm text-gray-800 text-right font-medium">{row.views.toLocaleString()}</td>
+                            <td className="px-4 py-3 text-sm text-gray-800 text-right">{row.likes.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="bg-white rounded-xl shadow-md p-12 text-center text-gray-500">Loading blog analytics…</div>
           )}
         </div>
       )}
