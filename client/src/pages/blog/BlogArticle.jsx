@@ -302,6 +302,19 @@ function BlogArticle() {
     }
     copyLink();
   };
+  // Instagram gives websites NO way to post a link directly (its API forbids
+  // it). The closest real path: on a phone, the native share sheet lets the
+  // user "Share to Instagram Story"; on desktop there's no such option, so we
+  // copy the link and tell them to paste it into their bio / Story. This keeps
+  // the promise honest instead of pretending a direct post is possible.
+  const shareInstagram = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: article?.title, text: article?.title, url: articleUrl }); return; } catch { /* cancelled */ }
+    }
+    try { await navigator.clipboard.writeText(articleUrl); }
+    catch { window.prompt('Copy this link:', articleUrl); }
+    toast('Link copied — open Instagram and paste it in your Story or bio 📸', { icon: '📸' });
+  };
 
   if (!article) {
     return (
@@ -410,6 +423,15 @@ function BlogArticle() {
             target="_blank" rel="noopener noreferrer"
             className="px-4 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:bg-[#0d65d9]"
           >📘 Facebook</a>
+          <button
+            onClick={shareInstagram}
+            className="px-4 py-2 text-white rounded-lg text-sm font-medium bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] hover:opacity-90"
+          >📸 Instagram</button>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article?.title ? article.title + ' — ProMedicoz' : 'ProMedicoz')}&url=${encodeURIComponent(articleUrl)}`}
+            target="_blank" rel="noopener noreferrer"
+            className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800"
+          >𝕏 Twitter</a>
           <button onClick={nativeShare} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700">📤 Share</button>
           <button onClick={copyLink} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50">🔗 Copy link</button>
         </div>
