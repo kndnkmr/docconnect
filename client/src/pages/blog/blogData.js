@@ -3402,6 +3402,47 @@ export const articles = [
       { type: 'callout', variant: 'tip', title: 'Had a "mini-stroke" (TIA)?', text: 'If you have ever had stroke-like symptoms that passed within minutes or hours, do not brush it off — a TIA is a serious warning sign that a bigger stroke could follow. See a doctor; it can be managed.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'A stroke itself is an **emergency** — call for help, do not book an appointment. But for **prevention** — managing blood pressure, diabetes, cholesterol, or after a warning "mini-stroke" — a doctor or neurologist is exactly who to see, and much of that ongoing care can be handled through online consultations. The best time to lower your stroke risk is long before an emergency ever happens.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Stroke (falij) un kuch health emergencies mein se ek hai jahaan simple sanketon ko jaanna — aur minaton mein action lena — sach mein ek jaan bacha sakta hai ya umar-bhar ki viklaangta rok sakta hai. Phir bhi log keemti samay khote hain kyunki unhe pakka nahi hota ki woh kya dekh rahe hain, ya ummeed karte hain ki yeh guzar jaayega. Yeh chhoti guide kisi din aapko kisi ki jaan bachane mein madad kar sakti hai. Kripya ise padhein, aur share karein.' },
+      { type: 'callout', variant: 'warning', title: 'Stroke ka shak ho — ABHI action lein', text: 'Neeche di **F.A.S.T.** check karein. Agar **koi bhi** sign ho, to turant ambulance bulayein ya nazdeeki hospital jaayein. Symptoms kab shuru hue, woh samay note karein. **Yeh dekhne ke liye intezaar mat karein ki theek hota hai ya nahi.**' },
+      { type: 'heading', text: 'Stroke Kya Hai' },
+      { type: 'paragraph', text: 'Stroke tab hota hai jab dimaag ke ek hisse tak blood flow achanak ruk jaata hai — aksar ek **clot** se, kabhi ek **bleed** se. Oxygen se vanchit, brain cells minaton mein marne lagte hain. Isiliye stroke care samay ke khilaaf ek daud hai: jitni jaldi blood flow wapas aata hai, utna zyada dimaag bachta hai. Doctors iske liye ek phrase istemaal karte hain — **"time is brain" (samay hi dimaag hai).**' },
+      { type: 'heading', text: 'F.A.S.T. Check' },
+      { type: 'paragraph', text: 'Stroke pehchaanne ka sabse aasaan tareeka hai chaar letters yaad rakhna — **F.A.S.T.**:' },
+      { type: 'steps', items: [
+        '**F — Face drooping (chehra latakna).** Unhe muskuraane ko kahein. Kya chehre ka ek taraf latka ya sunn hai?',
+        '**A — Arm weakness (haath mein kamzori).** Unhe dono haath uthaane ko kahein. Kya ek neeche gir jaata hai ya kamzor lagta hai?',
+        '**S — Speech difficulty (bolne mein dikkat).** Unhe ek simple vaakya dohraane ko kahein. Kya woh latakti (slurred) ya ajeeb hai?',
+        '**T — Time to call for help (madad bulane ka samay).** Agar aapko in mein se KOI bhi sign dikhe, to turant action lein — har minute maayne rakhta hai.'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Doosre achanak warning signs', items: [
+        'Body ke ek taraf achanak sunnapan ya kamzori',
+        'Achanak confusion ya samajhne mein dikkat',
+        'Ek ya dono aankhon mein achanak dekhne mein dikkat',
+        'Bina kisi jaani wajah ke tez sir dard',
+        'Achanak chakkar ya balance kho dena'
+      ]},
+      { type: 'heading', text: 'Turant Kya Karein' },
+      { type: 'steps', items: [
+        'Stroke facility wale nazdeeki hospital mein ambulance bulayein ya **turant** pahunchein — aur symptoms kab shuru hue woh samay note karein.',
+        '"Theek hota hai ya nahi" dekhne ke liye **mat** rukein.',
+        'Khaana, paani, ya dawa **mat** dein — stroke nigalne ko prabhaavit kar sakta hai aur ghutan (choking) ho sakti hai.',
+        'Vyakti ko shaant rakhein; agar sust/neend mein hon, to unhe surakshit roop se karwat par litayein.'
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Kai asardaar stroke treatments sirf shuruaat ke kuch ghanton ke andar hi kaam karte hain — der ka har minute brain cells ki keemat par hota hai. Yeh **kabhi bhi** "ghar par dekhte hain" wali sthiti nahi hai.' },
+      { type: 'heading', text: 'Achhi Khabar: Zyadatar Strokes Roke Jaa Sakte Hain' },
+      { type: 'paragraph', text: 'Risk factors zyadatar wahi hain jinpar aap action le sakte hain. Sabse bade levers:' },
+      { type: 'list', items: [
+        '**Apna blood pressure control karein** — sabse zaroori factor',
+        '**Diabetes** aur **cholesterol** manage karein',
+        '**Smoke na karein**, aur alcohol seemit rakhein',
+        '**Active** rahein aur achha khayein',
+        '**Irregular dhadkan** check karwayein — yeh stroke ka khatra badhati hai aur treatable hai'
+      ]},
+      { type: 'callout', variant: 'tip', title: '"Mini-stroke" (TIA) hua tha?', text: 'Agar aapko kabhi stroke-jaise symptoms hue jo minaton ya ghanton mein guzar gaye, to use halke mein mat lein — TIA ek gambhir warning sign hai ki ek bada stroke aa sakta hai. Doctor ko dikhayein; ise manage kiya jaa sakta hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Stroke khud ek **emergency** hai — madad bulayein, appointment book mat karein. Par **prevention** ke liye — blood pressure, diabetes, cholesterol manage karna, ya ek warning "mini-stroke" ke baad — doctor ya neurologist bilkul wahi hain jinhe dikhaana chahiye, aur us ongoing care ka bahut hissa online consultations se ho sakta hai. Apna stroke risk kam karne ka sabse achha samay emergency hone se bahut pehle hai.' },
     ]
   },
   {
@@ -4093,6 +4134,37 @@ export const articles = [
         'Pain that keeps you awake or is getting worse',
       ]},
       { type: 'paragraph', text: 'Mild, general sensitivity often improves with a soft brush, gentle technique, and desensitising toothpaste. But sensitivity that lingers, targets one tooth, or comes with a visible problem can signal decay, a crack, or a filling that needs attention — so see a dentist. They can find the cause and treat it properly, and a routine check-up catches these early. An **online consultation** is an easy first step to describe what you are feeling and decide whether you need to be seen in person.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap thande paani ka ek ghoont lete hain ya ice cream ka ek bite — zing — ek tez, achanak jhatka ek daant mein daudta hai, phir mit jaata hai. Daant ki sensitivity sabse common dental shikaayaton mein se ek hai, aur chaahe woh chhota shock bura lage, jab aap iske peeche ki wajah jaan lein to yeh aksar bahut treatable hota hai. Yahaan ek saaf guide hai ki daant sensitive kyun hote hain, kya sach mein help karta hai, aur kab dentist ko dikhaana theek hai.' },
+      { type: 'heading', text: 'Daant Sensitive Kyun Hote Hain' },
+      { type: 'paragraph', text: 'Aapke daant enamel ki ek kadi bahri parat se surakshit hote hain, aur jadein cementum naamak covering se. Neeche dentine hoti hai, jo nerve tak jaane wale sookshm channels se bhari hoti hai. Jab enamel patli ho jaati hai ya masoode (gums) peeche hatkar jad expose kar dete hain, to woh channels khul jaate hain — isliye garam, thanda, meetha, ya acidic cheezein nerve tak pahunch kar woh tez, chhota zing trigger karti hain. Sensitivity asal mein nerve ka pahunch mein aa jaana hai jabki use dhaka hona chahiye.' },
+      { type: 'heading', text: 'Common Kaaran' },
+      { type: 'list', items: [
+        '**Bahut zor se brush karna**, ya hard-bristle brush se, enamel aur masoodon ko ghisna',
+        '**Gum recession** jo daant ki jad expose kar de',
+        'Acidic foods aur drinks samay ke saath enamel ko erode karna',
+        'Daant **peesna** (grinding, aksar raat ko)',
+        'Ek chatka hua daant, ghisa filling, ya daant ka sadan (decay)',
+        'Kuch dental treatments ke baad temporary sensitivity',
+      ]},
+      { type: 'heading', text: 'Kya Help Karta Hai' },
+      { type: 'list', items: [
+        '**Soft-bristle** brush par switch karein aur **dheere** brush karein — zyada zor saaf nahi karta',
+        'Regular ek **desensitising toothpaste** (sensitive teeth wala) use karein — iska asar banne mein ek-do hafte lag sakte hain',
+        'Bahut **acidic** foods aur drinks kam karein; unke baad paani se kulla karein',
+        'Acidic khaane/peene ke **turant baad brush na karein** — thodi der rukein taaki narm hui enamel recover kar sake',
+        'Apne dentist ko **grinding** batayein — ek night guard help kar sakta hai',
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Sensitivity toothpaste ko ek theek mauka dein — kuch hafton tak lagatar din mein do baar use — yeh tay karne se pehle ki yeh kaam kar raha hai ya nahi.' },
+      { type: 'heading', text: 'Jab Sensitivity Kuch Zyada Ka Matlab Ho' },
+      { type: 'callout', variant: 'warning', title: 'Dentist ko dikhayein agar aapko ho', items: [
+        'Sensitivity ya dard jo ek quick zing ke bajaye **der tak rehta** ho',
+        '**Kisi ek daant** mein dard, ya kaatte waqt',
+        'Sensitivity ke saath ek **dikhne wala chhed (hole)**, chip, kaala dhabba, ya soojan',
+        'Dard jo aapko jagaaye rakhe ya badhta ja raha ho',
+      ]},
+      { type: 'paragraph', text: 'Halki, general sensitivity aksar soft brush, dheere technique, aur desensitising toothpaste se behtar ho jaati hai. Par sensitivity jo der tak rahe, ek daant ko target kare, ya ek dikhne wali problem ke saath aaye, woh decay, crack, ya ek aisi filling ka sanket ho sakti hai jispar dhyaan chahiye — isliye dentist ko dikhayein. Woh wajah dhoondh kar theek se ilaaj kar sakte hain, aur ek routine check-up inhe jaldi pakad leta hai. Ek **online consultation** yeh batane ka aasaan pehla kadam hai ki aap kya mehsoos kar rahe hain aur tay karne ke liye ki aapko in-person dikhaana chahiye ya nahi.' },
     ]
   },
   {
@@ -9698,6 +9770,41 @@ export const articles = [
       ]},
       { type: 'paragraph', text: 'See a **general physician** to keep up sensible checks, review medicines, and address any concerns — and treat emergency signs as emergencies. For older adults, the threshold to seek help should be a little lower, as problems can escalate faster. Regular, unhurried **online consultations** are especially valuable in older age — reviewing health and medicines without the effort of travelling for every visit. Ageing well is largely about steady habits and staying engaged — and a good relationship with a doctor.' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and healthy-ageing guidance (WHO, NIH/National Institute on Aging). It does not replace personalised advice from a doctor.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Budhe hona ek saubhaagya hai, aur iska matlab yeh nahi ki aap kharaab sehat ko sweekaar kar lein. Hum kaise budhe hote hain, iska bahut hissa rozana ki aadaton aur samajhdaar care se banta hai — aur iska faayda lene mein sach mein kabhi der nahi hoti. Chaahe yeh aapke liye ho ya ek budhe hote parent ke liye, yeh 60 ke baad majboot, sharp, aur swatantra rehne ki ek garam, practical guide hai: woh aadatein jo sabse zyada maayne rakhti hain, karne layak checks, aur woh warning signs jo ignore nahi karne.' },
+      { type: 'heading', text: 'Woh Aadatein Jo Sabse Zyada Maayne Rakhti Hain' },
+      { type: 'list', items: [
+        '**Sharirik roop se active** rahein — regular movement, aur **strength aur balance** ka kaam, muscle, haddiyon, aur swatantrata ki raksha karta hai (aur girne ka khatra kam karta hai)',
+        '**Achha** khayein — kaafi protein, calcium, fibre, aur fluids; umar ke saath bhookh kam ho sakti hai, isliye poshak meals maayne rakhte hain',
+        '**Dimaag ko vyast** rakhein — padhna, hobbies, seekhna, aur problem-solving',
+        '**Saamajik roop se jude** rahein — akelaapan sach mein sehat ko nuksaan pahunchata hai; dost, parivaar, aur community maayne rakhte hain',
+        '**Neend** bachayein, aur smoke na karein; alcohol modest rakhein',
+      ]},
+      { type: 'heading', text: 'Karte Rehne Layak Checks Aur Care' },
+      { type: 'list', items: [
+        'Regular **blood pressure, blood sugar, aur cholesterol** checks',
+        '**Aankh aur kaan (hearing)** ke test (dono dheere-dheere kam hote hain aur aasaani se theek ho jaate hain)',
+        '**Bone health** — khaaskar menopause ke baad auraton ke liye (osteoporosis risk)',
+        '**Dental** care, aur doctor ki salah anusaar screening checks',
+        'Ek samay-samay par **dawaiyon ki review** — budhe log aksar kai dawaiyan lete hain, aur kuch bekaar ya aapas mein react karti ho sakti hain',
+        '**Vaccinations** (jaise flu) salah anusaar up to date rakhein',
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Movement longevity ki goli ke sabse kareeb hai', text: 'Is page ki har cheez mein se, **active** rehna — strength aur balance exercises samet — aapko swatantra rakhne mein sabse zyada karta hai: majboot muscle aur haddiyan, kam girna, behtar mood, sharp dimaag, aur BP, sugar, aur wajan ka behtar control. Dheere se shuru karne mein kabhi der nahi hoti.' },
+      { type: 'heading', text: 'Girne Se Bachna Aur Surakshit Rehna' },
+      { type: 'paragraph', text: 'Girna budhe umar mein gambhir chot ka ek bada kaaran hai, aur zyadatar roke jaa sakte hain — kabaad aur trip hazards hatayein, achhi roshni rakhein, grab bars use karein, non-slip footwear pehnein, balance exercises karte rahein, aur aankhein check karwayein. Chakkar dene wali dawaiyon ki bhi review karein.' },
+      { type: 'heading', text: 'Dimaag Aur Mood Ka Khayaal' },
+      { type: 'paragraph', text: 'Baad ki zindagi mein mansik swasthya sharirik sehat jitna hi maayne rakhta hai. Low mood aur akelaapan common hain par budhaape ka "normal" hissa nahi jise bas sweekaar kar lein — yeh treatable hain. Aur kuch memory badlaav normal hai, par memory loss jo rozana zindagi mein khalal daale, use check karwana zaroori hai. Jude, active, aur vyast rehna mood aur dimaag dono ki raksha karta hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'In ke liye doctor ko dikhayein', items: [
+        'Kisi bhi umar par zaroori koi bhi **warning sign** — chest pain, saans phoolna, stroke ke sign, bina wajah wajan kam hona, ek lump, bleeding',
+        '**Baar-baar girna**, nayi asthirta, ya chakkar',
+        '**Memory badlaav** jo rozana zindagi mein khalal daalein, ya lagatar low mood/alag-thalag rehna',
+        'Naya confusion ya achanak badlaav (budhon mein infection ya doosri problem ka sanket ho sakta hai)',
+        'Dawaiyon ki review karne, ya umar ke anukool health checks plan karne ke liye',
+      ]},
+      { type: 'paragraph', text: 'Samajhdaar checks karte rehne, dawaiyan review karne, aur kisi chinta ko sambodhit karne ke liye ek **general physician** ko dikhayein — aur emergency signs ko emergency samjhein. Budhon ke liye, madad maangne ki threshold thodi kam honi chahiye, kyunki problems zyada tezi se badh sakti hain. Regular, binaa jaldi wali **online consultations** budhe umar mein khaaskar keemti hain — har visit ke liye safar ki mehnat ke bina sehat aur dawaiyan review karna. Achhe se budhe hona zyadatar steady aadaton aur vyast rehne ke baare mein hai — aur ek doctor ke saath achhe rishte ke.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health aur healthy-ageing guidance (WHO, NIH/National Institute on Aging) par aadhaarit general shiksha. Yeh doctor ki personalised salah ki jagah nahi leta. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -12743,6 +12850,39 @@ export const articles = [
       ]},
       { type: 'paragraph', text: 'See a **doctor or neurologist** if you notice persistent tremor, slowness, stiffness, or balance changes — early diagnosis means treatment and support can start sooner, which helps quality of life. If already diagnosed, regular reviews keep treatment optimised as things change. An **online consultation** is useful for follow-ups, medication questions, and coordinating ongoing care without frequent travel — valuable when movement is difficult. Parkinson\'s is manageable, and good care makes a real difference. (See our guides on neurological symptoms, dementia, and preventing falls in the elderly.)' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and neurology sources (NHS, NIH). It does not replace an assessment by a doctor or neurologist, who diagnoses and manages Parkinson\'s.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Parkinson\'s disease dimaag aur movement ko prabhaavit karne wali sabse jaani-maani conditions mein se ek hai — zyadatar log ise iske khaas haath ke tremor (kaanpan) se pehchaante hain. Par Parkinson\'s ek tremor se zyada hai, aur ise samajhna prabhaavit logon aur unke parivaaron ko behtar cope karne aur jaldi care lene mein madad karta hai. Abhi tak koi cure nahi hai, par treatment symptoms ko achhe se manage kar sakta hai aur logon ko kai saalon tak active zindagi jeene mein madad kar sakta hai. Yeh ek saaf, supportive guide hai ki Parkinson\'s kya hai, iske symptoms, aur ise kaise manage kiya jaata hai.' },
+      { type: 'heading', text: 'Parkinson\'s Disease Kya Hai?' },
+      { type: 'paragraph', text: 'Parkinson\'s ek long-term condition hai jismein kuch brain cells jo **dopamine** (ek chemical jo movement control karne mein madad karta hai) banati hain, dheere-dheere kho jaati hain. Isse woh movement symptoms hote hain jinke liye yeh jaana jaata hai. Yeh aam taur par dheere develop hota hai, zyadatar **budhon** mein, aur saalon mein dheere-dheere badhta hai. Yeh chhoot ka rog (contagious) nahi hai aur zyadatar cases mein seedhe wanshaanugat (inherited) nahi hota.' },
+      { type: 'heading', text: 'Mukhya Symptoms' },
+      { type: 'list', items: [
+        '**Tremor** — aksar aaram ki halat mein haath ka kaanpna (sabse pehchaana sign)',
+        '**Movement mein slowness** — rozana ke kaam dheere ho jaate hain',
+        'Muscles ki **stiffness (akadan)**',
+        '**Balance aur posture** ki problem, aur ghaseetkar chalna',
+        'Doosre, kam jaane symptoms: chhoti handwriting, kam facial expression, halki awaaz, aur kabhi neend, mood, ya memory badlaav',
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Har tremor Parkinson\'s nahi hai', text: 'Kaanpta haath apne aap Parkinson\'s nahi hai — tremors ke kai kaaran hote hain (ek common, harmless jise essential tremor kehte hain, plus anxiety, thyroid problems, aur kuch dawaiyan). Parkinson\'s ka tremor classically **aaram ki halat mein** hota hai aur movement se behtar ho jaata hai. Agar aap kisi tremor ko lekar chintit hain, to doctor fark bata sakte hain — khud diagnose mat karein.' },
+      { type: 'heading', text: 'Ise Kaise Diagnose Aur Manage Kiya Jaata Hai' },
+      { type: 'paragraph', text: 'Parkinson\'s mukhya roop se ek **neurologist** dwaara symptoms aur jaanch ke aadhaar par diagnose hota hai. Cure na hone par bhi, **dawaiyan** (jo dopamine badhati ya uski nakal karti hain) symptoms ko asardaar tareeke se manage kar sakti hain, khaaskar shuruaati saalon mein, aur samay ke saath adjust hoti hain. **Physiotherapy, exercise, aur speech/occupational therapy** bhi movement, function, aur swatantrata banaye rakhne mein madad karti hain. Care tailored hoti hai aur condition badalne ke saath badalti hai.' },
+      { type: 'heading', text: 'Parkinson\'s Ke Saath Achha Jeena' },
+      { type: 'list', items: [
+        '**Sharirik roop se active** rehna sach mein movement, balance, aur mood mein madad karta hai',
+        '**Dawaiyan samay par** lena maayne rakhta hai — timing tay karti hai ki symptoms kitni achhi tarah control hain',
+        '**Mansik swasthya** ke liye support — low mood common hai aur treatable',
+        'Ghar ki **safety** aur fall prevention zaroori ho jaate hain',
+        '**Parivaar, carers, aur Parkinson\'s support groups** se support',
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'Doctor (neurologist) ko dikhayein agar aap ya koi rishtedaar notice kare', items: [
+        'Ek lagatar **tremor**, khaaskar aaram ki halat mein',
+        '**Slowness, stiffness**, ya chalne ya balance mein badlaav',
+        'Chhoti handwriting, kam expression, ya halki awaaz',
+        'Symptoms jo **dheere-dheere badh rahe** hon',
+      ]},
+      { type: 'paragraph', text: 'Ek **doctor ya neurologist** ko dikhayein agar aap lagatar tremor, slowness, stiffness, ya balance badlaav notice karein — jaldi diagnosis ka matlab hai treatment aur support jaldi shuru ho sakte hain, jo quality of life mein madad karta hai. Agar pehle se diagnose hai, to regular reviews cheezein badalne par treatment ko optimised rakhti hain. Ek **online consultation** follow-ups, dawa ke sawaalon, aur baar-baar safar ke bina ongoing care coordinate karne ke liye useful hai — jab movement mushkil ho tab keemti. Parkinson\'s manageable hai, aur achhi care sach mein fark laati hai.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health aur neurology sources (NHS, NIH) par aadhaarit general shiksha. Yeh doctor ya neurologist ki jaanch ki jagah nahi leta, jo Parkinson\'s diagnose aur manage karte hain. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
