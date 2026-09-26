@@ -402,9 +402,19 @@ function BlogArticle() {
             version. Lets readers who find English hard switch to Hinglish
             (Hindi in Roman letters). Defaults to English. */}
         {hasHindi && (
-          <div className="mb-6 flex items-center gap-2">
-            <span className="text-sm text-gray-500">भाषा / Language:</span>
-            <div className="inline-flex rounded-lg border border-gray-300 overflow-hidden">
+          <div className="mb-6 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span aria-hidden="true" className="text-lg">🇮🇳</span>
+              {/* When reading English, actively invite Hindi readers to switch —
+                  this is the discoverability nudge so they notice the option.
+                  When already in Hinglish, show a neutral label. */}
+              <span className="text-sm font-medium text-gray-700">
+                {lang === 'en'
+                  ? 'यह लेख हिंदी में भी उपलब्ध है — पढ़ने के लिए चुनें 👉'
+                  : 'भाषा / Language:'}
+              </span>
+            </div>
+            <div className="inline-flex rounded-lg border border-gray-300 overflow-hidden bg-white flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setLang('en')}
