@@ -440,6 +440,34 @@ export const articles = [
       { type: 'paragraph', text: '**Epilepsy** is common and very manageable — most people become seizure-free with the right medication. Never stop anti-seizure medicine without your doctor.' },
       { type: 'paragraph', text: '**Nerve pain** — burning, tingling, or numbness in the feet and hands, especially in diabetics — signals nerve damage. Early treatment prevents it worsening; do not dismiss it as "just circulation."' },
       { type: 'callout', variant: 'tip', text: 'Short of the emergency signs above, neurology works well **online** for headache management, medication review, and initial evaluation — the neurologist advises if an MRI or nerve test is needed.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Dimaag aur nerves ke symptoms darawne ho sakte hain — ek sir dard jo jaata hi nahi, achanak sunnapan, ek memory jo baar-baar phisalti hai. Zyadatar harmless nikalte hain, par kuch asli emergencies hain jahaan minute maayne rakhte hain. Yahaan jaanein fark kaise batayein aur neurologist ko kab dikhaayein.' },
+      { type: 'callout', variant: 'warning', title: 'Emergency — ABHI hospital jaayein', items: [
+        'Ek achanak, tez "zindagi ka sabse tez sir dard"',
+        'Body ke ek taraf achanak kamzori ya sunnapan',
+        'Achanak bolne ya bhaasha samajhne mein dikkat',
+        'Achanak nazar jaana',
+        'Ek pehli-baar ka daura (seizure)',
+        'Hosh khona'
+      ]},
+      { type: 'paragraph', text: 'Yeh ek **stroke** ya bleed ka sanket ho sakte hain — har minute maayne rakhta hai, intezaar na karein.' },
+      { type: 'heading', text: 'Neurologist Ko Dikhayein Agar Aapko Ho:' },
+      { type: 'list', items: [
+        'Baar-baar sir dard ya migraine (mahine mein ~4 se zyada)',
+        'Haath ya pairon mein lagatar sunnapan ya jhunjhuni',
+        'Chakkar ya vertigo ke episodes',
+        'Rozana zindagi ko prabhaavit karti memory problems',
+        'Haathon mein tremors (kaanpan)',
+        'Nerve symptoms ke saath gardan ya kamar dard',
+        'Lagatar sleep disorders',
+        'Chehre mein dard ya kamzori'
+      ]},
+      { type: 'heading', text: 'Neurologist Jinhe Manage Karte Hain' },
+      { type: 'paragraph', text: '**Migraine** ek bure sir dard se kahin zyada hai — dhad-dhad karta dard, ghabrahat, light sensitivity, aksar disabling. Ek neurologist **preventive** treatment deta hai jo attacks ki aavritti kam karta hai, sirf har ek ke liye painkillers nahi.' },
+      { type: 'paragraph', text: '**Epilepsy** common aur bahut manageable hai — sahi dawa se zyadatar log seizure-free ho jaate hain. Anti-seizure dawa apne doctor ke bina kabhi band na karein.' },
+      { type: 'paragraph', text: '**Nerve pain** — pairon aur haathon mein jalan, jhunjhuni, ya sunnapan, khaaskar diabetics mein — nerve damage ka sanket deta hai. Jaldi treatment ise bigadne se rokta hai; ise "bas circulation" keh kar mat taalein.' },
+      { type: 'callout', variant: 'tip', text: 'Upar diye emergency signs ke alaawa, neurology headache management, medication review, aur shuruaati evaluation ke liye **online** achhi tarah kaam karti hai — neurologist salah dete hain agar ek MRI ya nerve test chahiye.' },
     ]
   },
   {
@@ -625,6 +653,45 @@ export const articles = [
       { type: 'paragraph', text: 'The first three can be **emergencies** — seek care immediately, do not wait.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'For recurring or chronic headaches (short of the emergency signs above), a doctor can review your pattern, pin down triggers, treat migraine properly, and advise whether a scan is needed — all through an **online consultation**.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Lagbhag har kisi ko sir dard hota hai — par jab yeh baar-baar ya tez ho jaayein, to chupchaap aapke din chura sakte hain, aur kabhi-kabhaar kisi aisi cheez ka sanket dete hain jispar dhyaan chahiye. Achhi baat: zyadatar sir dard ki simple, dhoondhi jaane wali wajah hoti hain. Yahaan jaanein apna kaise samjhein aur kab doctor ko dikhaane ka samay hai.' },
+      { type: 'heading', text: 'Baar-Baar Sir Dard Ke Common Kaaran' },
+      { type: 'list', items: [
+        'Stress aur tension — sabse common kaaran',
+        'Paani ki kami aur meals skip karna',
+        'Kharaab neend ya bahut zyada screen time',
+        'Eye strain ya purana chashme ka number',
+        'Caffeine — bahut zyada, ya withdrawal',
+        'Sinus ki problem',
+        'Migraine'
+      ]},
+      { type: 'heading', text: 'Tension Headache vs Migraine' },
+      { type: 'table', headers: ['', 'Tension Headache', 'Migraine'], rows: [
+        ['Kaisa lagta hai', 'Tight patti, halka', 'Dhad-dhad, pulsing'],
+        ['Jagah', 'Dono taraf', 'Aksar ek taraf'],
+        ['Saath mein', 'Zyada kuch nahi', 'Ghabrahat, light/sound sensitivity'],
+        ['Chahiye', 'Aaram, stress relief', 'Theek ilaaj, sirf painkillers nahi'],
+      ]},
+      { type: 'heading', text: 'Pehle Aazmaane Layak Simple Remedies' },
+      { type: 'list', items: [
+        'Paani piyein — paani ki kami ek underrated kaaran hai',
+        'Regular screen breaks lein (20-20-20 rule)',
+        'Regular sone aur khaane ka samay rakhein',
+        'Chhoti walks ya dheere saans se stress manage karein',
+        'Painkillers hafte mein kuch hi din tak seemit karein — zyada use "rebound" sir dard karta hai'
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Warning signs — doctor ko dikhayein', items: [
+        'Ek achanak, tez "zindagi ka sabse tez sir dard"',
+        'Bukhaar, akadi gardan, ya confusion ke saath sir dard',
+        'Sir ki chot ke baad sir dard',
+        'Sir dard jo dinon ya hafton mein badhta jaaye',
+        'Nazar jaana, kamzori, ya bolne mein dikkat ke saath sir dard',
+        '50 ki umar ke baad ek naye tarah ka sir dard'
+      ]},
+      { type: 'paragraph', text: 'Pehle teen **emergency** ho sakte hain — turant care lein, intezaar na karein.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Baar-baar ya chronic sir dard ke liye (upar diye emergency signs ke alaawa), ek doctor aapka pattern review kar sakte hain, triggers pakad sakte hain, migraine ka theek ilaaj kar sakte hain, aur salah de sakte hain ki scan chahiye ya nahi — yeh sab ek **online consultation** ke zariye.' },
     ]
   },
   {
@@ -7784,6 +7851,41 @@ export const articles = [
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a doctor or **neurologist** if you or a loved one has memory or thinking changes that are disrupting daily life, worsening over months, or causing worry — especially any of the warning signs above. A doctor can look for treatable causes, assess memory properly, and guide next steps. This is exactly the kind of concern where a calm **online consultation** can be a comfortable first step to talk it through — often with a family member present — before deciding on any in-person assessment. Getting checked early is an act of care, not something to fear.' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health sources (Mayo Clinic, NIH/National Institute on Aging, Alzheimer\'s associations). It does not replace an assessment by a doctor, who can evaluate memory concerns properly.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Chaabi kahaan rakhi bhool jaana, ya ek naam par blank ho jaana jo baad mein yaad aa jaata hai, umar badhne par bahut logon ko chintit karta hai — "kya yeh normal hai, ya dementia?" Yeh sach mein ek zaroori sawaal hai, aur aashwasan-bhara hissa yeh hai ki kaafi bhoolna budhaape ka ek normal hissa hai. Par kuch badlaav alag hote hain, aur kaunsa kaunsa hai yeh jaanna — apne liye ya ek budhe hote parent ke liye — maayne rakhta hai, kyunki jab memory problems par dhyaan chahiye, to jaldi check karwaana madad karta hai. Yahaan ek shaant, saral guide hai.' },
+      { type: 'heading', text: 'Normal Budhaapa vs Kuch Zyada' },
+      { type: 'paragraph', text: 'Jaise hum budhe hote hain, dimaag swaabhaavik roop se thoda slow hota hai — hum kuch naya seekhne mein zyada samay le sakte hain, kabhi ek naam ya appointment bhool sakte hain, ya cheezein rakh kar bhool sakte hain. Zaroori roop se, normal budhaape mein yeh **rozana zindagi ko gambhir roop se disrupt nahi karta**, aur aapko aksar ehsaas hota hai ki aap bhool gaye. Dementia alag hai: memory aur thinking ki problem **zyada hain, mahinon mein lagatar badhti hain**, aur rozana kaamkaaj mein dakhal dene lagti hain. Content was rephrased for compliance with licensing restrictions.' },
+      { type: 'heading', text: 'Inhe Alag Pehchaanna' },
+      { type: 'table', headers: ['Aksar normal budhaapa', 'Zyada chinta ka (doctor ko dikhayein)'], rows: [
+        ['Ek naam bhoolna par baad mein yaad aana', 'Haal mein seekhi jaankari baar-baar bhoolna'],
+        ['Kabhi chaabi/chashma rakh kar bhoolna', 'Cheezein ajeeb jagahon par rakhna aur steps yaad na karna'],
+        ['Pehle se zyada lists ki zaroorat', 'Ek jaani recipe ya routine follow karne mein dikkat'],
+        ['Kabhi bhoolna ki kaunsa din hai', 'Samay, jagah ko lekar confusion, ya jaani jagahon mein kho jaana'],
+        ['Ek shabd zabaan par aana par na aana', 'Baat-cheet follow karne ya usme judne mein dikkat, galat shabd'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Theme: normal budhaapa kabhi-kabhaar hota hai aur rozana zindagi patri se nahi utaarta; dementia-type badlaav lagatar, badhte hue hote hain aur rozana kaam, judgement, bhaasha, aur parichitta ko prabhaavit karne lagte hain. Saath hi, memory stress, kharaab neend, depression, thyroid problems, aur kuch dawaiyon se prabhaavit ho sakti hai — jo treatable hain, aur sabse bura maanne ke bajaye ise check karwaane ki ek aur wajah.' },
+      { type: 'heading', text: 'Action Lene Layak Warning Signs' },
+      { type: 'list', items: [
+        '**Rozana zindagi ko disrupt karti memory loss** (bills, dawaiyan, appointments chhootna)',
+        '**Jaane kaam**, planning, ya paise sambhaalne mein dikkat',
+        'Samay ya jagah ko lekar **confusion**; jaani jagah mein kho jaana',
+        '**Shabdon**, baat-cheet follow karne, ya judgement mein nayi problem',
+        '**Personality ya mood badlaav**, alag-thalag hona, ya asaadhaaran behaviour',
+        'Badlaav jo **mahinon mein saaf taur par badh rahe** hon',
+      ]},
+      { type: 'heading', text: 'Jaldi Check Karwaana Kyun Madad Karta Hai' },
+      { type: 'paragraph', text: 'Log kabhi dar ke maare doctor ko dikhaane se bachte hain — par jaldi assessment sach mein madad karti hai. Kabhi wajah kuch **treatable aur reversible** hoti hai (jaise thyroid problem, vitamin deficiency, depression, ya dawa ke side effects). Aur jab yeh dementia ho, to ek jaldi diagnosis support, planning, aur aise treatments ki ijaazat deta hai jo ise manage karne aur quality of life behtar karne mein madad kar sakte hain. Jawaab ka dar samajh mein aata hai, par saaf-safai woh darwaaze kholti hai jo chuppi band kar deti hai.' },
+      { type: 'heading', text: 'Brain Health Ko Support Karna' },
+      { type: 'list', items: [
+        '**Sharirik roop se active** rahein aur achha khayein (jo dil ke liye achha hai woh dimaag ke liye achha hai)',
+        '**Mansik aur saamajik roop se vyast** rahein — connection, seekhna, hobbies',
+        '**Blood pressure, sugar, aur cholesterol** manage karein, aur smoke na karein',
+        '**Neend** bachayein aur low mood ka ilaaj karein',
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Ek doctor ya **neurologist** ko dikhayein agar aap ya kisi apne ko memory ya thinking mein aise badlaav hon jo rozana zindagi disrupt kar rahe hon, mahinon mein badh rahe hon, ya chinta paida kar rahe hon — khaaskar upar diye koi bhi warning sign. Doctor treatable causes dhoondh sakte hain, memory theek se assess kar sakte hain, aur agle kadam guide kar sakte hain. Yeh bilkul woh chinta hai jahaan ek shaant **online consultation** ise baat karne ka ek aaraamdayak pehla kadam ho sakta hai — aksar ek family member ke saath — kisi in-person assessment ka faisla karne se pehle. Jaldi check karwaana dekhbhaal ka ek kaam hai, darne ki cheez nahi.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health sources (Mayo Clinic, NIH/National Institute on Aging, Alzheimer\'s associations) par aadhaarit general shiksha. Yeh doctor ki jaanch ki jagah nahi leta, jo memory ki chintaon ko theek se evaluate kar sakte hain. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -8786,6 +8888,40 @@ export const articles = [
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'Any **first-time** seizure needs a doctor to find the cause. Ongoing seizures (epilepsy) are very manageable with treatment, so see a **neurologist** if seizures are recurring, changing, or not well controlled — and treat a seizure lasting over 5 minutes, or one with the emergency signs above, as an **emergency**. Much of the ongoing management and review suits an **online consultation** well, with in-person tests as needed. Knowing the correct, calm first aid — and avoiding the harmful myths — genuinely protects someone during those frightening few minutes.' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health sources (NHS, epilepsy foundations, NIH). It does not replace medical care, which a first or prolonged seizure requires.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Kisi ko daura (seizure/"fit") padte dekhna — achanak akadna, jhatke, gir jaana, hosh khona — darawna hai, aur ghabrahat mein log aksar bilkul galat cheezein karte hain: mooh mein cheezein thoosna, vyakti ko pakadna, aaspaas bheed lagana. Yeh achhi-neeyat wale "nuskhe" sach mein nuksaan kar sakte hain. Sahi first aid shaant aur simple hai, aur zyadatar vyakti ko safe rakhne ke baare mein hai jab tak daura apne aap guzar jaaye. Yahaan jaanein kya karna hai, kaunse myths se bachna hai, aur ek daura kab emergency hai.' },
+      { type: 'heading', text: 'Daura (Seizure) Kya Hai' },
+      { type: 'paragraph', text: 'Ek daura (fit) tab hota hai jab dimaag mein abnormal electrical activity ka ek achanak burst hota hai. Yeh poore body ke akadne aur jhatke jaisa dikh sakta hai, ya subtler roop jaise khaali ghoorna, confusion, ya thodi der ke liye jawaab na dena. Zyadatar daure **kuch minaton mein apne aap ruk jaate hain**, aur us pal ka mukhya khatra girne ya kisi cheez se takraane se lagne wali chot hai — isiliye safe first aid vyakti ko bachaane par focus karta hai, daure ko "rokne" par nahi.' },
+      { type: 'heading', text: 'First Aid: Kya Karein (Shaant Rahein)' },
+      { type: 'steps', items: [
+        '**Shaant rahein aur vyakti ko safe rakhein** — zaroorat ho to unhe dheere zameen par litaayein aur kadi ya nukeeli cheezein hata dein.',
+        '**Sir ke neeche kuch naram rakhein** (ek muda kapda/jacket) aur gale ke aaspaas ki tight cheez dheeli karein.',
+        'Daura **kab shuru hua woh samay note karein** — timing maayne rakhti hai (emergency signs dekhein).',
+        'Jhatke kam hone par ya agar woh behosh hon, to unhe dheere se **karwat par kar dein** (recovery position) taaki saans ka raasta saaf rahe.',
+        'Jaise woh hosh mein aayein **unke saath rahein**; woh confused ya sust ho sakte hain — shaanti se aashwast karein.',
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Yeh KABHI NA karein — yeh nuksaan karte hain', items: [
+        'Mooh mein kuch (chammach, ungliyan, kapda, chaabi) **NA daalein** — aap "jeebh nigal" nahi sakte, aur yeh daant todta hai, chot karta hai, aur khatarnaak hai',
+        'Vyakti ko dabaakar ya unki movements ko **NA rokein**',
+        'Unhe pyaaz/joota/mirchi **NA sunghayein** ya folk remedies use na karein',
+        'Jab tak woh poori tarah alert na hon, **khaana, paani, ya dawa NA dein**',
+        'Bheed na lagayein — unhe jagah aur hawa dein',
+      ]},
+      { type: 'heading', text: 'Daura Kab Emergency Hai' },
+      { type: 'callout', variant: 'warning', title: 'Emergency madad bulayein agar', items: [
+        'Daura **5 minute se zyada** rahe, ya ek ke baad doosra beech mein hosh aaye bina aaye',
+        'Yeh vyakti ka **pehla-hi** daura ho',
+        'Woh **ghayal, paani mein, pregnant, ya diabetes** wale hon',
+        'Rukne ke baad woh **jaag nahi rahe / normally saans nahi le rahe**',
+        'Yeh ek **sir ki chot** ke baad, ya tez bukhaar/bimaari ke saath hua ho',
+      ]},
+      { type: 'paragraph', text: 'Ek lamba daura (5 minute se zyada) ek asli emergency hai jise urgent treatment chahiye — ise taalte na rahein.' },
+      { type: 'heading', text: 'Daure Ke Baad' },
+      { type: 'paragraph', text: 'Kisi ka baad mein kuch der **confused, thaka, ya sir dard** hona normal hai — unhe aaram karne aur recover hone dein, aur aashwast karein. Jaani epilepsy wale vyakti ko jinhe ek typical chhota daura aata hai aur woh aam ki tarah recover karte hain, unhe har baar emergency care ki zaroorat nahi ho sakti, par unhe apne tay plan ko follow karna chahiye. Ek **pehla** daura, ya upar diye koi bhi emergency sign, hamesha medical assessment maangta hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Kisi bhi **pehli baar** ke daure ko wajah dhoondhne ke liye ek doctor chahiye. Lagatar daure (epilepsy) treatment se bahut manageable hain, isliye ek **neurologist** ko dikhayein agar daure baar-baar aa rahe hon, badal rahe hon, ya achhe se control mein na hon — aur 5 minute se zyada rehne wale daure, ya upar diye emergency signs wale ko **emergency** samjhein. Ongoing management aur review ka bahut hissa ek **online consultation** mein achhi tarah ho jaata hai, zaroorat par in-person tests ke saath. Sahi, shaant first aid jaanna — aur nuksaandeh myths se bachna — un darawne kuch minaton mein kisi ki sach mein raksha karta hai.' },
+      { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Bharosemand public health sources (NHS, epilepsy foundations, NIH) par aadhaarit general shiksha. Yeh medical care ki jagah nahi leta, jo ek pehle ya lambe daure ko chahiye. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
