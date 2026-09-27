@@ -456,18 +456,25 @@ function BlogArticle() {
 
         {/* Share this article — safe engagement that grows reach (vs a public
             comment section, which we deliberately avoid on a health blog).
-            A warm, human message invites sharing rather than just demanding it. */}
+            A warm, human message invites sharing rather than just demanding it.
+            When the reader has switched the article to Hinglish, the message
+            follows suit so the whole page speaks one language. */}
         <div className="mt-8 p-5 bg-primary-50 border border-primary-100 rounded-xl">
           <p className="text-base font-semibold text-gray-800">
-            Found this genuinely helpful? ❤️
+            {lang === 'hi' && hasHindi
+              ? 'Yeh sach mein helpful laga? ❤️'
+              : 'Found this genuinely helpful? ❤️'}
           </p>
           <p className="mt-1 text-sm text-gray-600">
-            Good health information is worth passing on. If this helped you, share it with
-            your family and friends — it might be exactly what someone you love needs today.
+            {lang === 'hi' && hasHindi
+              ? 'Achhi health jaankari aage pahunchane layak hoti hai. Agar isse aapko madad mili, to ise apne parivaar aur doston ke saath share karein — ho sakta hai yeh theek wahi ho jiski aapke kisi apne ko aaj zaroorat hai.'
+              : 'Good health information is worth passing on. If this helped you, share it with your family and friends — it might be exactly what someone you love needs today.'}
           </p>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-medium text-gray-700">Share this article:</span>
+          <span className="text-sm font-medium text-gray-700">
+            {lang === 'hi' && hasHindi ? 'Is article ko share karein:' : 'Share this article:'}
+          </span>
           <a
             href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
             target="_blank" rel="noopener noreferrer"
