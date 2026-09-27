@@ -4199,6 +4199,43 @@ export const articles = [
         'Bleeding from a varicose vein',
       ]},
       { type: 'paragraph', text: 'Short of those, see a doctor if varicose veins are aching, worsening, or bothering you cosmetically — there are effective treatments, from compression to simple procedures. A doctor can assess the veins, rule out complications, and explain your options. An **online consultation** is a convenient first step to review your symptoms and decide whether you need an in-person vein assessment.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Pairon par lambe din ke ant tak, aapke pair bhaari aur thake lagte hain, aur aap dekhte hain woh rassi jaisi, neeli veins skin ke bilkul neeche ubhri hui. Varicose veins (nason ka phoolna) bahut common hain — khaaskar umar, pregnancy, aur khade rehne wale kaamon ke saath — aur chaahe yeh dukhein aur pareshaan karti dikhein, yeh aksar khatarnaak nahi hoti. Yahaan ek saaf nazar hai ki yeh kyun banti hain, kya sach mein bechaini kam karta hai, aur woh sanket jinka matlab hai doctor ko dikhaane ka samay hai.' },
+      { type: 'heading', text: 'Veins Varicose Kyun Ho Jaati Hain' },
+      { type: 'paragraph', text: 'Aapke pairon ki veins ka kaam mushkil hai: gravity ke khilaaf blood ko wapas dil tak dhakelna. Ise karne ke liye, woh chhote one-way valves par nirbhar karti hain jo blood ko peeche behne se rokte hain. Jab woh valves kamzor ho jaate hain, to blood vein mein jama ho jaata hai, jo khinchti, murti, aur ubharti hai — yahi ek varicose vein hai. Jab aap us simple plumbing problem ki tasveer bana lete hain, to yeh kyun banti hain (aur kya help karta hai) poori tarah samajh mein aata hai.' },
+      { type: 'heading', text: 'Kise Zyada Sambhavna' },
+      { type: 'list', items: [
+        'Varicose veins ki ek **family history**',
+        'Lambe ghante **khade ya baithe** rehna (kai jobs)',
+        '**Pregnancy** (extra pressure aur blood volume)',
+        '**Budhe** hona, ya extra wajan rakhna',
+        'Auraton mein zyada common',
+      ]},
+      { type: 'heading', text: 'Common Symptoms' },
+      { type: 'list', items: [
+        'Murti, ubhri, neeli ya gehri veins, aksar pairon par',
+        '**Dukhte, bhaari, ya thake pair**, aksar shaam tak zyada',
+        'Takhnon ke aaspaas soojan',
+        'Ek vein par khujli, ya raat ki cramps',
+      ]},
+      { type: 'heading', text: 'Bechaini Ko Kya Kam Karta Hai' },
+      { type: 'list', items: [
+        '**Regular chalein** — walking un leg muscles ko pump karti hai jo blood upar dhakelne mein madad karti hain',
+        '**Lambe samay** tak khade ya sthir baithne se bachein; hilein aur pair flex karein',
+        'Aaram karte waqt **apne pair ooncha karein**, ho sake to heart level se upar',
+        'Salah di jaaye to **compression stockings** pehnein — yeh sach mein veins ko support karti hain',
+        'Pairon par load kam karne ke liye ek **healthy weight** rakhein',
+      ]},
+      { type: 'callout', variant: 'info', text: 'Yeh upaay symptoms kam karte hain aur cheezein dheeri karte hain, par yeh maujood varicose veins ko gaayab nahi karenge — agar treatment chahiye to yahaan doctor ki zaroorat hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'callout', variant: 'warning', title: 'Jaldi check karwayein agar aap notice karein', items: [
+        'Ek **skin ulcer**, ya takhne ke paas skin badlaav/rang badalna',
+        'Ek vein jo **kadi, garam, laal, ya bahut dard bhari** ho jaaye (sambhavit clot)',
+        'Dard ke saath ek pair mein **achanak soojan** (urgent assessment chahiye)',
+        'Ek varicose vein se bleeding',
+      ]},
+      { type: 'paragraph', text: 'In ke alaawa, doctor ko dikhayein agar varicose veins dukh rahi hon, bigad rahi hon, ya cosmetically aapko pareshaan kar rahi hon — compression se lekar simple procedures tak asardaar treatments hain. Ek doctor veins assess kar sakte hain, complications rule out kar sakte hain, aur aapke options samjha sakte hain. Ek **online consultation** apne symptoms review karne aur yeh tay karne ka suvidhajanak pehla kadam hai ki aapko in-person vein assessment chahiye ya nahi.' },
     ]
   },
   {
