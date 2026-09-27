@@ -2913,5 +2913,257 @@ export const articleMeta = [
     "publishedDate": "2026-08-06",
     "readTime": "6 min",
     "image": "📏"
+  },
+  {
+    "slug": "elderly-home-care-essentials-what-to-keep-at-home-guide",
+    "title": "Caring for Elderly Parents at Home: The Essentials Worth Keeping",
+    "description": "Looking after an older parent or grandparent at home? A warm, practical checklist of the health essentials, safety items, and records worth keeping ready — so you can care calmly and handle small problems before they grow.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "8 min",
+    "image": "👵"
+  },
+  {
+    "slug": "ringworm-daad-keeps-coming-back-treatment-guide",
+    "title": "Ringworm (Daad) That Won't Go Away: Why It Keeps Coming Back and How to Finally Clear It",
+    "description": "Itchy, spreading ring-shaped patches that keep returning despite creams? Stubborn, recurring ringworm (daad) has become very common in India. A clear guide to why it happens, the steroid-cream trap, and how to actually break the cycle.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "8 min",
+    "image": "🔴"
+  },
+  {
+    "slug": "itchy-rash-between-fingers-toes-causes-home-care-guide",
+    "title": "Itching Between the Fingers and Toes: Causes and Safe Home Care",
+    "description": "Maddening itch, peeling, or a rash in the web spaces between your fingers or toes? It is very common and usually treatable. A clear guide to the likely causes and safe home care — and the signs that need a doctor.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🖐️"
+  },
+  {
+    "slug": "lymphatic-filariasis-filaria-elephantiasis-awareness-guide",
+    "title": "Filariasis (Filaria / Hathi Paon): A Mosquito-Borne Disease You Can Help Prevent",
+    "description": "Filariasis — known as filaria or hathi paon (elephantiasis) — is a mosquito-borne parasitic disease that can cause severe, lasting limb swelling. A clear awareness guide to what it is, the signs, why the free MDA medicine matters, and how to prevent it.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🦟"
+  },
+  {
+    "slug": "leprosy-hansens-disease-curable-myths-awareness-guide",
+    "title": "Leprosy (Kushth Rog): Curable, Not a Curse — Clearing the Myths",
+    "description": "Leprosy is one of the most misunderstood and stigmatised diseases in India — yet it is fully curable with free medicine, barely contagious once treated, and not hereditary or a \"curse\". A compassionate, myth-busting awareness guide.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🤝"
+  },
+  {
+    "slug": "chandipura-virus-sandfly-fever-children-awareness-guide",
+    "title": "Chandipura Virus: What Parents Should Know About This Sandfly-Borne Illness",
+    "description": "Chandipura virus is a sandfly-borne infection that mainly affects children and can cause rapid, serious brain inflammation. An awareness guide to the warning signs, why speed is critical, and how to protect your family through bite prevention.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🦟"
+  },
+  {
+    "slug": "scabies-khujli-intense-itch-treatment-guide",
+    "title": "Scabies (Khujli): The Intense, Night-Time Itch That Spreads Through a Household",
+    "description": "Relentless itching that is worse at night, with tiny bumps between the fingers — and others at home itching too? That is often scabies, a treatable mite infestation. A clear guide to the signs, treatment, and why the whole family must be treated together.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🌙"
+  },
+  {
+    "slug": "measles-khasra-children-symptoms-vaccine-guide",
+    "title": "Measles (Khasra): Why This \"Common\" Childhood Illness Is More Serious Than People Think",
+    "description": "Measles is far more than a rash — it is highly contagious and can cause dangerous complications in children, yet it is almost entirely preventable with the vaccine. A clear guide to the signs, care, complications, and why the MMR/MR vaccine matters.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🔴"
+  },
+  {
+    "slug": "newborn-jaundice-yellow-baby-when-to-worry-guide",
+    "title": "Newborn Jaundice: When a Yellow Baby Is Normal — and When It Needs Urgent Care",
+    "description": "Your newborn looks a little yellow in the first days? Mild jaundice is very common and usually harmless. A calm guide for parents to why it happens, how it is treated, and the warning signs that need a doctor the same day.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "👶"
+  },
+  {
+    "slug": "oral-cancer-mouth-early-warning-signs-screening-guide",
+    "title": "Oral Cancer: The Early Warning Signs in Your Mouth You Must Not Ignore",
+    "description": "Oral cancer is one of the most common cancers in India, largely because of tobacco and gutka — yet it is often preventable and highly treatable when caught early. A clear guide to the warning signs (a non-healing ulcer, a white or red patch), risk factors, and self-checks.",
+    "specialization": "Dentist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "👄"
+  },
+  {
+    "slug": "heart-failure-weak-heart-symptoms-management-guide",
+    "title": "Heart Failure: What It Really Means (It Does Not Mean the Heart Has Stopped)",
+    "description": "Breathless on mild effort, swollen ankles, tired all the time? These can be signs of heart failure — a heart that is not pumping as well as it should. A clear guide to what it is, the warning signs, and how it is managed and lived with well.",
+    "specialization": "Cardiologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "8 min",
+    "image": "❤️"
+  },
+  {
+    "slug": "atrial-fibrillation-irregular-heartbeat-stroke-risk-guide",
+    "title": "Atrial Fibrillation (AFib): An Irregular Heartbeat You Should Not Ignore",
+    "description": "A fluttering, racing, or irregular heartbeat that comes and goes? Atrial fibrillation is a common heart rhythm problem — and its biggest danger is a raised risk of stroke, which treatment can greatly reduce. A clear guide to the signs and why it matters.",
+    "specialization": "Cardiologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "💓"
+  },
+  {
+    "slug": "rheumatic-heart-disease-sore-throat-to-heart-guide",
+    "title": "Rheumatic Heart Disease: How an Untreated Sore Throat Can Damage a Child's Heart",
+    "description": "Rheumatic heart disease still affects many in India — and it often starts with something as ordinary as an untreated throat infection in childhood. A clear guide to how it happens, the signs, and why treating a sore throat can protect the heart.",
+    "specialization": "Cardiologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "❤️"
+  },
+  {
+    "slug": "angina-chest-pain-on-exertion-warning-sign-guide",
+    "title": "Angina: The Chest Pain on Exertion That Is Your Heart's Warning",
+    "description": "Chest tightness or pressure that comes on with exertion or stress and eases with rest? That can be angina — a warning that the heart is not getting enough blood. A clear guide to what it means, stable vs unstable angina, and when it is an emergency.",
+    "specialization": "Cardiologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "💗"
+  },
+  {
+    "slug": "diabetic-retinopathy-diabetes-eyes-vision-guide",
+    "title": "Diabetic Retinopathy: How Diabetes Can Quietly Threaten Your Eyesight",
+    "description": "Diabetes can slowly damage the eyes without any early warning — and it is a leading cause of blindness. The reassuring part: regular eye screening catches it early, when it is treatable. A clear guide for anyone with diabetes.",
+    "specialization": "Ophthalmologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "👁️"
+  },
+  {
+    "slug": "kidney-infection-pyelonephritis-back-pain-fever-guide",
+    "title": "Kidney Infection: When a UTI Climbs Higher — and Why It Needs Prompt Care",
+    "description": "Fever, chills, and back or side pain along with burning urine? A urine infection may have reached the kidney (pyelonephritis) — which needs prompt medical treatment. A clear guide to the warning signs and when it is an emergency.",
+    "specialization": "Urologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🫘"
+  },
+  {
+    "slug": "enlarged-prostate-bph-urinary-symptoms-men-guide",
+    "title": "Enlarged Prostate (BPH): Why Older Men Struggle to Pass Urine — and What Helps",
+    "description": "Getting up several times at night to urinate, a weak stream, or trouble starting? An enlarged prostate (BPH) is very common as men age — and it is not cancer. A clear guide to the symptoms, treatment options, and when to see a doctor.",
+    "specialization": "Urologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🚹"
+  },
+  {
+    "slug": "mumps-swollen-cheeks-jaw-children-vaccine-guide",
+    "title": "Mumps: The Swollen-Cheek Infection, Its Complications, and the Vaccine That Prevents It",
+    "description": "Painful swelling of the cheeks and jaw with fever in a child? That is the classic look of mumps — a contagious viral infection that is usually mild but can have complications. A clear guide to the signs, care, and the MMR vaccine.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "😷"
+  },
+  {
+    "slug": "rehabilitation-after-surgery-fracture-recovery-guide",
+    "title": "Rehabilitation After Surgery or a Fracture: Why Recovery Is More Than Just Rest",
+    "description": "After an operation, a fracture, or weeks in a cast, getting back to normal takes more than waiting — it takes rehabilitation. A clear guide to why physiotherapy matters, what to expect, and how to recover strength and movement safely.",
+    "specialization": "Physiotherapist",
+    "publishedDate": "2026-08-06",
+    "readTime": "7 min",
+    "image": "🦿"
+  },
+  {
+    "slug": "stroke-rehabilitation-recovery-regaining-movement-guide",
+    "title": "Life After a Stroke: How Rehabilitation Helps Regain Movement and Independence",
+    "description": "Surviving a stroke is the first step — rehabilitation is how many people regain movement, speech, and independence. A hopeful, practical guide to what stroke rehab involves, why starting early matters, and supporting recovery at home.",
+    "specialization": "Physiotherapist",
+    "publishedDate": "2026-08-06",
+    "readTime": "8 min",
+    "image": "🧠"
+  },
+  {
+    "slug": "refractive-errors-blurry-vision-glasses-guide",
+    "title": "Blurry Vision and Needing Glasses: Understanding Refractive Errors Simply",
+    "description": "Struggling to see the board, the phone, or road signs clearly? Most blurry vision is a refractive error — like short-sight, long-sight, or astigmatism — easily corrected with glasses or lenses. A clear guide, including your child's vision.",
+    "specialization": "Ophthalmologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "👓"
+  },
+  {
+    "slug": "squint-strabismus-misaligned-eyes-children-guide",
+    "title": "Squint (Bhengapan): Why Eyes Point in Different Directions — and Why Early Treatment Matters",
+    "description": "One eye that turns in, out, up, or down while the other looks straight? A squint (strabismus) is common in children and can occur in adults. A clear guide to why it happens, why treating it early in children is crucial, and the options.",
+    "specialization": "Ophthalmologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "👀"
+  },
+  {
+    "slug": "rubella-german-measles-pregnancy-risk-vaccine-guide",
+    "title": "Rubella (German Measles): Mild for Most, but a Serious Risk in Pregnancy",
+    "description": "Rubella is usually a mild infection — but if a woman catches it in early pregnancy, it can seriously harm the baby. A clear guide to what it is, why rubella immunity before pregnancy matters so much, and the vaccine that prevents it.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🤰"
+  },
+  {
+    "slug": "hepatitis-e-waterborne-liver-infection-pregnancy-guide",
+    "title": "Hepatitis E: The Waterborne Liver Infection Common in India (and Risky in Pregnancy)",
+    "description": "Jaundice, tiredness, and nausea after contaminated water or food? Hepatitis E is a common waterborne liver infection in India — usually self-limiting, but genuinely dangerous in pregnancy. A clear guide to the signs, care, and prevention.",
+    "specialization": "Gastroenterologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "💧"
+  },
+  {
+    "slug": "head-lice-itchy-scalp-children-treatment-guide",
+    "title": "Head Lice (Sir ki Joo): Why the Itch Happens and How to Clear Them (Without the Shame)",
+    "description": "An itchy scalp and tiny insects or eggs in the hair — common in schoolchildren? Head lice are harmless and nothing to do with being unclean. A clear, judgement-free guide to spotting them, clearing them, and stopping the spread.",
+    "specialization": "Dermatologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "🪮"
+  },
+  {
+    "slug": "whooping-cough-pertussis-severe-cough-babies-vaccine-guide",
+    "title": "Whooping Cough (Pertussis): The Cough That Is Dangerous for Babies",
+    "description": "Violent coughing fits, sometimes with a \"whoop\" sound, that drag on for weeks? Whooping cough is very contagious and especially dangerous for young babies — but it is vaccine-preventable. A clear guide to the signs, care, and prevention.",
+    "specialization": "Pulmonologist",
+    "publishedDate": "2026-08-06",
+    "readTime": "6 min",
+    "image": "😮‍💨"
+  },
+  {
+    "slug": "nutrients-food-sources-vitamins-minerals-chart-guide",
+    "title": "Which Foods Give You Which Nutrients? A Simple Food-Source Chart",
+    "description": "Confused about where to get your vitamins, minerals, and protein from everyday food? A clear, chart-style guide to the key nutrients and the common Indian foods and fruits that provide them — no supplements needed for most people.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "9 min",
+    "image": "🥗"
+  },
+  {
+    "slug": "foods-for-healthy-goals-bones-immunity-heart-gut-chart-guide",
+    "title": "Eating for a Goal: Which Foods Support Bones, Heart, Gut, Immunity, and More",
+    "description": "Want to eat for stronger bones, a healthier heart, better digestion, or immunity? A clear, chart-style guide to the everyday Indian foods that support each health goal — with an honest note on what food can and cannot do.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-08-06",
+    "readTime": "9 min",
+    "image": "🥑"
   }
 ];
