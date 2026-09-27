@@ -212,6 +212,43 @@ function applyMeta(template, route) {
   return { html, missing: checks };
 }
 
+// ---- Generate sitemap.xml from the SAME route list we prerender ----
+// WHY: the sitemap must never drift from the actual set of indexable pages.
+// Because buildRoutes() is the single source of truth for what we prerender,
+// deriving the sitemap from it guarantees every new blog article (and page)
+// appears in the sitemap automatically on the next build — no manual edits.
+// We deliberately mirror the same routes that get prerendered/indexed and skip
+// the noindex utility/auth routes (which are not in `routes` at all).
+function priorityFor(route) {
+  if (route.path === '/') return { priority: '1.0', changefreq: 'weekly' };
+  if (route.path === '/doctors') return { priority: '0.9', changefreq: 'daily' };
+  if (route.path === '/blog') return { priority: '0.8', changefreq: 'weekly' };
+  if (route.path.startsWith('/specialization/')) return { priority: '0.8', changefreq: 'weekly' };
+  if (route.path.startsWith('/blog/')) return { priority: '0.7', changefreq: 'monthly' };
+  // Other static pages (about, how-it-works, legal, etc.)
+  return { priority: '0.5', changefreq: 'monthly' };
+}
+
+async function writeSitemap(routes) {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const body = routes
+    .map((route) => {
+      const { priority, changefreq } = priorityFor(route);
+      return [
+        '  <url>',
+        `    <loc>${esc(SITE + route.path)}</loc>`,
+        `    <lastmod>${today}</lastmod>`,
+        `    <changefreq>${changefreq}</changefreq>`,
+        `    <priority>${priority}</priority>`,
+        '  </url>',
+      ].join('\n');
+    })
+    .join('\n');
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+  await writeFile(join(DIST, 'sitemap.xml'), xml, 'utf8');
+  return routes.length;
+}
+
 async function main() {
   if (!existsSync(TEMPLATE_PATH)) {
     console.error(`[prerender] dist/index.html not found at ${TEMPLATE_PATH}. Run "vite build" first.`);
@@ -251,7 +288,13 @@ async function main() {
     process.exit(1);
   }
 
+  // Regenerate sitemap.xml from the same route list, so it always matches the
+  // pages we actually ship (Vite already copied public/sitemap.xml into dist;
+  // this overwrites it with the up-to-date one).
+  const sitemapCount = await writeSitemap(routes);
+
   console.log(`[prerender] Wrote ${written} prerendered routes (static pages + ${routes.filter(r => r.path.startsWith('/blog/')).length} articles + specializations).`);
+  console.log(`[prerender] Wrote dist/sitemap.xml with ${sitemapCount} URLs.`);
 }
 
 main().catch((err) => {
