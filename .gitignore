@@ -33,3 +33,9 @@ server/uploads/*
 
 # --- Build output ---
 client/dist/
+
+# --- Auto-generated blog metadata ---
+# blogMeta.js is generated from blogData.js by scripts/gen-blog-meta.mjs on
+# every build (prebuild step). It is a build artifact, not source — the build
+# (locally and on Vercel) always regenerates it, so it should not be tracked.
+client/src/pages/blog/blogMeta.js
