@@ -455,9 +455,19 @@ function BlogArticle() {
         </div>
 
         {/* Share this article — safe engagement that grows reach (vs a public
-            comment section, which we deliberately avoid on a health blog). */}
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-medium text-gray-700">Found this useful? Share it:</span>
+            comment section, which we deliberately avoid on a health blog).
+            A warm, human message invites sharing rather than just demanding it. */}
+        <div className="mt-8 p-5 bg-primary-50 border border-primary-100 rounded-xl">
+          <p className="text-base font-semibold text-gray-800">
+            Found this genuinely helpful? ❤️
+          </p>
+          <p className="mt-1 text-sm text-gray-600">
+            Good health information is worth passing on. If this helped you, share it with
+            your family and friends — it might be exactly what someone you love needs today.
+          </p>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="text-sm font-medium text-gray-700">Share this article:</span>
           <a
             href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
             target="_blank" rel="noopener noreferrer"
