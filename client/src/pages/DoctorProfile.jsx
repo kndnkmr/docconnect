@@ -17,6 +17,7 @@ import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
+import { trackEvent } from '../components/Analytics';
 import toast from 'react-hot-toast';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
@@ -271,6 +272,11 @@ function DoctorProfile() {
               {isAuthenticated && isPatient && (
                 <Link
                   to={`/book-appointment/${doctor._id}`}
+                  onClick={() => trackEvent('book_appointment_click', {
+                    doctor_id: doctor._id,
+                    doctor_specialization: doctor.specialization || 'unknown',
+                    auth_state: 'logged_in',
+                  })}
                   className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
                 >
                   {t.bookAppointment}
@@ -296,6 +302,7 @@ function DoctorProfile() {
                   const shareUrl = window.location.href;
                   const shareText = `Check out ${formatDoctorName(doctor.name)} (${doctor.specialization || 'Doctor'}) on ProMedicoz - ${shareUrl}`;
                   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+                  trackEvent('share_doctor', { doctor_id: doctor._id, method: 'whatsapp' });
                   window.open(whatsappUrl, '_blank');
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
@@ -308,6 +315,11 @@ function DoctorProfile() {
               <div className="mt-4">
                 <Link
                   to="/login"
+                  onClick={() => trackEvent('book_appointment_click', {
+                    doctor_id: doctor._id,
+                    doctor_specialization: doctor.specialization || 'unknown',
+                    auth_state: 'logged_out',
+                  })}
                   className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
                 >
                   {t.loginToBook}

@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { articles } from './blogData';
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
+import { trackEvent } from '../../components/Analytics';
 
 // ---- Internal auto-linking ----
 // Turn key topic phrases in the body into links to their article (big SEO win
@@ -304,10 +305,12 @@ function BlogArticle() {
   const articleUrl = `https://www.promedicoz.in/blog/${slug}`;
   const shareText = article ? `${article.title} — ProMedicoz\n${articleUrl}` : articleUrl;
   const copyLink = async () => {
+    trackEvent('share_article', { article_slug: slug, method: 'copy_link' });
     try { await navigator.clipboard.writeText(articleUrl); toast.success('Link copied!'); }
     catch { window.prompt('Copy this link:', articleUrl); }
   };
   const nativeShare = async () => {
+    trackEvent('share_article', { article_slug: slug, method: 'native_share' });
     if (navigator.share) {
       try { await navigator.share({ title: article?.title, text: article?.title, url: articleUrl }); return; } catch { /* cancelled */ }
     }
@@ -319,6 +322,7 @@ function BlogArticle() {
   // copy the link and tell them to paste it into their bio / Story. This keeps
   // the promise honest instead of pretending a direct post is possible.
   const shareInstagram = async () => {
+    trackEvent('share_article', { article_slug: slug, method: 'instagram' });
     if (navigator.share) {
       try { await navigator.share({ title: article?.title, text: article?.title, url: articleUrl }); return; } catch { /* cancelled */ }
     }
@@ -423,7 +427,7 @@ function BlogArticle() {
               >English</button>
               <button
                 type="button"
-                onClick={() => setLang('hi')}
+                onClick={() => { setLang('hi'); trackEvent('language_toggle', { article_slug: slug, to_language: 'hinglish' }); }}
                 aria-pressed={lang === 'hi'}
                 className={`px-3 py-1.5 text-sm font-medium transition-colors border-l border-gray-300 ${lang === 'hi' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
               >हिंदी (Hinglish)</button>
@@ -477,11 +481,13 @@ function BlogArticle() {
           </span>
           <a
             href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
+            onClick={() => trackEvent('share_article', { article_slug: slug, method: 'whatsapp' })}
             target="_blank" rel="noopener noreferrer"
             className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600"
           >💬 WhatsApp</a>
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`}
+            onClick={() => trackEvent('share_article', { article_slug: slug, method: 'facebook' })}
             target="_blank" rel="noopener noreferrer"
             className="px-4 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:bg-[#0d65d9]"
           >📘 Facebook</a>
@@ -491,6 +497,7 @@ function BlogArticle() {
           >📸 Instagram</button>
           <a
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article?.title ? article.title + ' — ProMedicoz' : 'ProMedicoz')}&url=${encodeURIComponent(articleUrl)}`}
+            onClick={() => trackEvent('share_article', { article_slug: slug, method: 'twitter' })}
             target="_blank" rel="noopener noreferrer"
             className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800"
           >𝕏 Twitter</a>

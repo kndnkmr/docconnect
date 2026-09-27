@@ -27,6 +27,24 @@ import { useLocation } from 'react-router-dom';
 // index.html, so both stay in sync by default.
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-28BZZQPPXF';
 
+// ---- Fire a custom GA4 event (safe no-op if analytics isn't loaded) ----
+// Use this from click handlers to record meaningful actions (booking clicks,
+// shares, language toggles) — the "what did people DO" that page_view alone
+// can't tell you. Same safe-by-design guard as the page_view above: if gtag
+// is missing (ad-blocker, dev build, or the call runs before the snippet),
+// it simply returns without throwing, so it can NEVER break a click, a link
+// navigation, or the page. `params` is an optional plain object of extra
+// details (e.g. { doctor_id, article_slug }).
+export function trackEvent(eventName, params = {}) {
+  try {
+    if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+    if (!eventName) return;
+    window.gtag('event', eventName, { ...params, send_to: GA_MEASUREMENT_ID });
+  } catch {
+    // Never let analytics interfere with the app.
+  }
+}
+
 function Analytics() {
   // Keyed on the full location (path + query) so a genuine navigation is
   // counted, including query-string changes that represent a new view.
