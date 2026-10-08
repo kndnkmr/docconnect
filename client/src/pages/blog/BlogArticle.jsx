@@ -435,6 +435,25 @@ function BlogArticle() {
           </div>
         )}
 
+        {/* Top CTA — a compact, inline nudge for readers who are ready to act
+            immediately, so conversion does not depend on scrolling to the very
+            bottom. Bilingual (follows the language toggle) and tracked. The
+            fuller CTA card remains at the end of the article. */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3">
+          <span className="text-sm text-gray-700">
+            {lang === 'hi' && hasHindi
+              ? `${article.specialization} se baat karni hai? ProMedicoz par online ya in-person consult karein.`
+              : `Want to consult a ${article.specialization.toLowerCase()}? Talk to a verified one on ProMedicoz — online or in person.`}
+          </span>
+          <Link
+            to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'top' })}
+            className="inline-block flex-shrink-0 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors"
+          >
+            {lang === 'hi' && hasHindi ? `${article.specialization} dhoondhein` : `Find a ${article.specialization}`}
+          </Link>
+        </div>
+
         {/* Content — `linkCtx` is created fresh per render so internal
             auto-links are deduped across the whole article (each target linked
             once) and never link back to this same article. Renders either the
@@ -446,15 +465,25 @@ function BlogArticle() {
           })()}
         </div>
 
-        {/* CTA */}
+        {/* CTA — bilingual (follows the language toggle) and tracked, so we can
+            measure which articles actually drive readers to find a doctor. */}
         <div className="mt-10 p-6 bg-primary-50 border border-primary-200 rounded-xl text-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Need a {article.specialization} consultation?</h3>
-          <p className="text-gray-600 text-sm mb-4">Book an appointment with a verified {article.specialization.toLowerCase()} on ProMedicoz. Video, phone, or in-person.</p>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            {lang === 'hi' && hasHindi
+              ? `${article.specialization} consultation chahiye?`
+              : `Need a ${article.specialization} consultation?`}
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
+            {lang === 'hi' && hasHindi
+              ? `ProMedicoz par ek verified ${article.specialization.toLowerCase()} se appointment book karein. Video, phone, ya in-person.`
+              : `Book an appointment with a verified ${article.specialization.toLowerCase()} on ProMedicoz. Video, phone, or in-person.`}
+          </p>
           <Link
             to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'bottom' })}
             className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
           >
-            Find {article.specialization} Doctors
+            {lang === 'hi' && hasHindi ? `${article.specialization} Doctors Dhoondhein` : `Find ${article.specialization} Doctors`}
           </Link>
         </div>
 
