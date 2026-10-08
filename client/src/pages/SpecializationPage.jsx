@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
+import { trackEvent } from '../components/Analytics';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -431,6 +432,12 @@ function SpecializationPage() {
           <p className="text-primary-100 max-w-2xl text-lg">{view.description}</p>
           <Link
             to={`/doctors?specialization=${encodeURIComponent(specName)}`}
+            onClick={() => trackEvent('find_doctor_click', {
+              source: 'specialization_page',
+              specialization: specName,
+              cta_position: 'hero',
+              city: cityName || 'none',
+            })}
             className="inline-block mt-6 bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             {ui.bookConsult(view.title)}
@@ -489,7 +496,16 @@ function SpecializationPage() {
             </div>
           )}
           <div className="text-center mt-6">
-            <Link to={`/doctors?specialization=${encodeURIComponent(specName)}`} className="text-primary-600 font-medium hover:underline">
+            <Link
+              to={`/doctors?specialization=${encodeURIComponent(specName)}`}
+              onClick={() => trackEvent('find_doctor_click', {
+                source: 'specialization_page',
+                specialization: specName,
+                cta_position: 'view_all',
+                city: cityName || 'none',
+              })}
+              className="text-primary-600 font-medium hover:underline"
+            >
               {ui.viewAll(view.title)}
             </Link>
           </div>
@@ -540,7 +556,16 @@ function SpecializationPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-xl font-bold text-gray-800 mb-3">{ui.ctaTitle(view.title)}</h2>
           <p className="text-gray-600 mb-5">{ui.ctaText}</p>
-          <Link to={`/doctors?specialization=${encodeURIComponent(specName)}`} className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-block">
+          <Link
+            to={`/doctors?specialization=${encodeURIComponent(specName)}`}
+            onClick={() => trackEvent('find_doctor_click', {
+              source: 'specialization_page',
+              specialization: specName,
+              cta_position: 'bottom',
+              city: cityName || 'none',
+            })}
+            className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-block"
+          >
             {ui.ctaBtn(view.title)}
           </Link>
         </div>
