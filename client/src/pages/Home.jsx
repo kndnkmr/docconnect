@@ -6,6 +6,7 @@ import { reviewAPI } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
 import { Helmet } from 'react-helmet-async';
+import { trackEvent } from '../components/Analytics';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -283,6 +284,11 @@ function Home() {
                   to={symptomSearch
                     ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
                     : '/doctors'}
+                  onClick={() => trackEvent('find_doctor_click', {
+                    source: 'home_hero_search',
+                    specialization: symptomSearch ? getSpecializationFromSymptom(symptomSearch) : 'none',
+                    had_symptom: symptomSearch ? 'yes' : 'no',
+                  })}
                   className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-700 transition-colors"
                 >
                   {t.findDoctor}
@@ -389,6 +395,7 @@ function Home() {
             <div className="max-w-3xl mx-auto">
               <Link
                 to={`/blog/${dailyTip.slug}`}
+                onClick={() => trackEvent('daily_tip_click', { article_slug: dailyTip.slug })}
                 className="group block bg-white border border-primary-100 rounded-2xl p-5 sm:p-6 hover:shadow-md hover:border-primary-300 transition-all"
               >
                 <span className="inline-block bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">

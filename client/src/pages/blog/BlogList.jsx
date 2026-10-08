@@ -7,6 +7,7 @@ import SEO from '../../components/SEO';
 // just without the heavy `content`. The article PAGE still uses blogData.
 import { articleMeta as articles } from './blogMeta';
 import { blogViewAPI } from '../../services/api';
+import { trackEvent } from '../../components/Analytics';
 
 // Format a read count compactly: 1240 -> "1.2k", 980 -> "980".
 function formatViews(n) {
@@ -132,6 +133,17 @@ function BlogList() {
             {articles.length}+ articles
             {totalReads > 0 && <> · <span className="font-semibold text-white">{formatViews(totalReads)}</span> reads and counting</>}
           </p>
+
+          {/* Conversion nudge: readers browsing health content are warm leads —
+              offer a one-tap path to consult a doctor. Tracked so we can see how
+              the blog list drives doctor-finding. */}
+          <Link
+            to="/doctors"
+            onClick={() => trackEvent('find_doctor_click', { source: 'blog_list_header' })}
+            className="inline-block mt-4 bg-white text-primary-700 px-5 py-2 rounded-full text-sm font-semibold hover:bg-primary-50 transition-colors"
+          >
+            Consult a doctor online →
+          </Link>
 
           {/* Search box — filters instantly as you type (no button needed).
               The live result line + clear button make that obvious. */}
