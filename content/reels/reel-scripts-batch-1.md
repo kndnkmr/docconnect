@@ -129,3 +129,70 @@ _[+ universal footer]_
 **Note:** This is a reassurance-style Reel, so keep the tone calm and warm (not alarmist) — the
 value is relief + the clear "when to actually worry" line. Great candidate to pin, since it maps
 to your top-performing article.
+
+
+---
+
+## REEL 5 — Dandruff (#3 read, 14 reads)
+**Article:** /blog/dandruff-flaky-itchy-scalp-guide
+**Angle:** Relatable embarrassment hook → it's harmless and common → what actually fixes it.
+High relatability = high engagement.
+**Length:** ~28s
+
+| Time | On-screen text | Voiceover (Hinglish) | Visual |
+|---|---|---|---|
+| 0–3s (HOOK) | "Kaali shirt pe safed flakes? 🤦" | "Kaali shirt pehni aur kandhon par safed flakes? Dandruff — par ghabrao mat." | Brushing flakes off a dark shirt |
+| 3–9s | "Harmless + bahut common" | "Dandruff harmless hai aur bahut common — aur zyadatar cases mein manageable." | Reassuring tone, scalp close-up |
+| 9–16s | "Fix: anti-dandruff shampoo, sahi se" | "Ek anti-dandruff shampoo use karo — par sahi tareeke se: scalp par lagao, 3-5 minute chhodo, phir dhoyo." | Shampoo bottle, scalp massage |
+| 16–23s | "Regular use • scratch mat karo" | "Regularly use karo, scalp scratch mat karo, aur bahut oil lagana band karo — oil fungus ko badhaata hai." | Cross out heavy oiling / scratching |
+| 23–28s (CTA) | "Theek na ho to? → link in bio" | "Agar na jaaye, bahut khujli ho, ya patches banein — dermatologist ko dikhao. Poori guide link in bio." | ProMedicoz logo + "link in bio" |
+
+**Caption:**
+Dark shirt + safe flakes = dandruff 🤦‍♂️ Harmless hai, par sahi tareeke se theek hota hai 👇 (Shampoo kaise use karein + kab doctor — link in bio.)
+_[+ universal footer]_
+**Extra hashtags:** `#Dandruff #HairCare #ScalpCare #Dermatology #HairTips`
+
+---
+
+## REEL 6 — Body Reflexes: Goosebumps, Yawning, Shivering (#4 read, 13 reads)
+**Article:** /blog/goosebumps-yawning-shivering-body-reflexes-explained-guide
+**Angle:** Pure curiosity/"did you know" hook — great for shares and watch-time. Light, fun,
+educational. A nice change of pace from symptom Reels.
+**Length:** ~30s
+
+| Time | On-screen text | Voiceover (Hinglish) | Visual |
+|---|---|---|---|
+| 0–3s (HOOK) | "Jamhaai contagious kyun hoti hai? 🥱" | "Jab koi jamhaai leta hai, aapko bhi kyun aa jaati hai? Body ke mazedaar raaz 👇" | Someone yawning, then another person yawning |
+| 3–10s | "Goosebumps = purana reflex" | "Goosebumps — thand mein ya ek gaane se bhi. Yeh ek purana reflex hai jo kabhi body ko garm rakhta tha." | Arm with goosebumps close-up |
+| 10–17s | "Jamhaai = dimaag thanda karna" | "Jamhaai dimaag ko thanda karne aur alert rehne mein madad kar sakti hai — aur empathy ki wajah se failti hai." | Yawning, brain-cooling graphic |
+| 17–24s | "Kaanpna = garmi banana" | "Thand mein kaanpna muscles ka tezi se garmi banana hai — ek built-in heater!" | Shivering in cold |
+| 24–30s (CTA) | "Aur mazedaar facts → link in bio" | "Chheenk, hichki, rongte — sab ka ek maksad hai. Poori list promedicoz.in par." | ProMedicoz logo + "link in bio" |
+
+**Caption:**
+Jamhaai contagious kyun hoti hai? Goosebumps kyun aate hain? 🤔 Aapki body ke mazedaar automatic reflexes, simply samjhaaye 👇 (Full list — link in bio.)
+_[+ universal footer]_
+**Extra hashtags:** `#DidYouKnow #HealthFacts #HumanBody #Goosebumps #Yawning #Science`
+
+---
+
+## REEL 7 — Why a Yearly Health Check-Up Matters (#7 read, 11 reads)
+**Article:** /blog/why-preventive-health-checkups-matter
+**Angle:** "You feel fine — but..." hook. Promotes preventive care AND naturally ties to booking a
+doctor (good for conversions, not just reads). Calm, motivating tone.
+**Length:** ~28s
+
+| Time | On-screen text | Voiceover (Hinglish) | Visual |
+|---|---|---|---|
+| 0–3s (HOOK) | "Theek mehsoos ho raha hai? Phir bhi…" | "Aap bilkul theek mehsoos kar rahe hain — par kuch bimaariyan saalon tak chupke se badhti hain." | Person looking healthy, going about day |
+| 3–11s | "Silent: BP • sugar • cholesterol" | "High BP, sugar, cholesterol — inke shuru mein koi symptom nahi hota, par andar nuksaan hota rehta hai." | Icons: heart, sugar, cholesterol |
+| 11–19s | "Ek yearly check = jaldi pakad" | "Saal mein ek simple health check-up inhe jaldi pakad leta hai — jab theek karna sabse aasaan hai." | Checklist / blood test tube |
+| 19–24s | "40+ ya family history? Zaroori" | "Khaaskar 40 ke baad, ya family history ho to — yeh ek smart aadat hai." | Family / age graphic |
+| 24–28s (CTA) | "Apna check-up book karo → bio" | "Theek mehsoos karna kaafi nahi — check karwana zaroori hai. promedicoz.in par doctor se baat karo." | ProMedicoz logo + "link in bio" |
+
+**Caption:**
+"Main to bilkul theek hoon" — par BP, sugar, cholesterol chupke se badhte hain 🤫 Ek yearly check-up inhe jaldi pakad leta hai 👇 (Kaunse test, kab — link in bio.)
+_[+ universal footer]_
+**Extra hashtags:** `#PreventiveHealth #HealthCheckup #HealthScreening #StayHealthy #CheckupTime`
+
+**Note:** Reel 7 is a good "conversion" Reel — it naturally nudges toward booking a doctor, so it
+pairs well with the GA4 book_appointment_click event once that is marked as a key event.
