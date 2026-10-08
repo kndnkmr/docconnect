@@ -47,9 +47,12 @@ const TXT = {
     shareFallback: 'Link copied! Or use the WhatsApp / Facebook buttons below to share directly.',
     installedToast: 'ProMedicoz installed!',
     shareText:
-      '🏥 ProMedicoz is now live! Consult verified doctors online — video, phone, or in-person.\n\n' +
-      '📲 Book in under 2 minutes 👉 ' + SITE_URL + '\n\n' +
-      'No more waiting in line. Your health, our priority. ❤️',
+      '🏥 Found a great way to see a doctor: *ProMedicoz*\n\n' +
+      '✅ Verified doctors — video, phone, or in-person\n' +
+      '💸 Fair, honest fees — you pay the doctor directly, no commission\n' +
+      '⏱️ Book in under 2 minutes\n\n' +
+      '👉 ' + SITE_URL + '\n\n' +
+      'Sharing because good, affordable healthcare is worth passing on. ❤️',
   },
   hi: {
     heroTitle: '📲 ProMedicoz ऐप पाएं',
@@ -83,9 +86,12 @@ const TXT = {
     shareFallback: 'लिंक कॉपी हो गया! या नीचे दिए WhatsApp / Facebook बटन से सीधे साझा करें।',
     installedToast: 'ProMedicoz इंस्टॉल हो गया!',
     shareText:
-      '🏥 ProMedicoz अब उपलब्ध है! सत्यापित डॉक्टरों से ऑनलाइन परामर्श करें — वीडियो, फ़ोन या क्लिनिक पर।\n\n' +
-      '📲 2 मिनट से भी कम में बुक करें 👉 ' + SITE_URL + '\n\n' +
-      'अब लाइन में इंतज़ार नहीं। आपका स्वास्थ्य, हमारी प्राथमिकता। ❤️',
+      '🏥 डॉक्टर दिखाने का एक बढ़िया तरीका मिला: *ProMedicoz*\n\n' +
+      '✅ सत्यापित डॉक्टर — वीडियो, फ़ोन या क्लिनिक पर\n' +
+      '💸 वाजिब और ईमानदार फ़ीस — पैसे सीधे डॉक्टर को, कोई कमीशन नहीं\n' +
+      '⏱️ 2 मिनट से भी कम में बुक करें\n\n' +
+      '👉 ' + SITE_URL + '\n\n' +
+      'शेयर इसलिए, क्योंकि अच्छी और सस्ती सेहत-सुविधा सबके काम आती है। ❤️',
   },
 };
 
