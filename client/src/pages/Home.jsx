@@ -32,6 +32,17 @@ const TXT = {
     tipBadge: '💡 Health Tip of the Day',
     tipRead: 'Read the full article →',
     tipMore: 'More health articles →',
+    shareHeading: 'Know someone who needs a doctor?',
+    shareSub: 'Verified doctors, fair fees, no commission. Share ProMedicoz with family and friends.',
+    shareBtn: '📤 Share with family & friends',
+    shareMsg:
+      '🏥 Found a great way to see a doctor: *ProMedicoz*\n\n' +
+      '✅ Verified doctors — video, phone, or in-person\n' +
+      '💸 Fair, honest fees — you pay the doctor directly, no commission\n' +
+      '⏱️ Book in under 2 minutes\n\n' +
+      '👉 https://www.promedicoz.in\n\n' +
+      'Sharing because good, affordable healthcare is worth passing on. ❤️',
+    shareCopied: 'Message copied! Paste it in WhatsApp or anywhere to share.',
     specHeading: 'Consult by Specialization',
     specSubtitle: "Tap your concern — we'll show the right specialists",
     browseAll: '🔍 Browse All Specializations →',
@@ -72,6 +83,17 @@ const TXT = {
     tipBadge: '💡 आज का स्वास्थ्य सुझाव',
     tipRead: 'पूरा लेख पढ़ें →',
     tipMore: 'और स्वास्थ्य लेख →',
+    shareHeading: 'किसी को डॉक्टर की ज़रूरत है?',
+    shareSub: 'सत्यापित डॉक्टर, वाजिब फ़ीस, कोई कमीशन नहीं। ProMedicoz परिवार और दोस्तों के साथ साझा करें।',
+    shareBtn: '📤 परिवार और दोस्तों के साथ साझा करें',
+    shareMsg:
+      '🏥 डॉक्टर दिखाने का एक बढ़िया तरीका मिला: *ProMedicoz*\n\n' +
+      '✅ सत्यापित डॉक्टर — वीडियो, फ़ोन या क्लिनिक पर\n' +
+      '💸 वाजिब और ईमानदार फ़ीस — पैसे सीधे डॉक्टर को, कोई कमीशन नहीं\n' +
+      '⏱️ 2 मिनट से भी कम में बुक करें\n\n' +
+      '👉 https://www.promedicoz.in\n\n' +
+      'शेयर इसलिए, क्योंकि अच्छी और सस्ती सेहत-सुविधा सबके काम आती है। ❤️',
+    shareCopied: 'संदेश कॉपी हो गया! WhatsApp या कहीं भी पेस्ट करके साझा करें।',
     specHeading: 'बीमारी के अनुसार परामर्श करें',
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
@@ -133,6 +155,27 @@ function Home() {
   // down the initial home-page load. The tip card simply appears a moment
   // later once the data is fetched (and is hidden until then).
   const [dailyTip, setDailyTip] = useState(null);
+
+  // Share ProMedicoz with family/friends — uses the phone's native share sheet
+  // (WhatsApp, etc.) when available; otherwise falls back to copying the message
+  // and a WhatsApp web link. Self-contained (no toast dependency), and tracked
+  // so we can see how word-of-mouth sharing performs. Safe: wrapped so a share
+  // failure never breaks the page.
+  const handleShareSite = async () => {
+    trackEvent('share_site', { source: 'home' });
+    const msg = t.shareMsg;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ title: 'ProMedicoz', text: msg });
+        return;
+      }
+    } catch { /* user cancelled the native share — do nothing */ return; }
+    // Fallback (mostly desktop): copy the message, then open WhatsApp web.
+    try { await navigator.clipboard.writeText(msg); } catch { /* ignore */ }
+    try {
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+    } catch { /* popup blocked — the message is already copied */ }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -421,6 +464,25 @@ function Home() {
           </div>
         </section>
       )}
+
+      {/* ---- Share ProMedicoz ---- a prominent, friendly nudge for word-of-mouth
+           growth. Leads with the honest value angle (verified doctors, fair fees,
+           no commission). Uses the phone's native share sheet / WhatsApp. */}
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center bg-primary-50 border border-primary-200 rounded-2xl p-6 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{t.shareHeading}</h2>
+            <p className="text-gray-600 text-sm mb-5">{t.shareSub}</p>
+            <button
+              type="button"
+              onClick={handleShareSite}
+              className="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+            >
+              {t.shareBtn}
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* ---- How It Works ---- */}
       <section className="py-12 bg-gray-50">
