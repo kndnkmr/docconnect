@@ -100,3 +100,32 @@ _[+ universal footer]_
 - "Choking pe ye karo" (Heimlich — high shareability)
 - Silent signs of high blood sugar (curiosity hook)
 - Adult vaccines "sirf bachon ke liye nahi" (2nd most-read article)
+
+
+---
+
+## REEL 4 — "Lump in the Throat" / Globus (current #1 read article, 38 reads)
+**Article:** /blog/lump-in-throat-feeling-globus-causes-guide
+**Why this one:** It is currently your most-read article by a wide margin, and the topic has a
+perfect Reel arc — a scary-feeling symptom with a reassuring, "you're not alone / usually
+harmless" payoff. High relatability (stress/anxiety-linked) = high shares and saves.
+**Angle:** Hook with the unsettling feeling → name it (globus) → the reassuring test → when to check.
+**Length:** ~30s
+
+| Time | On-screen text | Voiceover (Hinglish) | Visual |
+|---|---|---|---|
+| 0–3s (HOOK) | "Gale mein kuch atka sa lagta hai?" | "Gale mein ek gaanth ya kuch atka sa lagta hai — par kuch hai hi nahi?" | Person touching throat, puzzled; close-up |
+| 3–9s | "Iska naam hai: GLOBUS" | "Iska ek naam hai — globus. Aur achhi baat: yeh aksar harmless hota hai." | Big word "GLOBUS" on screen |
+| 9–16s | "Reassuring test ✅" | "Pehchaan: aap khaana-paani bilkul normally nigal sakte hain. Ehsaas hai, par khaana rukta nahi." | Person sipping water easily / eating normally |
+| 16–22s | "Trigger: stress • acidity" | "Yeh aksar stress, anxiety, ya acidity se juda hota hai — khaaskar laar nigalte waqt zyada lagta hai." | Stress / acidity icon beats |
+| 22–27s (WARNING) | "⚠️ Par check karao agar…" | "Lekin doctor ko dikhao agar khaana sach mein atke, gale mein gaanth dikhe, awaaz baith jaaye, ya wajan ghate." | Red warning list, 3-4 quick items |
+| 27–32s (CTA) | "Poori guide → link in bio" | "Jyada ghabrao mat — poori jaankari promedicoz.in par. Shak ho to doctor se poochho." | ProMedicoz logo + "link in bio" |
+
+**Caption:**
+Gale mein kuch atka sa lagta hai par kuch hai nahi? 😮‍💨 Ise "globus" kehte hain — aksar harmless, aksar stress/acidity se juda. Ek reassuring test aur warning signs 👇 (Full guide — link in bio.)
+_[+ universal footer]_
+**Extra hashtags:** `#ThroatProblems #Globus #Acidity #Anxiety #ENT #HealthAwareness`
+
+**Note:** This is a reassurance-style Reel, so keep the tone calm and warm (not alarmist) — the
+value is relief + the clear "when to actually worry" line. Great candidate to pin, since it maps
+to your top-performing article.
