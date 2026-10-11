@@ -467,19 +467,25 @@ function Home() {
 
       {/* ---- Share ProMedicoz ---- a prominent, friendly nudge for word-of-mouth
            growth. Leads with the honest value angle (verified doctors, fair fees,
-           no commission). Uses the phone's native share sheet / WhatsApp. */}
-      <section className="py-10 bg-white">
+           no commission). Styled to match the "Install like an app" card below
+           so the two read as a consistent pair. */}
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center bg-primary-50 border border-primary-200 rounded-2xl p-6 sm:p-8">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{t.shareHeading}</h2>
-            <p className="text-gray-600 text-sm mb-5">{t.shareSub}</p>
-            <button
-              type="button"
-              onClick={handleShareSite}
-              className="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
-            >
-              {t.shareBtn}
-            </button>
+          <div className="max-w-3xl mx-auto bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <div className="text-4xl">📤</div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-gray-800">{t.shareHeading}</h3>
+              <p className="text-gray-600 text-sm mt-0.5">{t.shareSub}</p>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={handleShareSite}
+                className="whitespace-nowrap bg-green-500 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+              >
+                {t.shareBtn}
+              </button>
+            </div>
           </div>
         </div>
       </section>
