@@ -1125,6 +1125,37 @@ export const articles = [
         'Symptoms lasting more than a few weeks'
       ]},
       { type: 'paragraph', text: 'These need proper evaluation. You can start with an **online consultation** to know if tests are needed.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: '"Gut health" abhi har jagah hai — aur sahi kaaran se. Aapke digestive system mein kharbon bacteria sirf digestion ko nahi, balki aapki immunity, energy, mood, aur yahaan tak ki aapki skin ko bhi prabhaavit karte hain. Achhi khabar: ek swasth gut zyadaatar saral, rozmarra aadton par aata hai.' },
+      { type: 'heading', text: 'Aapka Gut Itna Kyun Maayne Rakhta Hai' },
+      { type: 'paragraph', text: 'Aapka gut microbes ke poore ecosystem ("microbiome") ka ghar hai jo khaana pachaane, kuch vitamins banaane, aapke immune system ko train karne, aur yahaan tak ki aapke dimaag se baat karne mein madad karte hain. Jab ye balance bigadta hai, aap bloating, irregular digestion, kam energy, ya baar-baar bimaari notice kar sakte hain.' },
+      { type: 'heading', text: 'Sanket Ki Aapke Gut Ko Dhyaan Chahiye' },
+      { type: 'list', items: [
+        'Baar-baar bloating, gas, ya acidity',
+        'Irregular bowel aadtein (constipation ya loose motions)',
+        'Khaane ke baad sust mehsoos hona',
+        'Baar-baar infections ya kam immunity',
+        'Skin flare-ups'
+      ]},
+      { type: 'paragraph', text: 'Kabhi-kabhi ki samasyaein normal hain — ek **lagaataar pattern** hi dekhne layak hai.' },
+      { type: 'heading', text: 'Apne Gut Ko Support Karne Ke Saral Tareeke' },
+      { type: 'list', items: [
+        'Zyada **fibre** khaayein — sabziyaan, fal, whole grains, dals',
+        '**Fermented foods** shaamil karein — dahi, chhaas, idli, dosa (traditional Indian probiotics!)',
+        'Hydrated rahein',
+        'Khaane mein jaldbaazi na karein — dhyaan se khaayein',
+        'Ultra-processed aur bahut oily khaane kam karein',
+        'Stress manage karein — gut aur dimaag kareebi se jude hain'
+      ]},
+      { type: 'callout', variant: 'info', title: 'Traditional nazariya', text: 'Ayurveda ne lambe samay se **"Agni" (digestive fire)** par zor diya hai — ye vichaar ki achhi digestion sehat ki neenv hai. Garam, taaza pakaaya khaana, niyamit timings, jeera aur ajwain jaise digestive spices, aur zyada na khaana sab modern gut-health salah ke saath achhe se mel khaate hain.' },
+      { type: 'callout', variant: 'warning', title: 'Doctor ko dikhayein agar', items: [
+        'Mal mein khoon',
+        'Anexplained weight loss',
+        'Gambhir ya lagaataar dard',
+        'Kuch hafton se zyada chalne wale lakshan'
+      ]},
+      { type: 'paragraph', text: 'Inhe sahi jaanch chahiye. Aap ek **online consultation** se shuru kar sakte hain ye jaanne ke liye ki tests ki zaroorat hai ya nahi. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -3939,6 +3970,39 @@ export const articles = [
       { type: 'callout', variant: 'info', title: 'Why gums matter beyond your mouth', text: 'Gum health is linked to overall health — poorly controlled gum disease is associated with **diabetes and heart health**, and pregnant women with gum disease need extra care. Looking after your gums is looking after more than your smile.' },
       { type: 'heading', text: 'When to See a Dentist' },
       { type: 'paragraph', text: 'See a dentist if your gums bleed regularly, look swollen, or if you have persistent bad breath — and promptly if teeth feel loose or gums are receding. A dentist can clean away tartar, treat the inflammation, and show you exactly where your brushing is missing. A routine check-up every six months catches gum problems long before they become serious. When it comes to your gums, a small effort now saves your teeth later.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Aap brush karte hain, thookte hain, aur wo hai — sink mein gulaabi rang ka ek chakra. Hum mein se zyadaatar ne ise dekha aur socha, "shaayad maine bas zor se brush kar diya." Kabhi ye sach hota hai. Lekin bleeding gums gum disease ka sabse shuruaati, sabse zyada nazarandaaz kiya jaane wala sanket bhi hai — aisi cheez jo chup-chaap bahut saare adults ko prabhaavit karti hai aur, akela chhodne par, logon ke daant khone ka ek mukhya kaaran hai. Achhi khabar ye hai ki jaldi pakadne par, ye poori tarah reversible hai. Yahaan bataaya hai ki aapke masude aapko kya bataane ki koshish kar rahe hain.' },
+      { type: 'heading', text: 'Swasth Masude Khoon Nahi Dete' },
+      { type: 'paragraph', text: 'Pehle sabse bada myth saaf kar lein: swasth masude normal roop se brush ya floss karne par khoon nahi dete. Bleeding ka matlab aam taur par ye hai ki masude sooje hue (inflamed) hain — gumline ke saath jama plaque naam ki bacteria ki ek chipchipi parat se irritate. Us shuruaati, sirf-masude wali stage ka ek naam hai (gingivitis), aur ye wo bindu hai jahaan sab kuch abhi bhi aasaani se theek ho sakta hai.' },
+      { type: 'heading', text: 'Gum Disease Kaise Badhti Hai' },
+      { type: 'steps', items: [
+        'Jab brushing jagahein chhod deti hai to gumline ke saath **plaque jama** hota hai',
+        '**Masude sooj jaate hain** — laal, phooli hui, aur aasaani se khoon dete hain (gingivitis). Yahaan abhi poori tarah reversible.',
+        'Nazarandaaz karne par, ye **masudon ke neeche** badhta hai, aur daanton ko support karne wali haddi dheere-dheere ghisti hai (periodontitis)',
+        'Samay ke saath, daant dheele ho sakte hain — aur ye haddi ka nuksaan **palat nahi sakta**, sirf roka ja sakta hai',
+      ]},
+      { type: 'callout', variant: 'success', title: 'Ummeed wala hissa', text: 'Shuruaati, bleeding-gums stage par, gum disease behtar safai aur ek dental visit se **reversible** hai. Abhi kaam karne ka poora matlab hai us stage tak kabhi na pahunchna jise palta nahi ja sakta.' },
+      { type: 'heading', text: 'Notice Karne Layak Sanket' },
+      { type: 'list', items: [
+        'Masude jo brush ya floss karne par **khoon dete** hain',
+        'Laal, sooje, ya dukhte masude (swasth masude firm aur gulaabi hote hain)',
+        'Lagaataar **bad breath** ya kadva swaad',
+        'Masude jo daanton se **door hat-te** dikhte hain',
+        'Daant jo dheele lagte hain, ya ek bite jo alag lagti hai',
+      ]},
+      { type: 'heading', text: 'Apne Masudon Ko Swasth Kaise Rakhein' },
+      { type: 'list', items: [
+        '**Din mein do baar brush karein**, halke se, do minute ke liye — brush ko gumline par angle karein',
+        'Rozana **daanton ke beech saaf karein** (floss ya interdental brushes) — yahin gum disease aam taur par shuru hoti hai',
+        'Ek **soft-bristled** brush istemaal karein aur har kuch mahino mein badlein',
+        'Baar-baar meethe snacks aur drinks kam karein',
+        'Agar aap smoke karte hain, to jaanein ki ye gum disease ka ek bada kaaran hai — chhodne ka ek aur mazboot kaaran',
+        'Ek **professional cleaning** ke liye dentist ko dikhayein — ye sakht plaque (tartar) hataati hai jo brushing nahi kar sakti',
+      ]},
+      { type: 'callout', variant: 'info', title: 'Masude muh se aage kyun maayne rakhte hain', text: 'Gum health samagra sehat se judi hai — kharab control wali gum disease **diabetes aur heart health** se judi hai, aur gum disease wali pregnant auraton ko extra care chahiye. Apne masudon ka khyaal rakhna aapki muskaan se zyada ka khyaal rakhna hai.' },
+      { type: 'heading', text: 'Dentist Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Dentist ko dikhayein agar aapke masude niyamit roop se khoon dete hain, sooje dikhte hain, ya agar aapko lagaataar bad breath hai — aur jaldi agar daant dheele lagte hain ya masude receding ho rahe hain. Ek dentist tartar saaf kar sakta hai, inflammation treat kar sakta hai, aur aapko theek dikha sakta hai ki aapki brushing kahaan chhoot rahi hai. Har chhah mahine ek routine check-up gum samasyaon ko gambhir hone se bahut pehle pakad leta hai. Jab baat aapke masudon ki ho, to abhi ki ek chhoti koshish baad mein aapke daant bachaati hai. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -4208,6 +4272,36 @@ export const articles = [
       { type: 'callout', variant: 'warning', text: 'Do **not** force the shoulder through sharp pain or yank on it — aggressive stretching can set recovery back. Gentle and consistent beats hard and occasional.' },
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a doctor or orthopedic specialist if your shoulder is stiff and painful for more than a few weeks, if it is steadily limiting everyday tasks like dressing or reaching, or if it follows an injury. They can confirm it is a frozen shoulder (rather than something else), rule out other causes, and set you up with the right exercises and pain plan. Much of this — assessing your movement, guiding physiotherapy, reviewing progress — works well through an **online consultation**, with an in-person visit only if a scan or procedure is needed. With the right approach, the vast majority of frozen shoulders recover fully.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Ye aksar bina kisi spasht chot ke dheere-dheere aata hai: ek din aap seatbelt ke liye haath badhaate hain ya peeth ke pichhe kuch baandhne ki koshish karte hain, aur ek teekha dard aapko rok deta hai. Hafton mein, shoulder aur zyada akadta jaata hai jab tak ye sach mein "frozen" na lage. Frozen shoulder ek asli, achhe se samjhi gayi condition hai — pareshan karne wali aur dheemi, lekin aisi jo lagbhag hamesha theek ho jaati hai. Yahaan bataaya hai ki us zidi joint mein kya ho raha hai, aur ise ubarne mein kaise madad karein.' },
+      { type: 'heading', text: 'Frozen Shoulder Kya Hai' },
+      { type: 'paragraph', text: 'Frozen shoulder (medical shabd adhesive capsulitis hai) tab hoti hai jab shoulder joint ke aaspaas ka lacheela capsule inflamed, mota, aur tight ho jaata hai. Wo tightness hi movement ko seemit karti hai aur dard karti hai. Ye aam taur par dheere-dheere aati hai, aksar bina kisi saaf kaaran ke, aur iska ek bahut vishesh pattern hai jo dheere-dheere behtar hone se pehle bigadta hai.' },
+      { type: 'heading', text: 'Teen Stages' },
+      { type: 'table', headers: ['Stage', 'Kya hota hai', 'Mota timeline'], rows: [
+        ['Freezing', 'Dard badhta hai, movement dheere-dheere ghatti hai', 'Hafte se mahine'],
+        ['Frozen', 'Dard kam ho sakta hai, lekin akdan sabse buri hoti hai', 'Kai mahine'],
+        ['Thawing', 'Movement dheere-dheere, sthir roop se wapas aati hai', 'Mahino se ek saal se zyada'],
+      ]},
+      { type: 'callout', variant: 'info', text: 'Ye ek dheemi condition hai — recovery mahino mein naapi jaati hai, kabhi-kabhi zyada. Ye pehle se jaanna us dhairya ko sehna kaafi aasaan bana deta hai jo ye maangti hai.' },
+      { type: 'heading', text: 'Kise Hone Ki Sambhaavna Hai' },
+      { type: 'list', items: [
+        'Lagbhag **40 se 60** ke adults, aur aksar auratein',
+        '**Diabetes** wale log (khaaskar zyada common aur zyada zidi ho sakta hai)',
+        'Thyroid problems aur kuch dusri conditions',
+        'Shoulder ko **na hilaane** ke daur ke baad — ek chot, surgery, ya sling se',
+      ]},
+      { type: 'heading', text: 'Ise Theek Hone Mein Kya Madad Karta Hai' },
+      { type: 'list', items: [
+        'Aaraam ke andar **halki, niyamit movement** aur stretching — sabse zaroori cheez; ek akda shoulder jo hilna band kar deta hai aur akadta jaata hai',
+        'Range surakshit roop se wapas laane ke liye ek professional dwara nirdeshit **physiotherapy**',
+        'Stretching se pehle garmi, joint ko dheela karne ke liye',
+        'Doctor ki salah ke anusaar dard se raahat, taaki aap asal mein exercises kar sakein',
+        'Kisi bhi **diabetes** ko achhe se control rakhna, jo recovery ko support karta hai',
+      ]},
+      { type: 'callout', variant: 'warning', text: 'Shoulder ko teekhe dard se zabardasti **na** chalaayein ya ispe jhatka na dein — aggressive stretching recovery peeche daal sakti hai. Halka aur lagaataar, kathor aur kabhi-kabhi se behtar hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Doctor ya orthopedic specialist ko dikhayein agar aapka shoulder kuch hafton se zyada akda aur dukhta hai, agar ye dressing ya reaching jaise rozmarra kaamon ko sthir roop se seemit kar raha hai, ya agar ye kisi chot ke baad hua ho. Wo pushti kar sakte hain ki ye ek frozen shoulder hai (kuch aur ke bajaay), dusre kaaran inkaar kar sakte hain, aur aapko sahi exercises aur pain plan de sakte hain. Iska bahut hissa — aapki movement ka aakalan, physiotherapy ka margdarshan, pragati review karna — ek **online consultation** ke zariye achhi tarah kaam karta hai, in-person visit sirf tab jab scan ya procedure chahiye. Sahi tareeke se, zyadaatar frozen shoulders poori tarah theek ho jaate hain. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -18272,6 +18366,34 @@ export const articles = [
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'See a **dermatologist** for pigmentation that bothers you — they can identify the type (melasma vs post-acne marks vs other), rule out anything needing different care, and give a safe, effective plan (rather than guesswork or risky creams). Also see a doctor for a **new, changing, or unusual dark spot or mole** (to rule out skin cancer). An **online consultation** with a dermatologist works well — a clear photo and history often allow assessment and a plan. Even skin tone takes patience, but it\'s very achievable. (See our guides on acne, sun protection, and signs you should see a dermatologist.)' },
       { type: 'callout', variant: 'info', title: 'A note on sources', text: 'General education based on trusted public health and dermatology sources (NHS, NIH). It does not replace an assessment by a dermatologist, who diagnoses and treats pigmentation safely.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Gaalon aur maathe par brown ya greyish patches, pimple theek hone ke baad dark spots, ya aam taur par uneven skin tone — pigmentation chintaein un sabse common kaaranon mein se hain jiske liye log (khaaskar Indian aur darker skin tone wale) dermatologist ke paas jaate hain. **Melasma** sabse jaana-maana ek hai. Ye aapki physical sehat ke liye harmless hai lekin samajhne layak roop se aatmvishwaas ko prabhaavit karta hai. Imaandaar khabar: ye manage ki ja sakti hai, haalaanki ise dhairya aur sahi tareeka chahiye. Ye skin pigmentation aur kya sach mein madad karta hai, is par ek saaf guide hai.' },
+      { type: 'heading', text: 'Melasma / Pigmentation Kya Hai?' },
+      { type: 'paragraph', text: 'Pigmentation tab hoti hai jab skin kuch areas mein **extra melanin** (wo pigment jo skin ko uska rang deta hai) banaati hai. **Melasma** ek common type hai — symmetrical brown patches, aam taur par chehre par (gaal, maatha, upar ka hoth) — auraton mein aur brown/darker skin wale logon mein zyada common. Dusri pigmentation mein **post-inflammatory hyperpigmentation** (acne, chot, ya rash ke baad bache dark marks), sun spots, aur tanning shaamil hain.' },
+      { type: 'heading', text: 'Ye Kyun Hota Hai' },
+      { type: 'list', items: [
+        '**Dhoop (sun exposure)** — sabse bada kaaran aur bigaadne wala (UV melanin badhaata hai)',
+        '**Hormones** — pregnancy ("mask of pregnancy"), aur kuch hormonal dawaiyaan, melasma trigger kar sakti hain',
+        '**Skin inflammation ke baad** — acne, chot, ya rash dark marks chhod deta hai (Indian skin mein common)',
+        'Genetics aur skin type',
+        'Irritate karne wale products ya aggressive scrubbing',
+      ]},
+      { type: 'callout', variant: 'warning', title: 'Sunscreen wo neenv hai jisme samjhauta nahi', text: 'Aap aur kuch bhi karein, **rozana dhoop se suraksha pigmentation ke liye sabse zaroori ek kadam hai** — dhoop ise banaati bhi hai aur bigaadti bhi, aur chhod dene par ye kisi bhi treatment ko palat degi. Broad-spectrum sunscreen, dobaara lagaayi, saath mein chhaya aur hats, wo neenv hai jis par baaki sab banta hai. (Hamari sun-protection guide dekhein.)' },
+      { type: 'heading', text: 'Kya Sach Mein Madad Karta Hai' },
+      { type: 'list', items: [
+        '**Sun protection**, har din (neenv — upar dekhein)',
+        '**Naram skincare** — kathor scrubbing aur irritate karne wale products se bachein, jo pigmentation bigaadte hain',
+        'Pigment fade karne ke liye dermatologist dwara salaahi gayi **topical treatments** (sahi aur dhairya se istemaal ki gayi)',
+        '**Mool kaaran** ka ilaaj — jaise acne manage karna taaki ye marks chhodna band kare',
+        '**Dhairya** — pigmentation hafton se mahino mein dheere-dheere fade hoti hai, raat-o-raat nahi',
+      ]},
+      { type: 'callout', variant: 'warning', title: '"Fairness" creams aur quick fixes se saavdhaan rahein', text: 'Unregulated "fairness"/instant-glow creams aur kathor gharelu nuskhon se bachein — kuch mein **steroids, mercury, ya bleaching agents** hote hain jo skin ko damage karte hain aur lambe samay mein pigmentation bigaad sakte hain. Pigmentation ka ilaaj swasth, even-tone skin ke baare mein hona chahiye, "fairness" ke baare mein nahi, aur ise ek dermatologist dwara nirdeshit hona chahiye, dukaan ke shelf dwara nahi.' },
+      { type: 'heading', text: 'Ek Vaastvik Nazariya' },
+      { type: 'paragraph', text: 'Melasma khaaskar **zidi aur wapas aane ki aadat** wala ho sakta hai, khaaskar dhoop ya hormonal triggers ke saath — isliye ye ek baar ke cure ke bajaay ise lagaataar *manage aur behtar karne* ke baare mein hai. Lagan se dhoop se suraksha aur ek dermatologist ke plan ke saath, zyadaatar log asli sudhaar dekhte hain. Consistency (khaaskar sunscreen) hi farak laati hai.' },
+      { type: 'heading', text: 'Doctor Ko Kab Dikhayein' },
+      { type: 'paragraph', text: 'Aapko pareshan karne wali pigmentation ke liye **dermatologist** ko dikhayein — wo type pehchaan sakte hain (melasma vs post-acne marks vs dusre), kuch bhi jise alag care chahiye use inkaar kar sakte hain, aur ek surakshit, asardaar plan de sakte hain (guesswork ya risky creams ke bajaay). Ek **naye, badalte, ya asaamaanya dark spot ya mole** ke liye bhi doctor ko dikhayein (skin cancer inkaar karne ke liye). Ek dermatologist ke saath ek **online consultation** achhi tarah kaam karti hai — ek saaf photo aur history aksar aakalan aur ek plan dene deti hai. Even skin tone dhairya maangti hai, lekin ye bahut haasil ki ja sakti hai. (Acne, sun protection, aur jin lakshanon par dermatologist ko dikhana chahiye, par hamari guides dekhein.) Content was rephrased for compliance with licensing restrictions.' },
+      { type: 'callout', variant: 'info', title: 'Sources ke baare mein', text: 'Ye bharosemand public health aur dermatology sources (NHS, NIH) par aadharit general shiksha hai. Ye dermatologist dwara jaanch ki jagah nahi leti, jo pigmentation ko surakshit roop se diagnose aur treat karte hain.' },
     ]
   },
   {
