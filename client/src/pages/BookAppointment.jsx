@@ -153,6 +153,13 @@ function BookAppointment() {
   // Check if this is a repeat booking (prefilled data from Dashboard)
   const repeatData = location.state || {};
 
+  // Deep-link support: the doctor profile's "quick-pick slot" chips link here
+  // with ?date=YYYY-MM-DD&slot=<label>. We pre-fill the date (and auto-select
+  // the slot once that date's free slots load, if it's still available).
+  const query = new URLSearchParams(location.search);
+  const presetDate = query.get('date') || '';
+  const presetSlot = query.get('slot') || '';
+
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -167,9 +174,9 @@ function BookAppointment() {
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsMessage, setSlotsMessage] = useState('');
 
-  // Form state
+  // Form state (date may be pre-filled from a quick-pick deep link)
   const [formData, setFormData] = useState({
-    date: '',
+    date: presetDate,
     timeSlot: '',
     reason: repeatData.reason || '',
     consultationType: repeatData.consultationType || 'in-person'
@@ -243,6 +250,13 @@ function BookAppointment() {
           setSlotsMessage(
             `${data.freeCount} slots available on ${data.dayOfWeek} (${data.bookedCount} already booked)`
           );
+          // If the user arrived via a quick-pick deep link, auto-select that
+          // slot — but only if it's still free (someone may have booked it
+          // first). Checked against the fresh list so we never select a
+          // now-unavailable time. Only fires for the matching date.
+          if (presetSlot && formData.date === presetDate && data.slots.includes(presetSlot)) {
+            setFormData(prev => ({ ...prev, timeSlot: presetSlot }));
+          }
         }
       } catch (error) {
         setSlotsMessage('Could not load available slots. The doctor may not have set their schedule yet.');

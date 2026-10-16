@@ -11,7 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doctorAPI, reviewAPI, getUploadUrl } from '../services/api';
+import { doctorAPI, reviewAPI, availabilityAPI, getUploadUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
@@ -42,6 +42,13 @@ const TXT = {
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} review${n > 1 ? 's' : ''})`,
     doctorReplyLabel: "Doctor's reply", reply: 'Reply', editReply: 'Edit reply',
     replyPlaceholder: 'Write a public reply…', postReply: 'Post reply', cancel: 'Cancel',
+    // Availability signal shown in the header + sticky bar
+    availableToday: '🟢 Available today', nextAvailable: (label) => `Next available: ${label}`,
+    nextToday: (time) => `Available today at ${time}`,
+    nextTomorrow: (time) => `Available tomorrow at ${time}`,
+    nextOn: (day, time) => `Next available ${day} at ${time}`,
+    pickSlot: 'Pick a time slot', feeFrom: (f) => `₹${f}`, feeConsult: 'consultation',
+    newRatingPlaceholder: '🆕 New on ProMedicoz',
   },
   hi: {
     loading: 'प्रोफ़ाइल लोड हो रही है...',
@@ -61,6 +68,12 @@ const TXT = {
     ratingBadge: (avg, n) => `⭐ ${avg} / 5 (${n} समीक्षा${n > 1 ? 'एं' : ''})`,
     doctorReplyLabel: 'डॉक्टर का जवाब', reply: 'जवाब दें', editReply: 'जवाब संपादित करें',
     replyPlaceholder: 'सार्वजनिक जवाब लिखें…', postReply: 'जवाब पोस्ट करें', cancel: 'रद्द करें',
+    availableToday: '🟢 आज उपलब्ध', nextAvailable: (label) => `अगली उपलब्धता: ${label}`,
+    nextToday: (time) => `आज ${time} बजे उपलब्ध`,
+    nextTomorrow: (time) => `कल ${time} बजे उपलब्ध`,
+    nextOn: (day, time) => `अगली उपलब्धता ${day} को ${time} बजे`,
+    pickSlot: 'समय स्लॉट चुनें', feeFrom: (f) => `₹${f}`, feeConsult: 'परामर्श',
+    newRatingPlaceholder: '🆕 ProMedicoz पर नया',
   },
 };
 
@@ -75,6 +88,11 @@ function DoctorProfile() {
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [reviewStats, setReviewStats] = useState({ averageRating: 0, totalReviews: 0 });
+  // Live availability: next free slot + a few quick-pick slots for today.
+  // Fetched from the public free-slots endpoint so it reflects real, unbooked,
+  // future times (never fabricated). `null` until loaded or if none found.
+  const [nextSlot, setNextSlot] = useState(null); // { date, dayName, time, isToday }
+  const [todaySlots, setTodaySlots] = useState([]); // quick-pick chips for today
   // Doctor reply UI: which review is open for reply, and the draft text.
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
@@ -83,6 +101,25 @@ function DoctorProfile() {
   // True when the logged-in user is the doctor whose profile this is —
   // gates the "Reply" controls to only their own reviews.
   const isOwnProfile = isAuthenticated && user && doctor && user._id === doctor._id;
+
+  // Friendly label for the next-available signal (today / tomorrow / weekday).
+  const availabilityLabel = (() => {
+    if (!nextSlot) return null;
+    if (nextSlot.isToday) return t.nextToday(nextSlot.time);
+    // Is the next slot tomorrow (IST)?
+    const tomorrow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+    if (nextSlot.date === tomorrowStr) return t.nextTomorrow(nextSlot.time);
+    return t.nextOn(nextSlot.dayName, nextSlot.time);
+  })();
+
+  // Shared click handler for any "book" entry point (keeps analytics consistent).
+  const trackBook = (authState) => trackEvent('book_appointment_click', {
+    doctor_id: doctor?._id,
+    doctor_specialization: doctor?.specialization || 'unknown',
+    auth_state: authState,
+  });
 
   // Reusable reviews fetch (also called after posting a reply to refresh).
   const loadReviews = async () => {
@@ -130,6 +167,41 @@ function DoctorProfile() {
   }, [id]);
   // [id] = re-fetch if the ID in the URL changes
 
+  // Fetch the earliest real free slot (searches up to 14 days, IST), plus a few
+  // quick-pick slots for the first day that has any. Uses the SAME public
+  // free-slots endpoint the booking page uses, so what we show here matches
+  // what's actually bookable. Fails quietly — availability is a nice-to-have
+  // signal, never allowed to break the profile.
+  useEffect(() => {
+    let cancelled = false;
+    const findNextAvailable = async () => {
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      // "Today" in IST so the date strings line up with the backend.
+      const istNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      for (let offset = 0; offset < 14; offset++) {
+        if (cancelled) return;
+        const d = new Date(istNow);
+        d.setDate(d.getDate() + offset);
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        try {
+          const res = await availabilityAPI.getFreeSlots(id, dateStr);
+          const slots = res.data.slots || [];
+          if (slots.length > 0) {
+            if (cancelled) return;
+            const firstStart = (slots[0] || '').split(' - ')[0]; // "09:30 AM"
+            setNextSlot({ date: dateStr, dayName: dayNames[d.getDay()], time: firstStart, isToday: offset === 0 });
+            // Only surface quick-pick chips when the soonest day is today or
+            // tomorrow — further out, a single "next available" line is clearer.
+            if (offset <= 1) setTodaySlots(slots.slice(0, 4).map((s) => ({ date: dateStr, label: s })));
+            return;
+          }
+        } catch { /* ignore this day, keep looking */ }
+      }
+    };
+    findNextAvailable();
+    return () => { cancelled = true; };
+  }, [id]);
+
   // Loading state
   if (loading) {
     return (
@@ -165,14 +237,34 @@ function DoctorProfile() {
       />
       {doctor && <DoctorSchema doctor={doctor} />}
 
-      {/* Slim gradient header band with the back link — keeps the page
-          consistent with the Doctors listing page and gives the profile
-          card something to sit against instead of bare gray. */}
+      {/* Gradient header band — carries the back link plus the trust signals
+          a patient wants up front (rating + live availability). This makes the
+          profile open as rich as the listing card promised, instead of a near
+          empty band. All signals use real data and are hidden when absent. */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-16">
           <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
             {t.backToDoctors}
           </Link>
+
+          {/* Signal chips — only render the ones we actually have data for. */}
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            {reviewStats.totalReviews > 0 && (
+              <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium">
+                ⭐ {reviewStats.averageRating} <span className="text-primary-100">/ 5 · {reviewStats.totalReviews}</span>
+              </span>
+            )}
+            {nextSlot && nextSlot.isToday && (
+              <span className="inline-flex items-center gap-1 bg-green-400/20 text-green-50 px-3 py-1.5 rounded-full text-sm font-medium">
+                {t.availableToday}
+              </span>
+            )}
+            {availabilityLabel && !(nextSlot && nextSlot.isToday) && (
+              <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium">
+                🕐 {availabilityLabel}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -267,19 +359,37 @@ function DoctorProfile() {
               </p>
             )}
 
+            {/* Quick-pick slots — real, bookable times for the soonest day.
+                Tapping one deep-links straight into booking with that slot
+                pre-selected. Only shown to logged-in patients (who can book);
+                logged-out users get the login CTA below. */}
+            {isAuthenticated && isPatient && todaySlots.length > 0 && (
+              <div className="mt-6">
+                <p className="text-xs font-medium text-gray-500 mb-2 text-center md:text-left">{t.pickSlot}</p>
+                <div className="flex flex-wrap justify-center md:justify-start gap-2">
+                  {todaySlots.map((slot) => (
+                    <Link
+                      key={`${slot.date}-${slot.label}`}
+                      to={`/book-appointment/${doctor._id}?date=${slot.date}&slot=${encodeURIComponent(slot.label)}`}
+                      onClick={() => trackBook('logged_in')}
+                      className="px-3 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-primary-700 text-sm font-medium hover:bg-primary-100 hover:border-primary-300 transition-colors"
+                    >
+                      {(slot.label || '').split(' - ')[0]}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Actions */}
-            <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-6">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-5">
               {isAuthenticated && isPatient && (
                 <Link
                   to={`/book-appointment/${doctor._id}`}
-                  onClick={() => trackEvent('book_appointment_click', {
-                    doctor_id: doctor._id,
-                    doctor_specialization: doctor.specialization || 'unknown',
-                    auth_state: 'logged_in',
-                  })}
-                  className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                  onClick={() => trackBook('logged_in')}
+                  className="inline-flex items-center gap-2 bg-primary-600 text-white px-7 py-3 rounded-lg font-semibold text-base shadow-sm hover:bg-primary-700 hover:shadow-md transition-all"
                 >
-                  {t.bookAppointment}
+                  📅 {t.bookAppointment}
                 </Link>
               )}
 
@@ -448,6 +558,50 @@ function DoctorProfile() {
         </div>
       </div>
       </div>
+
+      {/* Sticky mobile booking bar — the single most "big-platform" touch.
+          Stays pinned at the bottom on phones while the user scrolls the
+          profile, so the primary action (book / log in to book) is always one
+          tap away. Hidden on md+ where the header button is already in view.
+          Padding-bottom spacer below prevents it covering page content. */}
+      {!isOwnProfile && (
+        <>
+          <div className="h-20 md:hidden" aria-hidden="true" />
+          <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              {doctor.consultationFee > 0 ? (
+                <>
+                  <p className="text-lg font-bold text-gray-800 leading-none">{t.feeFrom(doctor.consultationFee)}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {availabilityLabel ? availabilityLabel : t.feeConsult}
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm font-medium text-gray-700">
+                  {availabilityLabel || formatDoctorName(doctor.name)}
+                </p>
+              )}
+            </div>
+            {isAuthenticated && isPatient ? (
+              <Link
+                to={`/book-appointment/${doctor._id}`}
+                onClick={() => trackBook('logged_in')}
+                className="flex-shrink-0 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              >
+                📅 {t.bookAppointment}
+              </Link>
+            ) : !isAuthenticated ? (
+              <Link
+                to="/login"
+                onClick={() => trackBook('logged_out')}
+                className="flex-shrink-0 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              >
+                {t.bookAppointment}
+              </Link>
+            ) : null}
+          </div>
+        </>
+      )}
     </div>
   );
 }
