@@ -24,6 +24,18 @@ const SYNONYM_GROUPS = [
   ['General Physician', 'Internal Medicine', 'Internal Medicine Specialist',
    'Physician', 'General Medicine', 'Family Medicine', 'Family Physician', 'GP'],
 
+  // Women's health — doctors write this many different ways: the British
+  // spelling ("Gynaecologist"), the American spelling ("Gynecologist"), the
+  // obstetrics-combined forms ("Obstetrician and Gynaecologist", "OB-GYN"),
+  // and even a common letter-swap typo ("Gyanecologist"). They are all the
+  // same specialty to a patient searching "Gynaecologist", so group them so
+  // the /specialization/gynaecologist page and every search surfaces them all.
+  // Matching is case-insensitive substring, so each short root here (e.g.
+  // "Gynecologist") also catches the combined forms that contain it.
+  ['Gynaecologist', 'Gynecologist', 'Gyanecologist',
+   'Obstetrician and Gynaecologist', 'Obstetrician and Gynecologist',
+   'OB-GYN', 'OBGYN', 'Obstetrician', 'Fertility specialist'],
+
   // Lab/infection specialty — doctors write either the person ("Microbiologist")
   // or the field ("Microbiology"); substring search wouldn't otherwise match
   // one against the other. This is a LAB specialty, kept separate from clinical
