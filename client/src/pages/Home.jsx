@@ -491,7 +491,7 @@ function Home() {
       </section>
 
       {/* ---- How It Works ---- */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-gray-50 bg-dotted">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">{t.howHeading}</h2>
           <p className="text-center text-gray-500 mb-10 text-sm">{t.howSubtitle}</p>

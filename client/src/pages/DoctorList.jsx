@@ -541,7 +541,7 @@ function DoctorCard({ doctor, t }) {
   return (
     <Link
       to={`/doctors/${doctor._id}`}
-      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow block p-5 flex gap-4 items-start"
+      className="card-lift bg-white rounded-xl shadow-md block p-5 flex gap-4 items-start"
       // "block" makes the entire card clickable
     >
       {/* Avatar */}

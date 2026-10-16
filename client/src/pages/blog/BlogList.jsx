@@ -308,7 +308,7 @@ function BlogList() {
               <Link
                 key={article.slug}
                 to={`/blog/${article.slug}`}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden block"
+                className="card-lift bg-white rounded-xl shadow-md overflow-hidden block"
               >
                 <div className="h-32 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
                   <span className="text-5xl">{article.image}</span>

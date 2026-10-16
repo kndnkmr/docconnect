@@ -63,3 +63,42 @@ html {
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
+/* ============================================
+   Global polish utilities (app-wide, opt-in)
+   ============================================
+   Small reusable classes that lift the whole app's feel without rewriting
+   component markup. They are OPT-IN: a component gets the nicer behaviour by
+   adding one class name, so nothing changes unless we ask for it. Respects
+   prefers-reduced-motion for accessibility. */
+
+/* Gentle "lift" on hover for clickable cards — a subtle rise + stronger
+   shadow that signals interactivity. Pair with an existing rounded card. */
+.card-lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -8px rgba(30, 64, 175, 0.18); /* soft primary-tinted */
+}
+
+/* Very subtle dotted texture for large grey section backgrounds, so flat
+   #f9fafb areas get a touch of depth instead of reading as dead space.
+   Extremely faint — adds warmth without distracting from content. */
+.bg-dotted {
+  background-image: radial-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Accessibility: honour users who prefer reduced motion — disable the lift
+   transform/animation for them (shadow still applies, no movement). */
+@media (prefers-reduced-motion: reduce) {
+  .card-lift,
+  .card-lift:hover {
+    transition: none;
+    transform: none;
+  }
+  html { scroll-behavior: auto; }
+  .animate-scroll { animation: none; }
+}
