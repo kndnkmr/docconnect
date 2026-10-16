@@ -387,7 +387,7 @@ function DoctorProfile() {
                 <Link
                   to={`/book-appointment/${doctor._id}`}
                   onClick={() => trackBook('logged_in')}
-                  className="inline-flex items-center gap-2 bg-primary-600 text-white px-7 py-3 rounded-lg font-semibold text-base shadow-sm hover:bg-primary-700 hover:shadow-md transition-all"
+                  className="btn btn-primary px-7 text-base"
                 >
                   📅 {t.bookAppointment}
                 </Link>
@@ -401,7 +401,7 @@ function DoctorProfile() {
                   href={`https://wa.me/${doctor.whatsappNumber.replace('+', '')}?text=${encodeURIComponent(`Hi ${formatDoctorName(doctor.name)}, I would like to consult with you.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
+                  className="btn btn-success px-4"
                 >
                   <span>💬</span> {t.messageWhatsApp}
                 </a>
@@ -430,7 +430,7 @@ function DoctorProfile() {
                     doctor_specialization: doctor.specialization || 'unknown',
                     auth_state: 'logged_out',
                   })}
-                  className="inline-block bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                  className="btn btn-primary"
                 >
                   {t.loginToBook}
                 </Link>
@@ -586,7 +586,7 @@ function DoctorProfile() {
               <Link
                 to={`/book-appointment/${doctor._id}`}
                 onClick={() => trackBook('logged_in')}
-                className="flex-shrink-0 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                className="btn btn-primary flex-shrink-0"
               >
                 📅 {t.bookAppointment}
               </Link>
@@ -594,7 +594,7 @@ function DoctorProfile() {
               <Link
                 to="/login"
                 onClick={() => trackBook('logged_out')}
-                className="flex-shrink-0 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                className="btn btn-primary flex-shrink-0"
               >
                 {t.bookAppointment}
               </Link>

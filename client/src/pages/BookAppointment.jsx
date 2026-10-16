@@ -638,7 +638,7 @@ function BookAppointment() {
             <button
               type="submit"
               disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn btn-primary w-full"
             >
               {isSubmitting ? t.booking : t.confirmBooking}
             </button>

@@ -187,9 +187,7 @@ function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              // disabled:opacity-50 = button looks faded when disabled
-              // disabled:cursor-not-allowed = shows "not allowed" cursor
+              className="btn btn-primary w-full"
             >
               {isLoading && <Spinner />}
               {isLoading ? 'Signing in...' : 'Sign In'}

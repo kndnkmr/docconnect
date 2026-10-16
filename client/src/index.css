@@ -102,3 +102,73 @@ html {
   html { scroll-behavior: auto; }
   .animate-scroll { animation: none; }
 }
+
+/* ============================================
+   Button system (opt-in, Tailwind-friendly)
+   ============================================
+   A shared, accessible button layer so CTAs across the app share the same
+   contrast, tap size, and feedback instead of each page hand-rolling slightly
+   different padding/colors. Grounded in current CTA best practices:
+   - Minimum 44px tall tap target (comfortable on mobile).
+   - Clear hover + active (press) feedback and dimensionality.
+   - Visible keyboard focus ring (accessibility / WCAG).
+   - Honours prefers-reduced-motion (no transform for those users).
+
+   OPT-IN: add `btn btn-primary` (etc.) to a button/link. Because these sit in
+   @layer components, Tailwind utilities still override them when needed
+   (e.g. add `w-full` or extra padding on a specific button). Existing buttons
+   are untouched until migrated. */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg px-6 text-sm;
+    min-height: 44px;              /* comfortable mobile tap target */
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.45);  /* visible keyboard focus */
+  }
+  .btn:active {
+    transform: translateY(1px);    /* subtle "press" feedback */
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    @apply opacity-50 cursor-not-allowed;
+    transform: none;
+  }
+
+  /* Primary — the single most important action on a screen. */
+  .btn-primary {
+    @apply bg-primary-600 text-white shadow-sm;
+  }
+  .btn-primary:hover {
+    @apply bg-primary-700 shadow-md;
+    transform: translateY(-1px);
+  }
+
+  /* Success / WhatsApp-style positive action. */
+  .btn-success {
+    @apply bg-green-500 text-white shadow-sm;
+  }
+  .btn-success:hover {
+    @apply bg-green-600 shadow-md;
+    transform: translateY(-1px);
+  }
+
+  /* Secondary / outline — lower-emphasis action beside a primary one. */
+  .btn-outline {
+    @apply bg-white text-gray-700 border-2 border-gray-300;
+  }
+  .btn-outline:hover {
+    @apply bg-gray-50 border-gray-400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .btn:active {
+    transition: none;
+    transform: none;
+  }
+}

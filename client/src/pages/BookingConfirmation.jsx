@@ -203,16 +203,10 @@ function BookingConfirmation() {
 
         {/* Action buttons */}
         <div className="flex gap-4">
-          <Link
-            to="/dashboard"
-            className="flex-1 bg-primary-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-primary-700 transition-colors"
-          >
+          <Link to="/dashboard" className="btn btn-primary flex-1">
             {t.goDashboard}
           </Link>
-          <Link
-            to="/doctors"
-            className="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold text-center hover:bg-gray-50 transition-colors"
-          >
+          <Link to="/doctors" className="btn btn-outline flex-1">
             {t.browseMore}
           </Link>
         </div>
