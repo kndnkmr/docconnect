@@ -15,6 +15,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
+import AuthLayout from '../components/AuthLayout';
 import toast from 'react-hot-toast';
 
 function ResetPassword() {
@@ -68,19 +69,10 @@ function ResetPassword() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <AuthLayout title="Set New Password" subtitle="Enter your new password below.">
       <SEO title="Reset Password" description="Set a new password for your ProMedicoz account." path="/reset-password" noindex />
-      <div className="w-full max-w-md">
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Set New Password</h1>
-          <p className="text-gray-600 mt-2">
-            Enter your new password below
-          </p>
-        </div>
-
-        {/* Form Card */}
+      {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit}>
 
@@ -148,8 +140,7 @@ function ResetPassword() {
             </p>
           </div>
         </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }
 

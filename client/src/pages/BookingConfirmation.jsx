@@ -94,13 +94,23 @@ function BookingConfirmation() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-lg mx-auto">
-        {/* Success icon */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl">✓</span>
+        {/* Success hero — a warm, celebratory moment right after booking.
+            A gradient card with a crisp vector check (matching the SVG badge
+            convention used elsewhere) reads far more affirming than a plain
+            glyph on white. Purely presentational — all booking logic below is
+            unchanged. The ring uses a subtle pop-in on first render. */}
+        <div className="text-center mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white p-8 shadow-md">
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/15 rounded-full blur-2xl" aria-hidden="true" />
+          <div className="relative z-10">
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-fade-in">
+              <svg width="44" height="44" viewBox="0 0 24 24" role="img" aria-label="Booked">
+                <circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.25)" />
+                <path d="M6.5 12.5L10.3 16.3L17.5 8.5" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold">{t.booked}</h1>
+            <p className="text-green-50 mt-2">{t.bookedSub}</p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">{t.booked}</h1>
-          <p className="text-gray-600 mt-2">{t.bookedSub}</p>
         </div>
 
         {/* Booking details card */}

@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
+import AuthLayout from '../components/AuthLayout';
 import toast from 'react-hot-toast';
 
 function ForgotPassword() {
@@ -55,19 +56,10 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <AuthLayout title="Forgot Password" subtitle="Enter your phone or email and we'll help you reset it.">
       <SEO title="Forgot Password" description="Reset your ProMedicoz account password." path="/forgot-password" noindex />
-      <div className="w-full max-w-md">
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Forgot Password</h1>
-          <p className="text-gray-600 mt-2">
-            Enter your phone or email and we'll help you reset it
-          </p>
-        </div>
-
-        {/* Form Card */}
+      {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
 
           {result ? (
@@ -199,8 +191,7 @@ function ForgotPassword() {
             </p>
           )}
         </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }
 
