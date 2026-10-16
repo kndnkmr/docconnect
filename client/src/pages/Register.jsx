@@ -14,6 +14,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
+import AuthLayout from '../components/AuthLayout';
 import PasswordToggleIcon from '../components/PasswordToggleIcon';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
@@ -113,19 +114,10 @@ function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-8">
+    <AuthLayout title="Create Account" subtitle="Join ProMedicoz today — free in seconds.">
       <SEO title="Register" description="Create your free ProMedicoz account. Book doctors, manage appointments, and access prescriptions online." path="/register" noindex />
-      <div className="w-full max-w-md">
 
-        {/* Header */}
-        {/* Header — no logo here on purpose; the navbar already shows the
-            ProMedicoz brand on every page, so repeating it read as a duplicate. */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join ProMedicoz today</p>
-        </div>
-
-        {/* Form Card */}
+      {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit}>
 
@@ -292,8 +284,7 @@ function Register() {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }
 

@@ -21,6 +21,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
+import AuthLayout from '../components/AuthLayout';
 import PasswordToggleIcon from '../components/PasswordToggleIcon';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
@@ -85,24 +86,10 @@ function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
+    <AuthLayout title="Welcome Back" subtitle="Sign in to your ProMedicoz account — works for both Doctors and Patients.">
       <SEO title="Login" description="Sign in to your ProMedicoz account. Manage appointments, view prescriptions, and book doctors." path="/login" noindex />
 
-      <div className="w-full max-w-md">
-        {/* max-w-md = max width ~448px (keeps form from being too wide) */}
-
-        {/* Header — no logo here on purpose; the navbar already shows the
-            ProMedicoz brand on every page, so repeating it here read as a
-            duplicate. */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your ProMedicoz account</p>
-          <p className="text-gray-500 text-sm mt-1">
-            Works for both Doctors and Patients
-          </p>
-        </div>
-
-        {/* Form Card */}
+      {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit}>
 
@@ -225,8 +212,7 @@ function Login() {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }
 
