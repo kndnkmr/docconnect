@@ -4,7 +4,7 @@ import SEO from '../components/SEO';
 function ForDoctors() {
   return (
     <div className="flex-grow flex flex-col">
-      <SEO title="For Doctors — How ProMedicoz Works" description="How ProMedicoz works for doctors: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person. Free to join." path="/for-doctors" />
+      <SEO title="For Doctors — Keep 100% of Your Fee, No Commission" description="Join ProMedicoz free and grow your practice online: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person." path="/for-doctors" />
 
       <div className="container mx-auto px-4 py-8 max-w-3xl">
 

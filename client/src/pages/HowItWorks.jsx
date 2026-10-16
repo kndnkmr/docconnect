@@ -96,7 +96,7 @@ function HowItWorks() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <SEO title="How It Works — For Patients" description="How ProMedicoz works for patients: find a verified doctor, book a slot, pay the doctor directly via UPI after confirmation, and consult by video, phone, or in person." path="/how-it-works" />
+      <SEO title="How to Book a Doctor Online in India — 4 Simple Steps" description="How ProMedicoz works for patients: find a verified doctor, book a slot, pay the doctor directly via UPI after confirmation, and consult by video, phone, or in person — in 4 simple steps." path="/how-it-works" />
 
       {/* Language toggle (patient-facing page) */}
       <div className="flex justify-center mb-6">

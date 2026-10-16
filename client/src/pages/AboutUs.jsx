@@ -4,7 +4,7 @@ import SEO from '../components/SEO';
 function AboutUs() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <SEO title="About Us" description="ProMedicoz connects patients across India with verified doctors for video, phone, and in-person consultations — a free platform built to make quality healthcare easy to reach." path="/about" />
+      <SEO title="About Us — Verified Doctors, Fair Fees, No Commission" description="ProMedicoz connects patients across India with verified doctors for video, phone, and in-person consultations — a free platform where you pay the doctor directly, with no commission, built to make quality healthcare easy to reach." path="/about" />
 
       {/* Hero */}
       <div className="text-center mb-10">
