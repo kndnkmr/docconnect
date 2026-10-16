@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { availabilityAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+import LoadingBlock from '../../components/LoadingBlock';
 
 function DoctorAvailability({ onScheduleChange }) {
   const [schedule, setSchedule] = useState([]);
@@ -161,7 +162,7 @@ function DoctorAvailability({ onScheduleChange }) {
     return acc;
   }, {});
 
-  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+  if (loading) return <LoadingBlock />;
 
   return (
     <div className="max-w-3xl">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { appointmentAPI, prescriptionAPI, reportAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
+import LoadingBlock from '../../components/LoadingBlock';
 
 // ============================================
 // Patient Health Timeline — "My Health History"
@@ -142,7 +143,7 @@ function PatientHealthTimeline({ onNavigateTab }) {
     }
   });
 
-  if (loading) return <div className="text-center py-8 text-gray-600">Loading your health history...</div>;
+  if (loading) return <LoadingBlock label="Loading your health history…" />;
 
   return (
     <div className="max-w-3xl">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { complaintAPI, appointmentAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
+import LoadingBlock from '../../components/LoadingBlock';
 import toast from 'react-hot-toast';
 
 function PatientComplaints() {
@@ -111,7 +112,7 @@ function PatientComplaints() {
     });
   };
 
-  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+  if (loading) return <LoadingBlock />;
 
   return (
     <div className="max-w-3xl">

@@ -3,6 +3,7 @@ import { prescriptionAPI } from '../../services/api';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
 import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
+import LoadingBlock from '../../components/LoadingBlock';
 
 function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -81,7 +82,7 @@ function PatientPrescriptions({ onNavigateTab }) {
     }
   };
 
-  if (loading) return <div className="text-center py-8 text-gray-600">Loading...</div>;
+  if (loading) return <LoadingBlock />;
 
   return (
     <div className="max-w-3xl">
