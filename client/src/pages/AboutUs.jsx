@@ -69,8 +69,8 @@ function AboutUs() {
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Get started</h2>
           <p className="text-gray-600 mb-4">Find a doctor in minutes, or join us as a practitioner.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/doctors" className="bg-primary-600 text-white py-2 px-6 rounded-lg hover:bg-primary-700 transition-colors font-medium">Find a Doctor</Link>
-            <Link to="/register?role=doctor" className="bg-white text-primary-700 border border-primary-200 py-2 px-6 rounded-lg hover:bg-primary-100 transition-colors font-medium">Join as a Doctor</Link>
+            <Link to="/doctors" className="btn btn-primary">Find a Doctor</Link>
+            <Link to="/register?role=doctor" className="btn btn-outline">Join as a Doctor</Link>
           </div>
         </section>
 
