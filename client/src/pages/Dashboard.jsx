@@ -1201,7 +1201,7 @@ function Dashboard() {
         <div>
           {isPatient && (
             <div className="mb-6">
-              <Link to="/doctors" className="inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">{pt.bookNew}</Link>
+              <Link to="/doctors" className="btn btn-primary">{pt.bookNew}</Link>
             </div>
           )}
 

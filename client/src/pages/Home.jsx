@@ -574,7 +574,7 @@ function Home() {
               <button
                 type="button"
                 onClick={handleShareSite}
-                className="whitespace-nowrap bg-green-500 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                className="btn btn-success whitespace-nowrap"
               >
                 {t.shareBtn}
               </button>
@@ -694,14 +694,14 @@ function Home() {
               {canInstall ? (
                 <button
                   onClick={promptInstall}
-                  className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                  className="btn btn-primary whitespace-nowrap"
                 >
                   {lang === 'hi' ? '📲 इंस्टॉल करें' : '📲 Install now'}
                 </button>
               ) : (
                 <Link
                   to="/install"
-                  className="whitespace-nowrap bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                  className="btn btn-primary whitespace-nowrap"
                 >
                   {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
                 </Link>

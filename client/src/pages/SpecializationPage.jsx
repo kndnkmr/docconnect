@@ -438,7 +438,7 @@ function SpecializationPage() {
               cta_position: 'hero',
               city: cityName || 'none',
             })}
-            className="inline-block mt-6 bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="btn mt-6 bg-white text-primary-700 hover:bg-gray-100 shadow-sm"
           >
             {ui.bookConsult(view.title)}
           </Link>
@@ -564,7 +564,7 @@ function SpecializationPage() {
               cta_position: 'bottom',
               city: cityName || 'none',
             })}
-            className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors inline-block"
+            className="btn btn-primary px-8 text-base"
           >
             {ui.ctaBtn(view.title)}
           </Link>

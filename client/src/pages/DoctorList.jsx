@@ -337,7 +337,7 @@ function DoctorList() {
             </label>
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white py-2 px-6 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+              className="btn btn-primary w-full"
             >
               {t.search}
             </button>
@@ -439,7 +439,7 @@ function DoctorList() {
                   href={`https://wa.me/919997019900?text=${encodeURIComponent(waMessage)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                  className="btn btn-success px-5"
                 >
                   {t.chatWhatsApp}
                 </a>
