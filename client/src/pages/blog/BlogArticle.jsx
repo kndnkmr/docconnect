@@ -448,7 +448,7 @@ function BlogArticle() {
           <Link
             to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
             onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'top' })}
-            className="inline-block flex-shrink-0 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors"
+            className="btn btn-primary flex-shrink-0 px-4"
           >
             {lang === 'hi' && hasHindi ? `${article.specialization} dhoondhein` : `Find a ${article.specialization}`}
           </Link>
@@ -481,7 +481,7 @@ function BlogArticle() {
           <Link
             to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
             onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'bottom' })}
-            className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+            className="btn btn-primary"
           >
             {lang === 'hi' && hasHindi ? `${article.specialization} Doctors Dhoondhein` : `Find ${article.specialization} Doctors`}
           </Link>

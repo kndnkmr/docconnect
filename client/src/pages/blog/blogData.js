@@ -13322,7 +13322,7 @@ export const articles = [
     slug: 'trying-to-conceive-fertility-basics-guide',
     title: 'Trying to Conceive: A Practical Guide to Getting Started',
     description: 'Planning for a baby? A warm, practical guide to preparing your body, understanding fertile timing, healthy habits for both partners, and when it makes sense to see a doctor.',
-    specialization: 'Gynecologist',
+    specialization: 'Gynaecologist',
     publishedDate: '2026-08-06',
     readTime: '7 min',
     image: '🌱',
