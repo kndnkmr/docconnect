@@ -216,8 +216,8 @@ function DoctorList() {
   return (
     <div>
       <SEO
-        title={searchSpecialization ? `${searchSpecialization} Doctors` : 'Find Doctors'}
-        description={`Find and book ${searchSpecialization || ''} doctors online. Browse profiles, check availability, read reviews, and book appointments instantly on ProMedicoz.`}
+        title={searchSpecialization ? `Book ${searchSpecialization} Doctors Online` : 'Find & Book Verified Doctors Online in India'}
+        description={`Find and book ${searchSpecialization || 'verified'} doctors online. Browse profiles, check availability, read reviews, and book video, phone, or in-person appointments instantly on ProMedicoz.`}
         path="/doctors"
       />
 

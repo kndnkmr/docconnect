@@ -445,6 +445,34 @@ function SpecializationPage() {
         </div>
       </section>
 
+      {/* Gynaecology-only reassurance band. Women's-health consults carry extra
+          privacy/comfort concerns, so we address them head-on — but HONESTLY:
+          we do NOT claim "all our doctors are women" (the roster includes at
+          least one male doctor and records have no gender field to verify
+          against). Instead we lead with what is genuinely true and reassuring:
+          a private, judgement-free consult, and the freedom to browse profiles
+          and choose a woman doctor if that's your preference. Shown only on the
+          base gynae page (not city sub-pages, to keep those lean). */}
+      {slug === 'gynaecologist' && !cityName && (
+        <section className="py-6 bg-pink-50 border-y border-pink-100">
+          <div className="container mx-auto px-4">
+            <div className="flex items-start gap-4 max-w-3xl">
+              <span className="text-3xl flex-shrink-0" aria-hidden="true">👩‍⚕️</span>
+              <div>
+                <h2 className="font-semibold text-gray-800">
+                  {lang === 'hi' ? 'निजी, बिना किसी झिझक के परामर्श' : 'Private, judgement-free consultations'}
+                </h2>
+                <p className="text-gray-600 text-sm mt-1">
+                  {lang === 'hi'
+                    ? 'महिलाओं के स्वास्थ्य से जुड़ी बातें निजी होती हैं। ProMedicoz पर आप आराम से, बिना किसी झिझक के परामर्श कर सकती हैं — और प्रोफ़ाइल देखकर अपनी पसंद की महिला डॉक्टर चुन सकती हैं। वीडियो, फ़ोन या क्लिनिक पर।'
+                    : "Women's health is personal. On ProMedicoz you can consult privately and without judgement — and you're free to browse profiles and choose a woman doctor if you prefer. By video, phone, or in person."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Common conditions */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
