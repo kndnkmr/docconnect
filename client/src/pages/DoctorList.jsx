@@ -87,6 +87,9 @@ function DoctorList() {
   // Read specialization from URL query params (from Consult Now section)
   const [searchParams] = useSearchParams();
   const urlSpecialization = searchParams.get('specialization') || '';
+  // Honor ?availableToday=true in the URL (e.g. from the home "Doctors
+  // available today" strip) so that link lands on a pre-filtered list.
+  const urlAvailableToday = searchParams.get('availableToday') === 'true';
   const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
 
@@ -107,7 +110,7 @@ function DoctorList() {
   const [searchName, setSearchName] = useState('');
   const [searchSpecialization, setSearchSpecialization] = useState(urlSpecialization);
   const [maxFee, setMaxFee] = useState('');
-  const [availableToday, setAvailableToday] = useState(false);
+  const [availableToday, setAvailableToday] = useState(urlAvailableToday);
   const [city, setCity] = useState('');
   const [consultationMode, setConsultationMode] = useState('');
   const [language, setLanguage] = useState('');

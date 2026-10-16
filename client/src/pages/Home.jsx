@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePwa } from '../context/PwaContext';
-import { reviewAPI } from '../services/api';
+import { reviewAPI, doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { WebsiteSchema } from '../components/StructuredData';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
+import VerifiedBadge from '../components/VerifiedBadge';
+import { formatDoctorName } from '../utils/formatName';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -43,6 +45,9 @@ const TXT = {
       '👉 https://www.promedicoz.in\n\n' +
       'Sharing because good, affordable healthcare is worth passing on. ❤️',
     shareCopied: 'Message copied! Paste it in WhatsApp or anywhere to share.',
+    availNowHeading: 'Doctors available today',
+    availNowSub: 'Real, verified doctors with open slots right now — tap to book',
+    availToday: 'Available today',
     specHeading: 'Consult by Specialization',
     specSubtitle: "Tap your concern — we'll show the right specialists",
     browseAll: '🔍 Browse All Specializations →',
@@ -94,6 +99,9 @@ const TXT = {
       '👉 https://www.promedicoz.in\n\n' +
       'शेयर इसलिए, क्योंकि अच्छी और सस्ती सेहत-सुविधा सबके काम आती है। ❤️',
     shareCopied: 'संदेश कॉपी हो गया! WhatsApp या कहीं भी पेस्ट करके साझा करें।',
+    availNowHeading: 'आज उपलब्ध डॉक्टर',
+    availNowSub: 'सत्यापित डॉक्टर, अभी खाली स्लॉट के साथ — बुक करने के लिए टैप करें',
+    availToday: 'आज उपलब्ध',
     specHeading: 'बीमारी के अनुसार परामर्श करें',
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
@@ -144,6 +152,12 @@ function Home() {
     navigate('/install');
   };
   const [topReviews, setTopReviews] = useState([]);
+  // "Doctors available today" strip — real, verified doctors who have BOTH a
+  // profile photo AND a free slot today. We filter to those two conditions so
+  // the row always looks populated and trustworthy (never a wall of generic
+  // placeholder icons, never a doctor you can't actually book today). If fewer
+  // than 3 qualify, the whole section hides itself — so it can't look sparse.
+  const [availableDoctors, setAvailableDoctors] = useState([]);
   // Language toggle (Phase 1: Home page). Remembered across visits.
   const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
@@ -200,6 +214,23 @@ function Home() {
       }
     };
     fetchTopReviews();
+  }, []);
+
+  // Fetch doctors available TODAY (server computes real, unbooked, future
+  // slots), then keep only those with a real photo for the strip. Non-critical
+  // and fully guarded: any failure just leaves the strip hidden.
+  useEffect(() => {
+    let cancelled = false;
+    doctorAPI.getAll({ availableToday: 'true', limit: 12 })
+      .then((res) => {
+        if (cancelled) return;
+        const docs = (res.data.doctors || []).filter(
+          (d) => d.profilePhoto && d.profilePhoto.trim() && d.nextAvailable && d.nextAvailable.isToday
+        );
+        setAvailableDoctors(docs);
+      })
+      .catch(() => { /* non-critical — strip simply won't show */ });
+    return () => { cancelled = true; };
   }, []);
 
   const getSpecializationFromSymptom = (input) => {
@@ -369,6 +400,68 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---- Doctors available today ---- Real faces + "available now" is the
+           strongest "this platform is alive" trust signal. We only show
+           doctors with a photo AND a genuine free slot today, and hide the
+           whole section unless at least 3 qualify — so it always reads as
+           populated and never exposes thin supply or placeholder icons.
+           Gentle auto-scroll (reusing the testimonial keyframe) gives the
+           "floating" feel; it pauses on hover and each card books that doctor. */}
+      {availableDoctors.length >= 3 && (
+        <section className="pt-8 pb-6 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-2xl font-bold text-gray-800">{t.availNowHeading}</h2>
+              <Link to="/doctors?availableToday=true" className="text-primary-600 text-sm font-medium hover:underline whitespace-nowrap">
+                {t.browseAll}
+              </Link>
+            </div>
+            <p className="text-gray-500 mb-5 text-sm">{t.availNowSub}</p>
+          </div>
+
+          {/* Edge-to-edge scroller. The inner track is duplicated so the
+              auto-scroll loops seamlessly; it pauses on hover (see
+              .animate-scroll in index.css) and respects reduced-motion. */}
+          <div className="overflow-x-auto">
+            <div className="flex gap-4 px-4 w-max animate-scroll">
+              {[...availableDoctors, ...availableDoctors].map((doc, idx) => {
+                const nextTime = (doc.nextAvailable?.timeSlot || '').split(' - ')[0];
+                return (
+                  <Link
+                    key={`${doc._id}-${idx}`}
+                    to={`/doctors/${doc._id}`}
+                    onClick={() => trackEvent('find_doctor_click', { source: 'home_available_now', doctor_id: doc._id, specialization: doc.specialization || 'unknown' })}
+                    className="card-lift flex-shrink-0 w-56 bg-white border border-gray-100 rounded-2xl shadow-sm p-4 text-center"
+                    aria-hidden={idx >= availableDoctors.length ? 'true' : undefined}
+                  >
+                    <div className="relative inline-block">
+                      <img
+                        src={getUploadUrl(doc.profilePhoto, { width: 200 })}
+                        alt={formatDoctorName(doc.name)}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-primary-100 mx-auto"
+                        loading="lazy"
+                      />
+                      {/* Green "available now" dot — the big-platform cue, and
+                          honest here because we already filtered to isToday. */}
+                      <span className="absolute bottom-0 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" title={t.availToday} />
+                    </div>
+                    <h3 className="mt-3 font-semibold text-gray-800 text-sm leading-snug flex items-center justify-center gap-1">
+                      {formatDoctorName(doc.name)}
+                      {doc.isAdminVerified && <VerifiedBadge size={14} />}
+                    </h3>
+                    <p className="text-primary-600 text-xs font-medium mt-0.5 truncate">{doc.specialization}</p>
+                    {doc.rating && doc.rating.count > 0 && (
+                      <p className="text-xs mt-1 text-gray-600">⭐ {doc.rating.average} <span className="text-gray-400">({doc.rating.count})</span></p>
+                    )}
+                    <p className="text-green-600 text-xs font-medium mt-1.5">🟢 {t.availToday}{nextTime ? ` · ${nextTime}` : ''}</p>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---- Browse by concern — full specialization grid ---- */}
       <section className="pt-8 pb-10 bg-white">
