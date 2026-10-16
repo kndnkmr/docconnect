@@ -1131,14 +1131,49 @@ function Dashboard() {
         );
       })()}
 
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
-        <p className="text-gray-600 mt-1">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
+      {/* Welcome Header — a modern "command center" banner. The gradient and
+          layered stat chips make the logged-in home feel like a real
+          dashboard rather than a bare heading on grey. Numbers shown here are
+          only the globally-reliable totals (pendingCount is the true count
+          across ALL pages; pagination.totalAppointments is the full total) —
+          never per-page-derived figures that could mislead once paginated. */}
+      <div className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-800 text-white p-6 sm:p-8 shadow-md">
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" aria-hidden="true" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
+            <p className="text-primary-100 mt-1 text-sm sm:text-base">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
+          </div>
+
+          {/* At-a-glance stat chips — tap to jump to the relevant view. */}
+          <div className="flex gap-3 flex-shrink-0">
+            {isDoctor && (
+              <button
+                onClick={() => { goToTab('appointments'); setAptStatusFilter('pending'); setPage(1); }}
+                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
+              >
+                <div className="text-2xl font-bold leading-none">{pendingCount}</div>
+                <div className="text-primary-100 text-xs mt-1">Pending</div>
+              </button>
+            )}
+            {pagination && typeof pagination.totalAppointments === 'number' && (
+              <button
+                onClick={() => { goToTab('appointments'); if (isDoctor) setAptStatusFilter(''); setPage(1); }}
+                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
+              >
+                <div className="text-2xl font-bold leading-none">{pagination.totalAppointments}</div>
+                <div className="text-primary-100 text-xs mt-1">{isDoctor ? 'Total' : (pt.tabAppointments || 'Appointments')}</div>
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div ref={tabSectionRef} className="flex border-b mb-6 overflow-x-auto">
+      {/* Tab Navigation — modern segmented pills in a soft rail. Behaviour is
+          unchanged (same keys, same onClick); only the styling moved from a
+          flat underline row to rounded pills, which reads cleaner and more
+          app-like, and scrolls horizontally on small screens. */}
+      <div ref={tabSectionRef} className="flex gap-1.5 mb-6 overflow-x-auto bg-gray-100 p-1.5 rounded-xl">
         {[
           { key: 'appointments', label: pt.tabAppointments, show: true },
           { key: 'timeline', label: pt.tabTimeline, show: isPatient },
@@ -1154,7 +1189,7 @@ function Dashboard() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.key ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            className={`px-4 sm:px-5 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.key ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-white/60'}`}
           >
             {tab.label}
           </button>
