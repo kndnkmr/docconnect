@@ -11,11 +11,11 @@ import SEO from '../components/SEO';
 const TXT = {
   en: {
     heroTitle: 'How ProMedicoz works',
-    heroSubtitle: 'Find the right doctor and consult by video, phone, or in person — in a few simple steps. Signing up and browsing is free.',
+    heroSubtitle: 'From "I need a doctor" to a confirmed consultation in a few simple steps — by video, phone, or in person. Signing up and browsing is completely free.',
     findDoctor: 'Find a Doctor',
     createAccount: 'Create Account',
 
-    stepsHeading: 'Booking in 4 steps',
+    stepsHeading: 'Book in 4 simple steps',
     steps: [
       { t: 'Find a doctor.', d: "Search by symptom, specialization, city, or the language you're comfortable in. Each profile shows the doctor's qualification, experience, fee, and patient reviews." },
       { t: 'Book a slot.', d: "Pick a date, an available time, and how you'd like to consult — video, phone, or in person." },
@@ -50,11 +50,11 @@ const TXT = {
   },
   hi: {
     heroTitle: 'ProMedicoz कैसे काम करता है',
-    heroSubtitle: 'सही डॉक्टर खोजें और वीडियो, फ़ोन या क्लिनिक पर परामर्श करें — कुछ आसान चरणों में। साइन अप करना और डॉक्टर देखना मुफ़्त है।',
+    heroSubtitle: '"मुझे डॉक्टर चाहिए" से लेकर पक्की अपॉइंटमेंट तक — कुछ आसान चरणों में, वीडियो, फ़ोन या क्लिनिक पर। साइन अप करना और डॉक्टर देखना बिल्कुल मुफ़्त है।',
     findDoctor: 'डॉक्टर खोजें',
     createAccount: 'खाता बनाएं',
 
-    stepsHeading: '4 आसान चरणों में बुकिंग',
+    stepsHeading: '4 आसान चरणों में बुक करें',
     steps: [
       { t: 'डॉक्टर खोजें।', d: 'लक्षण, विशेषज्ञता, शहर, या जिस भाषा में आप सहज हैं उसके अनुसार खोजें। हर प्रोफ़ाइल में डॉक्टर की योग्यता, अनुभव, शुल्क और मरीज़ों की समीक्षाएं दिखती हैं।' },
       { t: 'स्लॉट बुक करें।', d: 'तारीख, उपलब्ध समय, और परामर्श का तरीका चुनें — वीडियो, फ़ोन या क्लिनिक पर।' },
@@ -127,12 +127,17 @@ function HowItWorks() {
       </div>
 
       <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
-        {/* Steps */}
+        {/* Steps — numbered-circle visual (matches the step style used in
+            blog articles and the dashboard onboarding) so the core "4 steps"
+            reads as a clear, friendly flow rather than a plain list. */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.stepsHeading}</h2>
-          <ol className="list-decimal ml-6 space-y-2">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">{t.stepsHeading}</h2>
+          <ol className="space-y-3">
             {t.steps.map((s, i) => (
-              <li key={i}><strong>{s.t}</strong> {s.d}</li>
+              <li key={i} className="flex gap-3 items-start">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                <span className="pt-1"><strong className="text-gray-800">{s.t}</strong> {s.d}</span>
+              </li>
             ))}
           </ol>
         </section>
