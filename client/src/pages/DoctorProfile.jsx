@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
+import LangToggle from '../components/LangToggle';
 import { formatDoctorName } from '../utils/formatName';
 import { trackEvent } from '../components/Analytics';
 import toast from 'react-hot-toast';
@@ -81,7 +82,7 @@ function DoctorProfile() {
   const { id } = useParams();
   // If URL is /doctors/abc123, then id = "abc123"
 
-  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
   const { isAuthenticated, isPatient, user } = useAuth();
   const [doctor, setDoctor] = useState(null);
@@ -243,9 +244,14 @@ function DoctorProfile() {
           empty band. All signals use real data and are hidden when absent. */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-16">
-          <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
-            {t.backToDoctors}
-          </Link>
+          <div className="flex items-center justify-between gap-3">
+            <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
+              {t.backToDoctors}
+            </Link>
+            {/* Language toggle — lets a patient switch EN/हिंदी here too, not
+                just on Home. Shares the same promedicoz_lang choice site-wide. */}
+            <LangToggle lang={lang} onChange={setLang} />
+          </div>
 
           {/* Signal chips — only render the ones we actually have data for. */}
           <div className="flex flex-wrap items-center gap-2 mt-4">

@@ -4,6 +4,7 @@ import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
+import LangToggle from '../components/LangToggle';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -320,7 +321,7 @@ function SpecializationPage() {
   // on the base (non-city) page, to build the "Find X in your city" links.
   const [cities, setCities] = useState([]);
 
-  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const ui = UI[lang] || UI.en;
 
   const data = specializationData[slug];
@@ -415,6 +416,11 @@ function SpecializationPage() {
       {/* Hero section */}
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
         <div className="container mx-auto px-4">
+          {/* Language toggle — top-right so a patient can switch EN/हिंदी on
+              specialization landing pages too (shares the site-wide choice). */}
+          <div className="flex justify-end mb-4">
+            <LangToggle lang={lang} onChange={setLang} />
+          </div>
           <div className="flex items-center gap-4 mb-4">
             <span className="text-5xl">{view.icon}</span>
             <div>

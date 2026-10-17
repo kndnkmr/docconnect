@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
+import LangToggle from '../components/LangToggle';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
 // translate; booking values (doctor name, specialization, reason) stay as-is.
@@ -60,7 +61,7 @@ const TXT = {
 function BookingConfirmation() {
   const location = useLocation();
   const booking = location.state;
-  const [lang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
   // Booking data passed from BookAppointment page via navigate state
 
@@ -94,6 +95,11 @@ function BookingConfirmation() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-lg mx-auto">
+        {/* Language toggle — so a patient can switch EN/हिंदी on the
+            confirmation page too (shares the site-wide choice). */}
+        <div className="flex justify-end mb-4">
+          <LangToggle lang={lang} onChange={setLang} />
+        </div>
         {/* Success hero — a warm, celebratory moment right after booking.
             A gradient card with a crisp vector check (matching the SVG badge
             convention used elsewhere) reads far more affirming than a plain
