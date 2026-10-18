@@ -633,42 +633,78 @@ function Home() {
 
       {/* ---- Testimonials ---- */}
       <section className="py-10 bg-white overflow-hidden">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">{t.testimonialsHeading}</h2>
-          <p className="text-center text-gray-500 mb-6 text-sm">{t.testimonialsSubtitle}</p>
+        <div className="container mx-auto px-4 text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">{t.testimonialsHeading}</h2>
+          <span className="inline-block mt-2 mb-2 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
+          <p className="text-gray-500 text-sm">{t.testimonialsSubtitle}</p>
         </div>
         {topReviews.length > 0 ? (
+          // Real, verified reviews — auto-scrolling marquee (pauses on hover
+          // via .animate-scroll:hover). Doubled so the loop is seamless.
           <div className="relative">
+            {/* Soft fade masks on the edges so cards slide in/out instead of
+                being hard-clipped at the screen edge. */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
             <div className="flex animate-scroll gap-6 px-4">
-              {[...topReviews, ...topReviews].map((review, idx) => (
-                <div key={idx} className="min-w-[280px] max-w-[280px] bg-gray-50 border border-gray-100 rounded-xl p-4 flex-shrink-0">
+              {[...topReviews, ...topReviews].map((review, idx) => {
+                const stars = Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)));
+                return (
+                <div key={idx} className="min-w-[280px] max-w-[280px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
+                  <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
                   {/* Clamp rating to a safe 0–5 integer — a bad/undefined value
                       from the API would otherwise make String.repeat throw and
                       crash the whole testimonials carousel. */}
-                  <div className="text-yellow-400 text-sm mb-2" aria-label={`${Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)))} out of 5 stars`}>{'⭐'.repeat(Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0))))}</div>
-                  <p className="text-gray-700 text-sm line-clamp-3">"{review.comment}"</p>
-                  <div className="mt-3 flex justify-between items-center">
-                    <span className="text-xs font-medium text-gray-800">{review.patient?.name}</span>
-                    <span className="text-xs text-gray-400">Dr. {review.doctor?.name}</span>
+                  <div className="text-yellow-400 text-sm mb-2" aria-label={`${stars} out of 5 stars`}>{'⭐'.repeat(stars)}</div>
+                  <p className="text-gray-700 text-sm line-clamp-3 leading-relaxed">{review.comment}</p>
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2.5">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{review.patient?.name?.charAt(0) || '?'}</span>
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-gray-800 truncate">{review.patient?.name}</div>
+                      <div className="text-xs text-gray-400 truncate">consulted Dr. {review.doctor?.name}</div>
+                    </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : (
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-              {[
-                { stars: 5, text: 'Very easy to book an appointment. The doctor was on time and professional.', name: 'Priya S.' },
-                { stars: 5, text: 'Great platform! Found a specialist within minutes and got confirmed quickly.', name: 'Rahul M.' },
-                { stars: 4, text: 'Convenient and simple. No more waiting on phone calls to book a doctor.', name: 'Anita K.' },
-              ].map((item, idx) => (
-                <div key={idx} className="bg-gray-50 border border-gray-100 rounded-xl p-4">
-                  <div className="text-yellow-400 text-sm mb-2">{'⭐'.repeat(item.stars)}</div>
-                  <p className="text-gray-700 text-sm italic">"{item.text}"</p>
-                  <p className="text-xs font-medium text-gray-500 mt-2">— {item.name}</p>
-                </div>
-              ))}
+          // No real reviews yet → the same auto-scrolling marquee with a set
+          // of SAMPLE experiences, clearly tagged as samples so we never pass
+          // them off as verified patient reviews. Saves vertical space vs a
+          // static grid and keeps the section looking alive.
+          <div className="relative">
+            <p className="text-center text-[11px] uppercase tracking-wide text-gray-400 mb-4">Sample experiences</p>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
+            <div className="flex animate-scroll gap-6 px-4">
+              {(() => {
+                const samples = [
+                  { stars: 5, text: 'Very easy to book an appointment. The doctor was on time and professional.', name: 'Priya S.', spec: 'General Physician' },
+                  { stars: 5, text: 'Found a specialist within minutes and got confirmed the same day. Smooth experience.', name: 'Rahul M.', spec: 'Dermatologist' },
+                  { stars: 4, text: 'Convenient and simple. No more waiting on phone calls to book a doctor.', name: 'Anita K.', spec: 'Gynaecologist' },
+                  { stars: 5, text: 'Loved that I could pay the doctor directly over UPI. No hidden charges at all.', name: 'Suresh R.', spec: 'Cardiologist' },
+                  { stars: 5, text: 'Consulted a doctor by video from home — perfect for my elderly parents.', name: 'Meena T.', spec: 'General Physician' },
+                  { stars: 4, text: 'Could search by language, so I explained everything comfortably in Hindi.', name: 'Vikram J.', spec: 'ENT Specialist' },
+                  { stars: 5, text: 'Prescriptions and reports stay in one place. Made my follow-up so easy.', name: 'Fatima A.', spec: 'Pediatrician' },
+                  { stars: 5, text: 'Honest fees shown upfront. I knew exactly what I would pay before booking.', name: 'Deepak N.', spec: 'Orthopedic' },
+                ];
+                return [...samples, ...samples].map((item, idx) => (
+                  <div key={idx} className="min-w-[280px] max-w-[280px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
+                    <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
+                    <div className="text-yellow-400 text-sm mb-2" aria-label={`${item.stars} out of 5 stars`}>{'⭐'.repeat(item.stars)}</div>
+                    <p className="text-gray-700 text-sm leading-relaxed">{item.text}</p>
+                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2.5">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{item.name.charAt(0)}</span>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-gray-800 truncate">{item.name}</div>
+                        <div className="text-xs text-gray-400 truncate">{item.spec}</div>
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
           </div>
         )}
