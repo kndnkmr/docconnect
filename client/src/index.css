@@ -64,6 +64,18 @@ html {
   animation-play-state: paused;
 }
 
+/* Mobile nav dropdown entrance — a gentle fade + slide-down so the menu
+   feels like it unfolds rather than snapping into place. Used via Tailwind's
+   arbitrary animation syntax on the Navbar mobile sheet. */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll { animation: none; }
+}
+
 /* ============================================
    Global polish utilities (app-wide, opt-in)
    ============================================
