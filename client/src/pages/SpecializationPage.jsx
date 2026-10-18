@@ -573,12 +573,24 @@ function SpecializationPage() {
       {/* FAQs */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{ui.faqTitle}</h2>
-          <div className="space-y-4">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">{ui.faqTitle}</h2>
+            <span className="inline-block mt-2 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
+          </div>
+          <div className="space-y-3">
             {view.faqs.map((faq, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-xl p-5">
-                <h3 className="font-semibold text-gray-800 mb-2">{faq.q}</h3>
-                <p className="text-gray-600 text-sm">{faq.a}</p>
+              // Kept always-open (not collapsible) because this Q&A is SEO
+              // content that should stay visible/crawlable; just styled as a
+              // card with a question badge and a hover lift for polish.
+              <div
+                key={idx}
+                className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200"
+              >
+                <h3 className="font-semibold text-gray-800 mb-2 flex items-start gap-2.5">
+                  <span className="text-primary-500 shrink-0" aria-hidden="true">❓</span>
+                  {faq.q}
+                </h3>
+                <p className="text-gray-600 text-sm pl-7 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

@@ -104,60 +104,84 @@ function ForDoctors() {
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Doctors' most common questions</h2>
           <div className="space-y-3">
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>Will I lose my existing patients if I join?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 The opposite — it helps you <strong>keep</strong> them. Your existing patients stay yours and keep visiting exactly as before. But when one of them moves to another city, or their family lives far away, they no longer have to leave you for a local doctor: they can consult you online and remain your patient. So a patient of yours in Delhi can have their family in Bihar consult you too — the doctor they already trust — without anyone travelling. On top of that, <strong>new</strong> patients searching online can now discover you, see your qualifications and reviews, and book you. Think of it as a second, always-open front door to your practice — and a way to hold on to patients you'd otherwise lose to distance. You also get a shareable profile link to send your current patients so they (and their families anywhere) can book you easily.
               </p>
             </details>
 
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>Why is it free? What's the catch?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 There's no catch. ProMedicoz takes <strong>no commission and charges you nothing</strong> — you keep 100% of every consultation fee, paid to you directly by the patient via your own UPI. The big platforms take a cut of your earnings or charge listing fees, which quietly eats into what you make and pushes you to raise your prices. We deliberately don't do that. Keeping the platform free lets you keep your fees affordable, which brings you more patients — and that's the whole point: help good doctors reach more people, not tax them for it.
               </p>
             </details>
 
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>How do I get paid?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 Directly and fully. The patient pays your fee straight to your UPI ID / QR code — ProMedicoz never touches, holds, or delays the money. You set your own fee, and you confirm the payment on your side before the consultation. There's nothing to withdraw and no settlement wait.
               </p>
             </details>
 
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>Is my personal number and data safe?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 Yes. You choose what patients see. Your login phone number is not shown publicly — a WhatsApp number only appears on your profile if you deliberately add one as a contact option, and you can leave it out. Patient conversations happen through the in-app chat and calls. See our <Link to="/privacy" className="text-primary-600 hover:underline">Privacy Policy</Link> for how data is handled.
               </p>
             </details>
 
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>Do I have to be available all the time?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 No. You set your own weekly availability — only the days and hours you choose. Patients can only book the slots you've opened, and you confirm each appointment before it's final. It fits around your existing clinic hours, not the other way around.
               </p>
             </details>
 
-            <details className="bg-white border border-gray-200 rounded-xl p-4 group">
-              <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
+            <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
+              <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
                 <span>Can I leave whenever I want?</span>
-                <span className="text-primary-600 group-open:rotate-180 transition-transform">⌄</span>
+                <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
               <p className="text-gray-600 mt-3">
                 Anytime. There's no lock-in, no contract, and no fee. You can deactivate your profile or delete your account whenever you like. Since it costs you nothing and only brings you additional patients, there's really nothing to lose by trying it.

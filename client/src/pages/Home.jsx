@@ -657,17 +657,34 @@ function Home() {
       </section>
 
       {/* ---- FAQs for Google "People Also Ask" ---- */}
-      <section className="py-10 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">{t.faqHeading}</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800">{t.faqHeading}</h2>
+            <span className="inline-block mt-2 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
+          </div>
           <div className="space-y-3">
             {t.faqs.map((faq, idx) => (
-              <details key={idx} className="bg-white border border-gray-200 rounded-xl p-4 group">
-                <summary className="font-medium text-gray-800 cursor-pointer list-none flex justify-between items-center">
-                  {faq.q}
-                  <span className="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+              // Each FAQ is a <details> card that lifts on hover and gets a
+              // primary tint + ring when open. The chevron sits in a circular
+              // badge that turns primary and rotates as it opens, so the whole
+              // row clearly reads as an interactive accordion.
+              <details
+                key={idx}
+                className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30"
+              >
+                <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
+                  <span className="flex items-start gap-2.5">
+                    <span className="text-primary-500 shrink-0" aria-hidden="true">❓</span>
+                    {faq.q}
+                  </span>
+                  <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </span>
                 </summary>
-                <p className="text-gray-600 text-sm mt-3">{faq.a}</p>
+                <p className="text-gray-600 text-sm mt-3 pl-7 leading-relaxed">{faq.a}</p>
               </details>
             ))}
           </div>
