@@ -23,6 +23,10 @@ const CURATED_REVIEWS = [
   { stars: 5, text: 'Online doctor consultations are a game-changer — giving you a fast, stress-free way to connect with real physicians right from your couch.', name: 'Chandan', spec: 'Online consultation' },
   { stars: 5, text: 'Dr. Pooja is an incredible gynecologist — her virtual consultation gave me the exact guidance and relief I needed for period pain right when I needed it.', name: 'Naina', spec: 'consulted Dr. Pooja' },
   { stars: 5, text: 'A huge thank you to gynecologist Dr. Pooja; her online consultation provided fast, compassionate relief for my severe period pain without the hassle of a clinic visit.', name: 'Geeta', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'Highly recommend Dr. Pooja for gynecological consultations. She explained the root cause of my menstrual pain clearly and provided a very effective management plan online.', name: 'Kia', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: "Managing PCOS/PCOD symptoms can be overwhelming, but Dr. Pooja's expert guidance during our virtual consultation gave me the exact dietary and medical steps I needed to get my cycle back on track.", name: 'Sonam Tiwari', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'The most comfortable way to get expert gynecological advice — thank you, Dr. Pooja, for making women\'s healthcare so accessible!', name: 'Sagufta Sultana', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'Navigating menopause symptoms was becoming exhausting, but Dr. Pooja\'s online consultation changed everything. She carefully analyzed my hot flashes and mood shifts, creating a personalized management plan that has truly restored my energy.', name: 'Mandakini Chandrakar', spec: 'consulted Dr. Pooja' },
 ];
 
 // Bilingual UI strings for the patient-facing home page (Phase 1).
