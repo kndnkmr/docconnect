@@ -54,22 +54,41 @@ function BottomNav() {
       ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">
-      <div className="flex justify-around items-center h-14">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex flex-col items-center justify-center flex-1 h-full ${
-              isActive(item)
-                ? 'text-primary-600'
-                : 'text-gray-500'
-            }`}
-          >
-            <span className="text-lg">{item.icon}</span>
-            <span className="text-[11px] mt-0.5 font-medium whitespace-nowrap leading-tight">{item.label}</span>
-          </Link>
-        ))}
+    // Frosted-glass bar to match the top navbar. pb-[safe-area] keeps the
+    // tabs clear of the home indicator on gesture-nav phones.
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-t border-gray-200/70 shadow-[0_-1px_12px_rgba(0,0,0,0.05)] md:hidden pb-[env(safe-area-inset-bottom)]">
+      <div className="flex justify-around items-stretch h-16">
+        {navItems.map((item) => {
+          const active = isActive(item);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              aria-current={active ? 'page' : undefined}
+              className="group flex flex-col items-center justify-center flex-1 h-full"
+            >
+              {/* Active tab gets a soft pill behind the icon, the icon lifts
+                  and scales, and the label turns primary — so the current
+                  section reads clearly instead of only a faint colour change. */}
+              <span
+                className={`flex items-center justify-center w-12 h-7 rounded-full text-lg transition-all duration-200 ${
+                  active
+                    ? 'bg-primary-100 text-primary-600 -translate-y-0.5 scale-105'
+                    : 'text-gray-500 group-hover:text-primary-600 group-active:scale-95'
+                }`}
+              >
+                {item.icon}
+              </span>
+              <span
+                className={`text-[11px] mt-0.5 whitespace-nowrap leading-tight transition-colors ${
+                  active ? 'text-primary-600 font-semibold' : 'text-gray-500 font-medium'
+                }`}
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
