@@ -586,29 +586,47 @@ function Home() {
       {/* ---- How It Works ---- */}
       <section className="py-12 bg-gray-50 bg-dotted">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">{t.howHeading}</h2>
-          <p className="text-center text-gray-500 mb-10 text-sm">{t.howSubtitle}</p>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-gray-800">{t.howHeading}</h2>
+            <span className="inline-block mt-2 mb-3 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
+            <p className="text-gray-500 text-sm">{t.howSubtitle}</p>
+          </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              { step: 1, icon: '👤', to: '/register' },
-              { step: 2, icon: '🔍', to: '/doctors' },
-              { step: 3, icon: '📅', to: '/doctors' },
-              { step: 4, icon: '✅', to: '/dashboard' },
-            ].map(({ step, icon, to }) => {
-              const s = t.steps[step - 1];
-              return (
-              <Link key={step} to={to} className="group text-center p-5 rounded-xl border-2 border-gray-100 bg-white hover:border-primary-300 hover:shadow-md transition-all">
-                <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-bold mx-auto mb-3 group-hover:bg-primary-600 group-hover:text-white transition-colors text-sm">
-                  {step}
-                </div>
-                <div className="text-3xl mb-2">{icon}</div>
-                <h3 className="text-sm font-semibold text-gray-800 mb-1">{s.title}</h3>
-                <p className="text-gray-500 text-xs mb-2">{s.desc}</p>
-                <span className="text-primary-600 text-xs font-medium group-hover:underline">{s.cta}</span>
-              </Link>
-              );
-            })}
+          {/* A dashed line runs behind the four cards on desktop so the steps
+              read as a connected journey (1 → 2 → 3 → 4) rather than four
+              loose tiles. The numbered badge overlaps the top of each card and
+              fills with primary on hover, while the whole card lifts. */}
+          <div className="relative max-w-4xl mx-auto">
+            <div className="hidden lg:block absolute top-7 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-primary-200" aria-hidden="true"></div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
+              {[
+                { step: 1, icon: '👤', to: '/register' },
+                { step: 2, icon: '🔍', to: '/doctors' },
+                { step: 3, icon: '📅', to: '/doctors' },
+                { step: 4, icon: '✅', to: '/dashboard' },
+              ].map(({ step, icon, to }) => {
+                const s = t.steps[step - 1];
+                return (
+                <Link
+                  key={step}
+                  to={to}
+                  className="group relative text-center pt-9 pb-5 px-4 mt-4 rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-primary-200"
+                >
+                  {/* Numbered badge sits half-over the top edge of the card */}
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-9 h-9 bg-white border-2 border-primary-200 text-primary-600 rounded-full flex items-center justify-center font-bold text-sm shadow-sm transition-colors duration-200 group-hover:bg-primary-600 group-hover:text-white group-hover:border-primary-600">
+                    {step}
+                  </div>
+                  <div className="text-3xl mb-2 transition-transform duration-200 group-hover:scale-110">{icon}</div>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">{s.title}</h3>
+                  <p className="text-gray-500 text-xs mb-2 leading-relaxed">{s.desc}</p>
+                  <span className="inline-flex items-center gap-0.5 text-primary-600 text-xs font-semibold">
+                    {s.cta.replace(/\s*→\s*$/, '')}
+                    <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
+                  </span>
+                </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
