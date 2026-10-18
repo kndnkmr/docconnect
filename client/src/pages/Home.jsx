@@ -14,6 +14,17 @@ import { formatDoctorName } from '../utils/formatName';
 // card. Instead we load it dynamically after mount (see useEffect below), so
 // the home page stays lean regardless of how many articles exist.
 
+// Curated REAL patient reviews, provided and confirmed as genuine by the
+// ProMedicoz team. These are shown in the testimonials marquee alongside any
+// live reviews pulled from the API, so the section always reflects real
+// patient experiences. (Kept module-level so it isn't rebuilt each render.)
+// Add new confirmed reviews here as they come in.
+const CURATED_REVIEWS = [
+  { stars: 5, text: 'Online doctor consultations are a game-changer — giving you a fast, stress-free way to connect with real physicians right from your couch.', name: 'Chandan', spec: 'Online consultation' },
+  { stars: 5, text: 'Dr. Pooja is an incredible gynecologist — her virtual consultation gave me the exact guidance and relief I needed for period pain right when I needed it.', name: 'Naina', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'A huge thank you to gynecologist Dr. Pooja; her online consultation provided fast, compassionate relief for my severe period pain without the hassle of a clinic visit.', name: 'Geeta', spec: 'consulted Dr. Pooja' },
+];
+
 // Bilingual UI strings for the patient-facing home page (Phase 1).
 // Only fixed UI labels are translated. Brand name, Login/Register, and
 // anything a doctor types (profiles, specializations, prescriptions) stay in
@@ -638,76 +649,66 @@ function Home() {
           <span className="inline-block mt-2 mb-2 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
           <p className="text-gray-500 text-sm">{t.testimonialsSubtitle}</p>
         </div>
-        {topReviews.length > 0 ? (
-          // Real, verified reviews — auto-scrolling marquee (pauses on hover
-          // via .animate-scroll:hover). Doubled so the loop is seamless.
-          <div className="relative">
-            {/* Soft fade masks on the edges so cards slide in/out instead of
-                being hard-clipped at the screen edge. */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
-            <div className="flex animate-scroll gap-6 px-4">
-              {[...topReviews, ...topReviews].map((review, idx) => {
-                const stars = Math.max(0, Math.min(5, Math.round(Number(review.rating) || 0)));
-                return (
-                <div key={idx} className="min-w-[280px] max-w-[280px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                  <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
-                  {/* Clamp rating to a safe 0–5 integer — a bad/undefined value
-                      from the API would otherwise make String.repeat throw and
-                      crash the whole testimonials carousel. */}
-                  <div className="text-yellow-400 text-sm mb-2" aria-label={`${stars} out of 5 stars`}>{'⭐'.repeat(stars)}</div>
-                  <p className="text-gray-700 text-sm line-clamp-3 leading-relaxed">{review.comment}</p>
-                  <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2.5">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{review.patient?.name?.charAt(0) || '?'}</span>
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-gray-800 truncate">{review.patient?.name}</div>
-                      <div className="text-xs text-gray-400 truncate">consulted Dr. {review.doctor?.name}</div>
-                    </div>
-                  </div>
-                </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          // No real reviews yet → the same auto-scrolling marquee with a set
-          // of SAMPLE experiences, clearly tagged as samples so we never pass
-          // them off as verified patient reviews. Saves vertical space vs a
-          // static grid and keeps the section looking alive.
-          <div className="relative">
-            <p className="text-center text-[11px] uppercase tracking-wide text-gray-400 mb-4">Sample experiences</p>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
-            <div className="flex animate-scroll gap-6 px-4">
-              {(() => {
-                const samples = [
-                  { stars: 5, text: 'Very easy to book an appointment. The doctor was on time and professional.', name: 'Priya S.', spec: 'General Physician' },
-                  { stars: 5, text: 'Found a specialist within minutes and got confirmed the same day. Smooth experience.', name: 'Rahul M.', spec: 'Dermatologist' },
-                  { stars: 4, text: 'Convenient and simple. No more waiting on phone calls to book a doctor.', name: 'Anita K.', spec: 'Gynaecologist' },
-                  { stars: 5, text: 'Loved that I could pay the doctor directly over UPI. No hidden charges at all.', name: 'Suresh R.', spec: 'Cardiologist' },
-                  { stars: 5, text: 'Consulted a doctor by video from home — perfect for my elderly parents.', name: 'Meena T.', spec: 'General Physician' },
-                  { stars: 4, text: 'Could search by language, so I explained everything comfortably in Hindi.', name: 'Vikram J.', spec: 'ENT Specialist' },
-                  { stars: 5, text: 'Prescriptions and reports stay in one place. Made my follow-up so easy.', name: 'Fatima A.', spec: 'Pediatrician' },
-                  { stars: 5, text: 'Honest fees shown upfront. I knew exactly what I would pay before booking.', name: 'Deepak N.', spec: 'Orthopedic' },
-                ];
-                return [...samples, ...samples].map((item, idx) => (
-                  <div key={idx} className="min-w-[280px] max-w-[280px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
+        {(() => {
+          // Build ONE list of real reviews to show: live reviews from the API
+          // first, then the curated real reviews. Both are normalised to the
+          // same { stars, text, name, meta } shape so a single card template
+          // renders either. This is all genuine patient feedback, so it uses
+          // the honest "What Our Patients Say" framing (no "sample" tag).
+          const apiReviews = topReviews.map((r) => ({
+            stars: Math.max(0, Math.min(5, Math.round(Number(r.rating) || 0))),
+            text: r.comment,
+            name: r.patient?.name || 'Patient',
+            meta: r.doctor?.name ? `consulted Dr. ${r.doctor.name}` : 'Verified patient',
+          }));
+          const curated = CURATED_REVIEWS.map((r) => ({
+            stars: r.stars, text: r.text, name: r.name, meta: r.spec,
+          }));
+          const realReviews = [...apiReviews, ...curated];
+
+          // Generic placeholder experiences — only used as a cold-start safety
+          // net if there are somehow no real reviews at all. Tagged as samples
+          // so they're never passed off as genuine patient reviews.
+          const samples = [
+            { stars: 5, text: 'Very easy to book an appointment. The doctor was on time and professional.', name: 'Priya S.', meta: 'General Physician' },
+            { stars: 5, text: 'Found a specialist within minutes and got confirmed the same day. Smooth experience.', name: 'Rahul M.', meta: 'Dermatologist' },
+            { stars: 4, text: 'Convenient and simple. No more waiting on phone calls to book a doctor.', name: 'Anita K.', meta: 'Gynaecologist' },
+          ];
+
+          const showingReal = realReviews.length > 0;
+          const list = showingReal ? realReviews : samples;
+          // Duplicate the list so the marquee loop is seamless.
+          const loop = [...list, ...list];
+
+          return (
+            <div className="relative">
+              {!showingReal && (
+                <p className="text-center text-[11px] uppercase tracking-wide text-gray-400 mb-4">Sample experiences</p>
+              )}
+              {/* Soft fade masks on the edges so cards slide in/out instead of
+                  being hard-clipped at the screen edge. */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
+              {/* Auto-scrolling marquee — pauses on hover via .animate-scroll:hover */}
+              <div className="flex animate-scroll gap-6 px-4">
+                {loop.map((item, idx) => (
+                  <div key={idx} className="min-w-[280px] max-w-[300px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
                     <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
                     <div className="text-yellow-400 text-sm mb-2" aria-label={`${item.stars} out of 5 stars`}>{'⭐'.repeat(item.stars)}</div>
                     <p className="text-gray-700 text-sm leading-relaxed">{item.text}</p>
                     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2.5">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{item.name.charAt(0)}</span>
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{item.name?.charAt(0) || '?'}</span>
                       <div className="min-w-0">
                         <div className="text-xs font-semibold text-gray-800 truncate">{item.name}</div>
-                        <div className="text-xs text-gray-400 truncate">{item.spec}</div>
+                        <div className="text-xs text-gray-400 truncate">{item.meta}</div>
                       </div>
                     </div>
                   </div>
-                ));
-              })()}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </section>
 
       {/* ---- FAQs for Google "People Also Ask" ---- */}
