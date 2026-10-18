@@ -199,7 +199,7 @@ function InstallApp() {
       <div className="container mx-auto px-4 pb-12 max-w-3xl">
         <div className="grid md:grid-cols-2 gap-6 -mt-8 relative z-10">
           {/* ---- Install ---- */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">{t.installHeading}</h2>
 
             {isInstalled ? (
@@ -211,7 +211,7 @@ function InstallApp() {
                 {canInstall && (
                   <button
                     onClick={handleInstall}
-                    className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors mb-4"
+                    className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 mb-4"
                   >
                     {t.installNow}
                   </button>
@@ -237,14 +237,14 @@ function InstallApp() {
           </div>
 
           {/* ---- Share ---- */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">{t.shareHeading}</h2>
 
             <div className="flex flex-col gap-3">
               {/* Native share (mobile share sheet) + copy link */}
               <button
                 onClick={handleShare}
-                className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
               >
                 {t.shareBtn}
               </button>
@@ -265,10 +265,10 @@ function InstallApp() {
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex flex-col items-center justify-center gap-1 py-3 rounded-lg text-white text-xs font-medium transition-colors ${s.color}`}
+                  className={`group flex flex-col items-center justify-center gap-1 py-3 rounded-lg text-white text-xs font-medium shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 ${s.color}`}
                   aria-label={`Share on ${s.name}`}
                 >
-                  <span className="text-lg leading-none">{s.emoji}</span>
+                  <span className="text-lg leading-none transition-transform duration-200 group-hover:scale-110">{s.emoji}</span>
                   <span>{s.name}</span>
                 </a>
               ))}

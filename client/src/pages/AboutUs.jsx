@@ -144,12 +144,18 @@ function AboutUs() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.doH}</h2>
-          <ul className="space-y-2">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">{t.doH}</h2>
+          {/* Each "what we do" point is a card with a circular icon badge and a
+              subtle hover lift, so the section reads as a set of features
+              rather than a flat bulleted list. */}
+          <ul className="grid sm:grid-cols-2 gap-3">
             {t.doItems.map((item, i) => (
-              <li key={i} className="flex gap-2">
-                <span>{item.icon}</span>
-                <span><strong>{item.t}</strong> {item.d}</span>
+              <li
+                key={i}
+                className="flex items-start gap-3 bg-white border border-gray-100 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:border-primary-200"
+              >
+                <span className="flex items-center justify-center w-9 h-9 shrink-0 rounded-full bg-primary-50 text-lg" aria-hidden="true">{item.icon}</span>
+                <span className="leading-relaxed"><strong className="text-gray-800">{item.t}</strong> <span className="text-gray-600">{item.d}</span></span>
               </li>
             ))}
           </ul>

@@ -241,13 +241,35 @@ function App() {
               <p className="text-gray-400 text-sm">
                 Book verified doctors online — video, phone, or in-person consultations across India.
               </p>
-              {/* Role-neutral links (apply to patients and doctors alike) */}
+              {/* Role-neutral links (apply to patients and doctors alike).
+                  About Us is a subtle outline pill; Install/Get the App is the
+                  primary action, so it gets a solid green accent, a hover lift,
+                  and a scaling phone icon to draw the eye. */}
               <div className="flex flex-wrap gap-2 mt-4">
-                <a href="/about" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">About Us →</a>
+                <a
+                  href="/about"
+                  className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/25 text-white font-semibold text-sm transition-all duration-200 hover:bg-white/15 hover:border-white/40 hover:-translate-y-0.5"
+                >
+                  <span aria-hidden="true">ℹ️</span>
+                  About Us
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span>
+                </a>
                 {canInstall ? (
-                  <button onClick={promptInstall} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Install App</button>
+                  <button
+                    onClick={promptInstall}
+                    className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-green-600 text-white font-semibold text-sm shadow-sm transition-all duration-200 hover:bg-green-500 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-400/60"
+                  >
+                    <span className="transition-transform duration-200 group-hover:scale-110" aria-hidden="true">📲</span>
+                    Install App
+                  </button>
                 ) : (
-                  <a href="/install" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white font-semibold text-sm hover:bg-white/20 transition-colors">📲 Get the App</a>
+                  <a
+                    href="/install"
+                    className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-green-600 text-white font-semibold text-sm shadow-sm transition-all duration-200 hover:bg-green-500 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-400/60"
+                  >
+                    <span className="transition-transform duration-200 group-hover:scale-110" aria-hidden="true">📲</span>
+                    Get the App
+                  </a>
                 )}
               </div>
               {/* Official social profiles. These reinforce the brand signal
@@ -283,24 +305,33 @@ function App() {
               </div>
             </div>
 
-            {/* For Patients */}
+            {/* For Patients. Each link is an icon + label with an arrow that
+                slides in and a label that nudges right on hover, so the whole
+                column reads as interactive rather than flat text. The heading
+                carries a short green accent bar for visual rhythm. */}
             <div>
-              <h3 className="font-semibold text-sm mb-3 text-gray-200">For Patients</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/doctors" className="text-gray-400 hover:text-white transition-colors">Find Doctors</a></li>
-                <li><a href="/how-it-works" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="/blog" className="text-gray-400 hover:text-white transition-colors">Health Blog</a></li>
-                <li><a href="/register" className="text-gray-400 hover:text-white transition-colors">Create Account</a></li>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200 inline-flex flex-col">
+                For Patients
+                <span className="mt-1 h-0.5 w-8 rounded-full bg-green-500" aria-hidden="true"></span>
+              </h3>
+              <ul className="space-y-1 text-sm">
+                <li><a href="/doctors" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🔍</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Find Doctors</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/how-it-works" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📝</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">How It Works</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/blog" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📰</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Health Blog</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/register" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">👤</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Create Account</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
               </ul>
             </div>
 
             {/* For Doctors */}
             <div>
-              <h3 className="font-semibold text-sm mb-3 text-gray-200">For Doctors</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/for-doctors" className="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="/register?role=doctor" className="text-gray-400 hover:text-white transition-colors">Join ProMedicoz</a></li>
-                <li><a href="/login" className="text-gray-400 hover:text-white transition-colors">Doctor Login</a></li>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200 inline-flex flex-col">
+                For Doctors
+                <span className="mt-1 h-0.5 w-8 rounded-full bg-green-500" aria-hidden="true"></span>
+              </h3>
+              <ul className="space-y-1 text-sm">
+                <li><a href="/for-doctors" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">💡</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">How It Works</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/register?role=doctor" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🩺</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Join ProMedicoz</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/login" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🔑</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Doctor Login</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
               </ul>
             </div>
 
@@ -308,13 +339,16 @@ function App() {
                 do (legal policies + a clear support/grievance contact), and
                 includes the Medical Disclaimer expected of a health site. */}
             <div>
-              <h3 className="font-semibold text-sm mb-3 text-gray-200">Legal & Support</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/medical-disclaimer" className="text-gray-400 hover:text-white transition-colors">Medical Disclaimer</a></li>
-                <li><a href="/cancellation-refund" className="text-gray-400 hover:text-white transition-colors">Cancellation & Refund</a></li>
-                <li><a href="mailto:support@promedicoz.in?subject=Contact%20%2F%20Grievance%20-%20ProMedicoz" className="text-gray-400 hover:text-white transition-colors">Contact / Grievance</a></li>
+              <h3 className="font-semibold text-sm mb-3 text-gray-200 inline-flex flex-col">
+                Legal & Support
+                <span className="mt-1 h-0.5 w-8 rounded-full bg-green-500" aria-hidden="true"></span>
+              </h3>
+              <ul className="space-y-1 text-sm">
+                <li><a href="/terms" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📄</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Terms & Conditions</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/privacy" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🔒</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Privacy Policy</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/medical-disclaimer" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">⚕️</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Medical Disclaimer</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/cancellation-refund" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">↩️</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Cancellation & Refund</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="mailto:support@promedicoz.in?subject=Contact%20%2F%20Grievance%20-%20ProMedicoz" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">✉️</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Contact / Grievance</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
               </ul>
             </div>
           </div>
