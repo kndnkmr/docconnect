@@ -1158,22 +1158,32 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 ### SEO blog articles (growth)
 
 - `blog/blogData.js` holds static articles (`{slug,title,description,
-  specialization,publishedDate,readTime,image,content:[{type,...}]}`). The
-  renderer (`BlogArticle.jsx`) supports rich block types beyond plain prose:
+  specialization,publishedDate,readTime,image,content:[{type,...}],contentHi?:[{type,...}]}`).
+  The optional `contentHi` is the Hinglish (Hindi-in-Roman-script) version of the
+  same article, rendered when the per-article EN/हिंदी toggle is set to Hindi.
+  The renderer (`BlogArticle.jsx`) supports rich block types beyond plain prose:
   `intro`, `heading`, `paragraph`, `list` (`{items:[]}`), `callout`
   (`{variant:'tip'|'warning'|'success'|'info', title?, text?, items?}`), `table`
   (`{headers:[], rows:[[]]}`), and `steps` (`{items:[]}`), plus inline
-  `**bold**` via `renderInline()`. All 320+ articles use these so reads are
+  `**bold**` via `renderInline()`. All 370+ articles use these so reads are
   scannable (tables/callouts/step-lists), not walls of text; adding a new block
   type means extending the renderer's switch, and old `{type,text}` blocks still
   render (backward-compatible). `renderInline()` also auto-links key topic
-  phrases to their article (internal linking, see `linkMap.js`). Grew to 320+
+  phrases to their article (internal linking, see `linkMap.js`). Grew to 370+
   articles across many kinds:
   per-specialty "when to see a [specialist]", symptom/question explainers
   (frequent-headaches, fever-home-care, is-online-consultation-safe, silent-
   signs-high-blood-sugar, always-tired, high-bp, stop-googling-symptoms), and
   responsibly-framed wellness/traditional-habit pieces (ancient-indian-wellness,
   gut-health, sleep, immunity).
+- **Hinglish (`contentHi`) convention:** the Hindi version is written in Roman
+  script only (NO Devanagari), medical terms kept in English, and ALL safety
+  framing (emergency numbers like 112/108/Tele-MANAS 14416, red flags, "see a
+  doctor" lines) preserved. It's added in rolling batches; after each batch,
+  run a Devanagari leak sweep over `blogData.js`
+  (`grep -noE '[A-Za-z]*[ऀ-ॿ]+[A-Za-z]*'` for mixed words and `grep -cE '[ऀ-ॿ]'`
+  for a total count — both should be 0) before building/committing, since
+  stray Devanagari characters occasionally slip into otherwise-Roman words.
 - **Each article's `specialization` must map to a real specialty** — the
   article page's CTA links to `/doctors?specialization=...`. New articles must
   also be added to `client/public/sitemap.xml` (SEO is a slow burn; resubmit
