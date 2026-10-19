@@ -938,4 +938,79 @@ const updateDoctorLocation = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation };
+// ============================================
+// UPDATE DOCTOR AVAILABILITY (admin, on the doctor's behalf)
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/availability
+// Body: { availability: [{ day, startTime, endTime }], slotDuration }
+//
+// Lets an admin set a doctor's weekly schedule for them (common support case:
+// doctors ask the admin to set it up). This writes the SAME data shape and
+// runs the SAME validation as the doctor-side PUT /api/availability, so what
+// the admin saves is indistinguishable from what the doctor would save — and
+// every consumer (free-slot generation, next-available, list ranking) keeps
+// working. Replaces the whole availability array + slotDuration (full replace,
+// matching the doctor-side behaviour). Does NOT touch blockedDates.
+const updateDoctorAvailability = async (req, res) => {
+  try {
+    const { availability, slotDuration } = req.body;
+
+    if (!availability || !Array.isArray(availability)) {
+      return res.status(400).json({ message: 'Please provide availability as an array' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'This action is only for doctor accounts' });
+    }
+
+    // ---- Validate each entry (identical rules to availabilityController.setAvailability) ----
+    const validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // 09:00, 14:30 — not 25:00 or 9:00
+    const toMinutes = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+
+    for (const slot of availability) {
+      if (!slot || !slot.day || !slot.startTime || !slot.endTime) {
+        return res.status(400).json({ message: 'Each availability entry must have day, startTime, and endTime' });
+      }
+      if (!validDays.includes(slot.day)) {
+        return res.status(400).json({ message: `Invalid day: "${slot.day}". Must be one of: ${validDays.join(', ')}` });
+      }
+      if (!timeRegex.test(slot.startTime) || !timeRegex.test(slot.endTime)) {
+        return res.status(400).json({ message: 'Invalid time format. Use 24-hour format like "09:00" or "14:30"' });
+      }
+      const startM = toMinutes(slot.startTime);
+      let endM = toMinutes(slot.endTime);
+      if (endM === 0) endM = 24 * 60; // midnight = end of day
+      if (startM >= endM) {
+        return res.status(400).json({ message: `Start time (${slot.startTime}) must be before end time (${slot.endTime})` });
+      }
+    }
+
+    // ---- Validate slot duration (same whitelist as the doctor-side) ----
+    const validDurations = [15, 30, 45, 60];
+    const duration = slotDuration || 30;
+    if (!validDurations.includes(duration)) {
+      return res.status(400).json({ message: `Slot duration must be one of: ${validDurations.join(', ')} minutes` });
+    }
+
+    // Normalise entries to exactly { day, startTime, endTime } (drop any extra
+    // client-sent fields), then full-replace — mirrors the doctor-side write.
+    user.availability = availability.map((s) => ({ day: s.day, startTime: s.startTime, endTime: s.endTime }));
+    user.slotDuration = duration;
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: `Updated availability for "${user.name}" (${user.availability.length} session${user.availability.length === 1 ? '' : 's'}).`,
+      user: { _id: user._id, name: user.name, availability: user.availability, slotDuration: user.slotDuration }
+    });
+  } catch (error) {
+    console.error('Update doctor availability error:', error.message);
+    res.status(500).json({ message: 'Error updating availability' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability };

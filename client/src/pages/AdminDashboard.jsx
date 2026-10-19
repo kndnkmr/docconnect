@@ -46,6 +46,18 @@ function AdminDashboard() {
   // Google Analytics, not this table.
   const [blogStats, setBlogStats] = useState(null);
 
+  // Edit-availability modal (admin sets a doctor's weekly schedule for them).
+  // `availDoctor` is the doctor being edited (null = modal closed); the rest
+  // is the working draft, loaded from that doctor's current schedule.
+  const [availDoctor, setAvailDoctor] = useState(null);
+  const [availSchedule, setAvailSchedule] = useState([]); // [{day,startTime,endTime}]
+  const [availDuration, setAvailDuration] = useState(30);
+  const [availSelectedDays, setAvailSelectedDays] = useState([]);
+  const [availStart, setAvailStart] = useState('09:00');
+  const [availEnd, setAvailEnd] = useState('17:00');
+  const [availSaving, setAvailSaving] = useState(false);
+  const AVAIL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
   // Build a slug → {title, specialization, image} lookup once from the
   // lightweight article metadata, so we can show human-readable titles next
   // to the view counts (which are keyed by slug).
@@ -507,6 +519,66 @@ function AdminDashboard() {
     }
   };
 
+  // ---- Edit a doctor's weekly availability on their behalf ----
+  // Opens the modal pre-loaded with the doctor's CURRENT schedule (from the
+  // users list data we already have), so the admin edits their real schedule.
+  const openAvailabilityModal = (user) => {
+    setAvailDoctor(user);
+    setAvailSchedule(Array.isArray(user.availability)
+      ? user.availability.map((s) => ({ day: s.day, startTime: s.startTime, endTime: s.endTime }))
+      : []);
+    setAvailDuration([15, 30, 45, 60].includes(user.slotDuration) ? user.slotDuration : 30);
+    setAvailSelectedDays([]);
+    setAvailStart('09:00');
+    setAvailEnd('17:00');
+  };
+
+  const closeAvailabilityModal = () => {
+    if (availSaving) return;
+    setAvailDoctor(null);
+  };
+
+  const toggleAvailDay = (day) =>
+    setAvailSelectedDays((prev) => prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]);
+
+  // Add the chosen time block to each selected day (skips exact duplicates),
+  // mirroring the doctor-side DoctorAvailability validation.
+  const addAvailBlocks = () => {
+    if (availSelectedDays.length === 0) { toast.error('Select at least one day'); return; }
+    const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+    const startM = toMin(availStart);
+    let endM = toMin(availEnd);
+    if (endM === 0) endM = 24 * 60; // midnight end-of-day
+    if (startM >= endM) { toast.error('Start time must be before end time (use 00:00 as "To" for midnight)'); return; }
+    const additions = availSelectedDays
+      .map((day) => ({ day, startTime: availStart, endTime: availEnd }))
+      .filter((n) => !availSchedule.some((e) => e.day === n.day && e.startTime === n.startTime && e.endTime === n.endTime));
+    if (additions.length === 0) { toast.error('Those slots already exist'); return; }
+    setAvailSchedule((prev) => [...prev, ...additions]);
+    setAvailSelectedDays([]);
+  };
+
+  const removeAvailSlot = (index) =>
+    setAvailSchedule((prev) => prev.filter((_, i) => i !== index));
+
+  const saveAvailability = async () => {
+    if (!availDoctor) return;
+    setAvailSaving(true);
+    try {
+      const response = await adminAPI.updateDoctorAvailability(availDoctor._id, {
+        availability: availSchedule,
+        slotDuration: availDuration,
+      });
+      toast.success(response.data.message, { duration: 5000 });
+      setAvailDoctor(null);
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update availability');
+    } finally {
+      setAvailSaving(false);
+    }
+  };
+
   const handleSearchUsers = (e) => {
     e.preventDefault();
     fetchUsers();
@@ -934,6 +1006,15 @@ function AdminDashboard() {
                                 title="Edit this doctor's city / clinic address on their behalf (e.g. fix a state entered in the City field)"
                               >
                                 Edit Location
+                              </button>
+                            )}
+                            {!user.isDeleted && user.role === 'doctor' && (
+                              <button
+                                onClick={() => openAvailabilityModal(user)}
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                                title="Set this doctor's weekly schedule on their behalf (for doctors who ask the admin to set it up)"
+                              >
+                                Edit Availability
                               </button>
                             )}
                             <button
@@ -1530,6 +1611,111 @@ function AdminDashboard() {
           ) : (
             <div className="bg-white rounded-xl shadow-md p-12 text-center text-gray-500">Loading blog analytics…</div>
           )}
+        </div>
+      )}
+
+      {/* ===== Edit Availability modal (admin sets a doctor's schedule) ===== */}
+      {availDoctor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={closeAvailabilityModal}>
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 p-5 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-gray-800">Edit Availability</h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {availDoctor.name}{availDoctor.specialization ? ` · ${availDoctor.specialization}` : ''}
+                </p>
+              </div>
+              <button onClick={closeAvailabilityModal} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Close">✕</button>
+            </div>
+
+            <div className="p-5 space-y-5">
+              {/* Duration */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">Appointment duration</label>
+                <div className="flex flex-wrap gap-2">
+                  {[15, 30, 45, 60].map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setAvailDuration(d)}
+                      className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${availDuration === d ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    >
+                      {d} min
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add time block */}
+              <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
+                <label className="block text-xs font-semibold text-gray-700 mb-2">Add available time</label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {AVAIL_DAYS.map((day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleAvailDay(day)}
+                      className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors ${availSelectedDays.includes(day) ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    >
+                      {day.substring(0, 3)}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-3 mb-3 text-xs">
+                  <button type="button" onClick={() => setAvailSelectedDays(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])} className="text-primary-600 hover:underline">Select Mon–Sat</button>
+                  <button type="button" onClick={() => setAvailSelectedDays([])} className="text-gray-500 hover:underline">Clear</button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+                  <div>
+                    <label className="block text-[11px] text-gray-500 mb-1">From</label>
+                    <input type="time" value={availStart} onChange={(e) => setAvailStart(e.target.value)} className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-gray-500 mb-1">To</label>
+                    <input type="time" value={availEnd} onChange={(e) => setAvailEnd(e.target.value)} className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none" />
+                  </div>
+                  <button type="button" onClick={addAvailBlocks} className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                    + Add to {availSelectedDays.length || 0} day(s)
+                  </button>
+                </div>
+              </div>
+
+              {/* Current schedule */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-2">Current schedule</label>
+                {availSchedule.length === 0 ? (
+                  <p className="text-sm text-gray-400">No sessions yet — add time above.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {availSchedule.map((slot, i) => (
+                      <div key={`${slot.day}-${slot.startTime}-${slot.endTime}-${i}`} className="flex items-center justify-between gap-2 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-gray-800">{slot.day}</p>
+                          <p className="text-xs text-gray-500">{slot.startTime} – {slot.endTime}</p>
+                        </div>
+                        <button onClick={() => removeAvailSlot(i)} className="text-red-500 hover:text-red-700 text-xs font-medium flex-shrink-0">Remove</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between gap-3 p-5 border-t border-gray-100">
+              <p className="text-[11px] text-gray-400 hidden sm:block">Saves the doctor's weekly schedule on their behalf.</p>
+              <div className="flex gap-2 ml-auto">
+                <button onClick={closeAvailabilityModal} disabled={availSaving} className="px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-60">Cancel</button>
+                <button onClick={saveAvailability} disabled={availSaving} className="px-5 py-2 rounded-lg text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-60">
+                  {availSaving ? 'Saving…' : 'Save schedule'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

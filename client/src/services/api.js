@@ -348,6 +348,11 @@ export const adminAPI = {
   // e.g. a doctor who put their state in the City field).
   // Body: { city?, clinicAddress? } — send only the field(s) being changed.
   updateDoctorLocation: (id, data) => API.put(`/admin/users/${id}/location`, data),
+
+  // Set a doctor's weekly availability on their behalf (support case).
+  // Body: { availability: [{day,startTime,endTime}], slotDuration } — same
+  // shape/validation as the doctor-side availabilityAPI.set.
+  updateDoctorAvailability: (id, data) => API.put(`/admin/users/${id}/availability`, data),
 };
 
 // ============================================

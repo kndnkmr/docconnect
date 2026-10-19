@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -76,5 +76,10 @@ router.put('/users/:id/contact', updateDoctorContact);
 // their behalf (support case — e.g. a doctor who entered their state in the
 // City field). Trims values; city cannot be blanked.
 router.put('/users/:id/location', updateDoctorLocation);
+
+// PUT /api/admin/users/:id/availability - set a doctor's weekly schedule on
+// their behalf (common support case — doctors ask the admin to set it up).
+// Same validation + data shape as the doctor-side PUT /api/availability.
+router.put('/users/:id/availability', updateDoctorAvailability);
 
 module.exports = router;
