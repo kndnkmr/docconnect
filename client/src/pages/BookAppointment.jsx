@@ -86,6 +86,9 @@ const BOOKING_TXT = {
     inPerson: 'In-Person Visit',
     video: 'Video Call',
     phone: 'Phone Call',
+    step1: 'Date & time',
+    step2: 'Who & how',
+    step3: 'Reason for visit',
     symptomsLabel: 'Symptoms (optional)',
     symptomsHint: 'Select any that apply — helps your doctor at a glance.',
     reasonLabel: 'Reason for Visit *',
@@ -127,6 +130,9 @@ const BOOKING_TXT = {
     inPerson: 'क्लिनिक पर मिलें',
     video: 'वीडियो कॉल',
     phone: 'फ़ोन कॉल',
+    step1: 'तारीख और समय',
+    step2: 'किसके लिए और कैसे',
+    step3: 'आने का कारण',
     symptomsLabel: 'लक्षण (वैकल्पिक)',
     symptomsHint: 'जो भी लागू हों चुनें — इससे डॉक्टर को एक नज़र में मदद मिलती है।',
     reasonLabel: 'आने का कारण *',
@@ -373,22 +379,25 @@ function BookAppointment() {
       </div>
 
       <div className="max-w-2xl mx-auto">
-        {/* Doctor info card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex items-center gap-4">
-          <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+        {/* Doctor summary card — who you're booking + the fee, up front. */}
+        <div className="bg-white rounded-2xl shadow-md p-5 mb-6 flex items-center gap-4">
+          <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-primary-50">
             {doctor?.profilePhoto ? (
               <img src={getUploadUrl(doctor.profilePhoto, { width: 150 })} alt={doctor.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
               <span className="text-2xl">🧑‍⚕️</span>
             )}
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800">{doctor?.name}</h2>
-            <p className="text-primary-600">{doctor?.specialization || 'General Physician'}</p>
-            {doctor?.consultationFee > 0 && (
-              <p className="text-gray-500 text-sm">{t.feeLabel}: Rs. {doctor.consultationFee}</p>
-            )}
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-bold text-gray-800 truncate">{doctor?.name}</h2>
+            <p className="text-primary-600 text-sm font-medium">{doctor?.specialization || 'General Physician'}</p>
           </div>
+          {doctor?.consultationFee > 0 && (
+            <div className="flex-shrink-0 text-center bg-green-50 border border-green-100 rounded-xl px-3 py-2">
+              <div className="text-base font-extrabold text-green-700 leading-none">Rs. {doctor.consultationFee}</div>
+              <div className="text-[10px] text-green-600 mt-0.5">{t.feeLabel}</div>
+            </div>
+          )}
         </div>
 
         {/* Booking form */}
@@ -405,7 +414,13 @@ function BookAppointment() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form id="book-form" onSubmit={handleSubmit} className="space-y-5">
+            {/* Step 1 — Date & time */}
+            <div className="flex items-center gap-2.5">
+              <span className="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <h2 className="text-base font-bold text-gray-800">{t.step1}</h2>
+            </div>
+
             {/* Date picker */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -470,6 +485,12 @@ function BookAppointment() {
                   </p>
                 </>
               )}
+            </div>
+
+            {/* Step 2 — Who & how */}
+            <div className="flex items-center gap-2.5 pt-2 border-t border-gray-100">
+              <span className="w-6 h-6 mt-4 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <h2 className="text-base font-bold text-gray-800 mt-4">{t.step2}</h2>
             </div>
 
             {/* Who is this booking for? */}
@@ -559,20 +580,38 @@ function BookAppointment() {
               )
             )}
 
-            {/* Consultation type */}
+            {/* Consultation type — tap-to-pick mode cards (writes the same
+                formData.consultationType values the old dropdown did). */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t.consultType}
               </label>
-              <select
-                value={formData.consultationType}
-                onChange={(e) => setFormData(prev => ({ ...prev, consultationType: e.target.value }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-              >
-                <option value="in-person">{t.inPerson}</option>
-                <option value="video">{t.video}</option>
-                <option value="phone">{t.phone}</option>
-              </select>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { key: 'video', icon: '📹', label: t.video },
+                  { key: 'phone', icon: '📞', label: t.phone },
+                  { key: 'in-person', icon: '🏥', label: t.inPerson },
+                ].map((m) => {
+                  const on = formData.consultationType === m.key;
+                  return (
+                    <button
+                      key={m.key}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, consultationType: m.key }))}
+                      className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-xl border text-center transition-all ${on ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200' : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'}`}
+                    >
+                      <span className="text-xl" aria-hidden="true">{m.icon}</span>
+                      <span className={`text-xs font-medium leading-tight ${on ? 'text-primary-700' : 'text-gray-600'}`}>{m.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Step 3 — Reason for visit */}
+            <div className="flex items-center gap-2.5 pt-2 border-t border-gray-100">
+              <span className="w-6 h-6 mt-4 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <h2 className="text-base font-bold text-gray-800 mt-4">{t.step3}</h2>
             </div>
 
             {/* Structured symptom tags — optional quick-pick, supplements
@@ -634,11 +673,12 @@ function BookAppointment() {
               </span>
             </label>
 
-            {/* Submit */}
+            {/* Submit — inline button for tablet/desktop; on mobile the sticky
+                bottom bar carries the action (md:hidden here to avoid two). */}
             <button
               type="submit"
               disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
-              className="btn btn-primary w-full"
+              className="btn btn-primary w-full hidden md:flex"
             >
               {isSubmitting ? t.booking : t.confirmBooking}
             </button>
@@ -648,6 +688,31 @@ function BookAppointment() {
             {t.pendingNote}
           </p>
         </div>
+      </div>
+
+      {/* Sticky mobile submit bar — fee + Confirm always reachable while the
+          patient scrolls the form. Submits #book-form via the form attribute,
+          so it shares the exact same disabled rules + submit handler. */}
+      <div className="h-20 md:hidden" aria-hidden="true" />
+      <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          {doctor?.consultationFee > 0 ? (
+            <>
+              <p className="text-lg font-bold text-gray-800 leading-none">Rs. {doctor.consultationFee}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5">{formData.timeSlot ? formData.timeSlot.split(' - ')[0] : t.pickDateFirst}</p>
+            </>
+          ) : (
+            <p className="text-sm font-medium text-gray-700 truncate">{doctor?.name}</p>
+          )}
+        </div>
+        <button
+          type="submit"
+          form="book-form"
+          disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
+          className="btn btn-primary flex-shrink-0 disabled:opacity-60"
+        >
+          {isSubmitting ? t.booking : t.confirmBooking}
+        </button>
       </div>
     </div>
   );
