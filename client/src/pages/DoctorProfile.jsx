@@ -275,24 +275,33 @@ function DoctorProfile() {
       </div>
 
       <div className="container mx-auto px-4 pb-10">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden -mt-10 relative z-10">
+      {/* Two-column "decision layout" on desktop: a rich profile/detail column
+          on the left, and a sticky booking card on the right that stays in view
+          while the patient reads. On mobile everything stacks and the existing
+          sticky bottom bar carries the primary action. */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 -mt-10 relative z-10 items-start">
+      <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* ---- Header Section (photo + basic info) ---- */}
         {/* Stacked & centered on mobile, side-by-side on desktop — avoids a
             giant colored box on small screens and keeps info tidy either way. */}
         <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-start">
-          {/* Avatar */}
+          {/* Avatar — a green "available today" ring is added only when the
+              doctor genuinely has a free slot today (real data), so it stays
+              honest and simply disappears otherwise. */}
           <div className="flex-shrink-0 mx-auto md:mx-0">
+            <div className={`rounded-full p-1 ${nextSlot && nextSlot.isToday ? 'ring-4 ring-green-400/70' : ''}`}>
             {doctor.profilePhoto ? (
               <img
                 src={getUploadUrl(doctor.profilePhoto, { width: 300 })}
                 alt={doctor.name}
-                className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-4 border-primary-100 shadow-sm"
+                className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-4 border-white shadow-sm"
               />
             ) : (
-              <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-6xl">
+              <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-6xl border-4 border-white">
                 🧑‍⚕️
               </div>
             )}
+            </div>
           </div>
 
           {/* Basic Info */}
@@ -321,31 +330,54 @@ function DoctorProfile() {
               </p>
             )}
 
-            {/* Quick facts as compact badges — wrap cleanly instead of scattering */}
-            <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
+            {/* Quick facts as icon stat tiles — far more scannable than a row
+                of identical grey pills. Each tile renders only when we have
+                that data (fee shown exactly as the doctor set it, never a
+                default). On mobile they sit in a 2-col grid; inline-ish on
+                desktop. */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-4">
               {doctor.experience > 0 && (
-                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  {t.yrsExp(doctor.experience)}
-                </span>
+                <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
+                  <span className="text-xl" aria-hidden="true">🎓</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-gray-800 leading-none">{doctor.experience}{lang === 'hi' ? ' वर्ष' : ' yrs'}</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'अनुभव' : 'experience'}</div>
+                  </div>
+                </div>
               )}
               {doctor.consultationFee > 0 && (
-                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  {t.feeBadge(doctor.consultationFee)}
-                </span>
-              )}
-              {doctor.city && (
-                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  📍 {doctor.city}
-                </span>
+                <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
+                  <span className="text-xl" aria-hidden="true">💰</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-gray-800 leading-none">₹{doctor.consultationFee}</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'परामर्श' : 'consultation'}</div>
+                  </div>
+                </div>
               )}
               {doctor.completedConsultations > 0 ? (
-                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                  {t.consultsDone(doctor.completedConsultations)}
-                </span>
+                <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
+                  <span className="text-xl" aria-hidden="true">✅</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-gray-800 leading-none">{doctor.completedConsultations}+</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'परामर्श पूरे' : 'consults done'}</div>
+                  </div>
+                </div>
               ) : (
-                <span className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium">
-                  {t.newDoctor}
-                </span>
+                <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
+                  <span className="text-xl" aria-hidden="true">🆕</span>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-indigo-700 leading-tight">{lang === 'hi' ? 'ProMedicoz पर नया' : 'New on ProMedicoz'}</div>
+                  </div>
+                </div>
+              )}
+              {doctor.city && (
+                <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
+                  <span className="text-xl" aria-hidden="true">📍</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-gray-800 leading-none truncate">{doctor.city}</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'स्थान' : 'location'}</div>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -366,11 +398,12 @@ function DoctorProfile() {
             )}
 
             {/* Quick-pick slots — real, bookable times for the soonest day.
-                Tapping one deep-links straight into booking with that slot
-                pre-selected. Only shown to logged-in patients (who can book);
-                logged-out users get the login CTA below. */}
+                Tapping one takes the patient into the booking page with that
+                time carried through; nothing is auto-chosen for them — they
+                still confirm on the booking page. Only shown to logged-in
+                patients (who can book); logged-out users get the login CTA. */}
             {isAuthenticated && isPatient && todaySlots.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-6 lg:hidden">
                 <p className="text-xs font-medium text-gray-500 mb-2 text-center md:text-left">{t.pickSlot}</p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-2">
                   {todaySlots.map((slot) => (
@@ -387,13 +420,16 @@ function DoctorProfile() {
               </div>
             )}
 
-            {/* Actions */}
+            {/* Actions. The primary Book button here is hidden on large screens
+                (lg:hidden) because the sticky right-column card carries it on
+                desktop; it stays visible on mobile/tablet. WhatsApp message +
+                Share remain on every size. */}
             <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-5">
               {isAuthenticated && isPatient && (
                 <Link
                   to={`/book-appointment/${doctor._id}`}
                   onClick={() => trackBook('logged_in')}
-                  className="btn btn-primary px-7 text-base"
+                  className="btn btn-primary px-7 text-base lg:hidden"
                 >
                   📅 {t.bookAppointment}
                 </Link>
@@ -428,7 +464,7 @@ function DoctorProfile() {
             </div>
 
             {!isAuthenticated && (
-              <div className="mt-4">
+              <div className="mt-4 lg:hidden">
                 <Link
                   to="/login"
                   onClick={() => trackEvent('book_appointment_click', {
@@ -480,22 +516,44 @@ function DoctorProfile() {
         </div>
 
         {/* ---- Reviews Section ---- */}
-        <div className="border-t p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">{t.patientReviews}</h2>
-            {reviewStats.totalReviews > 0 && (
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
-                {t.ratingBadge(reviewStats.averageRating, reviewStats.totalReviews)}
-              </span>
-            )}
-          </div>
+        <div className="border-t p-6 md:p-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-5">{t.patientReviews}</h2>
+
+          {/* Rating summary — a big average + a star-distribution bar, so the
+              overall sentiment is readable at a glance (real data; shown only
+              when there are reviews). */}
+          {reviewStats.totalReviews > 0 && (
+            <div className="flex items-center gap-5 mb-6 pb-6 border-b border-gray-100">
+              <div className="text-center flex-shrink-0">
+                <div className="text-4xl font-extrabold text-gray-800 leading-none">{reviewStats.averageRating}</div>
+                <div className="text-yellow-500 text-sm mt-1">{'★'.repeat(Math.round(reviewStats.averageRating))}<span className="text-gray-300">{'★'.repeat(5 - Math.round(reviewStats.averageRating))}</span></div>
+                <div className="text-xs text-gray-500 mt-1">{reviewStats.totalReviews} {lang === 'hi' ? 'समीक्षाएं' : reviewStats.totalReviews > 1 ? 'reviews' : 'review'}</div>
+              </div>
+              {/* Distribution bars (5★→1★) computed from the loaded reviews. */}
+              <div className="flex-1 space-y-1.5 min-w-0">
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const count = reviews.filter((r) => r.rating === star).length;
+                  const pct = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0;
+                  return (
+                    <div key={star} className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="w-5 flex-shrink-0">{star}★</span>
+                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${pct}%` }}></div>
+                      </div>
+                      <span className="w-6 text-right flex-shrink-0">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {reviews.length === 0 ? (
             <p className="text-gray-500">{t.noReviews}</p>
           ) : (
             <div className="space-y-4">
               {reviews.map((review) => (
-                <div key={review._id} className="p-4 bg-gray-50 rounded-lg">
+                <div key={review._id} className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2">
@@ -562,6 +620,87 @@ function DoctorProfile() {
             </div>
           )}
         </div>
+      </div>
+      {/* ---- Right column: sticky booking card (desktop only) ----
+          Keeps fee, live availability, quick-pick slots and the primary Book
+          action in view while the patient reads the profile. Hidden on mobile
+          (lg:block) where the fixed bottom bar already carries the action.
+          Everything here mirrors the left column's data/behaviour exactly —
+          same links, same auth gating, same analytics — nothing new is
+          auto-selected and the fee is shown exactly as the doctor set it. */}
+      {!isOwnProfile && (
+      <aside className="hidden lg:block">
+        <div className="sticky top-24 bg-white rounded-2xl shadow-lg ring-1 ring-black/5 p-5">
+          {doctor.consultationFee > 0 && (
+            <div className="mb-3">
+              <span className="text-2xl font-extrabold text-gray-800">₹{doctor.consultationFee}</span>
+              <span className="text-sm text-gray-500 ml-1">{lang === 'hi' ? 'परामर्श' : 'per consultation'}</span>
+            </div>
+          )}
+
+          {nextSlot && nextSlot.isToday ? (
+            <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-100 rounded-lg px-3 py-1.5 text-sm font-medium mb-4">
+              {t.availableToday}{nextSlot.time ? ` · ${nextSlot.time}` : ''}
+            </div>
+          ) : availabilityLabel ? (
+            <div className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-600 border border-gray-100 rounded-lg px-3 py-1.5 text-sm font-medium mb-4">
+              🕐 {availabilityLabel}
+            </div>
+          ) : null}
+
+          {/* Quick-pick slots (logged-in patients only) — tap carries the time
+              into booking; nothing is auto-selected. */}
+          {isAuthenticated && isPatient && todaySlots.length > 0 && (
+            <div className="mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">{t.pickSlot}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {todaySlots.map((slot) => (
+                  <Link
+                    key={`aside-${slot.date}-${slot.label}`}
+                    to={`/book-appointment/${doctor._id}?date=${slot.date}&slot=${encodeURIComponent(slot.label)}`}
+                    onClick={() => trackBook('logged_in')}
+                    className="text-center px-2 py-2 rounded-lg border border-primary-200 bg-primary-50 text-primary-700 text-sm font-medium hover:bg-primary-100 hover:border-primary-300 transition-colors"
+                  >
+                    {(slot.label || '').split(' - ')[0]}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Primary action — same gating as the inline buttons. */}
+          {isAuthenticated && isPatient ? (
+            <Link
+              to={`/book-appointment/${doctor._id}`}
+              onClick={() => trackBook('logged_in')}
+              className="btn btn-primary w-full justify-center text-base"
+            >
+              📅 {t.bookAppointment}
+            </Link>
+          ) : !isAuthenticated ? (
+            <>
+              <Link
+                to="/login"
+                onClick={() => trackEvent('book_appointment_click', { doctor_id: doctor._id, doctor_specialization: doctor.specialization || 'unknown', auth_state: 'logged_out' })}
+                className="btn btn-primary w-full justify-center"
+              >
+                {t.loginToBook}
+              </Link>
+              <p className="mt-2 text-xs text-gray-500 text-center">
+                {t.noAccount}{' '}
+                <Link to="/register" className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
+              </p>
+            </>
+          ) : null}
+
+          {/* Honest differentiator — reinforces the platform's edge at the
+              point of decision. */}
+          <p className="mt-3 text-[11px] text-center text-green-700 bg-green-50 rounded-lg py-1.5">
+            {lang === 'hi' ? 'पैसे सीधे डॉक्टर को · कोई कमीशन नहीं' : 'Pay the doctor directly · no commission'}
+          </p>
+        </div>
+      </aside>
+      )}
       </div>
       </div>
 
