@@ -1254,7 +1254,7 @@ function AdminDashboard() {
                             return (
                               <div>
                                 <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Paid</span>
-                                {apt.amountCollected > 0 && <div className="text-xs text-gray-600 mt-1">₹{apt.amountCollected}</div>}
+                                {apt.amountCollected > 0 && <div className="text-xs text-gray-600 mt-1">Rs. {apt.amountCollected}</div>}
                                 {apt.paidAt && <div className="text-xs text-gray-400">{formatDate(apt.paidAt)}</div>}
                               </div>
                             );
@@ -1297,7 +1297,7 @@ function AdminDashboard() {
           {/* Revenue Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-3xl font-bold text-green-600">₹{analytics.revenue.total.toLocaleString()}</div>
+              <div className="text-3xl font-bold text-green-600">Rs. {analytics.revenue.total.toLocaleString()}</div>
               <div className="text-gray-600 mt-1">Total Revenue</div>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6 text-center">
@@ -1306,7 +1306,7 @@ function AdminDashboard() {
             </div>
             <div className="bg-white rounded-xl shadow-md p-6 text-center">
               <div className="text-3xl font-bold text-purple-600">
-                ₹{analytics.revenue.totalPaidAppointments > 0 ? Math.round(analytics.revenue.total / analytics.revenue.totalPaidAppointments) : 0}
+                Rs. {analytics.revenue.totalPaidAppointments > 0 ? Math.round(analytics.revenue.total / analytics.revenue.totalPaidAppointments) : 0}
               </div>
               <div className="text-gray-600 mt-1">Avg Fee per Consultation</div>
             </div>
@@ -1425,7 +1425,7 @@ function AdminDashboard() {
                         <td className="px-4 py-3 text-sm font-medium text-gray-800">{doc.doctorName}</td>
                         <td className="px-4 py-3 text-sm text-gray-600">{doc.specialization || '-'}</td>
                         <td className="px-4 py-3 text-sm text-gray-600">{doc.appointments}</td>
-                        <td className="px-4 py-3 text-sm font-semibold text-green-600">₹{doc.revenue.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-green-600">Rs. {doc.revenue.toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1448,7 +1448,7 @@ function AdminDashboard() {
                       <p className="text-xs text-gray-500">{payment.consultationType} • {formatDate(payment.date)} • {payment.timeSlot}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-green-600">₹{payment.amountCollected}</p>
+                      <p className="font-semibold text-green-600">Rs. {payment.amountCollected}</p>
                       <p className="text-xs text-gray-400">{payment.paidAt ? formatDate(payment.paidAt) : ''}</p>
                     </div>
                   </div>
@@ -1922,7 +1922,7 @@ function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Consultation fee (₹)</label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Consultation fee (Rs.)</label>
                 <input
                   type="number" min="0"
                   value={profileForm.consultationFee}

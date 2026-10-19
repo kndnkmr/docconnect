@@ -1383,7 +1383,7 @@ function Dashboard() {
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
                       {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && (
                         <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                          <p className="text-sm font-medium text-orange-800 mb-2">Pay ₹{apt.doctor?.consultationFee || 'as discussed'}</p>
+                          <p className="text-sm font-medium text-orange-800 mb-2">Pay Rs. {apt.doctor?.consultationFee || 'as discussed'}</p>
                           {apt.doctor?.upiQrCode ? (
                             <div className="text-center">
                               <img src={getUploadUrl(apt.doctor.upiQrCode)} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
@@ -1623,7 +1623,7 @@ function Dashboard() {
               { key: 'qualification', label: 'Qualification *', placeholder: 'e.g., MBBS, MD - Cardiology' },
               { key: 'medicalRegistrationNo', label: 'Medical Registration No. *', placeholder: 'NMC or State Medical Council number' },
               { key: 'experience', label: 'Years of Experience *', placeholder: 'e.g., 10', type: 'number' },
-              { key: 'consultationFee', label: 'Consultation Fee (₹) *', placeholder: 'e.g., 500', type: 'number' },
+              { key: 'consultationFee', label: 'Consultation Fee (Rs.) *', placeholder: 'e.g., 500', type: 'number' },
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
               { key: 'city', label: 'City *', placeholder: 'e.g., Delhi, Mumbai, Rishikesh' },
               { key: 'googleMapsLink', label: 'Google Maps Link (optional)', placeholder: 'Paste your clinic Google Maps URL' },

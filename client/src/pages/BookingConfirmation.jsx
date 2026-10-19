@@ -153,7 +153,7 @@ function BookingConfirmation() {
             {booking.fee && (
               <div className="flex justify-between py-2">
                 <span className="text-gray-500">{t.fee}</span>
-                <span className="font-semibold text-primary-600">₹{booking.fee}</span>
+                <span className="font-semibold text-primary-600">Rs. {booking.fee}</span>
               </div>
             )}
           </div>

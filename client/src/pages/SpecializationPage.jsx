@@ -28,7 +28,7 @@ const specializationData = {
     icon: '🤰',
     faqs: [
       { q: 'When should I see a gynaecologist?', a: 'You should visit a gynaecologist for irregular periods, pregnancy planning, pelvic pain, unusual discharge, or routine screening after age 21.' },
-      { q: 'How much does a gynaecologist consultation cost?', a: 'Online consultations on ProMedicoz typically range from ₹300 to ₹1000 depending on the doctor\'s experience.' },
+      { q: 'How much does a gynaecologist consultation cost?', a: 'Online consultations on ProMedicoz typically range from Rs. 300 to Rs. 1000 depending on the doctor\'s experience.' },
       { q: 'Can I consult a gynaecologist online?', a: 'Yes, ProMedicoz offers video and phone consultations with experienced gynaecologists for non-emergency concerns.' },
     ]
   },
@@ -113,7 +113,7 @@ const specializationData = {
     faqs: [
       { q: 'How often should I visit a dentist?', a: 'Every 6 months for routine check-ups and cleaning, or immediately if you have pain, swelling, or bleeding gums.' },
       { q: 'Can I consult a dentist online?', a: 'For initial assessment, medication for pain/infection, and treatment planning. Procedures require in-person visits.' },
-      { q: 'How much does a dental consultation cost?', a: 'Online consultations range from ₹200-₹500. In-person procedures vary by treatment type.' },
+      { q: 'How much does a dental consultation cost?', a: 'Online consultations range from Rs. 200-Rs. 500. In-person procedures vary by treatment type.' },
     ]
   },
   'general-physician': {
@@ -166,7 +166,7 @@ const specializationHi = {
     conditions: ['अनियमित मासिक धर्म', 'PCOD/PCOS', 'गर्भावस्था देखभाल', 'बांझपन/IVF', 'रजोनिवृत्ति', 'एंडोमेट्रियोसिस', 'फाइब्रॉएड', 'सर्वाइकल जांच'],
     faqs: [
       { q: 'मुझे स्त्री रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'अनियमित मासिक धर्म, गर्भावस्था की योजना, पेल्विक दर्द, असामान्य स्राव, या 21 वर्ष के बाद नियमित जांच के लिए स्त्री रोग विशेषज्ञ से मिलें।' },
-      { q: 'स्त्री रोग विशेषज्ञ के परामर्श का खर्च कितना है?', a: 'ProMedicoz पर ऑनलाइन परामर्श आमतौर पर डॉक्टर के अनुभव के अनुसार ₹300 से ₹1000 तक होता है।' },
+      { q: 'स्त्री रोग विशेषज्ञ के परामर्श का खर्च कितना है?', a: 'ProMedicoz पर ऑनलाइन परामर्श आमतौर पर डॉक्टर के अनुभव के अनुसार Rs. 300 से Rs. 1000 तक होता है।' },
       { q: 'क्या मैं ऑनलाइन स्त्री रोग विशेषज्ञ से परामर्श कर सकती हूं?', a: 'हां, ProMedicoz गैर-आपातकालीन समस्याओं के लिए अनुभवी स्त्री रोग विशेषज्ञों के साथ वीडियो और फोन परामर्श प्रदान करता है।' },
     ]
   },
@@ -513,18 +513,22 @@ function SpecializationPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {doctors.map((doc) => (
-                <Link key={doc._id} to={`/doctors/${doc._id}`} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow block">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-xl">
-                      {doc.profilePhoto ? <img src={getUploadUrl(doc.profilePhoto, { width: 120 })} alt={doc.name} className="w-12 h-12 rounded-full object-cover" /> : '🧑‍⚕️'}
+                <Link key={doc._id} to={`/doctors/${doc._id}`} className="group card-lift bg-white rounded-2xl p-5 shadow-sm block border border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center text-xl flex-shrink-0 overflow-hidden border-2 border-primary-50">
+                      {doc.profilePhoto ? <img src={getUploadUrl(doc.profilePhoto, { width: 120 })} alt={doc.name} className="w-14 h-14 rounded-full object-cover" /> : '🧑‍⚕️'}
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">{doc.name}</h3>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-gray-800 truncate">{doc.name}</h3>
                       <p className="text-sm text-gray-500">{doc.experience || 0} {ui.yrsExp}</p>
                     </div>
                   </div>
-                  {doc.consultationFee > 0 && <p className="text-sm text-gray-600">{ui.consultation}: ₹{doc.consultationFee}</p>}
-                  <span className="text-primary-600 text-sm font-medium mt-2 inline-block">{ui.bookAppointment}</span>
+                  {doc.consultationFee > 0 && (
+                    <p className="text-sm text-gray-500">{ui.consultation}: <span className="font-bold text-gray-800">Rs. {doc.consultationFee}</span></p>
+                  )}
+                  <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-semibold mt-3 group-hover:gap-1.5 transition-all">
+                    {ui.bookAppointment} <span aria-hidden="true">→</span>
+                  </span>
                 </Link>
               ))}
             </div>

@@ -386,7 +386,7 @@ function BookAppointment() {
             <h2 className="text-xl font-semibold text-gray-800">{doctor?.name}</h2>
             <p className="text-primary-600">{doctor?.specialization || 'General Physician'}</p>
             {doctor?.consultationFee > 0 && (
-              <p className="text-gray-500 text-sm">{t.feeLabel}: ₹{doctor.consultationFee}</p>
+              <p className="text-gray-500 text-sm">{t.feeLabel}: Rs. {doctor.consultationFee}</p>
             )}
           </div>
         </div>

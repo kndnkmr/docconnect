@@ -29,7 +29,7 @@ const TXT = {
     headerSubtitle: (n) => `Browse our network of ${n} verified doctor${n === 1 ? '' : 's'} — book by video, phone, or in person`,
     specialization: 'Specialization', specializationPh: 'e.g., Gynaecologist, Cardiologist...',
     doctorName: 'Doctor Name', doctorNamePh: 'Search by name...',
-    maxFee: 'Max Fee (₹)', maxFeePh: 'e.g., 500',
+    maxFee: 'Max Fee (Rs.)', maxFeePh: 'e.g., 500',
     city: 'City', cityPh: 'e.g., Delhi, Mumbai',
     consultation: 'Consultation', allTypes: 'All Types',
     inPerson: '🏥 In-Person', video: '📹 Video Call', phone: '📞 Phone Call',
@@ -58,7 +58,7 @@ const TXT = {
     headerSubtitle: (n) => `हमारे ${n} सत्यापित डॉक्टर${n === 1 ? '' : 'ों'} में से चुनें — वीडियो, फ़ोन या क्लिनिक पर बुक करें`,
     specialization: 'विशेषज्ञता', specializationPh: 'जैसे: स्त्री रोग विशेषज्ञ, हृदय रोग विशेषज्ञ...',
     doctorName: 'डॉक्टर का नाम', doctorNamePh: 'नाम से खोजें...',
-    maxFee: 'अधिकतम शुल्क (₹)', maxFeePh: 'जैसे: 500',
+    maxFee: 'अधिकतम शुल्क (Rs.)', maxFeePh: 'जैसे: 500',
     city: 'शहर', cityPh: 'जैसे: दिल्ली, मुंबई',
     consultation: 'परामर्श', allTypes: 'सभी प्रकार',
     inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो कॉल', phone: '📞 फ़ोन कॉल',
@@ -552,7 +552,7 @@ function DoctorCard({ doctor, t }) {
   return (
     <Link
       to={`/doctors/${doctor._id}`}
-      className="card-lift bg-white rounded-xl shadow-md block p-5 flex gap-4 items-start"
+      className="group card-lift bg-white rounded-xl shadow-md block p-5 flex gap-4 items-start"
       // "block" makes the entire card clickable
     >
       {/* Avatar */}
@@ -618,36 +618,37 @@ function DoctorCard({ doctor, t }) {
           {availabilityLabel}
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 mt-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
           {doctor.consultationFee > 0 && (
-            <span className="text-gray-700 font-medium text-sm">₹{doctor.consultationFee}</span>
+            <span className="text-gray-800 font-bold text-base">Rs. {doctor.consultationFee}</span>
           )}
           {doctor.city && (
             <span className="text-gray-500 text-sm">📍 {doctor.city}</span>
           )}
         </div>
 
-        {/* Consultation mode badges */}
+        {/* Consultation mode pills — tinted bordered pills, consistent with
+            the doctor profile. */}
         {doctor.consultationModes && doctor.consultationModes.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {doctor.consultationModes.includes('in-person') && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">🏥 In-Person</span>}
-            {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">📹 Video</span>}
-            {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">📞 Phone</span>}
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
+            {doctor.consultationModes.includes('video') && <span className="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-100 rounded-full text-xs font-medium">📹 Video</span>}
+            {doctor.consultationModes.includes('phone') && <span className="px-2.5 py-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-full text-xs font-medium">📞 Phone</span>}
+            {doctor.consultationModes.includes('in-person') && <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-xs font-medium">🏥 In-Person</span>}
           </div>
         )}
 
         {/* Languages the doctor can consult in — helps local patients find
             someone they can talk to comfortably */}
         {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
-          <p className="text-gray-500 text-xs mt-2">
+          <p className="text-gray-500 text-xs mt-2.5">
             🗣️ {t.speaks}: {doctor.languagesSpoken.join(', ')}
           </p>
         )}
 
         {/* View Profile link */}
         <div className="mt-3">
-          <span className="text-primary-600 text-sm font-medium hover:underline">
-            {t.viewProfile}
+          <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-semibold group-hover:gap-1.5 transition-all">
+            {t.viewProfile} <span aria-hidden="true">→</span>
           </span>
         </div>
       </div>

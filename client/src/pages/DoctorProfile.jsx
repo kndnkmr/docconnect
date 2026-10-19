@@ -31,7 +31,7 @@ const TXT = {
     backToDoctors: '← Back to all doctors',
     verified: 'Verified by ProMedicoz',
     yrsExp: (y) => `${y} yrs experience`,
-    feeBadge: (f) => `₹${f} consultation`,
+    feeBadge: (f) => `Rs. ${f} consultation`,
     consultsDone: (n) => `✅ ${n} consultation${n > 1 ? 's' : ''} completed`,
     newDoctor: '🆕 New on ProMedicoz',
     inPerson: '🏥 In-Person', video: '📹 Video', phone: '📞 Phone',
@@ -48,7 +48,7 @@ const TXT = {
     nextToday: (time) => `Available today at ${time}`,
     nextTomorrow: (time) => `Available tomorrow at ${time}`,
     nextOn: (day, time) => `Next available ${day} at ${time}`,
-    pickSlot: 'Pick a time slot', feeFrom: (f) => `₹${f}`, feeConsult: 'consultation',
+    pickSlot: 'Pick a time slot', feeFrom: (f) => `Rs. ${f}`, feeConsult: 'consultation',
     newRatingPlaceholder: '🆕 New on ProMedicoz',
   },
   hi: {
@@ -57,7 +57,7 @@ const TXT = {
     backToDoctors: '← सभी डॉक्टर पर वापस जाएं',
     verified: 'ProMedicoz द्वारा सत्यापित',
     yrsExp: (y) => `${y} वर्ष का अनुभव`,
-    feeBadge: (f) => `₹${f} परामर्श`,
+    feeBadge: (f) => `Rs. ${f} परामर्श`,
     consultsDone: (n) => `✅ ${n} परामर्श पूरे`,
     newDoctor: '🆕 ProMedicoz पर नया',
     inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो', phone: '📞 फ़ोन',
@@ -73,7 +73,7 @@ const TXT = {
     nextToday: (time) => `आज ${time} बजे उपलब्ध`,
     nextTomorrow: (time) => `कल ${time} बजे उपलब्ध`,
     nextOn: (day, time) => `अगली उपलब्धता ${day} को ${time} बजे`,
-    pickSlot: 'समय स्लॉट चुनें', feeFrom: (f) => `₹${f}`, feeConsult: 'परामर्श',
+    pickSlot: 'समय स्लॉट चुनें', feeFrom: (f) => `Rs. ${f}`, feeConsult: 'परामर्श',
     newRatingPlaceholder: '🆕 ProMedicoz पर नया',
   },
 };
@@ -283,7 +283,7 @@ function DoctorProfile() {
     <div>
       <SEO
         title={doctor ? `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
-        description={doctor ? `Book appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: ₹${doctor.consultationFee || 'N/A'}.` : ''}
+        description={doctor ? `Book appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: Rs. ${doctor.consultationFee || 'N/A'}.` : ''}
         path={`/doctors/${id}`}
         type="profile"
       />
@@ -400,7 +400,7 @@ function DoctorProfile() {
                 <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
                   <span className="text-xl" aria-hidden="true">💰</span>
                   <div className="min-w-0">
-                    <div className="text-sm font-bold text-gray-800 leading-none">₹{doctor.consultationFee}</div>
+                    <div className="text-sm font-bold text-gray-800 leading-none">Rs. {doctor.consultationFee}</div>
                     <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'परामर्श' : 'consultation'}</div>
                   </div>
                 </div>
@@ -722,7 +722,7 @@ function DoctorProfile() {
         <div className="sticky top-24 bg-white rounded-2xl shadow-lg ring-1 ring-black/5 p-5">
           {doctor.consultationFee > 0 && (
             <div className="mb-3">
-              <span className="text-2xl font-extrabold text-gray-800">₹{doctor.consultationFee}</span>
+              <span className="text-2xl font-extrabold text-gray-800">Rs. {doctor.consultationFee}</span>
               <span className="text-sm text-gray-500 ml-1">{lang === 'hi' ? 'परामर्श' : 'per consultation'}</span>
             </div>
           )}
