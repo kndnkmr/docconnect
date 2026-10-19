@@ -413,14 +413,18 @@ function DoctorProfile() {
                     <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'परामर्श पूरे' : 'consults done'}</div>
                   </div>
                 </div>
-              ) : (
+              ) : curatedReviews.length === 0 ? (
+                /* "New on ProMedicoz" only for genuinely new doctors. An
+                   established doctor who already has patient reviews (e.g. ones
+                   collected before they were on the platform) is NOT new, so we
+                   suppress the badge for them rather than mislabel them. */
                 <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
                   <span className="text-xl" aria-hidden="true">🆕</span>
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-indigo-700 leading-tight">{lang === 'hi' ? 'ProMedicoz पर नया' : 'New on ProMedicoz'}</div>
                   </div>
                 </div>
-              )}
+              ) : null}
               {doctor.city && (
                 <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
                   <span className="text-xl" aria-hidden="true">📍</span>
