@@ -112,6 +112,70 @@ html {
   background-size: 22px 22px;
 }
 
+/* ============================================
+   Home hero — modern, "alive" treatment
+   ============================================ */
+
+/* Slowly drifting gradient so the hero band breathes instead of sitting as a
+   flat fill. Pairs with a larger background-size on the element. Very slow
+   (18s) and subtle, so it reads as premium depth, not a distracting loop. */
+@keyframes heroGradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.hero-animated-gradient {
+  background-size: 200% 200%;
+  animation: heroGradientShift 18s ease infinite;
+}
+
+/* Soft "aurora" glow blobs that slowly float — gives the hero dimensional,
+   app-like depth. Decorative only (used on pointer-events-none layers). */
+@keyframes heroFloat {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(14px, -18px) scale(1.08); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+.hero-float-slow { animation: heroFloat 12s ease-in-out infinite; }
+.hero-float-slower { animation: heroFloat 16s ease-in-out infinite reverse; }
+
+/* Staggered entrance for hero content — each element fades up a touch, so the
+   hero feels crafted and intentional on load rather than snapping in. */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-rise {
+  opacity: 0;
+  animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.hero-rise-1 { animation-delay: 0.05s; }
+.hero-rise-2 { animation-delay: 0.15s; }
+.hero-rise-3 { animation-delay: 0.25s; }
+.hero-rise-4 { animation-delay: 0.35s; }
+.hero-rise-5 { animation-delay: 0.45s; }
+
+/* Faint medical-cross motif layered into the hero — more on-brand than plain
+   dots. Built from two crossed gradients forming a "+" tile. */
+.hero-cross-pattern {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.9) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(255,255,255,0.9) 2px, transparent 2px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+  mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animated-gradient,
+  .hero-float-slow,
+  .hero-float-slower { animation: none; }
+  .hero-rise {
+    opacity: 1;
+    animation: none;
+  }
+}
+
 /* Accessibility: honour users who prefer reduced motion — disable the lift
    transform/animation for them (shadow still applies, no movement). */
 @media (prefers-reduced-motion: reduce) {

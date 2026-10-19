@@ -37,16 +37,19 @@ const CURATED_REVIEWS = [
 const TXT = {
   en: {
     heroTitle: 'Find the Right Doctor & Book Instantly',
-    heroSubtitle: 'Video, phone, or in-person consultations with verified doctors across India.',
+    heroSubtitle: 'Consult trusted doctors across India — booked in under 2 minutes.',
     trustVerified: 'Verified doctors',
     trustNoCommission: 'Pay the doctor directly',
     trustModes: 'Video, phone or in-person',
+    heroPill: 'No commission · fair fees',
+    searchLabel: 'What do you need help with?',
     searchPlaceholder: 'Describe your problem (e.g., back pain, fever...)',
     findDoctor: 'Find Doctor',
+    quickLabel: 'Popular',
     suggested: 'Suggested',
     statDoctors: 'Doctors',
-    statSpecializations: 'Specializations',
-    statAppointments: 'Appointments',
+    statSpecializations: 'Specialities',
+    statAppointments: 'Booked',
     areYouDoctor: 'Are you a doctor?',
     joinLink: 'Join ProMedicoz →',
     tipBadge: '💡 Health Tip of the Day',
@@ -94,16 +97,19 @@ const TXT = {
   },
   hi: {
     heroTitle: 'सही डॉक्टर खोजें और तुरंत बुक करें',
-    heroSubtitle: 'भारत भर के सत्यापित डॉक्टरों से वीडियो, फ़ोन या क्लिनिक पर परामर्श।',
+    heroSubtitle: 'भारत भर के भरोसेमंद डॉक्टर — 2 मिनट से भी कम में बुक करें।',
     trustVerified: 'सत्यापित डॉक्टर',
     trustNoCommission: 'पैसे सीधे डॉक्टर को',
     trustModes: 'वीडियो, फ़ोन या क्लिनिक पर',
+    heroPill: 'कोई कमीशन नहीं · वाजिब फ़ीस',
+    searchLabel: 'आपको किसमें मदद चाहिए?',
     searchPlaceholder: 'अपनी समस्या बताएं (जैसे: कमर दर्द, बुखार...)',
     findDoctor: 'डॉक्टर खोजें',
+    quickLabel: 'लोकप्रिय',
     suggested: 'सुझाव',
     statDoctors: 'डॉक्टर',
     statSpecializations: 'विशेषज्ञताएं',
-    statAppointments: 'अपॉइंटमेंट',
+    statAppointments: 'बुकिंग',
     areYouDoctor: 'क्या आप डॉक्टर हैं?',
     joinLink: 'ProMedicoz से जुड़ें →',
     tipBadge: '💡 आज का स्वास्थ्य सुझाव',
@@ -281,6 +287,19 @@ function Home() {
     return 'General Physician';
   };
 
+  // One-tap "popular" chips under the search — the single biggest modern
+  // health-app upgrade: a patient who doesn't want to type can jump straight
+  // into a specialty. Gynaecologist + General Physician lead (the platform's
+  // focus). Each `spec` is a real specialization the backend/synonyms match,
+  // so a tap lands on a populated doctor list. Labels are bilingual.
+  const quickPicks = [
+    { en: "Women's health", hi: 'महिला स्वास्थ्य', emoji: '🌸', spec: 'Gynaecologist' },
+    { en: 'General Physician', hi: 'सामान्य चिकित्सक', emoji: '🩺', spec: 'General Physician' },
+    { en: 'Skin & hair', hi: 'त्वचा व बाल', emoji: '✨', spec: 'Dermatologist' },
+    { en: 'Child care', hi: 'बाल रोग', emoji: '🧸', spec: 'Pediatrician' },
+    { en: 'Mental health', hi: 'मानसिक स्वास्थ्य', emoji: '🧠', spec: 'Psychiatrist' },
+  ];
+
   return (
     <div className="flex-grow flex flex-col">
       <SEO
@@ -306,25 +325,26 @@ function Home() {
           IS the hero, so it's the first thing on screen — no scrolling past
           marketing to reach it. Login/Register live in the navbar; the hero
           stays focused on the one job a patient came to do. */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
-        {/* Depth layers: a faint dotted texture + two soft glowing blobs so the
-            hero reads as a modern, dimensional band rather than a flat fill.
-            All decorative + pointer-events-none, so nothing interactive moves. */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.12]"
-          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-          aria-hidden="true"
-        ></div>
-        <div className="pointer-events-none absolute -top-24 -left-24 w-80 h-80 rounded-full bg-white/10 blur-3xl" aria-hidden="true"></div>
-        <div className="pointer-events-none absolute -bottom-28 -right-20 w-96 h-96 rounded-full bg-primary-400/20 blur-3xl" aria-hidden="true"></div>
+      <section className="hero-animated-gradient relative overflow-hidden bg-gradient-to-br from-primary-800 via-primary-600 to-primary-700 text-white">
+        {/* Depth layers (all decorative + pointer-events-none, so nothing
+            interactive moves):
+            1. a faint medical-cross motif (on-brand, radially masked so it
+               fades toward the edges),
+            2. two slowly floating "aurora" glow blobs for app-like depth,
+            3. a soft dark vignette at the bottom so the content below reads
+               as a clean seam rather than a hard gradient cut. */}
+        <div className="hero-cross-pattern pointer-events-none absolute inset-0 opacity-[0.07]" aria-hidden="true"></div>
+        <div className="hero-float-slow pointer-events-none absolute -top-24 -left-20 w-80 h-80 rounded-full bg-white/10 blur-3xl" aria-hidden="true"></div>
+        <div className="hero-float-slower pointer-events-none absolute -bottom-28 -right-16 w-96 h-96 rounded-full bg-cyan-300/20 blur-3xl" aria-hidden="true"></div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/15 to-transparent" aria-hidden="true"></div>
 
-        <div className="relative container mx-auto px-4 py-12 sm:py-16 md:py-24">
+        <div className="relative container mx-auto px-4 py-10 sm:py-16 md:py-24">
           <div className="max-w-2xl mx-auto text-center">
             {/* Top row: language toggle centered, with Install (left) and
                 Share (right) filling the empty space on either side. Wraps
                 cleanly on small screens. Language toggle stays prominent in
                 the hero (not the navbar) so a non-English speaker sees it. */}
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-5">
+            <div className="hero-rise hero-rise-1 flex items-center justify-center gap-1.5 sm:gap-2 mb-6">
               {/* Install — one-tap when the browser supports it, else the
                   /install page (iOS steps). */}
               {canInstall ? (
@@ -368,75 +388,116 @@ function Home() {
               </button>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 tracking-tight">
+            {/* One differentiator pill above the title — "no commission" is
+                the genuine edge over Practo/1mg, so it leads. The old trio of
+                pills duplicated the subtitle (verified + modes) and has been
+                folded into the glass card's trust strip below. */}
+            <span className="hero-rise hero-rise-1 inline-flex items-center gap-1.5 bg-white/12 border border-white/20 rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-medium mb-4 backdrop-blur-sm">
+              <span className="text-cyan-200" aria-hidden="true">●</span>
+              {t.heroPill}
+            </span>
+
+            <h1 className="hero-rise hero-rise-2 text-[26px] leading-tight sm:text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">
               {t.heroTitle}
             </h1>
-            <p className="text-sm sm:text-lg text-primary-100 mb-5">
+            <p className="hero-rise hero-rise-2 text-sm sm:text-lg text-primary-100 mb-6 max-w-lg mx-auto">
               {t.heroSubtitle}
             </p>
 
-            {/* Trust pills — quick, scannable credibility above the search */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-7 text-xs sm:text-sm">
-              {[t.trustVerified, t.trustNoCommission, t.trustModes].map((label, i) => (
-                <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 rounded-full px-3 py-1 font-medium">
-                  <span className="text-green-300" aria-hidden="true">✓</span>
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            {/* Search box — the hero's centerpiece. A search icon anchors the
-                left, and the Find Doctor button lifts on hover. */}
-            <div className="max-w-xl mx-auto">
+            {/* Booking card — the hero's centrepiece, lifted onto a frosted
+                glass panel so it reads as a real, tappable object (the app
+                feel) instead of a bare input floating on the gradient. */}
+            <div className="hero-rise hero-rise-3 max-w-xl mx-auto bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl ring-1 ring-black/5 p-3.5 sm:p-4 text-left">
+              <label htmlFor="hero-symptom" className="block text-xs font-semibold text-gray-500 mb-2 px-1">
+                {t.searchLabel}
+              </label>
               <div className="relative">
-                <svg className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
                 </svg>
                 <input
+                  id="hero-symptom"
                   type="text"
                   value={symptomSearch}
                   onChange={(e) => setSymptomSearch(e.target.value)}
                   placeholder={t.searchPlaceholder}
-                  aria-label={t.searchPlaceholder}
-                  className="w-full pl-12 pr-32 py-4 rounded-full text-gray-800 text-sm sm:text-base outline-none focus:ring-4 focus:ring-white/40 shadow-xl"
+                  aria-label={t.searchLabel}
+                  className="w-full pl-11 pr-3 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 text-sm sm:text-base outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white transition-colors"
                 />
-                <Link
-                  to={symptomSearch
-                    ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
-                    : '/doctors'}
-                  onClick={() => trackEvent('find_doctor_click', {
-                    source: 'home_hero_search',
-                    specialization: symptomSearch ? getSpecializationFromSymptom(symptomSearch) : 'none',
-                    had_symptom: symptomSearch ? 'yes' : 'no',
-                  })}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:-translate-y-px hover:shadow-md active:translate-y-0"
-                >
-                  {t.findDoctor}
-                </Link>
               </div>
+
               {symptomSearch && (
-                <p className="text-xs text-primary-100 mt-2 text-left pl-4">
-                  {t.suggested}: <span className="font-semibold">{getSpecializationFromSymptom(symptomSearch)}</span>
+                <p className="text-xs text-gray-500 mt-2 px-1">
+                  {t.suggested}: <span className="font-semibold text-primary-700">{getSpecializationFromSymptom(symptomSearch)}</span>
                 </p>
               )}
+
+              <Link
+                to={symptomSearch
+                  ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
+                  : '/doctors'}
+                onClick={() => trackEvent('find_doctor_click', {
+                  source: 'home_hero_search',
+                  specialization: symptomSearch ? getSpecializationFromSymptom(symptomSearch) : 'none',
+                  had_symptom: symptomSearch ? 'yes' : 'no',
+                })}
+                className="mt-3 w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-5 py-3.5 rounded-xl text-sm sm:text-base font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:shadow-md active:scale-[0.99]"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
+                </svg>
+                {t.findDoctor}
+              </Link>
+
+              {/* One-tap popular specialties — lets a patient who doesn't want
+                  to type jump straight into a populated doctor list. */}
+              <div className="mt-3.5 pt-3.5 border-t border-gray-100">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-2 px-1">{t.quickLabel}</p>
+                <div className="flex flex-wrap gap-2">
+                  {quickPicks.map((q) => (
+                    <Link
+                      key={q.spec}
+                      to={`/doctors?specialization=${encodeURIComponent(q.spec)}`}
+                      onClick={() => trackEvent('find_doctor_click', { source: 'home_hero_quickpick', specialization: q.spec, had_symptom: 'no' })}
+                      className="inline-flex items-center gap-1.5 bg-primary-50 text-primary-700 border border-primary-100 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-primary-100 active:scale-[0.97]"
+                    >
+                      <span aria-hidden="true">{q.emoji}</span>
+                      {lang === 'hi' ? q.hi : q.en}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Trust stats — compact glass cards below the action */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-8 max-w-md mx-auto">
+            {/* Trust strip — the two credibility points (verified + modes),
+                now shown ONCE here instead of duplicating the subtitle. */}
+            <div className="hero-rise hero-rise-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 mt-5 text-xs sm:text-sm text-primary-100">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-cyan-200" aria-hidden="true">✓</span>{t.trustVerified}
+              </span>
+              <span className="text-white/30" aria-hidden="true">•</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-cyan-200" aria-hidden="true">✓</span>{t.trustModes}
+              </span>
+            </div>
+
+            {/* Compact stat row — flat, inline numbers (no boxed cards), so it
+                reads as a confident footer to the hero rather than more UI. */}
+            <div className="hero-rise hero-rise-5 flex items-center justify-center divide-x divide-white/20 mt-6 max-w-sm mx-auto">
               {[
                 { num: '100+', label: t.statDoctors },
                 { num: '20+', label: t.statSpecializations },
                 { num: '1000+', label: t.statAppointments },
               ].map((s, i) => (
-                <div key={i} className="bg-white/10 border border-white/15 rounded-xl py-3 px-2 backdrop-blur-sm">
-                  <div className="text-lg sm:text-2xl font-bold">{s.num}</div>
-                  <div className="text-primary-200 text-[11px] sm:text-sm leading-tight">{s.label}</div>
+                <div key={i} className="px-4 sm:px-6 text-center">
+                  <div className="text-xl sm:text-2xl font-bold leading-none">{s.num}</div>
+                  <div className="text-primary-200 text-[11px] sm:text-xs mt-1">{s.label}</div>
                 </div>
               ))}
             </div>
 
             {!isAuthenticated && (
-              <p className="text-primary-100 text-xs sm:text-sm mt-5">
+              <p className="hero-rise hero-rise-5 text-primary-100 text-xs sm:text-sm mt-6">
                 {t.areYouDoctor}{' '}
                 <Link to="/register?role=doctor" className="underline font-semibold hover:text-white">{t.joinLink}</Link>
               </p>
