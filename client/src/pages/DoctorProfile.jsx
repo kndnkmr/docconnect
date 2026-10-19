@@ -425,11 +425,14 @@ function DoctorProfile() {
                   </div>
                 </div>
               ) : null}
-              {doctor.city && (
+              {doctor.city && doctor.city.trim() && (
                 <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
-                  <span className="text-xl" aria-hidden="true">📍</span>
+                  <span className="text-xl flex-shrink-0" aria-hidden="true">📍</span>
                   <div className="min-w-0">
-                    <div className="text-sm font-bold text-gray-800 leading-none truncate">{doctor.city}</div>
+                    {/* Full city shown (no truncation) — long names like
+                        "Chhattisgarh" were being clipped to "Chhattisg…".
+                        leading-tight lets it wrap to a second line if needed. */}
+                    <div className="text-sm font-bold text-gray-800 leading-tight break-words">{doctor.city.trim()}</div>
                     <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'स्थान' : 'location'}</div>
                   </div>
                 </div>
