@@ -71,6 +71,8 @@ const TXT = {
     availToday: 'Available today',
     specHeading: 'Consult by Specialization',
     specSubtitle: "Tap your concern — we'll show the right specialists",
+    specMostConsulted: 'Most consulted',
+    specAll: 'All specialities',
     browseAll: '🔍 Browse All Specializations →',
     howHeading: 'How ProMedicoz Works',
     howSubtitle: 'Book a consultation in 4 simple steps',
@@ -131,6 +133,8 @@ const TXT = {
     availToday: 'आज उपलब्ध',
     specHeading: 'बीमारी के अनुसार परामर्श करें',
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
+    specMostConsulted: 'सबसे ज़्यादा परामर्श',
+    specAll: 'सभी विशेषज्ञताएं',
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
     howHeading: 'ProMedicoz कैसे काम करता है',
     howSubtitle: '4 आसान चरणों में परामर्श बुक करें',
@@ -568,56 +572,94 @@ function Home() {
         </section>
       )}
 
-      {/* ---- Browse by concern — full specialization grid ---- */}
-      <section className="pt-8 pb-10 bg-white">
+      {/* ---- Browse by concern — specialization directory ----
+           Split into a "Most consulted" featured band (Gynae + GP + Child,
+           the platform's focus) and a colour-tinted "All specialities" grid.
+           Colour-coded icon chips give the grid scannable rhythm instead of
+           24 identical grey tiles. Every destination, label (EN + हिंदी) and
+           the "Browse all" button are preserved. Pure CSS — no new deps. */}
+      <section className="pt-10 pb-12 bg-dotted bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">{t.specHeading}</h2>
-          <p className="text-center text-gray-500 mb-6 text-sm">{t.specSubtitle}</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">{t.specHeading}</h2>
+          <p className="text-center text-gray-500 mb-7 text-sm">{t.specSubtitle}</p>
 
-          {/* Symptom cards — all departments */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 max-w-5xl mx-auto">
-            {[
-              { symptom: 'Fever / Cold', hi: 'बुखार / सर्दी', icon: '🤒', specialization: 'General Physician', slug: 'general-physician' },
-              { symptom: 'Headache', hi: 'सिरदर्द', icon: '🤕', specialization: 'Neurologist', slug: 'neurologist' },
-              { symptom: 'Pregnancy', hi: 'गर्भावस्था', icon: '🤰', specialization: 'Gynaecologist', slug: 'gynaecologist' },
-              { symptom: 'Skin / Hair', hi: 'त्वचा / बाल', icon: '🧴', specialization: 'Dermatologist', slug: 'dermatologist' },
-              { symptom: 'Heart / BP', hi: 'हृदय / रक्तचाप', icon: '❤️', specialization: 'Cardiologist', slug: 'cardiologist' },
-              { symptom: 'Bone / Joint', hi: 'हड्डी / जोड़', icon: '🦴', specialization: 'Orthopedic', slug: 'orthopedic' },
-              { symptom: 'Child Health', hi: 'बच्चों का स्वास्थ्य', icon: '👶', specialization: 'Pediatrician', slug: 'pediatrician' },
-              { symptom: 'Dental', hi: 'दंत / दांत', icon: '🦷', specialization: 'Dentist', slug: 'dentist' },
-              { symptom: 'Eye / Vision', hi: 'आँख / दृष्टि', icon: '👁️', specialization: 'Ophthalmologist' },
-              { symptom: 'Mental Health', hi: 'मानसिक स्वास्थ्य', icon: '🧠', specialization: 'Psychiatrist', slug: 'psychiatrist' },
-              { symptom: 'Ear / Nose', hi: 'कान / नाक', icon: '👂', specialization: 'ENT Specialist', slug: 'ent-specialist' },
-              { symptom: 'Stomach', hi: 'पेट', icon: '🤢', specialization: 'Gastroenterologist' },
-              { symptom: 'Lungs', hi: 'फेफड़े', icon: '🫁', specialization: 'Pulmonologist' },
-              { symptom: 'Kidney / Urine', hi: 'किडनी / मूत्र', icon: '💧', specialization: 'Urologist' },
-              { symptom: 'Diabetes', hi: 'मधुमेह', icon: '💉', specialization: 'Endocrinologist' },
-              { symptom: 'Cancer', hi: 'कैंसर', icon: '🎗️', specialization: 'Oncologist' },
-              { symptom: 'Kidney Disease', hi: 'गुर्दा रोग', icon: '🫘', specialization: 'Nephrologist' },
-              { symptom: 'Arthritis', hi: 'गठिया', icon: '🖐️', specialization: 'Rheumatologist' },
-              { symptom: 'Surgery', hi: 'सर्जरी', icon: '🔪', specialization: 'Surgeon' },
-              { symptom: 'Physiotherapy', hi: 'फिजियोथेरेपी', icon: '🏃', specialization: 'Physiotherapist' },
-              { symptom: 'Sexual Health', hi: 'यौन स्वास्थ्य', icon: '🔒', specialization: 'Sexologist' },
-              { symptom: 'Homeopathy', hi: 'होम्योपैथी', icon: '🌿', specialization: 'Homeopathy' },
-              { symptom: 'Ayurveda', hi: 'आयुर्वेद', icon: '🍃', specialization: 'Ayurveda' },
-              { symptom: 'Diet / Nutrition', hi: 'आहार / पोषण', icon: '🥗', specialization: 'Dietitian' },
-            ].map((item, idx) => (
-              <Link
-                key={idx}
-                to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                className="bg-gray-50 p-3 rounded-xl hover:shadow-md transition-all text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50"
-              >
-                <div className="text-3xl mb-1">{item.icon}</div>
-                {/* Always bilingual — the whole point is a Hindi-speaking
-                    patient can tap the right card instead of typing English. */}
-                <p className="text-xs font-medium text-gray-700 leading-tight">{item.symptom}</p>
-                <p className="text-xs text-gray-500 leading-tight mt-0.5">{item.hi}</p>
-              </Link>
-            ))}
+          {/* ---- Most consulted — larger featured cards ---- */}
+          <div className="max-w-5xl mx-auto mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
+              <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specMostConsulted}</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { en: "Women's health", hi: 'महिला स्वास्थ्य', note: { en: 'Pregnancy · PCOS · periods · fertility', hi: 'गर्भावस्था · PCOS · मासिक · प्रजनन' }, icon: '🌸', slug: 'gynaecologist', spec: 'Gynaecologist', card: 'from-pink-50 to-rose-50 border-pink-100 hover:border-pink-300', badge: 'bg-pink-500', noteColor: 'text-pink-700' },
+                { en: 'General Physician', hi: 'सामान्य चिकित्सक', note: { en: 'Fever · cough · body pain · checkups', hi: 'बुखार · खांसी · दर्द · जांच' }, icon: '🩺', slug: 'general-physician', spec: 'General Physician', card: 'from-blue-50 to-sky-50 border-blue-100 hover:border-blue-300', badge: 'bg-primary-600', noteColor: 'text-primary-700' },
+                { en: 'Child health', hi: 'बच्चों का स्वास्थ्य', note: { en: 'Newborn · vaccination · fever', hi: 'नवजात · टीकाकरण · बुखार' }, icon: '🧸', slug: 'pediatrician', spec: 'Pediatrician', card: 'from-amber-50 to-orange-50 border-amber-100 hover:border-amber-300', badge: 'bg-amber-500', noteColor: 'text-amber-700' },
+              ].map((f) => (
+                <Link
+                  key={f.spec}
+                  to={`/specialization/${f.slug}`}
+                  onClick={() => trackEvent('find_doctor_click', { source: 'home_spec_featured', specialization: f.spec, had_symptom: 'no' })}
+                  className={`card-lift group bg-gradient-to-br ${f.card} border rounded-2xl p-4 flex items-center gap-3.5`}
+                >
+                  <span className={`flex-shrink-0 w-12 h-12 rounded-xl ${f.badge} text-white text-2xl flex items-center justify-center shadow-sm`} aria-hidden="true">{f.icon}</span>
+                  <div className="min-w-0">
+                    <p className="font-bold text-gray-800 text-sm leading-tight">{lang === 'hi' ? f.hi : f.en}</p>
+                    <p className="text-gray-500 text-xs leading-tight mt-0.5">{lang === 'hi' ? f.en : f.hi}</p>
+                    <p className={`text-[11px] ${f.noteColor} font-medium mt-1.5 leading-tight`}>{lang === 'hi' ? f.note.hi : f.note.en}</p>
+                  </div>
+                  <span className="ml-auto flex-shrink-0 text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* ---- All specialities — colour-tinted compact grid ---- */}
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
+              <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specAll}</h3>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              {[
+                { symptom: 'Headache', hi: 'सिरदर्द', icon: '🤕', specialization: 'Neurologist', slug: 'neurologist', tint: 'bg-violet-100' },
+                { symptom: 'Skin / Hair', hi: 'त्वचा / बाल', icon: '🧴', specialization: 'Dermatologist', slug: 'dermatologist', tint: 'bg-amber-100' },
+                { symptom: 'Heart / BP', hi: 'हृदय / रक्तचाप', icon: '❤️', specialization: 'Cardiologist', slug: 'cardiologist', tint: 'bg-red-100' },
+                { symptom: 'Bone / Joint', hi: 'हड्डी / जोड़', icon: '🦴', specialization: 'Orthopedic', slug: 'orthopedic', tint: 'bg-emerald-100' },
+                { symptom: 'Dental', hi: 'दंत / दांत', icon: '🦷', specialization: 'Dentist', slug: 'dentist', tint: 'bg-cyan-100' },
+                { symptom: 'Eye / Vision', hi: 'आँख / दृष्टि', icon: '👁️', specialization: 'Ophthalmologist', tint: 'bg-sky-100' },
+                { symptom: 'Mental Health', hi: 'मानसिक स्वास्थ्य', icon: '🧠', specialization: 'Psychiatrist', slug: 'psychiatrist', tint: 'bg-purple-100' },
+                { symptom: 'Ear / Nose', hi: 'कान / नाक', icon: '👂', specialization: 'ENT Specialist', slug: 'ent-specialist', tint: 'bg-orange-100' },
+                { symptom: 'Stomach', hi: 'पेट', icon: '🤢', specialization: 'Gastroenterologist', tint: 'bg-yellow-100' },
+                { symptom: 'Lungs', hi: 'फेफड़े', icon: '🫁', specialization: 'Pulmonologist', tint: 'bg-teal-100' },
+                { symptom: 'Kidney / Urine', hi: 'किडनी / मूत्र', icon: '💧', specialization: 'Urologist', tint: 'bg-blue-100' },
+                { symptom: 'Diabetes', hi: 'मधुमेह', icon: '💉', specialization: 'Endocrinologist', tint: 'bg-rose-100' },
+                { symptom: 'Cancer', hi: 'कैंसर', icon: '🎗️', specialization: 'Oncologist', tint: 'bg-pink-100' },
+                { symptom: 'Kidney Disease', hi: 'गुर्दा रोग', icon: '🫘', specialization: 'Nephrologist', tint: 'bg-indigo-100' },
+                { symptom: 'Arthritis', hi: 'गठिया', icon: '🖐️', specialization: 'Rheumatologist', tint: 'bg-lime-100' },
+                { symptom: 'Surgery', hi: 'सर्जरी', icon: '🔪', specialization: 'Surgeon', tint: 'bg-slate-100' },
+                { symptom: 'Physiotherapy', hi: 'फिजियोथेरेपी', icon: '🏃', specialization: 'Physiotherapist', tint: 'bg-green-100' },
+                { symptom: 'Sexual Health', hi: 'यौन स्वास्थ्य', icon: '🔒', specialization: 'Sexologist', tint: 'bg-fuchsia-100' },
+                { symptom: 'Homeopathy', hi: 'होम्योपैथी', icon: '🌿', specialization: 'Homeopathy', tint: 'bg-emerald-100' },
+                { symptom: 'Ayurveda', hi: 'आयुर्वेद', icon: '🍃', specialization: 'Ayurveda', tint: 'bg-lime-100' },
+                { symptom: 'Diet / Nutrition', hi: 'आहार / पोषण', icon: '🥗', specialization: 'Dietitian', tint: 'bg-teal-100' },
+              ].map((item, idx) => (
+                <Link
+                  key={idx}
+                  to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                  className="card-lift group bg-white p-3 rounded-xl text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40"
+                >
+                  <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
+                  {/* Always bilingual — the whole point is a Hindi-speaking
+                      patient can tap the right card instead of typing English. */}
+                  <p className="text-xs font-semibold text-gray-700 leading-tight">{item.symptom}</p>
+                  <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* See all link */}
-          <div className="text-center mt-5">
+          <div className="text-center mt-7">
             <Link
               to="/doctors"
               className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 text-primary-700 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-100 transition-colors"
