@@ -119,51 +119,69 @@ function BookingConfirmation() {
           </div>
         </div>
 
-        {/* Booking details card */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <h2 className="font-semibold text-gray-800 mb-4 text-lg">{t.summary}</h2>
-          
-          <div className="space-y-3">
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.doctor}</span>
-              <span className="font-medium text-gray-800">{booking.doctorName}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.specialization}</span>
-              <span className="font-medium text-gray-800">{booking.specialization || '-'}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.date}</span>
-              <span className="font-medium text-gray-800">
-                {new Date(booking.date).toLocaleDateString(t.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-              </span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.timeSlot}</span>
-              <span className="font-medium text-gray-800">{booking.timeSlot}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.type}</span>
-              <span className="font-medium text-gray-800 capitalize">{booking.consultationType}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-500">{t.reason}</span>
-              <span className="font-medium text-gray-800">{booking.reason}</span>
+        {/* Booking "ticket" — doctor + fee on top, a perforated divider, then
+            icon detail rows. Reads like a pass the patient can screenshot. */}
+        <div className="relative bg-white rounded-2xl shadow-md mb-6 overflow-hidden">
+          {/* Top: doctor identity + fee */}
+          <div className="flex items-center gap-3 p-5">
+            <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-xl flex-shrink-0" aria-hidden="true">🧑‍⚕️</div>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-gray-800 truncate">{booking.doctorName}</p>
+              {booking.specialization && <p className="text-primary-600 text-sm">{booking.specialization}</p>}
             </div>
             {booking.fee && (
-              <div className="flex justify-between py-2">
-                <span className="text-gray-500">{t.fee}</span>
-                <span className="font-semibold text-primary-600">Rs. {booking.fee}</span>
+              <div className="flex-shrink-0 text-center bg-green-50 border border-green-100 rounded-xl px-3 py-1.5">
+                <div className="text-sm font-extrabold text-green-700 leading-none">Rs. {booking.fee}</div>
+                <div className="text-[10px] text-green-600 mt-0.5">{t.fee}</div>
               </div>
             )}
           </div>
+
+          {/* Perforated divider — two notches + a dashed line, the ticket cue. */}
+          <div className="relative h-0">
+            <span className="absolute -left-2.5 -top-2.5 w-5 h-5 rounded-full bg-gray-50 border border-gray-100" aria-hidden="true" />
+            <span className="absolute -right-2.5 -top-2.5 w-5 h-5 rounded-full bg-gray-50 border border-gray-100" aria-hidden="true" />
+            <div className="absolute inset-x-5 top-0 border-t-2 border-dashed border-gray-200" aria-hidden="true" />
+          </div>
+
+          {/* Detail rows */}
+          <div className="p-5 pt-6 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-gray-500 text-sm flex items-center gap-2"><span aria-hidden="true">📅</span>{t.date}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right">
+                {new Date(booking.date).toLocaleDateString(t.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-gray-500 text-sm flex items-center gap-2"><span aria-hidden="true">🕐</span>{t.timeSlot}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right">{booking.timeSlot}</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-gray-500 text-sm flex items-center gap-2"><span aria-hidden="true">💬</span>{t.type}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right capitalize">{booking.consultationType}</span>
+            </div>
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-gray-500 text-sm flex items-center gap-2 flex-shrink-0"><span aria-hidden="true">📝</span>{t.reason}</span>
+              <span className="font-semibold text-gray-800 text-sm text-right">{booking.reason}</span>
+            </div>
+          </div>
         </div>
 
-        {/* What's next */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
-          <h3 className="font-medium text-blue-800 mb-2">{t.nextTitle}</h3>
-          <ol className="text-sm text-blue-700 space-y-2 list-decimal ml-4">
-            {t.next(booking.consultationType).map((step, i) => <li key={i}>{step}</li>)}
+        {/* What's next — a clean vertical timeline (clearer than a plain
+            numbered list). Step 1 is the current/next action, highlighted. */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6 shadow-sm">
+          <h3 className="font-bold text-gray-800 mb-4">{t.nextTitle}</h3>
+          <ol className="relative space-y-4">
+            {/* connecting line behind the dots */}
+            <span className="absolute left-[11px] top-1 bottom-1 w-0.5 bg-blue-100" aria-hidden="true" />
+            {t.next(booking.consultationType).map((step, i) => (
+              <li key={i} className="relative flex items-start gap-3">
+                <span className={`relative z-10 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-primary-600 text-white' : 'bg-blue-100 text-blue-600'}`}>
+                  {i + 1}
+                </span>
+                <span className={`text-sm leading-snug pt-0.5 ${i === 0 ? 'text-gray-800 font-medium' : 'text-gray-600'}`}>{step}</span>
+              </li>
+            ))}
           </ol>
         </div>
 
