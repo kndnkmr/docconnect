@@ -694,8 +694,11 @@ function Home() {
               <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-white to-transparent" aria-hidden="true"></div>
               <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-white to-transparent" aria-hidden="true"></div>
               {/* Auto-scrolling marquee — faster variant (more cards than the
-                  doctors strip) and pauses on hover. */}
-              <div className="flex animate-scroll-fast gap-6 px-4">
+                  doctors strip) and pauses on hover. w-max + flex-nowrap keep
+                  all cards in ONE long row (wider than the screen) so the
+                  marquee actually scrolls through every review instead of the
+                  flex row collapsing to viewport width and showing only a few. */}
+              <div className="flex flex-nowrap w-max animate-scroll-fast gap-6 px-4">
                 {loop.map((item, idx) => (
                   <div key={idx} className="min-w-[280px] max-w-[300px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
                     <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
