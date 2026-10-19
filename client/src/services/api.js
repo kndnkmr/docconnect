@@ -323,6 +323,10 @@ export const adminAPI = {
   // One-time: migrate legacy base64 images to Cloudinary
   migrateImages: () => API.post('/admin/migrate-images'),
 
+  // Repair the User.email index (sparse unique) — fixes "email already exists"
+  // for phone-only patient registrations caused by a legacy non-sparse index.
+  fixEmailIndex: () => API.post('/admin/fix-email-index'),
+
   // Generate/relay a password reset link for a user (manual recovery assist
   // for phone-only patients with no email on file; also works as a "resend")
   generateResetLink: (id) => API.post(`/admin/users/${id}/reset-link`),

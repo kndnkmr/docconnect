@@ -13,6 +13,7 @@ const { uploadFile } = require('../utils/uploadFile');
 const crypto = require('crypto');
 const { sendEmail, sendAppointmentConfirmation } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
+const { fixEmailIndex } = require('../utils/fixIndexes');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 
 // ============================================
@@ -1155,4 +1156,28 @@ const updateDoctorProfileAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin };
+// ============================================
+// FIX EMAIL INDEX (admin, on demand)
+// ============================================
+// Endpoint: POST /api/admin/fix-email-index
+// Re-runs the idempotent email-index repair (rebuilds User.email as a sparse
+// unique index and unsets any ''/null emails). This is the fix for the bug
+// where a SECOND phone-only patient (no email) gets "email already exists" —
+// caused by a legacy NON-sparse unique index. Safe to run anytime; returns a
+// report of what it changed and the before/after index state.
+const fixEmailIndexAdmin = async (req, res) => {
+  try {
+    const report = await fixEmailIndex();
+    res.json({
+      message: report.changed
+        ? 'Email index repaired — phone-only patients can register again.'
+        : 'Email index already correct (sparse unique). No change needed.',
+      report
+    });
+  } catch (error) {
+    console.error('Fix email index (admin) error:', error.message);
+    res.status(500).json({ message: 'Error repairing email index', error: error.message });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };

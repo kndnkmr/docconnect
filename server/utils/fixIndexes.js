@@ -12,47 +12,61 @@
 //
 // Changing the Mongoose schema (default: undefined, sparse: true) does NOT
 // rebuild an index that already exists in the database. This migration does:
-//   1. Drop the old email index (removes the constraint temporarily).
-//   2. Unset '' / null emails so those docs have NO email value at all.
+//   1. Unset '' / null emails so those docs have NO email value at all
+//      (done FIRST, so neither the old index nor the rebuild can trip over
+//      duplicate empty strings).
+//   2. Drop the old email index (removes the stale constraint).
 //   3. Recreate the schema indexes (email becomes sparse unique).
 //
-// Idempotent: if the email index is already sparse, it does nothing. Safe to
-// run on every startup.
+// Idempotent + defensive: if the email index is already sparse it still makes
+// sure no '' / null emails remain, but otherwise does nothing destructive.
+// Safe to run on every startup AND on demand via the admin endpoint.
 
 const User = require('../models/User');
 
 async function fixEmailIndex() {
+  const report = { changed: false, steps: [] };
   try {
-    const indexes = await User.collection.indexes();
-    const emailIdx = indexes.find((i) => i.key && i.key.email === 1);
+    const before = await User.collection.indexes();
+    const emailIdx = before.find((i) => i.key && i.key.email === 1);
+    report.emailIndexBefore = emailIdx ? { name: emailIdx.name, unique: !!emailIdx.unique, sparse: !!emailIdx.sparse } : null;
 
-    // Already correct (sparse) — nothing to do.
-    if (emailIdx && emailIdx.sparse) return { changed: false };
-
-    // 1. Drop the old non-sparse email index if it exists, so the next steps
-    //    aren't blocked by its uniqueness constraint.
-    if (emailIdx) {
-      await User.collection.dropIndex(emailIdx.name);
-    }
-
-    // 2. Make empty/null emails truly absent — a sparse index only exempts
-    //    ABSENT fields, not empty strings. (Phone-only patients have no real
-    //    email, so nothing meaningful is lost.)
-    await User.updateMany(
+    // 1. ALWAYS normalise empty/null emails to ABSENT first. A sparse index
+    //    only exempts documents where the field is missing — an empty string
+    //    or null is a real value and still collides. (Phone-only patients
+    //    have no real email, so nothing meaningful is lost.) Doing this first
+    //    means a later syncIndexes won't fail on duplicate '' values.
+    const cleanup = await User.updateMany(
       { $or: [{ email: '' }, { email: null }] },
       { $unset: { email: 1 } }
     );
+    const cleaned = cleanup.modifiedCount || cleanup.nModified || 0;
+    if (cleaned > 0) { report.steps.push(`unset ${cleaned} empty/null email(s)`); report.changed = true; }
 
-    // 3. Rebuild indexes to match the current schema (email = sparse unique).
-    await User.syncIndexes();
+    // 2/3. If the email index is missing or NOT sparse, drop + rebuild it as
+    //    the schema's sparse-unique index.
+    if (!emailIdx || !emailIdx.sparse) {
+      if (emailIdx) {
+        await User.collection.dropIndex(emailIdx.name);
+        report.steps.push(`dropped stale index "${emailIdx.name}"`);
+      }
+      await User.syncIndexes();
+      report.steps.push('rebuilt indexes from schema (email = sparse unique)');
+      report.changed = true;
+    }
 
-    console.log('[migration] User email index rebuilt as sparse unique');
-    return { changed: true };
+    const after = await User.collection.indexes();
+    const emailIdxAfter = after.find((i) => i.key && i.key.email === 1);
+    report.emailIndexAfter = emailIdxAfter ? { name: emailIdxAfter.name, unique: !!emailIdxAfter.unique, sparse: !!emailIdxAfter.sparse } : null;
+
+    if (report.changed) {
+      console.log('[migration] fixEmailIndex:', JSON.stringify(report));
+    }
+    return report;
   } catch (error) {
-    // Never crash startup over this — log and continue. Registration of NEW
-    // phone-only users still can't be worse than before if this fails.
+    // Never crash startup over this — log and continue.
     console.error('[migration] fixEmailIndex failed:', error.message);
-    return { changed: false, error: error.message };
+    return { ...report, ok: false, error: error.message };
   }
 }
 

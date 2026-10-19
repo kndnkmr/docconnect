@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -57,6 +57,11 @@ router.post('/users/:id/free-contact-info', freeUpContactInfo);
 // POST /api/admin/backfill-patient-ids - one-time: assign a Patient ID to
 // any existing patient who registered before this field existed
 router.post('/backfill-patient-ids', backfillPatientIds);
+
+// POST /api/admin/fix-email-index - repair the User.email index (sparse unique)
+// and unset ''/null emails. Fixes "email already exists" for phone-only
+// patients caused by a legacy non-sparse unique index. Idempotent.
+router.post('/fix-email-index', fixEmailIndexAdmin);
 
 // POST /api/admin/backfill-doctor-languages - one-time: set a default
 // languagesSpoken (Hindi + English) on doctors who registered before the

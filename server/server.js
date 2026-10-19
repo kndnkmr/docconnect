@@ -123,14 +123,22 @@ const { fixEmailIndex } = require('./utils/fixIndexes');
 
 if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connected to MongoDB successfully!');
 
     // One-time, idempotent index repair: rebuild the User.email index as
-    // sparse unique if an older non-sparse index is still in the database.
-    // Without this, the SECOND phone-only patient (no email) fails to
-    // register with a duplicate-key error. Safe to run every startup.
-    fixEmailIndex();
+    // sparse unique if an older non-sparse index is still in the database,
+    // and unset any ''/null emails. Without this, the SECOND phone-only
+    // patient (no email) fails to register with a duplicate-key error.
+    // Awaited + logged so a failure is visible in the server logs (it used to
+    // be fire-and-forget, which could leave the bug silently unfixed). Safe to
+    // run every startup; also re-runnable on demand via POST /api/admin/fix-email-index.
+    try {
+      const r = await fixEmailIndex();
+      console.log('[startup] fixEmailIndex result:', JSON.stringify(r));
+    } catch (e) {
+      console.error('[startup] fixEmailIndex threw:', e.message);
+    }
 
     // Promote the configured admin email to admin role (one-time bootstrap).
     // Set ADMIN_EMAIL in environment variables. Safe to run on every startup:

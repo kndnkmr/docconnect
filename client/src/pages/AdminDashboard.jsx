@@ -178,6 +178,23 @@ function AdminDashboard() {
     }
   };
 
+  // Repair the email index — fixes "email already exists" when a phone-only
+  // patient (no email) tries to register, caused by a legacy non-sparse unique
+  // index. Idempotent and safe to run anytime.
+  const [fixingEmailIndex, setFixingEmailIndex] = useState(false);
+  const handleFixEmailIndex = async () => {
+    if (!window.confirm('Repair the email index now?\n\nThis fixes patient registrations failing with "email already exists" when no email is entered. Safe to run anytime.')) return;
+    setFixingEmailIndex(true);
+    try {
+      const response = await adminAPI.fixEmailIndex();
+      toast.success(response.data.message, { duration: 7000 });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to repair email index');
+    } finally {
+      setFixingEmailIndex(false);
+    }
+  };
+
   const fetchDuplicatePhones = async () => {
     try {
       const response = await adminAPI.getDuplicatePhones();
@@ -795,6 +812,22 @@ function AdminDashboard() {
       {/* === STATS TAB === */}
       {activeTab === 'stats' && stats && (
         <div>
+          {/* Maintenance — on-demand fix for the "email already exists" bug on
+              phone-only patient registration (legacy non-sparse email index). */}
+          <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-gray-800 text-sm">Registration fix — email index</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Run this if patients without an email get "email already exists" when registering. Safe to run anytime.</p>
+            </div>
+            <button
+              onClick={handleFixEmailIndex}
+              disabled={fixingEmailIndex}
+              className="flex-shrink-0 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-60"
+            >
+              {fixingEmailIndex ? 'Repairing…' : 'Repair email index'}
+            </button>
+          </div>
+
           {/* Data integrity warning — a phone number shared by more than one
               account can cause login to find the WRONG one (e.g. a deleted
               duplicate instead of the real active account). Read-only check;
