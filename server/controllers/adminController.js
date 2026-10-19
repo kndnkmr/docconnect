@@ -1013,4 +1013,87 @@ const updateDoctorAvailability = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability };
+// ============================================
+// UPDATE DOCTOR PROFILE (admin, on the doctor's behalf)
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/profile
+// Body: any of { specialization, qualification, experience, consultationFee,
+//                bio, consultationModes }
+//
+// Lets an admin edit a doctor's professional profile + how they consult, for
+// doctors who ask the admin to set it up. Contact (phone/WhatsApp) and location
+// (city/address) already have their own admin actions, so they're intentionally
+// NOT here. Only the fields actually sent are changed; writes the same shapes
+// the doctor-side profile form writes, so nothing downstream breaks.
+const updateDoctorProfileAdmin = async (req, res) => {
+  try {
+    const { specialization, qualification, experience, consultationFee, bio, consultationModes } = req.body;
+
+    const anyProvided = [specialization, qualification, experience, consultationFee, bio, consultationModes]
+      .some((v) => v !== undefined);
+    if (!anyProvided) {
+      return res.status(400).json({ message: 'Provide at least one field to update' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'This action is only for doctor accounts' });
+    }
+
+    // Free-text fields — trim; may be cleared.
+    if (specialization !== undefined) user.specialization = String(specialization).trim();
+    if (qualification !== undefined) user.qualification = String(qualification).trim();
+    if (bio !== undefined) user.bio = String(bio).trim();
+
+    // Experience — number, 0..70 (matches the schema bounds).
+    if (experience !== undefined) {
+      const exp = Number(experience);
+      if (Number.isNaN(exp) || exp < 0 || exp > 70) {
+        return res.status(400).json({ message: 'Experience must be a number between 0 and 70 years.' });
+      }
+      user.experience = exp;
+    }
+
+    // Consultation fee — non-negative number.
+    if (consultationFee !== undefined) {
+      const fee = Number(consultationFee);
+      if (Number.isNaN(fee) || fee < 0) {
+        return res.status(400).json({ message: 'Consultation fee must be a non-negative number.' });
+      }
+      user.consultationFee = fee;
+    }
+
+    // Consultation modes — array limited to the schema enum.
+    if (consultationModes !== undefined) {
+      if (!Array.isArray(consultationModes)) {
+        return res.status(400).json({ message: 'consultationModes must be an array.' });
+      }
+      const allowed = ['in-person', 'video', 'phone'];
+      const cleaned = [...new Set(consultationModes)].filter((m) => allowed.includes(m));
+      if (consultationModes.some((m) => !allowed.includes(m))) {
+        return res.status(400).json({ message: `Consultation modes must be any of: ${allowed.join(', ')}.` });
+      }
+      user.consultationModes = cleaned;
+    }
+
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: `Updated profile for "${user.name}".`,
+      user: {
+        _id: user._id, name: user.name,
+        specialization: user.specialization, qualification: user.qualification,
+        experience: user.experience, consultationFee: user.consultationFee,
+        bio: user.bio, consultationModes: user.consultationModes,
+      }
+    });
+  } catch (error) {
+    console.error('Update doctor profile (admin) error:', error.message);
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin };

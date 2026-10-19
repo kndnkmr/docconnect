@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -81,5 +81,11 @@ router.put('/users/:id/location', updateDoctorLocation);
 // their behalf (common support case — doctors ask the admin to set it up).
 // Same validation + data shape as the doctor-side PUT /api/availability.
 router.put('/users/:id/availability', updateDoctorAvailability);
+
+// PUT /api/admin/users/:id/profile - edit a doctor's professional profile
+// (specialization, qualification, experience, fee, bio) and consultation modes
+// on their behalf. Validates experience range, non-negative fee, and the mode
+// enum; only the fields sent are changed.
+router.put('/users/:id/profile', updateDoctorProfileAdmin);
 
 module.exports = router;

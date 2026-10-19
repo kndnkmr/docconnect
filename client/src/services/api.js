@@ -353,6 +353,11 @@ export const adminAPI = {
   // Body: { availability: [{day,startTime,endTime}], slotDuration } — same
   // shape/validation as the doctor-side availabilityAPI.set.
   updateDoctorAvailability: (id, data) => API.put(`/admin/users/${id}/availability`, data),
+
+  // Edit a doctor's professional profile + consultation modes on their behalf.
+  // Body: any of { specialization, qualification, experience, consultationFee,
+  // bio, consultationModes } — send only the field(s) being changed.
+  updateDoctorProfile: (id, data) => API.put(`/admin/users/${id}/profile`, data),
 };
 
 // ============================================

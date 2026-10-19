@@ -58,6 +58,17 @@ function AdminDashboard() {
   const [availSaving, setAvailSaving] = useState(false);
   const AVAIL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+  // Edit-profile modal (admin edits a doctor's professional profile + how they
+  // consult). `profileDoctor` is the doctor being edited (null = closed).
+  const [profileDoctor, setProfileDoctor] = useState(null);
+  const [profileForm, setProfileForm] = useState({ specialization: '', qualification: '', experience: '', consultationFee: '', bio: '', consultationModes: [] });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const CONSULT_MODES = [
+    { key: 'video', label: '📹 Video' },
+    { key: 'phone', label: '📞 Phone' },
+    { key: 'in-person', label: '🏥 In-person' },
+  ];
+
   // Per-row "Manage" dropdown: which user's action menu is open (by _id, or
   // null). Collapses the ~10 per-row action buttons into one menu so the users
   // table stays narrow. The menu is rendered with FIXED positioning (anchored
@@ -612,6 +623,57 @@ function AdminDashboard() {
     }
   };
 
+  // ---- Edit a doctor's professional profile + consultation modes ----
+  const openProfileModal = (user) => {
+    setProfileDoctor(user);
+    setProfileForm({
+      specialization: user.specialization || '',
+      qualification: user.qualification || '',
+      experience: user.experience != null ? String(user.experience) : '',
+      consultationFee: user.consultationFee != null ? String(user.consultationFee) : '',
+      bio: user.bio || '',
+      consultationModes: Array.isArray(user.consultationModes) ? [...user.consultationModes] : [],
+    });
+  };
+  const closeProfileModal = () => { if (!profileSaving) setProfileDoctor(null); };
+  const toggleConsultMode = (mode) =>
+    setProfileForm((p) => ({
+      ...p,
+      consultationModes: p.consultationModes.includes(mode)
+        ? p.consultationModes.filter((m) => m !== mode)
+        : [...p.consultationModes, mode],
+    }));
+
+  const saveProfile = async () => {
+    if (!profileDoctor) return;
+    // Build a payload of only the fields that actually changed from the record,
+    // so we never overwrite a field the admin didn't touch.
+    const d = profileDoctor;
+    const payload = {};
+    if (profileForm.specialization.trim() !== (d.specialization || '').trim()) payload.specialization = profileForm.specialization.trim();
+    if (profileForm.qualification.trim() !== (d.qualification || '').trim()) payload.qualification = profileForm.qualification.trim();
+    if (profileForm.bio.trim() !== (d.bio || '').trim()) payload.bio = profileForm.bio.trim();
+    if (profileForm.experience !== '' && Number(profileForm.experience) !== Number(d.experience || 0)) payload.experience = Number(profileForm.experience);
+    if (profileForm.consultationFee !== '' && Number(profileForm.consultationFee) !== Number(d.consultationFee || 0)) payload.consultationFee = Number(profileForm.consultationFee);
+    const curModes = [...(d.consultationModes || [])].sort().join(',');
+    const newModes = [...profileForm.consultationModes].sort().join(',');
+    if (curModes !== newModes) payload.consultationModes = profileForm.consultationModes;
+
+    if (Object.keys(payload).length === 0) { toast('No changes made.', { icon: 'ℹ️' }); return; }
+
+    setProfileSaving(true);
+    try {
+      const response = await adminAPI.updateDoctorProfile(d._id, payload);
+      toast.success(response.data.message, { duration: 5000 });
+      setProfileDoctor(null);
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   const handleSearchUsers = (e) => {
     e.preventDefault();
     fetchUsers();
@@ -1040,6 +1102,15 @@ function AdminDashboard() {
                                 title={user.email ? 'Password recovery: emails this user a link to set a new password (keeps their account)' : 'Password recovery: no email on file, copies a link for you to send manually (keeps their account)'}
                               >
                                 Send Password Reset
+                              </button>
+                            )}
+                            {!user.isDeleted && user.role === 'doctor' && (
+                              <button
+                                onClick={() => openProfileModal(user)}
+                                className="text-sm font-medium text-fuchsia-600 hover:text-fuchsia-800"
+                                title="Edit this doctor's professional profile (specialization, qualification, experience, fee, bio) and consultation modes on their behalf"
+                              >
+                                Edit Profile
                               </button>
                             )}
                             {!user.isDeleted && user.role === 'doctor' && (
@@ -1769,6 +1840,104 @@ function AdminDashboard() {
                   {availSaving ? 'Saving…' : 'Save schedule'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Edit Profile modal (admin edits a doctor's profile + modes) ===== */}
+      {profileDoctor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={closeProfileModal}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-3 p-5 border-b border-gray-100">
+              <div>
+                <h3 className="text-lg font-bold text-gray-800">Edit Profile</h3>
+                <p className="text-xs text-gray-500 mt-0.5">{profileDoctor.name}</p>
+              </div>
+              <button onClick={closeProfileModal} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Close">✕</button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Specialization</label>
+                <input
+                  type="text"
+                  value={profileForm.specialization}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, specialization: e.target.value }))}
+                  placeholder="e.g. Gynaecologist"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Qualification</label>
+                  <input
+                    type="text"
+                    value={profileForm.qualification}
+                    onChange={(e) => setProfileForm((p) => ({ ...p, qualification: e.target.value }))}
+                    placeholder="e.g. MBBS, MS"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Experience (years)</label>
+                  <input
+                    type="number" min="0" max="70"
+                    value={profileForm.experience}
+                    onChange={(e) => setProfileForm((p) => ({ ...p, experience: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Consultation fee (₹)</label>
+                <input
+                  type="number" min="0"
+                  value={profileForm.consultationFee}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, consultationFee: e.target.value }))}
+                  className="w-full max-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Consultation modes</label>
+                <p className="text-[11px] text-gray-400 mb-2">Which ways this doctor consults — tap to toggle.</p>
+                <div className="flex flex-wrap gap-2">
+                  {CONSULT_MODES.map((m) => {
+                    const on = profileForm.consultationModes.includes(m.key);
+                    return (
+                      <button
+                        key={m.key}
+                        type="button"
+                        onClick={() => toggleConsultMode(m.key)}
+                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${on ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                      >
+                        {m.label}{on ? ' ✓' : ''}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Bio / About</label>
+                <textarea
+                  rows={3}
+                  value={profileForm.bio}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, bio: e.target.value }))}
+                  placeholder="Short description shown on the doctor's profile"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-100">
+              <button onClick={closeProfileModal} disabled={profileSaving} className="px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-60">Cancel</button>
+              <button onClick={saveProfile} disabled={profileSaving} className="px-5 py-2 rounded-lg text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-60">
+                {profileSaving ? 'Saving…' : 'Save profile'}
+              </button>
             </div>
           </div>
         </div>
