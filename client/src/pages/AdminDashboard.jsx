@@ -2,7 +2,7 @@
 // Admin Dashboard - Manage users and appointments
 // ============================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from '../services/api';
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
@@ -57,6 +57,39 @@ function AdminDashboard() {
   const [availEnd, setAvailEnd] = useState('17:00');
   const [availSaving, setAvailSaving] = useState(false);
   const AVAIL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Per-row "Manage" dropdown: which user's action menu is open (by _id, or
+  // null). Collapses the ~10 per-row action buttons into one menu so the users
+  // table stays narrow. The menu is rendered with FIXED positioning (anchored
+  // to the trigger's on-screen rect) so it is never clipped by the table's
+  // overflow-hidden / overflow-x-auto wrappers. Closes on outside-click,
+  // Escape, or scroll/resize.
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const menuRef = useRef(null);
+  const openRowMenu = (e, userId) => {
+    if (openMenuId === userId) { setOpenMenuId(null); return; }
+    const r = e.currentTarget.getBoundingClientRect();
+    // Align the menu's right edge under the trigger's right edge; width 224px (w-56).
+    setMenuPos({ top: r.bottom + 4, left: Math.max(8, r.right - 224) });
+    setOpenMenuId(userId);
+  };
+  useEffect(() => {
+    if (!openMenuId) return;
+    const onDown = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setOpenMenuId(null); };
+    const onKey = (e) => { if (e.key === 'Escape') setOpenMenuId(null); };
+    const onReflow = () => setOpenMenuId(null); // simplest: close on scroll/resize
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('scroll', onReflow, true);
+    window.addEventListener('resize', onReflow);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('scroll', onReflow, true);
+      window.removeEventListener('resize', onReflow);
+    };
+  }, [openMenuId]);
 
   // Build a slug → {title, specialization, image} lookup once from the
   // lightweight article metadata, so we can show human-readable titles next
@@ -911,15 +944,33 @@ function AdminDashboard() {
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(user.createdAt)}</td>
                       <td className="px-4 py-3">
                         {user.role !== 'admin' && (
-                          <div className="flex items-center gap-1.5 flex-wrap max-w-sm [&>button]:px-2.5 [&>button]:py-1 [&>button]:rounded-md [&>button]:border [&>button]:border-gray-200 [&>button]:bg-white [&>button]:text-xs [&>button]:font-medium [&>button]:hover:bg-gray-50 [&>button]:transition-colors">
+                          <div className="inline-block text-left">
+                            {/* Single "Manage" trigger collapses the ~10 per-row
+                                actions into one dropdown, so the table stays
+                                narrow instead of a wide run-on row of links. */}
+                            <button
+                              onClick={(e) => openRowMenu(e, user._id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                              aria-haspopup="true"
+                              aria-expanded={openMenuId === user._id}
+                            >
+                              Manage
+                              <span className={`text-xs transition-transform ${openMenuId === user._id ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
+                            </button>
+                            {openMenuId === user._id && (
+                            <div
+                              ref={menuRef}
+                              onClick={() => setOpenMenuId(null)}
+                              style={{ top: menuPos.top, left: menuPos.left }}
+                              className="fixed z-50 w-56 max-h-[70vh] overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-xl py-1.5 flex flex-col text-left [&>button]:w-full [&>button]:text-left [&>button]:px-3 [&>button]:py-2 [&>button]:text-sm [&>button]:font-medium [&>button]:hover:bg-gray-50 [&>button]:transition-colors"
+                            >
                             {/* A self-deleted account already can't log in and is hidden from
                                 patients/search — verifying, deactivating, or resetting its
                                 password no longer does anything useful. Only permanent Delete
                                 (to purge before the 90-day retention window) still applies.
-                                Buttons are styled as compact pills via the parent's
-                                [&>button] utilities so the action cell reads as tidy chips
-                                instead of a run-on row of text links — colours below are kept
-                                for meaning. */}
+                                All actions live in this dropdown; each button's handler is
+                                unchanged (clicking any also closes the menu via the panel's
+                                onClick) — colours below are kept for meaning. */}
                             {!user.isDeleted && user.role === 'doctor' && (
                               <button
                                 onClick={() => handleToggleVerification(user)}
@@ -1031,6 +1082,8 @@ function AdminDashboard() {
                             >
                               Delete
                             </button>
+                            </div>
+                            )}
                           </div>
                         )}
                       </td>
