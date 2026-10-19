@@ -15,7 +15,7 @@
 
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
-const { sendAppointmentNotification, sendAppointmentConfirmation } = require('../utils/sendEmail');
+const { sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
@@ -144,8 +144,11 @@ const bookAppointment = async (req, res) => {
     // Second argument = which fields to include (space-separated)
 
     // Send email notification to doctor (non-blocking — don't wait for it)
-    const patient = await User.findById(req.user._id).select('name phone email');
+    const patient = await User.findById(req.user._id).select('name phone email patientId');
     sendAppointmentNotification(doctor, patient, appointment);
+    // Also notify the admin so a pending appointment isn't missed if the
+    // doctor forgets to confirm — non-blocking, never affects booking.
+    sendAdminBookingNotification(doctor, patient, appointment);
 
     res.status(201).json({
       message: 'Appointment booked successfully! Waiting for doctor confirmation.',
@@ -593,8 +596,10 @@ const rescheduleAppointment = async (req, res) => {
       url: '/dashboard',
       tag: `appointment-${appointment._id}`
     });
-    const patient = await User.findById(req.user._id).select('name phone email');
+    const patient = await User.findById(req.user._id).select('name phone email patientId');
     sendAppointmentNotification(doctor, patient, appointment);
+    // Admin notification — a rescheduled appointment is pending again.
+    sendAdminBookingNotification(doctor, patient, appointment);
 
     res.json({
       message: 'Appointment rescheduled. Waiting for the doctor to confirm the new time.',

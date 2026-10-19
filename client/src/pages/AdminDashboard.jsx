@@ -312,6 +312,22 @@ function AdminDashboard() {
     }
   };
 
+  // Confirm a pending appointment on the doctor's behalf (doctors sometimes
+  // forget). The patient gets the same confirmation email + push a doctor
+  // confirm sends. Asks first since it notifies the patient.
+  const handleConfirmAppointment = async (apt) => {
+    const who = apt.patient?.name || 'the patient';
+    const dr = apt.doctor?.name || 'the doctor';
+    if (!window.confirm(`Confirm this appointment on behalf of Dr. ${dr}?\n\n${who} will be notified (email + app) that their appointment on ${formatDate(apt.date)} at ${apt.timeSlot} is confirmed.`)) return;
+    try {
+      const response = await adminAPI.confirmAppointment(apt._id);
+      toast.success(response.data.message, { duration: 6000 });
+      fetchAppointments();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to confirm appointment');
+    }
+  };
+
   const fetchComplaints = async () => {
     try {
       const params = { limit: 50 };
@@ -1201,6 +1217,7 @@ function AdminDashboard() {
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Status</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Payment</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Reason</th>
+                    <th className="px-4 py-3 text-sm font-medium text-gray-600">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -1249,6 +1266,19 @@ function AdminDashboard() {
                         })()}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{apt.reason}</td>
+                      <td className="px-4 py-3">
+                        {apt.status === 'pending' ? (
+                          <button
+                            onClick={() => handleConfirmAppointment(apt)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors whitespace-nowrap"
+                            title="Confirm this appointment on the doctor's behalf — notifies the patient by email + app"
+                          >
+                            ✓ Confirm
+                          </button>
+                        ) : (
+                          <span className="text-gray-300 text-sm">—</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

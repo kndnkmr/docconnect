@@ -134,4 +134,50 @@ const sendAppointmentConfirmation = async (patient, doctor, appointment) => {
   }
 };
 
-module.exports = { sendEmail, sendAppointmentNotification, sendAppointmentConfirmation };
+// ============================================
+// Admin notification on a new booking
+// ============================================
+// So the admin knows a pending appointment needs attention (doctors sometimes
+// forget to confirm). Recipient resolves from ADMIN_NOTIFY_EMAIL, then
+// ADMIN_EMAIL, then support@promedicoz.in. Fire-and-forget like the others —
+// a missing/failed admin email never affects booking.
+const ADMIN_NOTIFY_EMAIL = process.env.ADMIN_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || 'support@promedicoz.in';
+
+const sendAdminBookingNotification = async (doctor, patient, appointment) => {
+  const subject = `New booking: ${patient.name} → Dr. ${doctor.name} — ProMedicoz`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+        <h1 style="margin: 0; font-size: 20px;">🏥 ProMedicoz — Admin</h1>
+      </div>
+      <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #1f2937; margin-top: 0;">New appointment booked (pending)</h2>
+        <p style="color: #4b5563;">A patient just booked an appointment. It is <strong>pending the doctor's confirmation</strong>. If the doctor doesn't confirm, you can confirm it on their behalf from the Admin dashboard.</p>
+
+        <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+          <p style="margin: 4px 0; color: #374151;"><strong>Patient:</strong> ${patient.name}${patient.patientId ? ` (${patient.patientId})` : ''}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Patient phone:</strong> ${patient.phone || 'Not provided'}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Doctor:</strong> Dr. ${doctor.name}${doctor.specialization ? ` (${doctor.specialization})` : ''}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Doctor phone:</strong> ${doctor.phone || 'Not provided'}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Time:</strong> ${appointment.timeSlot}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Type:</strong> ${appointment.consultationType}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Reason:</strong> ${appointment.reason}</p>
+        </div>
+
+        <a href="https://www.promedicoz.in/admin" style="display: inline-block; background: #0f172a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+          Open Admin Dashboard
+        </a>
+
+        <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
+          Automated admin notification from ProMedicoz.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await sendEmail({ to: ADMIN_NOTIFY_EMAIL, subject, html });
+};
+
+module.exports = { sendEmail, sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification };

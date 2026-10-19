@@ -302,6 +302,10 @@ export const adminAPI = {
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
 
+  // Confirm a pending appointment on the doctor's behalf (sends the patient
+  // the same confirmation email + push a doctor-confirm would). Body: { meetingLink? }
+  confirmAppointment: (id, data = {}) => API.put(`/admin/appointments/${id}/confirm`, data),
+
   // Delete a user (permanent)
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
 

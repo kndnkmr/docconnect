@@ -11,7 +11,8 @@ const MedicalReport = require('../models/MedicalReport');
 const { getNextSequence } = require('../models/Counter');
 const { uploadFile } = require('../utils/uploadFile');
 const crypto = require('crypto');
-const { sendEmail } = require('../utils/sendEmail');
+const { sendEmail, sendAppointmentConfirmation } = require('../utils/sendEmail');
+const { sendPushToUser } = require('../utils/push');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 
 // ============================================
@@ -135,6 +136,64 @@ const getAllAppointments = async (req, res) => {
   } catch (error) {
     console.error('Get all appointments error:', error.message);
     res.status(500).json({ message: 'Error fetching appointments' });
+  }
+};
+
+// ============================================
+// CONFIRM APPOINTMENT (admin, on the doctor's behalf)
+// ============================================
+// Endpoint: PUT /api/admin/appointments/:id/confirm
+// Body: { meetingLink? }
+//
+// Doctors sometimes forget to confirm a pending appointment. This lets the
+// admin confirm it for them. It deliberately does NOT reuse the doctor-only
+// PUT /api/appointments/:id/status (that endpoint hard-blocks anyone who isn't
+// the owning doctor). It enforces the same pending→confirmed rule and fires the
+// SAME patient-facing side effects (confirmation email + push) the doctor path
+// uses, so the patient's experience is identical.
+const confirmAppointmentAsAdmin = async (req, res) => {
+  try {
+    const { meetingLink } = req.body;
+
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Only a pending appointment can be confirmed (same rule as the doctor path).
+    if (appointment.status !== 'pending') {
+      return res.status(400).json({
+        message: `Only pending appointments can be confirmed. This one is "${appointment.status}".`
+      });
+    }
+
+    appointment.status = 'confirmed';
+    if (meetingLink) appointment.meetingLink = meetingLink;
+    appointment.markModified('status');
+    await appointment.save({ validateModifiedOnly: true });
+
+    // Populate the fields the confirmation email/push need (doctor email +
+    // fee for the template; patient email for the email, _id for the push).
+    await appointment.populate('doctor', 'name specialization consultationFee email');
+    await appointment.populate('patient', 'name email phone patientId');
+
+    // Identical side effects to the doctor-confirm path — so the patient gets
+    // the same confirmation they'd get if the doctor had clicked confirm.
+    sendAppointmentConfirmation(appointment.patient, appointment.doctor, appointment);
+    sendPushToUser(appointment.patient._id, {
+      title: 'Appointment confirmed',
+      body: `Dr. ${appointment.doctor.name} confirmed your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,
+      url: '/dashboard',
+      tag: `appointment-${appointment._id}`
+    });
+
+    res.json({
+      message: `Appointment confirmed on behalf of Dr. ${appointment.doctor.name}. The patient has been notified.`,
+      appointment
+    });
+  } catch (error) {
+    console.error('Admin confirm appointment error:', error.message);
+    res.status(500).json({ message: 'Error confirming appointment' });
   }
 };
 
@@ -1096,4 +1155,4 @@ const updateDoctorProfileAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin };
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin };

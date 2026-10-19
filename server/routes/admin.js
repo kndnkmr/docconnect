@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -21,6 +21,11 @@ router.get('/users', getAllUsers);
 
 // GET /api/admin/appointments - All appointments (with filter)
 router.get('/appointments', getAllAppointments);
+
+// PUT /api/admin/appointments/:id/confirm - confirm a pending appointment on
+// the doctor's behalf (doctors sometimes forget). Sends the patient the same
+// confirmation email + push the doctor-confirm flow sends.
+router.put('/appointments/:id/confirm', confirmAppointmentAsAdmin);
 
 // DELETE /api/admin/users/:id - Remove a user (permanent)
 router.delete('/users/:id', deleteUser);
