@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact } = require('../controllers/adminController');
+const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -71,5 +71,10 @@ router.post('/users/:id/verify-email', markEmailVerified);
 // on their behalf (support case where the doctor can't/won't do it in Edit
 // Profile). Validates + normalizes the number and guards against duplicates.
 router.put('/users/:id/contact', updateDoctorContact);
+
+// PUT /api/admin/users/:id/location - edit a doctor's city / clinic address on
+// their behalf (support case — e.g. a doctor who entered their state in the
+// City field). Trims values; city cannot be blanked.
+router.put('/users/:id/location', updateDoctorLocation);
 
 module.exports = router;

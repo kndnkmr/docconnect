@@ -886,4 +886,56 @@ const updateDoctorContact = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact };
+// ============================================
+// UPDATE DOCTOR LOCATION (admin, on the doctor's behalf)
+// ============================================
+// Endpoint: PUT /api/admin/users/:id/location
+// Body: { city?, clinicAddress? }
+//
+// Lets an admin correct a doctor's City and/or Clinic Address (support case —
+// e.g. a doctor who put their STATE in the City field, like "Chhattisgarh"
+// instead of "Bhilai"). Only these two fields are touched; both are optional,
+// so send just the one being changed. Values are trimmed (stray trailing
+// spaces are a common cause of odd display/search behaviour). City cannot be
+// blanked (it drives search/landing pages); clinicAddress may be cleared.
+const updateDoctorLocation = async (req, res) => {
+  try {
+    const { city, clinicAddress } = req.body;
+
+    if (city === undefined && clinicAddress === undefined) {
+      return res.status(400).json({ message: 'Provide a city and/or clinicAddress to update' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'This action is only for doctor accounts' });
+    }
+
+    if (city !== undefined) {
+      const trimmed = String(city).trim();
+      if (!trimmed) {
+        return res.status(400).json({ message: 'City cannot be empty. Leave it out of the request to keep it unchanged.' });
+      }
+      user.city = trimmed;
+    }
+
+    if (clinicAddress !== undefined) {
+      user.clinicAddress = String(clinicAddress).trim(); // may be cleared
+    }
+
+    await user.save({ validateModifiedOnly: true });
+
+    res.json({
+      message: `Updated location for "${user.name}".`,
+      user: { _id: user._id, name: user.name, city: user.city, clinicAddress: user.clinicAddress }
+    });
+  } catch (error) {
+    console.error('Update doctor location error:', error.message);
+    res.status(500).json({ message: 'Error updating location' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation };

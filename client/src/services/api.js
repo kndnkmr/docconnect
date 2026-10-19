@@ -343,6 +343,11 @@ export const adminAPI = {
   // Edit a doctor's phone / WhatsApp number on their behalf (support case).
   // Body: { phone?, whatsappNumber? } — send only the field(s) being changed.
   updateDoctorContact: (id, data) => API.put(`/admin/users/${id}/contact`, data),
+
+  // Edit a doctor's city / clinic address on their behalf (support case —
+  // e.g. a doctor who put their state in the City field).
+  // Body: { city?, clinicAddress? } — send only the field(s) being changed.
+  updateDoctorLocation: (id, data) => API.put(`/admin/users/${id}/location`, data),
 };
 
 // ============================================

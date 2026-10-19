@@ -469,6 +469,44 @@ function AdminDashboard() {
     }
   };
 
+  // Edit a doctor's City / Clinic Address on their behalf (support case — e.g.
+  // a doctor who entered their state in the City field, like "Chhattisgarh"
+  // instead of "Bhilai"). Pre-fills current values; an unchanged value is
+  // skipped so you can edit just one. Cancelling either prompt aborts.
+  const handleEditLocation = async (user) => {
+    const newCity = window.prompt(
+      `Edit City for "${user.name}".\n\nThis is the city shown on their profile and used for city search/landing pages (enter a city, not a state). Leave as-is to keep it unchanged.`,
+      user.city || ''
+    );
+    if (newCity === null) return; // cancelled
+
+    const newAddress = window.prompt(
+      `Edit Clinic Address for "${user.name}" (optional).\n\nShown on their profile with a "Get Directions" link. Leave as-is to keep it unchanged.`,
+      user.clinicAddress || ''
+    );
+    if (newAddress === null) return; // cancelled
+
+    const payload = {};
+    if (newCity.trim() !== (user.city || '').trim()) {
+      if (!newCity.trim()) { toast.error('City cannot be empty.'); return; }
+      payload.city = newCity.trim();
+    }
+    if (newAddress.trim() !== (user.clinicAddress || '').trim()) payload.clinicAddress = newAddress.trim();
+
+    if (Object.keys(payload).length === 0) {
+      toast('No changes made.', { icon: 'ℹ️' });
+      return;
+    }
+
+    try {
+      const response = await adminAPI.updateDoctorLocation(user._id, payload);
+      toast.success(response.data.message, { duration: 5000 });
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update location');
+    }
+  };
+
   const handleSearchUsers = (e) => {
     e.preventDefault();
     fetchUsers();
@@ -887,6 +925,15 @@ function AdminDashboard() {
                                 title="Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
                               >
                                 Edit Contact
+                              </button>
+                            )}
+                            {!user.isDeleted && user.role === 'doctor' && (
+                              <button
+                                onClick={() => handleEditLocation(user)}
+                                className="text-sm font-medium text-sky-600 hover:text-sky-800"
+                                title="Edit this doctor's city / clinic address on their behalf (e.g. fix a state entered in the City field)"
+                              >
+                                Edit Location
                               </button>
                             )}
                             <button
