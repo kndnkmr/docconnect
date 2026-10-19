@@ -574,11 +574,15 @@ function DoctorProfile() {
               overall sentiment is readable at a glance. Computed over all real
               feedback (in-app DB reviews + offline-collected curated reviews). */}
           {combinedStats.totalReviews > 0 && (
-            <div className="flex items-center gap-5 mb-6 pb-6 border-b border-gray-100">
-              <div className="text-center flex-shrink-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 mb-6 pb-6 border-b border-gray-100">
+              {/* Score card — number on top, stars beneath, count on its own
+                  line, so nothing collides regardless of screen width. */}
+              <div className="flex-shrink-0 bg-amber-50 border border-amber-100 rounded-2xl px-6 py-4 text-center sm:w-44">
                 <div className="text-4xl font-extrabold text-gray-800 leading-none">{combinedStats.averageRating}</div>
-                <div className="text-yellow-500 text-sm mt-1">{'★'.repeat(Math.round(combinedStats.averageRating))}<span className="text-gray-300">{'★'.repeat(5 - Math.round(combinedStats.averageRating))}</span></div>
-                <div className="text-xs text-gray-500 mt-1">{combinedStats.totalReviews} {lang === 'hi' ? 'समीक्षाएं' : combinedStats.totalReviews > 1 ? 'reviews' : 'review'}</div>
+                <div className="text-yellow-500 text-base mt-1.5">{'★'.repeat(Math.round(combinedStats.averageRating))}<span className="text-amber-200">{'★'.repeat(5 - Math.round(combinedStats.averageRating))}</span></div>
+                <div className="text-xs text-amber-800 mt-1.5">
+                  {lang === 'hi' ? `${combinedStats.totalReviews} समीक्षाओं पर आधारित` : `Based on ${combinedStats.totalReviews} review${combinedStats.totalReviews > 1 ? 's' : ''}`}
+                </div>
               </div>
               {/* Distribution bars (5★→1★) computed over all reviews. */}
               <div className="flex-1 space-y-1.5 min-w-0">
@@ -587,9 +591,9 @@ function DoctorProfile() {
                   const pct = allReviews.length > 0 ? Math.round((count / allReviews.length) * 100) : 0;
                   return (
                     <div key={star} className="flex items-center gap-2 text-xs text-gray-500">
-                      <span className="w-5 flex-shrink-0">{star}★</span>
-                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${pct}%` }}></div>
+                      <span className="w-6 flex-shrink-0">{star}★</span>
+                      <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-400 rounded-full transition-all" style={{ width: `${pct}%` }}></div>
                       </div>
                       <span className="w-6 text-right flex-shrink-0">{count}</span>
                     </div>
@@ -603,32 +607,34 @@ function DoctorProfile() {
             <p className="text-gray-500">{t.noReviews}</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {allReviews.map((review) => (
+              {allReviews.map((review) => {
+                // Stable colour for the avatar initial, derived from the name
+                // so each patient keeps a consistent tint (purely cosmetic).
+                const palette = ['bg-pink-100 text-pink-700', 'bg-blue-100 text-blue-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-violet-100 text-violet-700', 'bg-cyan-100 text-cyan-700'];
+                const pname = review.patient?.name || 'Patient';
+                const tint = palette[(pname.charCodeAt(0) || 0) % palette.length];
+                return (
                 <div key={review._id} className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col">
-                  <div className="flex justify-between items-start gap-3">
+                  {/* Top row: avatar initial + name + stars. Name sits on its
+                      own line here, so it can never overlap the review text. */}
+                  <div className="flex items-center gap-3">
+                    <span className={`flex-shrink-0 w-9 h-9 rounded-full ${tint} flex items-center justify-center text-sm font-bold`} aria-hidden="true">
+                      {pname.charAt(0).toUpperCase()}
+                    </span>
                     <div className="min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">{pname}</p>
                       <div className="flex items-center gap-2">
-                        <span className="text-yellow-500">{'⭐'.repeat(review.rating)}</span>
-                        <span className="text-sm text-gray-500">({review.rating}/5)</span>
+                        <span className="text-yellow-500 text-sm leading-none">{'★'.repeat(review.rating)}<span className="text-gray-300">{'★'.repeat(5 - review.rating)}</span></span>
+                        {review.createdAt && (
+                          <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
+                        )}
                       </div>
-                      {review.comment && (
-                        <p className="text-gray-700 mt-2 text-sm leading-relaxed">"{review.comment}"</p>
-                      )}
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-medium text-gray-600">{review.patient?.name}</p>
-                      {review.createdAt && (
-                        <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
-                      )}
                     </div>
                   </div>
 
-                  {/* Curated (offline-collected) reviews get an honest tag so
-                      they're clearly attributed and never passed off as in-app. */}
-                  {review.isCurated && (
-                    <p className="text-[11px] text-gray-400 mt-2">
-                      {lang === 'hi' ? '✔ सत्यापित मरीज़ · ऑफ़लाइन साझा' : '✔ Verified patient · shared offline'}
-                    </p>
+                  {/* Review text — full width, below the header, so nothing overlaps. */}
+                  {review.comment && (
+                    <p className="text-gray-600 mt-3 text-sm leading-relaxed">"{review.comment}"</p>
                   )}
 
                   {/* Doctor's public reply, if any (DB reviews only) */}
@@ -678,7 +684,8 @@ function DoctorProfile() {
                     )
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
