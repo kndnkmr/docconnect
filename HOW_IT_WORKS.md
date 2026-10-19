@@ -1159,8 +1159,9 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 - `blog/blogData.js` holds static articles (`{slug,title,description,
   specialization,publishedDate,readTime,image,content:[{type,...}],contentHi?:[{type,...}]}`).
-  The optional `contentHi` is the Hinglish (Hindi-in-Roman-script) version of the
+  `contentHi` is the Hinglish (Hindi-in-Roman-script) version of the
   same article, rendered when the per-article EN/हिंदी toggle is set to Hindi.
+  Every article now has a `contentHi`, so the blog is 100% bilingual.
   The renderer (`BlogArticle.jsx`) supports rich block types beyond plain prose:
   `intro`, `heading`, `paragraph`, `list` (`{items:[]}`), `callout`
   (`{variant:'tip'|'warning'|'success'|'info', title?, text?, items?}`), `table`
@@ -1179,11 +1180,12 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 - **Hinglish (`contentHi`) convention:** the Hindi version is written in Roman
   script only (NO Devanagari), medical terms kept in English, and ALL safety
   framing (emergency numbers like 112/108/Tele-MANAS 14416, red flags, "see a
-  doctor" lines) preserved. It's added in rolling batches; after each batch,
-  run a Devanagari leak sweep over `blogData.js`
+  doctor" lines) preserved. All 373 articles are now translated; when adding
+  or editing one, run a Devanagari leak sweep over `blogData.js`
   (`grep -noE '[A-Za-z]*[ऀ-ॿ]+[A-Za-z]*'` for mixed words and `grep -cE '[ऀ-ॿ]'`
-  for a total count — both should be 0) before building/committing, since
-  stray Devanagari characters occasionally slip into otherwise-Roman words.
+  for a total count — both should be 0) plus the same sweep for Cyrillic
+  (`[Ѐ-ӿ]`) before building/committing, since stray Devanagari or Cyrillic
+  characters occasionally slip into otherwise-Roman words.
 - **Each article's `specialization` must map to a real specialty** — the
   article page's CTA links to `/doctors?specialization=...`. New articles must
   also be added to `client/public/sitemap.xml` (SEO is a slow burn; resubmit
