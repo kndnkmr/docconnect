@@ -28,6 +28,13 @@ function WhatsAppButton() {
   // CTA. (Covers /blog and /blog/<slug>.)
   if (pathname === '/blog' || pathname.startsWith('/blog/')) return null;
 
+  // Hide on auth / form pages (login, register, password reset, email verify).
+  // The user has one clear job here — fill in the form — and on mobile the
+  // floating button sits right over the inputs/submit button and gets tapped
+  // by accident. It isn't useful on these focused pages anyway.
+  const authPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
+  if (authPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
+
   const message = encodeURIComponent(
     'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'
   );
