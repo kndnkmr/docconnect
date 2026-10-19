@@ -398,7 +398,7 @@ function DoctorProfile() {
               )}
               {doctor.consultationFee > 0 && (
                 <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center gap-2.5 text-left">
-                  <span className="text-xl" aria-hidden="true">💰</span>
+                  <span className="text-xl" aria-hidden="true">🧾</span>
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-gray-800 leading-none">Rs. {doctor.consultationFee}</div>
                     <div className="text-[11px] text-gray-500 mt-0.5">{lang === 'hi' ? 'परामर्श' : 'consultation'}</div>
