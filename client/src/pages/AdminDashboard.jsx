@@ -600,6 +600,25 @@ function AdminDashboard() {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
+  // Sidebar nav items. `onSelect` preserves the original tab buttons' side-
+  // effects (some tabs kick off their own fetch when first opened). The tab
+  // content blocks below are unchanged — this only replaces the old top tab
+  // bar with a console-style sidebar.
+  const NAV_ITEMS = [
+    { key: 'stats', label: 'Overview', icon: '📊' },
+    { key: 'users', label: 'Users', icon: '👥' },
+    { key: 'appointments', label: 'Appointments', icon: '📅' },
+    { key: 'analytics', label: 'Revenue & Analytics', icon: '💰', onSelect: fetchAnalytics },
+    { key: 'announcements', label: 'Announcements', icon: '📣', onSelect: fetchAnnouncements },
+    { key: 'complaints', label: 'Complaints', icon: '💬' },
+    { key: 'reviews', label: 'Reviews', icon: '⭐' },
+    { key: 'blog', label: 'Blog Analytics', icon: '📈', onSelect: fetchBlogStats },
+  ];
+  const selectTab = (item) => {
+    setActiveTab(item.key);
+    if (item.onSelect) item.onSelect();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -609,79 +628,57 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-1">Manage users, appointments, and monitor platform activity</p>
-      </div>
+    <div className="lg:flex lg:min-h-[calc(100vh-4rem)] bg-gray-50">
+      {/* ===== Sidebar nav (console style) ===== On desktop it's a fixed-width
+          dark rail; on mobile it collapses to a horizontal scrolling bar at
+          the top. Replaces the old top tab bar — same tabs, same side-effects
+          (via selectTab). */}
+      <aside className="lg:w-60 lg:flex-shrink-0 bg-slate-900 text-white lg:min-h-full">
+        <div className="px-5 pt-5 pb-3 hidden lg:block">
+          <div className="text-lg font-extrabold flex items-center gap-2">
+            <span aria-hidden="true">⚕</span> ProMedicoz
+          </div>
+          <div className="text-[10px] font-semibold tracking-widest text-slate-400 mt-0.5">ADMIN CONSOLE</div>
+        </div>
+        <nav className="flex lg:flex-col gap-1 p-3 overflow-x-auto lg:overflow-visible">
+          {NAV_ITEMS.map((item) => {
+            const active = activeTab === item.key;
+            // Small attention badges from data we already have.
+            const badge = item.key === 'complaints'
+              ? complaints.filter((c) => c.status === 'open').length
+              : item.key === 'stats'
+                ? duplicatePhones.length
+                : 0;
+            return (
+              <button
+                key={item.key}
+                onClick={() => selectTab(item)}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 lg:w-full ${active ? 'bg-primary-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+              >
+                <span aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
+                {badge > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold">{badge}</span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+        <div className="p-3 hidden lg:block mt-auto">
+          <a href="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+            <span aria-hidden="true">↩</span> Back to site
+          </a>
+        </div>
+      </aside>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b mb-6 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('stats')}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'stats' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'users' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Users
-        </button>
-        <button
-          onClick={() => setActiveTab('appointments')}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'appointments' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Appointments
-        </button>
-        <button
-          onClick={() => { setActiveTab('analytics'); fetchAnalytics(); }}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'analytics' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Revenue & Analytics
-        </button>
-        <button
-          onClick={() => { setActiveTab('announcements'); fetchAnnouncements(); }}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'announcements' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Announcements
-        </button>
-        <button
-          onClick={() => setActiveTab('complaints')}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'complaints' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Complaints
-        </button>
-        <button
-          onClick={() => setActiveTab('reviews')}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'reviews' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Reviews
-        </button>
-        <button
-          onClick={() => { setActiveTab('blog'); fetchBlogStats(); }}
-          className={`px-6 py-3 font-medium border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === 'blog' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          Blog Analytics
-        </button>
+      {/* ===== Content column ===== */}
+      <main className="flex-1 min-w-0 px-4 sm:px-6 py-6 lg:py-8">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          {(NAV_ITEMS.find((n) => n.key === activeTab) || {}).label || 'Admin Dashboard'}
+        </h1>
+        <p className="text-gray-500 text-sm mt-1">Manage users, appointments, and monitor platform activity</p>
       </div>
 
       {/* === STATS TAB === */}
@@ -914,15 +911,19 @@ function AdminDashboard() {
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(user.createdAt)}</td>
                       <td className="px-4 py-3">
                         {user.role !== 'admin' && (
-                          <div className="flex items-center gap-3 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap max-w-sm [&>button]:px-2.5 [&>button]:py-1 [&>button]:rounded-md [&>button]:border [&>button]:border-gray-200 [&>button]:bg-white [&>button]:text-xs [&>button]:font-medium [&>button]:hover:bg-gray-50 [&>button]:transition-colors">
                             {/* A self-deleted account already can't log in and is hidden from
                                 patients/search — verifying, deactivating, or resetting its
                                 password no longer does anything useful. Only permanent Delete
-                                (to purge before the 90-day retention window) still applies. */}
+                                (to purge before the 90-day retention window) still applies.
+                                Buttons are styled as compact pills via the parent's
+                                [&>button] utilities so the action cell reads as tidy chips
+                                instead of a run-on row of text links — colours below are kept
+                                for meaning. */}
                             {!user.isDeleted && user.role === 'doctor' && (
                               <button
                                 onClick={() => handleToggleVerification(user)}
-                                className={`text-sm font-medium ${
+                                className={`${
                                   user.isAdminVerified
                                     ? 'text-gray-500 hover:text-gray-700'
                                     : 'text-blue-600 hover:text-blue-800'
@@ -1613,6 +1614,7 @@ function AdminDashboard() {
           )}
         </div>
       )}
+      </main>
 
       {/* ===== Edit Availability modal (admin sets a doctor's schedule) ===== */}
       {availDoctor && (
