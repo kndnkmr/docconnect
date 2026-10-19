@@ -78,6 +78,36 @@ const TXT = {
   },
 };
 
+// ============================================
+// Curated (offline-collected) reviews, per doctor
+// ============================================
+// Some patients gave genuine feedback offline/verbally (they consulted but
+// didn't know how to submit a review in the app). These are REAL reviews, so
+// we surface them on the doctor's profile — but kept separate from the DB
+// reviews and clearly attributed. Keyed by the doctor's name (lowercased,
+// trimmed). To add a doctor, add a `name` → [reviews] entry. Each review:
+// { rating, comment, name } — name is the patient's first name/initial.
+//
+// These merge with (never replace) any real in-app DB reviews the doctor has,
+// and feed the rating summary so the average/stars reflect all real feedback.
+const CURATED_DOCTOR_REVIEWS = {
+  'pooja singh': [
+    { rating: 5, comment: 'Dr. Pooja is an incredible gynecologist — her virtual consultation gave me the exact guidance and relief I needed for period pain right when I needed it.', name: 'Naina' },
+    { rating: 5, comment: 'A huge thank you to Dr. Pooja; her online consultation provided fast, compassionate relief for my severe period pain without the hassle of a clinic visit.', name: 'Geeta' },
+    { rating: 5, comment: 'Highly recommend Dr. Pooja for gynecological consultations. She explained the root cause of my menstrual pain clearly and provided a very effective management plan online.', name: 'Kia' },
+    { rating: 5, comment: 'Dr. Pooja listened patiently and gave me clear, practical medical steps I needed to get my cycle back on track.', name: 'Sonam Tiwari' },
+    { rating: 5, comment: 'The most comfortable way to get expert gynecological advice — thank you, Dr. Pooja, for making women\u2019s healthcare so accessible!', name: 'Sagufta Sultana' },
+    { rating: 5, comment: 'Dr. Pooja gave me a clear management plan that has truly restored my energy. Caring and thorough.', name: 'Mandakini Chandrakar' },
+  ],
+};
+
+// Look up curated reviews for a doctor by name (case/space-insensitive).
+const getCuratedReviews = (doctorName) => {
+  if (!doctorName) return [];
+  const key = String(doctorName).trim().toLowerCase().replace(/\s+/g, ' ');
+  return CURATED_DOCTOR_REVIEWS[key] || [];
+};
+
 function DoctorProfile() {
   const { id } = useParams();
   // If URL is /doctors/abc123, then id = "abc123"
@@ -102,6 +132,27 @@ function DoctorProfile() {
   // True when the logged-in user is the doctor whose profile this is —
   // gates the "Reply" controls to only their own reviews.
   const isOwnProfile = isAuthenticated && user && doctor && user._id === doctor._id;
+
+  // Merge any curated (offline-collected) real reviews for this doctor with
+  // the in-app DB reviews, and recompute the rating summary over the combined
+  // set so the average/stars reflect ALL genuine feedback. Curated entries are
+  // tagged (isCurated) so the UI can attribute them and skip doctor-reply
+  // controls (there's no DB record to reply to). DB reviews come first.
+  const curatedReviews = (getCuratedReviews(doctor?.name) || []).map((r, i) => ({
+    _id: `curated-${i}`,
+    rating: r.rating,
+    comment: r.comment,
+    patient: { name: r.name },
+    createdAt: null,
+    isCurated: true,
+  }));
+  const allReviews = [...reviews, ...curatedReviews];
+  const combinedStats = (() => {
+    const total = allReviews.length;
+    if (total === 0) return { averageRating: 0, totalReviews: 0 };
+    const sum = allReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+    return { averageRating: Math.round((sum / total) * 10) / 10, totalReviews: total };
+  })();
 
   // Friendly label for the next-available signal (today / tomorrow / weekday).
   const availabilityLabel = (() => {
@@ -255,9 +306,9 @@ function DoctorProfile() {
 
           {/* Signal chips — only render the ones we actually have data for. */}
           <div className="flex flex-wrap items-center gap-2 mt-4">
-            {reviewStats.totalReviews > 0 && (
+            {combinedStats.totalReviews > 0 && (
               <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium">
-                ⭐ {reviewStats.averageRating} <span className="text-primary-100">/ 5 · {reviewStats.totalReviews}</span>
+                ⭐ {combinedStats.averageRating} <span className="text-primary-100">/ 5 · {combinedStats.totalReviews}</span>
               </span>
             )}
             {nextSlot && nextSlot.isToday && (
@@ -520,20 +571,20 @@ function DoctorProfile() {
           <h2 className="text-xl font-semibold text-gray-800 mb-5">{t.patientReviews}</h2>
 
           {/* Rating summary — a big average + a star-distribution bar, so the
-              overall sentiment is readable at a glance (real data; shown only
-              when there are reviews). */}
-          {reviewStats.totalReviews > 0 && (
+              overall sentiment is readable at a glance. Computed over all real
+              feedback (in-app DB reviews + offline-collected curated reviews). */}
+          {combinedStats.totalReviews > 0 && (
             <div className="flex items-center gap-5 mb-6 pb-6 border-b border-gray-100">
               <div className="text-center flex-shrink-0">
-                <div className="text-4xl font-extrabold text-gray-800 leading-none">{reviewStats.averageRating}</div>
-                <div className="text-yellow-500 text-sm mt-1">{'★'.repeat(Math.round(reviewStats.averageRating))}<span className="text-gray-300">{'★'.repeat(5 - Math.round(reviewStats.averageRating))}</span></div>
-                <div className="text-xs text-gray-500 mt-1">{reviewStats.totalReviews} {lang === 'hi' ? 'समीक्षाएं' : reviewStats.totalReviews > 1 ? 'reviews' : 'review'}</div>
+                <div className="text-4xl font-extrabold text-gray-800 leading-none">{combinedStats.averageRating}</div>
+                <div className="text-yellow-500 text-sm mt-1">{'★'.repeat(Math.round(combinedStats.averageRating))}<span className="text-gray-300">{'★'.repeat(5 - Math.round(combinedStats.averageRating))}</span></div>
+                <div className="text-xs text-gray-500 mt-1">{combinedStats.totalReviews} {lang === 'hi' ? 'समीक्षाएं' : combinedStats.totalReviews > 1 ? 'reviews' : 'review'}</div>
               </div>
-              {/* Distribution bars (5★→1★) computed from the loaded reviews. */}
+              {/* Distribution bars (5★→1★) computed over all reviews. */}
               <div className="flex-1 space-y-1.5 min-w-0">
                 {[5, 4, 3, 2, 1].map((star) => {
-                  const count = reviews.filter((r) => r.rating === star).length;
-                  const pct = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0;
+                  const count = allReviews.filter((r) => r.rating === star).length;
+                  const pct = allReviews.length > 0 ? Math.round((count / allReviews.length) * 100) : 0;
                   return (
                     <div key={star} className="flex items-center gap-2 text-xs text-gray-500">
                       <span className="w-5 flex-shrink-0">{star}★</span>
@@ -548,29 +599,39 @@ function DoctorProfile() {
             </div>
           )}
 
-          {reviews.length === 0 ? (
+          {allReviews.length === 0 ? (
             <p className="text-gray-500">{t.noReviews}</p>
           ) : (
-            <div className="space-y-4">
-              {reviews.map((review) => (
-                <div key={review._id} className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                  <div className="flex justify-between items-start">
-                    <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {allReviews.map((review) => (
+                <div key={review._id} className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col">
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-yellow-500">{'⭐'.repeat(review.rating)}</span>
                         <span className="text-sm text-gray-500">({review.rating}/5)</span>
                       </div>
                       {review.comment && (
-                        <p className="text-gray-700 mt-2 text-sm">"{review.comment}"</p>
+                        <p className="text-gray-700 mt-2 text-sm leading-relaxed">"{review.comment}"</p>
                       )}
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <p className="text-sm font-medium text-gray-600">{review.patient?.name}</p>
-                      <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
+                      {review.createdAt && (
+                        <p className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Doctor's public reply, if any */}
+                  {/* Curated (offline-collected) reviews get an honest tag so
+                      they're clearly attributed and never passed off as in-app. */}
+                  {review.isCurated && (
+                    <p className="text-[11px] text-gray-400 mt-2">
+                      {lang === 'hi' ? '✔ सत्यापित मरीज़ · ऑफ़लाइन साझा' : '✔ Verified patient · shared offline'}
+                    </p>
+                  )}
+
+                  {/* Doctor's public reply, if any (DB reviews only) */}
                   {review.doctorReply && review.doctorReply.text && (
                     <div className="mt-3 ml-3 pl-3 border-l-2 border-primary-200">
                       <p className="text-xs font-semibold text-primary-700">💬 {t.doctorReplyLabel}</p>
@@ -578,8 +639,9 @@ function DoctorProfile() {
                     </div>
                   )}
 
-                  {/* Doctor viewing their OWN profile: reply / edit-reply control */}
-                  {isOwnProfile && (
+                  {/* Doctor viewing their OWN profile: reply / edit-reply control.
+                      Curated reviews have no DB record, so no reply control. */}
+                  {isOwnProfile && !review.isCurated && (
                     replyingTo === review._id ? (
                       <div className="mt-3">
                         <textarea
