@@ -866,6 +866,34 @@ export const articles = [
         'Keep the kitchen well ventilated; avoid burning coils indoors'
       ]},
       { type: 'callout', variant: 'tip', text: 'Asthma management, COPD follow-ups, cough evaluation, and medication adjustment work well **online** — the doctor advises if a lung function test or X-ray is needed.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Indian shehron mein badhte air pollution ke saath, breathing problems tezi se badh rahi hain — asthma, chronic cough, COPD lakhon ko prabhaavit karte hain. Zyaadaatar sahi care ke saath kaafi manageable hain. Yahaan kab ek khaansi ya saans phoolna ek pulmonologist (lung specialist) ki haqdaar hai.' },
+      { type: 'heading', text: 'Ek Pulmonologist Ko Dikhaayein Agar Aapko Ho:' },
+      { type: 'list', items: [
+        '3 hafton se zyaada chalne waali ek khaansi',
+        'Routine activities ke dauraan saans phoolna',
+        'Wheezing ya chest mein jakdan',
+        'Khoon ki khaansi',
+        'Baar-baar chest infections (saal mein ~3 se zyaada)',
+        'Asthma jo aapke inhaler se kaabu mein nahi',
+        'Din ki neend ke saath kharaate',
+        'Jaani-pehchaani TB exposure ya ek asaamaanya chest X-ray',
+      ]},
+      { type: 'heading', text: 'Asthma — Aam Aur Kaafi Manageable' },
+      { type: 'paragraph', text: 'Asthma waale kai log **under-treated** hain — preventive therapy ke bajaay sirf ek rescue inhaler par nirbhar. Ek pulmonologist ek aisa plan banata hai jo asal mein symptoms kaabu karta hai aur attacks rokta hai.' },
+      { type: 'callout', variant: 'info', title: 'Myth vs fact', text: '**Myth:** "Inhalers addictive hote hain." **Fact:** inhalers sabse surakshit, sabse asardaar asthma treatment hain — yeh ek nanhi dose seedhe lungs tak kam se kam side effects ke saath pahunchaate hain. Inka dar logon ko bevajah wheezing karvaata rakhta hai.' },
+      { type: 'heading', text: 'COPD Aur TB' },
+      { type: 'paragraph', text: '**COPD** smokers aur andaruni khaana pakaane ke dhuaan ke sampark waalon ko prabhaavit karta hai — badhti saans phoolna, chronic cough, baar-baar infections. Jaldi ilaaj ise dheema karta hai.' },
+      { type: 'callout', variant: 'warning', title: 'Ek lambi khaansi ko nazarandaaz na karein — TB sochein', text: 'Shaam ke bukhaar, raat ke paseene, ya weight loss ke saath **2 hafton se zyaada** chalne waali ek khaansi ko ek TB check ki zaroorat hai. TB sahi medication se poori tarah **ilaaj-yogya** hai — lekin ilaaj jaldi rokna khatarnaak drug-resistant TB paida karta hai, isliye poora course khatm karein.' },
+      { type: 'callout', variant: 'tip', title: 'Apne lungs bachaayein', items: [
+        'Smoking band karein — passive smoke sameth',
+        'Zyaada-pollution waale dinon ek N95 mask istemaal karein',
+        'Lung capacity banaane ke liye exercise karein',
+        'Ek saalaana flu vaccine lein',
+        'Kitchen achhe se hawadaar rakhein; andar coils jalaane se bachein',
+      ]},
+      { type: 'callout', variant: 'tip', text: 'Asthma management, COPD follow-ups, khaansi ka evaluation, aur medication adjustment **online** achhe se kaam karte hain — doctor salaah dete hain agar ek lung function test ya X-ray ki zaroorat hai. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -1168,6 +1196,25 @@ export const articles = [
         'Be honest and complete about your history'
       ]},
       { type: 'callout', variant: 'success', title: 'Sign up in seconds', text: 'On ProMedicoz you can register with just your **phone number** — email is optional — and you can even book on behalf of **family members**. Getting quality healthcare has never been simpler.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Ek doctor se salaah lena ab yatra karne aur ghanton intezaar karne ka matlab nahi hai. Agar aapke paas ek phone aur internet hai, to aap ghar se kuchh minaton mein ek satyaapit doctor se salaah le sakte hain. Yahaan theek kaise — shuru se ant tak.' },
+      { type: 'heading', text: 'Symptom Se Prescription Tak — 5 Kadamon Mein' },
+      { type: 'steps', items: [
+        '**Sahi doctor dhoondhein.** Apne symptom ya specialization se search karein, aur city, fee, ya yahaan tak ki doctor jo **bhaasha** bolta hai usse filter karein. Har profile qualifications, anubhav, fee, aur patient reviews dikhaati hai.',
+        '**Ek time slot chunein.** Ek date aur ek uplabdh samay chunein, aur chunein ki aap kaise salaah lena chahte hain — **video, phone, ya clinic par in-person**.',
+        '**Confirmation paayein.** Doctor aapki appointment confirm karte hain, aam taur par kuchh ghanton mein. Aapko app mein (aur aapke phone par agar aap notifications enable karte hain) soochit kiya jaata hai.',
+        '**Doctor ko seedhe pay karein.** Confirmation ke baad, aap fee seedhe doctor ko **UPI** ke zariye dete hain. Platform kabhi aapka paisa nahi rakhta ya charges nahi jodta.',
+        '**Salaah lein.** Apne slot samay par, app ke andar hi surakshit video ya phone call join karein — koi alag software nahi. In-person ke liye, bas clinic jaayein. Aapka **prescription baad mein apne aap aapke account mein dikhta hai**.',
+      ]},
+      { type: 'callout', variant: 'tip', title: 'Ek shaandaar online consultation ke liye tips', items: [
+        'Ek shaant, achhi roshni waali jagah par baithein',
+        'Apni medicines aur pichhle reports haath mein rakhein',
+        'Pehle apne symptoms aur sawaal likh lein',
+        'Skin issues ke liye, saaf photos taiyaar rakhein',
+        'Apne itihaas ke baare mein imaandaar aur poore rahein',
+      ]},
+      { type: 'callout', variant: 'success', title: 'Second mein sign up karein', text: 'ProMedicoz par aap sirf apne **phone number** se register kar sakte hain — email optional hai — aur aap **parivaar ke sadasyon** ki ore se bhi book kar sakte hain. Achhi healthcare paana kabhi itna saral nahi raha. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -1754,6 +1801,25 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When to See a Doctor' },
       { type: 'paragraph', text: 'If your waist is rising, weight is not budging despite effort, or you have a family history of diabetes/heart disease, get your sugar, cholesterol, and other levels checked. A doctor can look at the full metabolic picture and build a realistic plan with you — an **online consultation** is a good, judgement-free place to start.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Hum health ko tolne ki machine par number se aankne ki pravritti rakhte hain. Lekin research dikhaata hai ki khaaskar Indians ke liye, aap fat KAHAN lekar chalte hain — khaaskar pet ke aaspaas — aapke total weight se zyaada mayne rakhta hai. Aap patle dikh sakte hain aur phir bhi metabolic risk par ho sakte hain. Yahaan woh hai jo asal mein mayne rakhta hai, guilt ya crash-diet myths ke bina samjhaya gaya.' },
+      { type: 'heading', text: 'Indians Kam Weight Par Risk Par Kyun Hain' },
+      { type: 'paragraph', text: 'Indians kai Western populations se kam BMI aur kam umar par zyaada body fat aur metabolic samasyaayein (jaise type 2 diabetes aur dil ki bimaari) vikasit karne ki pravritti rakhte hain. Iska matlab hai ek "normal" weight bhi chhupa risk le kar chal sakta hai — yahi vajah hai ki kamar size aur blood tests mayne rakhte hain, sirf scale nahi.' },
+      { type: 'heading', text: 'Belly Fat Khatarnaak Kism Hai' },
+      { type: 'paragraph', text: 'Aapke organs ke aaspaas fat (visceral fat, "belly" fat) metabolically active hai — yeh insulin resistance, high sugar, high cholesterol, aur soojan chalaata hai. Skin ke neeche kahin aur fat kaafi kam nuksaandeh hai. To ek badhti kamar ek asli chetaavani sanket hai, zyaada weight badhne ke bina bhi.' },
+      { type: 'callout', variant: 'tip', title: 'Ek saral home check', text: 'Apni kamar naabhi par maapein. Indians ke liye ek mote maargdarshan ke roop par, lagbhag **90 cm (35 in) purushon ke liye** aur **80 cm (31 in) mahilaon ke liye** se upar extra dhyaan dein. Yeh ek diagnosis nahi — bas jaanch karvaane ka ek nudge.' },
+      { type: 'callout', variant: 'info', title: 'Yeh sirf "kam khaao, zyaada chalo" nahi hai', text: 'Weight genetics, hormones, neend, stress, aur medications se aakaar paata hai — sirf willpower se nahi. Khud ko sharm dilaana kaam nahi karta aur uchit nahi hai. Jo madad karta hai woh ek **tikaaou** tareeka hai: vaastavik badlaav jinhein aap banaaye rakh sakein, crash diets nahi jo vaapas lauut aati hain.' },
+      { type: 'heading', text: 'Vyavahaarik, Tikaaou Kadam' },
+      { type: 'list', items: [
+        'Rozaana chalein — ek 30-minute ki sair bhi ek asli farq laati hai',
+        'Bhojan protein, fibre, sabziyaan aur whole grains ke aaspaas banaayein',
+        'Meethe drinks, refined carbs, aur ultra-processed snacks kam karein',
+        'Neend ko praathmikta dein aur stress manage karein — dono weight ko prabhaavit karte hain',
+        'Tez kami nahi — dheemi, sthir badlaav ka lakshya rakhein',
+      ]},
+      { type: 'heading', text: 'Doctor Ko Kab Dikhaayein' },
+      { type: 'paragraph', text: 'Agar aapki kamar badh rahi hai, weight prayas ke bawajood hil nahi raha, ya aapko diabetes/dil ki bimaari ka family history hai, to apni sugar, cholesterol, aur anya levels jaanch karvaayein. Ek doctor poori metabolic tasveer dekh sakte hain aur aapke saath ek vaastavik plan bana sakte hain — ek **online consultation** ek achhi, bina-faisle waali jagah hai shuru karne ke liye. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
@@ -1918,6 +1984,33 @@ export const articles = [
       ]},
       { type: 'heading', text: 'When It\'s a Medical Concern' },
       { type: 'paragraph', text: 'Constant **excessive thirst** can sometimes signal high blood sugar or other issues — so if you are always thirsty no matter how much you drink, or urinating very frequently, see a doctor. An **online consultation** can quickly tell you whether it needs a test.' },
+    ],
+    contentHi: [
+      { type: 'intro', text: 'Hummein "din mein 8 glass" peene, vishaal water bottles le kar chalne, aur ki pyaasa hona matlab hum pehle se dehydrated hain, bataya jaata hai. Ismein se kuchh sach hai, kuchh myth. Yahaan sahi se hydrated rehne ki ek saaf, imaandaar guide hai — ise zyaada soche bina.' },
+      { type: 'heading', text: 'Kya Din Mein 8 Glass Ek Asli Niyam Hai?' },
+      { type: 'paragraph', text: 'Theek nahi — yeh ek mota maargdarshan hai, ek jaadui number nahi. Aapki asli zaroorat aapke body size, activity, mausam (bahut, Indian garmiyon mein), aur aapke swasthya par nirbhar karti hai. Zyaadaatar swasth log pyaas sunne aur apna urine paandu peela rakhne se achha karte hain.' },
+      { type: 'callout', variant: 'tip', title: 'Sabse saral hydration check', text: 'Glass ginna bhool jaayein — bas apne urine par ek nazar daalein. **Paandu bhoose-rang ka = achhe se hydrated.** Gehra peela = zyaada piyein. Aapke shareer ki pyaas zyaadaatar swasth logon ke liye ek achha maargdarshan hai.' },
+      { type: 'heading', text: 'Sanket Ki Aap Kaafi Nahi Pee Rahe' },
+      { type: 'list', items: [
+        'Gehra peela urine',
+        'Sir dard aur thakaan',
+        'Sookha mooh aur hoth',
+        'Khade hone par chakkar',
+        'Kabz',
+      ]},
+      { type: 'heading', text: 'Kya Chai/Coffee Ginti Hai?' },
+      { type: 'paragraph', text: 'Zyaadaatar **haan** — myth ke bawajood, madhyam chai aur coffee aapke rozaana taral mein jud jaate hain. Lekin paani, chaas, aur naariyal paani meethe drinks ya bahut strong caffeine se behtar rozmarra choices hain.' },
+      { type: 'callout', variant: 'info', title: 'Kya aap bahut zyaada pee sakte hain?', text: 'Shaayad hi, lekin haan — vishaal maatra zabardasti karna "detoxing" nahi hai aur extreme maamlon mein nuksaandeh tak ho sakta hai. Aapko pyaas se aage litre peene ki zaroorat nahi. **Santulan, zyaadti nahi.**' },
+      { type: 'heading', text: 'Hydrated Rehne Ke Aasaan Tareeke' },
+      { type: 'list', items: [
+        'Ek bottle pahunch mein rakhein',
+        'Har bhojan ke saath ek glass lein',
+        'Garmi mein ya exercise ke dauraan zyaada piyein',
+        'Paani-bharpoor foods khaayein — kheera, tarbooj, santre',
+        'Boodhon aur chhote bachhon mein hydration par saavdhaani se dhyaan dein',
+      ]},
+      { type: 'heading', text: 'Jab Yeh Ek Medical Chinta Ho' },
+      { type: 'paragraph', text: 'Lagaataar **zyaada pyaas** kabhi-kabhi high blood sugar ya anya issues ka sanket de sakti hai — isliye agar aap kitna bhi piyein phir bhi hamesha pyaase rehte hain, ya bahut baar-baar urinate karte hain, to ek doctor ko dikhaayein. Ek **online consultation** aapko jaldi bata sakti hai ki kya ise ek test ki zaroorat hai. Content was rephrased for compliance with licensing restrictions.' },
     ]
   },
   {
