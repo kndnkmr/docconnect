@@ -439,19 +439,20 @@ function DoctorProfile() {
               )}
             </div>
 
-            {/* Consultation modes */}
+            {/* Consultation modes — polished bordered pills (how the doctor
+                consults). Tinted per mode for quick scanning. */}
             {doctor.consultationModes && doctor.consultationModes.length > 0 && (
-              <div className="flex flex-wrap justify-center md:justify-start gap-1 mt-2">
-                {doctor.consultationModes.includes('in-person') && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">{t.inPerson}</span>}
-                {doctor.consultationModes.includes('video') && <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">{t.video}</span>}
-                {doctor.consultationModes.includes('phone') && <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-xs">{t.phone}</span>}
+              <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
+                {doctor.consultationModes.includes('video') && <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 border border-purple-100 rounded-full text-xs font-medium">{t.video}</span>}
+                {doctor.consultationModes.includes('phone') && <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 border border-orange-100 rounded-full text-xs font-medium">{t.phone}</span>}
+                {doctor.consultationModes.includes('in-person') && <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-xs font-medium">{t.inPerson}</span>}
               </div>
             )}
 
             {/* Languages the doctor can consult in */}
             {doctor.languagesSpoken && doctor.languagesSpoken.length > 0 && (
               <p className="text-gray-600 text-sm mt-3 text-center md:text-left">
-                🗣️ <span className="font-medium text-gray-700">{t.speaks}:</span> {doctor.languagesSpoken.join(', ')}
+                <span aria-hidden="true">🗣️</span> <span className="font-semibold text-gray-700">{t.speaks}:</span> {doctor.languagesSpoken.join(', ')}
               </p>
             )}
 
@@ -544,27 +545,35 @@ function DoctorProfile() {
         </div>
 
         {/* ---- Details Section ---- */}
+        {(doctor.bio || doctor.clinicAddress) && (
         <div className="border-t p-6 md:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* About */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* About — soft card with an accent icon heading instead of a bare
+                text header, so the section reads as a designed block. */}
             {doctor.bio && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.about}</h2>
-                <p className="text-gray-600 leading-relaxed">{doctor.bio}</p>
-                {/* leading-relaxed = more line spacing (easier to read paragraphs) */}
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+                <h2 className="flex items-center gap-2 text-base font-bold text-gray-800 mb-2.5">
+                  <span className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center text-lg flex-shrink-0" aria-hidden="true">👤</span>
+                  {t.about}
+                </h2>
+                <p className="text-gray-600 leading-relaxed text-sm">{doctor.bio}</p>
               </div>
             )}
 
-            {/* Clinic Address */}
+            {/* Clinic Address — matching card with a maps accent + a proper
+                "Get Directions" pill button. */}
             {doctor.clinicAddress && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.clinicAddress}</h2>
-                <p className="text-gray-600">{doctor.clinicAddress}</p>
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+                <h2 className="flex items-center gap-2 text-base font-bold text-gray-800 mb-2.5">
+                  <span className="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-lg flex-shrink-0" aria-hidden="true">📍</span>
+                  {t.clinicAddress}
+                </h2>
+                <p className="text-gray-600 text-sm leading-relaxed">{doctor.clinicAddress}</p>
                 <a
                   href={doctor.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(doctor.clinicAddress || doctor.city || '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block mt-2 text-sm text-primary-600 hover:underline font-medium"
+                  className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-sm text-primary-700 hover:bg-primary-50 hover:border-primary-200 font-medium transition-colors"
                 >
                   {t.getDirections}
                 </a>
@@ -572,10 +581,14 @@ function DoctorProfile() {
             )}
           </div>
         </div>
+        )}
 
         {/* ---- Reviews Section ---- */}
         <div className="border-t p-6 md:p-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-5">{t.patientReviews}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-5">
+            <span className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-lg flex-shrink-0" aria-hidden="true">⭐</span>
+            {t.patientReviews}
+          </h2>
 
           {/* Rating summary — a big average + a star-distribution bar, so the
               overall sentiment is readable at a glance. Computed over all real
