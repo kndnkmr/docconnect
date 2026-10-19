@@ -692,9 +692,17 @@ function BookAppointment() {
 
       {/* Sticky mobile submit bar — fee + Confirm always reachable while the
           patient scrolls the form. Submits #book-form via the form attribute,
-          so it shares the exact same disabled rules + submit handler. */}
-      <div className="h-20 md:hidden" aria-hidden="true" />
-      <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3">
+          so it shares the exact same disabled rules + submit handler.
+          IMPORTANT: it sits ABOVE the global BottomNav (which is fixed at
+          bottom-0, h-16 = 64px, + the safe-area inset). If this bar also sat
+          at bottom-0 the BottomNav (z-50) would cover it and the Confirm
+          button would be invisible — so we offset it by the nav height and
+          give it z-50 too. The spacer below reserves room for both bars. */}
+      <div className="h-36 md:hidden" aria-hidden="true" />
+      <div
+        className="fixed inset-x-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3"
+        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+      >
         <div className="flex-1 min-w-0">
           {doctor?.consultationFee > 0 ? (
             <>

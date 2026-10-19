@@ -800,8 +800,13 @@ function DoctorProfile() {
           Padding-bottom spacer below prevents it covering page content. */}
       {!isOwnProfile && (
         <>
-          <div className="h-20 md:hidden" aria-hidden="true" />
-          <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3">
+          {/* Sits ABOVE the global BottomNav (fixed bottom-0, h-16 + safe area)
+              so the nav doesn't cover the Book button for logged-in patients. */}
+          <div className="h-36 md:hidden" aria-hidden="true" />
+          <div
+            className="fixed inset-x-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3"
+            style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+          >
             <div className="flex-1 min-w-0">
               {doctor.consultationFee > 0 ? (
                 <>
