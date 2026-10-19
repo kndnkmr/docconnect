@@ -38,6 +38,9 @@ const TXT = {
   en: {
     heroTitle: 'Find the Right Doctor & Book Instantly',
     heroSubtitle: 'Video, phone, or in-person consultations with verified doctors across India.',
+    trustVerified: 'Verified doctors',
+    trustNoCommission: 'Pay the doctor directly',
+    trustModes: 'Video, phone or in-person',
     searchPlaceholder: 'Describe your problem (e.g., back pain, fever...)',
     findDoctor: 'Find Doctor',
     suggested: 'Suggested',
@@ -92,6 +95,9 @@ const TXT = {
   hi: {
     heroTitle: 'सही डॉक्टर खोजें और तुरंत बुक करें',
     heroSubtitle: 'भारत भर के सत्यापित डॉक्टरों से वीडियो, फ़ोन या क्लिनिक पर परामर्श।',
+    trustVerified: 'सत्यापित डॉक्टर',
+    trustNoCommission: 'पैसे सीधे डॉक्टर को',
+    trustModes: 'वीडियो, फ़ोन या क्लिनिक पर',
     searchPlaceholder: 'अपनी समस्या बताएं (जैसे: कमर दर्द, बुखार...)',
     findDoctor: 'डॉक्टर खोजें',
     suggested: 'सुझाव',
@@ -300,8 +306,19 @@ function Home() {
           IS the hero, so it's the first thing on screen — no scrolling past
           marketing to reach it. Login/Register live in the navbar; the hero
           stays focused on the one job a patient came to do. */}
-      <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
-        <div className="container mx-auto px-4 py-10 sm:py-14 md:py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+        {/* Depth layers: a faint dotted texture + two soft glowing blobs so the
+            hero reads as a modern, dimensional band rather than a flat fill.
+            All decorative + pointer-events-none, so nothing interactive moves. */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
+          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
+          aria-hidden="true"
+        ></div>
+        <div className="pointer-events-none absolute -top-24 -left-24 w-80 h-80 rounded-full bg-white/10 blur-3xl" aria-hidden="true"></div>
+        <div className="pointer-events-none absolute -bottom-28 -right-20 w-96 h-96 rounded-full bg-primary-400/20 blur-3xl" aria-hidden="true"></div>
+
+        <div className="relative container mx-auto px-4 py-12 sm:py-16 md:py-24">
           <div className="max-w-2xl mx-auto text-center">
             {/* Top row: language toggle centered, with Install (left) and
                 Share (right) filling the empty space on either side. Wraps
@@ -351,23 +368,37 @@ function Home() {
               </button>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 tracking-tight">
               {t.heroTitle}
             </h1>
-            <p className="text-sm sm:text-lg text-primary-100 mb-6">
+            <p className="text-sm sm:text-lg text-primary-100 mb-5">
               {t.heroSubtitle}
             </p>
 
-            {/* Search box — the hero's centerpiece */}
+            {/* Trust pills — quick, scannable credibility above the search */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-7 text-xs sm:text-sm">
+              {[t.trustVerified, t.trustNoCommission, t.trustModes].map((label, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 rounded-full px-3 py-1 font-medium">
+                  <span className="text-green-300" aria-hidden="true">✓</span>
+                  {label}
+                </span>
+              ))}
+            </div>
+
+            {/* Search box — the hero's centerpiece. A search icon anchors the
+                left, and the Find Doctor button lifts on hover. */}
             <div className="max-w-xl mx-auto">
               <div className="relative">
+                <svg className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 18a7 7 0 110-14 7 7 0 010 14z" />
+                </svg>
                 <input
                   type="text"
                   value={symptomSearch}
                   onChange={(e) => setSymptomSearch(e.target.value)}
                   placeholder={t.searchPlaceholder}
                   aria-label={t.searchPlaceholder}
-                  className="w-full pl-5 pr-28 py-3.5 rounded-full text-gray-800 text-sm sm:text-base outline-none focus:ring-4 focus:ring-white/30 shadow-lg"
+                  className="w-full pl-12 pr-32 py-4 rounded-full text-gray-800 text-sm sm:text-base outline-none focus:ring-4 focus:ring-white/40 shadow-xl"
                 />
                 <Link
                   to={symptomSearch
@@ -378,7 +409,7 @@ function Home() {
                     specialization: symptomSearch ? getSpecializationFromSymptom(symptomSearch) : 'none',
                     had_symptom: symptomSearch ? 'yes' : 'no',
                   })}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-700 transition-colors"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:-translate-y-px hover:shadow-md active:translate-y-0"
                 >
                   {t.findDoctor}
                 </Link>
@@ -390,20 +421,18 @@ function Home() {
               )}
             </div>
 
-            {/* Trust stats — compact, below the action */}
-            <div className="flex justify-center gap-6 sm:gap-10 mt-8 pt-5 border-t border-primary-500/50">
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">100+</div>
-                <div className="text-primary-200 text-xs sm:text-sm">{t.statDoctors}</div>
-              </div>
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">20+</div>
-                <div className="text-primary-200 text-xs sm:text-sm">{t.statSpecializations}</div>
-              </div>
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">1000+</div>
-                <div className="text-primary-200 text-xs sm:text-sm">{t.statAppointments}</div>
-              </div>
+            {/* Trust stats — compact glass cards below the action */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-8 max-w-md mx-auto">
+              {[
+                { num: '100+', label: t.statDoctors },
+                { num: '20+', label: t.statSpecializations },
+                { num: '1000+', label: t.statAppointments },
+              ].map((s, i) => (
+                <div key={i} className="bg-white/10 border border-white/15 rounded-xl py-3 px-2 backdrop-blur-sm">
+                  <div className="text-lg sm:text-2xl font-bold">{s.num}</div>
+                  <div className="text-primary-200 text-[11px] sm:text-sm leading-tight">{s.label}</div>
+                </div>
+              ))}
             </div>
 
             {!isAuthenticated && (
