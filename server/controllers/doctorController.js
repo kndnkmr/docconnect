@@ -221,6 +221,17 @@ const getAllDoctors = async (req, res) => {
     // Show verified doctors and legacy doctors (who don't have isVerified field yet)
     const filter = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true }, isSuspended: { $ne: true } };
 
+    // Hide empty "shell" profiles from the public browse list. A doctor with no
+    // specialization at all is an incomplete registration — there is nothing a
+    // patient can act on (they already never appear on any /specialization page,
+    // since there's nothing to match, and with no schedule they can't be booked).
+    // Showing them in the generic /doctors list only produced blank, name-only,
+    // "No upcoming availability" cards. Requiring a non-empty specialization keeps
+    // the browse list to real, usable profiles. (A doctor who fills in their
+    // specialization immediately reappears — this filters nothing from a complete
+    // profile, and doesn't touch direct profile views via GET /api/doctors/:id.)
+    filter.specialization = { $nin: [null, ''] };
+
     // If the user added ?specialization=something in the URL, filter by it
     // Example: /api/doctors?specialization=Cardiologist
     if (req.query.specialization) {
