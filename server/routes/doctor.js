@@ -20,6 +20,9 @@ const {
   getAllDoctors,
   getDoctorCities,
   getDoctorById,
+  getDoctorBySlug,
+  trackLinkBooking,
+  getMyStats,
   updateDoctorProfile
 } = require('../controllers/doctorController');
 
@@ -58,10 +61,27 @@ router.get('/', getAllDoctors);
 // treat "cities" as a doctor id.
 router.get('/cities', getDoctorCities);
 
+// GET /api/doctors/me/stats
+// The logged-in doctor's own "Promote Me" numbers (consultations, earnings,
+// patients, rating, page views, link bookings). MUST come before '/:id' so
+// "me" isn't treated as a doctor id. Doctor-only.
+router.get('/me/stats', protect, authorize('doctor'), getMyStats);
+
+// GET /api/doctors/by-slug/:slug
+// Resolve a doctor by their vanity handle for the branded /dr/:slug page.
+// MUST come before '/:id' so "by-slug" isn't treated as a doctor id.
+router.get('/by-slug/:slug', getDoctorBySlug);
+
 // GET /api/doctors/:id
 // Anyone can view a doctor's full profile
 // ":id" is a placeholder — the actual URL would be like /api/doctors/65a1b2c3...
 router.get('/:id', getDoctorById);
+
+// POST /api/doctors/:id/link-booking
+// Best-effort counter: the branded page pings this when a visitor taps "Book"
+// from it, so the doctor can see bookings their shared link drove. Public,
+// always 200. Declared after '/:id' is fine (distinct method + sub-path).
+router.post('/:id/link-booking', trackLinkBooking);
 
 // ---- PROTECTED ROUTES ----
 

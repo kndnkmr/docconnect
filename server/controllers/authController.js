@@ -320,7 +320,10 @@ const login = async (req, res) => {
         role: user.role,
         profilePhoto: user.profilePhoto,
         isVerified: user.isVerified,
-        patientId: user.patientId
+        patientId: user.patientId,
+        // slug powers the doctor's branded "My Clinic" link in the Promote
+        // tab/banner right after login (before the next /auth/me refresh).
+        slug: user.slug
       }
     });
 

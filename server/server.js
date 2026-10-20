@@ -120,6 +120,7 @@ const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
 const { sendCallStartReminders } = require('./utils/callReminder');
 const { sendAppointmentReminders } = require('./utils/appointmentReminder');
 const { fixEmailIndex } = require('./utils/fixIndexes');
+const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
 if (require.main === module) {
 mongoose.connect(process.env.MONGODB_URI)
@@ -138,6 +139,17 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log('[startup] fixEmailIndex result:', JSON.stringify(r));
     } catch (e) {
       console.error('[startup] fixEmailIndex threw:', e.message);
+    }
+
+    // One-time, idempotent backfill: give every pre-existing doctor a vanity
+    // slug for their branded /dr/:slug booking page. New doctors get one
+    // automatically via the User pre-save hook; this catches doctors who
+    // registered before the feature. Only touches doctors missing a slug.
+    try {
+      const s = await backfillDoctorSlugs();
+      console.log('[startup] backfillDoctorSlugs result:', JSON.stringify(s));
+    } catch (e) {
+      console.error('[startup] backfillDoctorSlugs threw:', e.message);
     }
 
     // Promote the configured admin email to admin role (one-time bootstrap).

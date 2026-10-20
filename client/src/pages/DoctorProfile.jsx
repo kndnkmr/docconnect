@@ -108,9 +108,18 @@ const getCuratedReviews = (doctorName) => {
   return CURATED_DOCTOR_REVIEWS[key] || [];
 };
 
-function DoctorProfile() {
-  const { id } = useParams();
-  // If URL is /doctors/abc123, then id = "abc123"
+function DoctorProfile({ clinicMode = false }) {
+  // This page serves TWO routes with one component:
+  //   /doctors/:id   → the marketplace profile (id = Mongo id)
+  //   /dr/:slug      → the doctor's own branded "My Clinic" page (clinicMode)
+  // In clinic mode we resolve the doctor by their vanity slug; otherwise by id.
+  const { id: idParam, slug: slugParam } = useParams();
+  // The real Mongo id, once the doctor is loaded — ALL downstream calls
+  // (reviews, free slots, booking links) use this, so they work identically
+  // whether the page was reached by id or by slug. Falls back to the id param
+  // for the non-clinic route so nothing changes there.
+  const [resolvedId, setResolvedId] = useState(clinicMode ? null : idParam);
+  const id = resolvedId;
 
   const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
   const t = TXT[lang];
@@ -200,24 +209,40 @@ function DoctorProfile() {
     }
   };
 
-  // Fetch doctor data when component loads
+  // Fetch doctor data when component loads. In clinic mode we resolve by slug
+  // (and capture the real Mongo id into resolvedId, which then drives the
+  // reviews/slots effects below); otherwise we fetch by id as before.
   useEffect(() => {
+    let cancelled = false;
     const fetchDoctor = async () => {
       try {
-        const response = await doctorAPI.getById(id);
-        setDoctor(response.data.doctor);
+        const response = clinicMode
+          ? await doctorAPI.getBySlug(slugParam)
+          : await doctorAPI.getById(idParam);
+        if (cancelled) return;
+        const doc = response.data.doctor;
+        setDoctor(doc);
+        // Lock in the Mongo id so every downstream call (reviews, slots,
+        // booking) uses it, regardless of whether we came in by id or slug.
+        if (doc && doc._id) setResolvedId(doc._id);
       } catch (error) {
+        if (cancelled) return;
         toast.error('Failed to load doctor profile');
         console.error('Fetch doctor error:', error);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchDoctor();
-    loadReviews();
+    return () => { cancelled = true; };
+  }, [clinicMode, idParam, slugParam]);
+
+  // Load reviews once we know the real doctor id (resolved from id or slug).
+  useEffect(() => {
+    if (id) loadReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-  // [id] = re-fetch if the ID in the URL changes
 
   // Fetch the earliest real free slot (searches up to 14 days, IST), plus a few
   // quick-pick slots for the first day that has any. Uses the SAME public
@@ -225,6 +250,7 @@ function DoctorProfile() {
   // what's actually bookable. Fails quietly — availability is a nice-to-have
   // signal, never allowed to break the profile.
   useEffect(() => {
+    if (!id) return undefined; // wait until the doctor id is resolved (slug route)
     let cancelled = false;
     const findNextAvailable = async () => {
       const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -282,12 +308,32 @@ function DoctorProfile() {
   return (
     <div>
       <SEO
-        title={doctor ? `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}` : 'Doctor Profile'}
-        description={doctor ? `Book appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: Rs. ${doctor.consultationFee || 'N/A'}.` : ''}
-        path={`/doctors/${id}`}
+        title={doctor
+          ? (clinicMode
+              ? `${formatDoctorName(doctor.name)} — Book an appointment${doctor.city ? ` · ${doctor.city}` : ''}`
+              : `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}`)
+          : 'Doctor Profile'}
+        description={doctor ? `Book an appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: Rs. ${doctor.consultationFee || 'N/A'}.` : ''}
+        path={clinicMode && doctor?.slug ? `/dr/${doctor.slug}` : `/doctors/${id}`}
         type="profile"
       />
       {doctor && <DoctorSchema doctor={doctor} />}
+
+      {/* Clinic mode (the doctor's own branded /dr/:slug page): a quiet
+          co-brand strip at the very top — the doctor is the hero, ProMedicoz is
+          the trust mark. No "browse other doctors" nav here (that lives only in
+          the footer link far below), so a patient who opens the doctor's shared
+          link stays focused on booking with THEM. */}
+      {clinicMode && (
+        <div className="bg-white border-b border-gray-100">
+          <div className="container mx-auto px-4 h-11 flex items-center justify-between">
+            <Link to="/" className="text-primary-700 font-bold text-sm">ProMedicoz</Link>
+            <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+              <span className="text-green-500" aria-hidden="true">✓</span> Verified clinic page
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Gradient header band — carries the back link plus the trust signals
           a patient wants up front (rating + live availability). This makes the
@@ -296,9 +342,17 @@ function DoctorProfile() {
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-16">
           <div className="flex items-center justify-between gap-3">
-            <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
-              {t.backToDoctors}
-            </Link>
+            {/* In clinic mode there's no marketplace to go "back" to — show the
+                doctor's name as a quiet title instead of a Back-to-doctors link. */}
+            {clinicMode ? (
+              <span className="text-primary-100 text-sm font-medium truncate">
+                {doctor ? formatDoctorName(doctor.name) : ''}
+              </span>
+            ) : (
+              <Link to="/doctors" className="text-primary-100 hover:text-white text-sm inline-flex items-center gap-1 transition-colors">
+                {t.backToDoctors}
+              </Link>
+            )}
             {/* Language toggle — lets a patient switch EN/हिंदी here too, not
                 just on Home. Shares the same promedicoz_lang choice site-wide. */}
             <LangToggle lang={lang} onChange={setLang} />
@@ -840,6 +894,18 @@ function DoctorProfile() {
             ) : null}
           </div>
         </>
+      )}
+
+      {/* Clinic mode only: a small, footer-level "explore ProMedicoz" link.
+          It's deliberately quiet and sits at the very bottom — the branded page
+          stays single-doctor focused, but a curious visitor can still discover
+          the wider platform (which keeps feeding the marketplace). */}
+      {clinicMode && (
+        <div className="border-t border-gray-100 bg-gray-50 py-5 text-center">
+          <Link to="/doctors" className="text-sm text-gray-400 hover:text-primary-600 transition-colors">
+            {lang === 'hi' ? 'ProMedicoz पर और डॉक्टर देखें →' : 'Explore more doctors on ProMedicoz →'}
+          </Link>
+        </div>
       )}
     </div>
   );

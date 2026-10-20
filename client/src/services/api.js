@@ -152,6 +152,16 @@ export const doctorAPI = {
   // Get single doctor by ID
   getById: (id) => API.get(`/doctors/${id}`),
 
+  // Get a doctor by their vanity slug (for the branded /dr/:slug page)
+  getBySlug: (slug) => API.get(`/doctors/by-slug/${slug}`),
+
+  // Best-effort: count that a booking started from the doctor's shared link
+  trackLinkBooking: (id) => API.post(`/doctors/${id}/link-booking`),
+
+  // The logged-in doctor's own stats (consultations, earnings, patients,
+  // rating, page views, link bookings) for the "Promote Me" panel
+  getMyStats: () => API.get('/doctors/me/stats'),
+
   // Update own profile (for logged-in doctors)
   updateProfile: (data) => {
     // If data includes a file, we need to use FormData instead of JSON

@@ -569,5 +569,151 @@ const updateDoctorProfile = async (req, res) => {
   }
 };
 
+// ============================================
+// GET DOCTOR BY SLUG - Public (branded "My Clinic" page)
+// ============================================
+// Endpoint: GET /api/doctors/by-slug/:slug
+// Resolves a doctor from their vanity handle (e.g. "pooja-singh") for the
+// branded /dr/:slug booking page. Increments a lightweight page-view counter
+// (fire-and-forget — a counter hiccup must never fail the page load) and, like
+// getDoctorById, attaches the real completed-consultation count. Hidden
+// (deleted/suspended) doctors 404 just as they do on the id route.
+const getDoctorBySlug = async (req, res) => {
+  try {
+    const slug = String(req.params.slug || '').trim().toLowerCase();
+    if (!slug) {
+      return res.status(400).json({ message: 'Missing doctor handle' });
+    }
+
+    const doctor = await User.findOne({ slug, role: 'doctor' }).select('-password');
+
+    if (!doctor || doctor.isDeleted || doctor.isSuspended) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Count a page view — never block the response on it.
+    User.updateOne({ _id: doctor._id }, { $inc: { pageViews: 1 } }).catch(() => {});
+
+    const completedConsultations = await Appointment.countDocuments({
+      doctor: doctor._id,
+      status: 'completed'
+    });
+
+    const doctorObj = doctor.toObject();
+    doctorObj.completedConsultations = completedConsultations;
+
+    res.json({ doctor: doctorObj });
+  } catch (error) {
+    console.error('Get doctor by slug error:', error.message);
+    res.status(500).json({ message: 'Error fetching doctor profile' });
+  }
+};
+
+// ============================================
+// TRACK LINK BOOKING START - Public (best-effort)
+// ============================================
+// Endpoint: POST /api/doctors/:id/link-booking
+// Called by the branded /dr/:slug page when a visitor taps "Book" from it, so
+// the doctor can see how many bookings their shared link drove. Pure counter —
+// no auth, no side effects, always 200 so it can never interfere with the
+// patient actually proceeding to book.
+const trackLinkBooking = async (req, res) => {
+  try {
+    await User.updateOne(
+      { _id: req.params.id, role: 'doctor' },
+      { $inc: { linkBookings: 1 } }
+    );
+  } catch (error) {
+    // Swallow — this is a nice-to-have metric, never a blocker.
+    console.error('Track link booking error:', error.message);
+  }
+  res.json({ ok: true });
+};
+
+// ============================================
+// GET MY STATS - Protected (doctor only)
+// ============================================
+// Endpoint: GET /api/doctors/me/stats
+// The data behind the doctor's own "Promote Me" numbers strip. Everything here
+// is the doctor's OWN data (req.user._id), computed live from Appointments +
+// Reviews — not invented. "This month" = the current calendar month in IST.
+//   - consultationsThisMonth: appointments completed this month
+//   - earningsThisMonth: sum of amountCollected on paid appointments this month
+//   - earningsAllTime: sum of amountCollected on all paid appointments
+//   - uniquePatients / repeatPatients: distinct patients + how many came back
+//   - rating: live average + count from (non-hidden) reviews
+//   - pageViews / linkBookings: the branded-page counters stored on the user
+const getMyStats = async (req, res) => {
+  try {
+    const doctorId = req.user._id;
+
+    // Start of the current month in IST, expressed as a UTC Date.
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const monthStart = new Date(`${nowIST.getFullYear()}-${String(nowIST.getMonth() + 1).padStart(2, '0')}-01T00:00:00+05:30`);
+
+    const [
+      consultationsThisMonth,
+      earnThisMonthAgg,
+      earnAllTimeAgg,
+      patientAgg,
+      ratingAgg,
+      me
+    ] = await Promise.all([
+      Appointment.countDocuments({ doctor: doctorId, status: 'completed', date: { $gte: monthStart } }),
+      Appointment.aggregate([
+        { $match: { doctor: doctorId, paymentStatus: 'paid', paidAt: { $gte: monthStart } } },
+        { $group: { _id: null, total: { $sum: { $ifNull: ['$amountCollected', 0] } } } }
+      ]),
+      Appointment.aggregate([
+        { $match: { doctor: doctorId, paymentStatus: 'paid' } },
+        { $group: { _id: null, total: { $sum: { $ifNull: ['$amountCollected', 0] } } } }
+      ]),
+      // Distinct patients + repeat count (patients with >1 appointment).
+      Appointment.aggregate([
+        { $match: { doctor: doctorId, status: { $in: ['confirmed', 'completed'] } } },
+        { $group: { _id: '$patient', visits: { $sum: 1 } } },
+        { $group: { _id: null, unique: { $sum: 1 }, repeat: { $sum: { $cond: [{ $gt: ['$visits', 1] }, 1, 0] } } } }
+      ]),
+      Review.aggregate([
+        { $match: { doctor: doctorId, isHidden: { $ne: true } } },
+        { $group: { _id: null, average: { $avg: '$rating' }, count: { $sum: 1 } } }
+      ]),
+      User.findById(doctorId).select('pageViews linkBookings slug')
+    ]);
+
+    const earningsThisMonth = (earnThisMonthAgg[0] && earnThisMonthAgg[0].total) || 0;
+    const earningsAllTime = (earnAllTimeAgg[0] && earnAllTimeAgg[0].total) || 0;
+    const uniquePatients = (patientAgg[0] && patientAgg[0].unique) || 0;
+    const repeatPatients = (patientAgg[0] && patientAgg[0].repeat) || 0;
+    const ratingAverage = ratingAgg[0] && ratingAgg[0].average ? Math.round(ratingAgg[0].average * 10) / 10 : 0;
+    const ratingCount = (ratingAgg[0] && ratingAgg[0].count) || 0;
+
+    res.json({
+      stats: {
+        consultationsThisMonth,
+        earningsThisMonth,
+        earningsAllTime,
+        uniquePatients,
+        repeatPatients,
+        rating: { average: ratingAverage, count: ratingCount },
+        pageViews: (me && me.pageViews) || 0,
+        linkBookings: (me && me.linkBookings) || 0,
+        slug: (me && me.slug) || null
+      }
+    });
+  } catch (error) {
+    console.error('Get my stats error:', error.message);
+    res.status(500).json({ message: 'Error fetching your stats' });
+  }
+};
+
 // ---- Export all controller functions ----
-module.exports = { getAllDoctors, getDoctorCities, getDoctorById, updateDoctorProfile };
+module.exports = {
+  getAllDoctors,
+  getDoctorCities,
+  getDoctorById,
+  getDoctorBySlug,
+  trackLinkBooking,
+  getMyStats,
+  updateDoctorProfile
+};

@@ -145,6 +145,11 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/doctors" element={<DoctorList />} />
           <Route path="/doctors/:id" element={<DoctorProfile />} />
+          {/* A doctor's own branded "My Clinic" booking page, reached via their
+              vanity handle (e.g. /dr/pooja-singh). Same component in clinicMode:
+              single-doctor focus, quiet ProMedicoz co-brand, footer-only
+              "explore" link. The link doctors share to promote themselves. */}
+          <Route path="/dr/:slug" element={<DoctorProfile clinicMode />} />
           <Route path="/specialization/:slug" element={<SpecializationPage />} />
           {/* City-specific SEO landing page, e.g. /specialization/dermatologist/rishikesh
               — "Best Dermatologists in Rishikesh". Same component, city-aware. */}

@@ -99,6 +99,40 @@ const userSchema = new mongoose.Schema({
     // Patients scan this to pay
   },
 
+  // --- Vanity Slug (Doctor-specific) ---
+  // A readable, shareable handle for the doctor's own branded booking page,
+  // e.g. "pooja-singh" → promedicoz.in/dr/pooja-singh. Generated from the
+  // doctor's name on first save (see generateUniqueSlug + the pre-save hook
+  // below) and kept stable afterwards so shared links never break. Unique +
+  // sparse so patients/admins (who never get one) don't collide on a shared
+  // null. The old /doctors/:id URL keeps working and redirects to this.
+  slug: {
+    type: String,
+    unique: true,
+    sparse: true,
+    default: undefined
+    // IMPORTANT: default must be `undefined` (ABSENT), not '' or null — same
+    // sparse-index rule as email/patientId above: a sparse unique index only
+    // exempts documents where the field is missing, so an explicit ''/null
+    // would make every doctor-less account collide on one shared value.
+  },
+
+  // --- "My Clinic" page metrics (Doctor-specific, display-only) ---
+  // Lightweight counters powering the doctor's own "Promote Me" stats strip.
+  // pageViews: how many times their branded /dr/:slug page has been opened.
+  // linkBookings: bookings that started from that branded page. Both are just
+  // incremented counters — the authoritative earnings/consultation numbers are
+  // still computed from Appointments (see the stats endpoint), not stored here.
+  pageViews: {
+    type: Number,
+    default: 0
+  },
+
+  linkBookings: {
+    type: Number,
+    default: 0
+  },
+
   // --- Doctor-specific fields ---
   // These only matter if role === 'doctor', but we keep them here for simplicity
   specialization: {
@@ -499,6 +533,60 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   // bcrypt.compare handles the complex math of checking a plain password against a hash
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+// ---- Slug helpers (doctor vanity URLs) ----
+// Turn a name into a URL-safe base slug: "Dr. Pooja Singh!" → "pooja-singh".
+// Strips a leading "dr"/"dr." honorific so the handle is the doctor's actual
+// name, lowercases, keeps only a–z/0–9, and collapses runs to single hyphens.
+function slugifyName(name) {
+  return String(name || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^dr\.?\s+/i, '')      // drop a leading "Dr " / "Dr. " honorific
+    .normalize('NFKD')               // split accents off letters
+    .replace(/[\u0300-\u036f]/g, '') // remove the accent marks
+    .replace(/[^a-z0-9]+/g, '-')     // non-alphanumerics → hyphen
+    .replace(/^-+|-+$/g, '')         // trim leading/trailing hyphens
+    .slice(0, 40)                    // keep it reasonably short
+    .replace(/-+$/g, '');            // re-trim if the slice left a trailing -
+}
+
+// Produce a slug that's unique across the collection. Starts from the base
+// slug and, on collision, appends -2, -3, … until it's free. `excludeId` lets
+// a doctor keep their own slug when re-checking (e.g. a future rename). Falls
+// back to "doctor" when a name slugifies to nothing (e.g. all-symbol names).
+userSchema.statics.generateUniqueSlug = async function(name, excludeId) {
+  const base = slugifyName(name) || 'doctor';
+  let candidate = base;
+  let n = 1;
+  // Loop until we find a slug no OTHER document is using.
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const query = { slug: candidate };
+    if (excludeId) query._id = { $ne: excludeId };
+    const clash = await this.findOne(query).select('_id').lean();
+    if (!clash) return candidate;
+    n += 1;
+    candidate = `${base}-${n}`;
+  }
+};
+
+// Auto-assign a slug the first time a DOCTOR is saved without one. Patients and
+// admins never get a slug (they have no public page). Kept stable once set so
+// shared links don't break. Runs before save; skips cleanly on any error so a
+// slug hiccup can never block saving the actual account.
+userSchema.pre('save', async function(next) {
+  try {
+    if (this.role === 'doctor' && !this.slug && this.name) {
+      this.slug = await this.constructor.generateUniqueSlug(this.name, this._id);
+    }
+  } catch (e) {
+    // Never block the save over slug generation — the backfill/endpoint can
+    // assign one later. Log so it's visible if it ever happens.
+    console.error('[User.pre-save] slug generation skipped:', e.message);
+  }
+  next();
+});
 
 // ---- Indexes ----
 // The public doctor listing (GET /api/doctors) filters by

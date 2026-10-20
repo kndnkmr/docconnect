@@ -28,11 +28,12 @@ import PatientReports from './dashboard/PatientReports';
 import PatientComplaints from './dashboard/PatientComplaints';
 import AccountSettings from './dashboard/AccountSettings';
 import RescheduleModal from './dashboard/RescheduleModal';
+import PromoteMe from './dashboard/PromoteMe';
 
 // Every tab key the dashboard supports. Used to validate a deep-link
 // (?tab=familyMembers) so other pages can send patients straight to the
 // right place instead of a generic "go check your dashboard" message.
-const VALID_TAB_KEYS = ['appointments', 'timeline', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
+const VALID_TAB_KEYS = ['appointments', 'promote', 'timeline', 'profile', 'availability', 'patientReports', 'familyMembers', 'prescriptions', 'reports', 'complaints', 'account'];
 
 // "When" quick filter for the Appointments tab — Today/Tomorrow/This Week/
 // Next Week, all computed in IST (same calendar-day boundary logic as
@@ -1052,7 +1053,13 @@ function Dashboard() {
           highest-trust, zero-cost way to bring users. Shown once the doctor's
           profile is live (email verified). */}
       {isDoctor && user && user.isVerified && (() => {
-        const profileUrl = `https://www.promedicoz.in/doctors/${user._id}`;
+        // Prefer the doctor's vanity "My Clinic" link (/dr/:slug) — it's the
+        // branded, single-doctor page. Falls back to the id profile only if a
+        // slug hasn't been assigned yet. The full Promote tab has the QR,
+        // printable poster and live stats; this banner is the quick nudge.
+        const profileUrl = user.slug
+          ? `https://www.promedicoz.in/dr/${user.slug}`
+          : `https://www.promedicoz.in/doctors/${user._id}`;
         // A ready-to-send invite in the doctor's own voice. The key benefit is
         // framed as KEEPING patients (and reaching their family in other cities)
         // — not "join a platform" — because that's what actually motivates both
@@ -1102,13 +1109,19 @@ function Dashboard() {
                     🔗 Copy link only
                   </button>
                   <a
-                    href={`/doctors/${user._id}`}
+                    href={profileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
                   >
-                    👁️ View my profile
+                    👁️ View my page
                   </a>
+                  <button
+                    onClick={() => goToTab('promote')}
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
+                  >
+                    📣 QR, poster & stats →
+                  </button>
                 </div>
                 <p className="text-xs text-green-700 mt-3">
                   Tip: even 5–10 of your regular patients sharing this with their families is the fastest way to grow your online bookings.
@@ -1179,6 +1192,7 @@ function Dashboard() {
       <div ref={tabSectionRef} className="flex gap-1.5 mb-6 overflow-x-auto bg-gray-100 p-1.5 rounded-xl">
         {[
           { key: 'appointments', label: pt.tabAppointments, show: true },
+          { key: 'promote', label: '📣 Promote', show: isDoctor },
           { key: 'timeline', label: pt.tabTimeline, show: isPatient },
           { key: 'profile', label: 'Edit Profile', show: isDoctor },
           { key: 'availability', label: 'Availability', show: isDoctor },
@@ -1747,6 +1761,7 @@ function Dashboard() {
       )}
 
       {/* Sub-component tabs */}
+      {activeTab === 'promote' && isDoctor && <PromoteMe />}
       {activeTab === 'availability' && isDoctor && <DoctorAvailability onScheduleChange={setHasAvailability} />}
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'timeline' && isPatient && <PatientHealthTimeline onNavigateTab={goToTab} />}
