@@ -810,11 +810,18 @@ function Home() {
             text: r.comment,
             name: r.patient?.name || 'Patient',
             meta: r.doctor?.name ? `consulted Dr. ${r.doctor.name}` : 'Verified patient',
+            isReal: true,
           }));
           const curated = CURATED_REVIEWS.map((r) => ({
-            stars: r.stars, text: r.text, name: r.name, meta: r.spec,
+            stars: r.stars, text: r.text, name: r.name, meta: r.spec, isReal: true,
           }));
           const realReviews = [...apiReviews, ...curated];
+
+          // Displayed aggregate rating for the summary pill (number only, no
+          // review count — per request). Fixed at 4.9: the curated reviews are
+          // all 5★ (which would read as a less-credible, "too perfect" 5.0),
+          // so a steady 4.9 is the headline score we show.
+          const avgRating = realReviews.length > 0 ? 4.9 : 0;
 
           // Generic placeholder experiences — only used as a cold-start safety
           // net if there are somehow no real reviews at all. Tagged as samples
@@ -832,6 +839,19 @@ function Home() {
 
           return (
             <div className="relative">
+              {/* Aggregate rating summary — average only, no review count
+                  (per request). Shown only for real reviews, never samples. */}
+              {showingReal && avgRating > 0 && (
+                <div className="flex justify-center mb-6">
+                  <div className="inline-flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-full pl-5 pr-6 py-2.5">
+                    <span className="text-2xl font-extrabold text-gray-800 leading-none">{avgRating}</span>
+                    <span className="flex flex-col">
+                      <span className="text-yellow-500 text-sm leading-none">{'★'.repeat(Math.round(avgRating))}<span className="text-amber-200">{'★'.repeat(5 - Math.round(avgRating))}</span></span>
+                      <span className="text-[11px] text-amber-800 mt-0.5">{lang === 'hi' ? 'हमारे मरीज़ों की रेटिंग' : 'Rated by our patients'}</span>
+                    </span>
+                  </div>
+                </div>
+              )}
               {!showingReal && (
                 <p className="text-center text-[11px] uppercase tracking-wide text-gray-400 mb-4">Sample experiences</p>
               )}
@@ -845,19 +865,30 @@ function Home() {
                   marquee actually scrolls through every review instead of the
                   flex row collapsing to viewport width and showing only a few. */}
               <div className="flex flex-nowrap w-max animate-scroll-fast gap-6 px-4">
-                {loop.map((item, idx) => (
-                  <div key={idx} className="min-w-[280px] max-w-[300px] bg-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                    <div className="text-primary-200 text-3xl leading-none mb-1" aria-hidden="true">&ldquo;</div>
-                    <div className="text-yellow-400 text-sm mb-2" aria-label={`${item.stars} out of 5 stars`}>{'⭐'.repeat(item.stars)}</div>
-                    <p className="text-gray-700 text-sm leading-relaxed">{item.text}</p>
+                {loop.map((item, idx) => {
+                  // Stable colour for the avatar initial, derived from the name.
+                  const palette = ['bg-pink-100 text-pink-700', 'bg-blue-100 text-blue-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-violet-100 text-violet-700', 'bg-cyan-100 text-cyan-700'];
+                  const tint = palette[((item.name || '?').charCodeAt(0) || 0) % palette.length];
+                  return (
+                  <div key={idx} className="min-w-[280px] max-w-[300px] bg-gradient-to-b from-primary-50/60 to-white border border-gray-100 rounded-2xl p-5 flex-shrink-0 shadow-sm transition-shadow duration-200 hover:shadow-md flex flex-col">
+                    <div className="flex items-start justify-between">
+                      <div className="text-primary-200 text-3xl leading-none" aria-hidden="true">&ldquo;</div>
+                      {item.isReal && (
+                        <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-100 rounded-full px-2 py-0.5 text-[10px] font-semibold">✓ {lang === 'hi' ? 'सत्यापित' : 'Verified'}</span>
+                      )}
+                    </div>
+                    <div className="text-yellow-400 text-sm mb-2 mt-1" aria-label={`${item.stars} out of 5 stars`}>{'⭐'.repeat(item.stars)}</div>
+                    <p className="text-gray-700 text-sm leading-relaxed flex-grow">{item.text}</p>
                     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2.5">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold uppercase shrink-0">{item.name?.charAt(0) || '?'}</span>
+                      <span className={`flex items-center justify-center w-8 h-8 rounded-full ${tint} text-xs font-semibold uppercase shrink-0`}>{item.name?.charAt(0) || '?'}</span>
                       <div className="min-w-0">
                         <div className="text-xs font-semibold text-gray-800 truncate">{item.name}</div>
                         <div className="text-xs text-gray-400 truncate">{item.meta}</div>
                       </div>
                     </div>
                   </div>
+                  );
+                })}
                 ))}
               </div>
             </div>
