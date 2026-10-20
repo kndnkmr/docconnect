@@ -58,6 +58,15 @@ const TXT = {
     shareHeading: 'Know someone who needs a doctor?',
     shareSub: 'Verified doctors, fair fees, no commission. Share ProMedicoz with family and friends.',
     shareBtn: '📤 Share with family & friends',
+    takeItTitle: 'Love ProMedicoz? Take it with you.',
+    takeItSub: 'Install it like an app for one-tap access, and share it with family & friends who need a doctor.',
+    installCardTitle: 'Install the app',
+    installCardSub: 'One tap · no app store',
+    installCardBtn: '📲 Install now',
+    installCardBtnAlt: '📲 Get the app',
+    shareCardTitle: 'Share with others',
+    shareCardSub: 'WhatsApp, link & more',
+    shareCardBtn: '📤 Share now',
     shareMsg:
       '🏥 Found a great way to see a doctor: *ProMedicoz*\n\n' +
       '✅ Verified doctors — video, phone, or in-person\n' +
@@ -82,6 +91,7 @@ const TXT = {
     ctaHeading: 'Are You a Doctor?',
     ctaText: 'Join ProMedicoz to reach more patients, manage your schedule, and grow your practice effortlessly.',
     ctaButton: 'Register Now',
+    ctaChips: ['✓ Keep 100% of your fee', '✓ No commission', '✓ Your own online clinic'],
     steps: [
       { title: 'Find a doctor', desc: 'Search by symptom, specialty, city or language.', cta: 'Search →' },
       { title: 'Book a slot', desc: 'Pick a time & how to consult — video, phone or clinic.', cta: 'Book →' },
@@ -126,6 +136,15 @@ const TXT = {
     shareHeading: 'किसी को डॉक्टर की ज़रूरत है?',
     shareSub: 'सत्यापित डॉक्टर, वाजिब फ़ीस, कोई कमीशन नहीं। ProMedicoz परिवार और दोस्तों के साथ साझा करें।',
     shareBtn: '📤 परिवार और दोस्तों के साथ साझा करें',
+    takeItTitle: 'ProMedicoz पसंद आया? इसे साथ ले जाएं।',
+    takeItSub: 'एक टैप में खुलने के लिए ऐप की तरह इंस्टॉल करें, और जिन्हें डॉक्टर चाहिए उन्हें साझा करें।',
+    installCardTitle: 'ऐप इंस्टॉल करें',
+    installCardSub: 'एक टैप · कोई ऐप स्टोर नहीं',
+    installCardBtn: '📲 अभी इंस्टॉल करें',
+    installCardBtnAlt: '📲 ऐप पाएं',
+    shareCardTitle: 'दूसरों के साथ साझा करें',
+    shareCardSub: 'WhatsApp, लिंक और बहुत कुछ',
+    shareCardBtn: '📤 अभी साझा करें',
     shareMsg:
       '🏥 डॉक्टर दिखाने का एक बढ़िया तरीका मिला: *ProMedicoz*\n\n' +
       '✅ सत्यापित डॉक्टर — वीडियो, फ़ोन या क्लिनिक पर\n' +
@@ -150,6 +169,7 @@ const TXT = {
     ctaHeading: 'क्या आप डॉक्टर हैं?',
     ctaText: 'अधिक मरीज़ों तक पहुंचने, अपना शेड्यूल प्रबंधित करने और अपनी प्रैक्टिस बढ़ाने के लिए ProMedicoz से जुड़ें।',
     ctaButton: 'अभी रजिस्टर करें',
+    ctaChips: ['✓ पूरी फ़ीस आपकी', '✓ कोई कमीशन नहीं', '✓ अपनी ऑनलाइन क्लिनिक'],
     steps: [
       { title: 'डॉक्टर खोजें', desc: 'लक्षण, विशेषज्ञता, शहर या भाषा से खोजें।', cta: 'खोजें →' },
       { title: 'स्लॉट बुक करें', desc: 'समय और परामर्श का तरीका चुनें — वीडियो, फ़ोन या क्लिनिक।', cta: 'बुक करें →' },
@@ -693,8 +713,11 @@ function Home() {
               <Link
                 to={`/blog/${dailyTip.slug}`}
                 onClick={() => trackEvent('daily_tip_click', { article_slug: dailyTip.slug })}
-                className="group block bg-white border border-primary-100 rounded-2xl p-5 sm:p-6 hover:shadow-md hover:border-primary-300 transition-all"
+                className="group relative block bg-white border border-primary-100 rounded-2xl p-5 sm:p-6 pl-7 overflow-hidden hover:shadow-md hover:border-primary-300 transition-all"
               >
+                {/* Accent edge — makes the daily tip read as a featured 'ribbon'
+                    card rather than a plain bordered box. */}
+                <span className="absolute left-0 inset-y-0 w-1.5 bg-gradient-to-b from-primary-500 to-primary-700" aria-hidden="true" />
                 <span className="inline-block bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {t.tipBadge}
                 </span>
@@ -725,20 +748,32 @@ function Home() {
            so the two read as a consistent pair. */}
       <section className="py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <div className="text-4xl">📤</div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-800">{t.shareHeading}</h3>
-              <p className="text-gray-600 text-sm mt-0.5">{t.shareSub}</p>
-            </div>
-            <div className="flex gap-2 flex-shrink-0">
-              <button
-                type="button"
-                onClick={handleShareSite}
-                className="btn btn-success whitespace-nowrap"
-              >
-                {t.shareBtn}
-              </button>
+          {/* Merged "take it with you" card — Install + Share in one block
+              (replaces the two near-identical gradient strips). Both actions
+              are preserved: one-tap install (or /install on iOS) and the
+              native/WhatsApp share. */}
+          <div className="max-w-3xl mx-auto bg-gradient-to-br from-primary-50 to-primary-100 border border-primary-200 rounded-2xl p-5 sm:p-7 text-center">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800">{t.takeItTitle}</h3>
+            <p className="text-gray-600 text-sm mt-1 max-w-xl mx-auto">{t.takeItSub}</p>
+            <div className="grid sm:grid-cols-2 gap-3 mt-5 max-w-2xl mx-auto">
+              {/* Install half */}
+              <div className="bg-white border border-primary-100 rounded-xl p-4 flex flex-col items-center text-center">
+                <span className="text-3xl mb-1" aria-hidden="true">📲</span>
+                <p className="font-bold text-gray-800 text-sm">{t.installCardTitle}</p>
+                <p className="text-gray-500 text-xs mb-3">{t.installCardSub}</p>
+                {canInstall ? (
+                  <button onClick={promptInstall} className="w-full btn btn-primary whitespace-nowrap">{t.installCardBtn}</button>
+                ) : (
+                  <Link to="/install" className="w-full btn btn-primary whitespace-nowrap justify-center">{t.installCardBtnAlt}</Link>
+                )}
+              </div>
+              {/* Share half */}
+              <div className="bg-white border border-primary-100 rounded-xl p-4 flex flex-col items-center text-center">
+                <span className="text-3xl mb-1" aria-hidden="true">📤</span>
+                <p className="font-bold text-gray-800 text-sm">{t.shareCardTitle}</p>
+                <p className="text-gray-500 text-xs mb-3">{t.shareCardSub}</p>
+                <button onClick={handleShareSite} className="w-full btn btn-success whitespace-nowrap justify-center">{t.shareCardBtn}</button>
+              </div>
             </div>
           </div>
         </div>
@@ -977,57 +1012,20 @@ function Home() {
         </div>
       </section>
 
-      {/* ---- Get the App strip ---- compact, so first-time visitors know
-           they can install ProMedicoz like an app and share it. */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <div className="text-4xl">📲</div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-800">
-                {lang === 'hi' ? 'ProMedicoz को ऐप की तरह इंस्टॉल करें' : 'Install ProMedicoz like an app'}
-              </h3>
-              <p className="text-gray-600 text-sm mt-0.5">
-                {lang === 'hi'
-                  ? 'अपने फ़ोन की होम स्क्रीन पर जोड़ें — तेज़ पहुँच पाएं और परिवार व दोस्तों के साथ साझा करें।'
-                  : 'Add it to your phone’s home screen for quick access — and share it with family and friends.'}
-              </p>
-            </div>
-            <div className="flex gap-2 flex-shrink-0">
-              {canInstall ? (
-                <button
-                  onClick={promptInstall}
-                  className="btn btn-primary whitespace-nowrap"
-                >
-                  {lang === 'hi' ? '📲 इंस्टॉल करें' : '📲 Install now'}
-                </button>
-              ) : (
-                <Link
-                  to="/install"
-                  className="btn btn-primary whitespace-nowrap"
-                >
-                  {lang === 'hi' ? 'ऐप पाएं' : 'Get the App'}
-                </Link>
-              )}
-              <Link
-                to="/install"
-                className="whitespace-nowrap bg-white text-primary-700 border border-primary-300 px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
-              >
-                {lang === 'hi' ? '📤 साझा करें' : '📤 Share'}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ---- CTA ---- (flex-grow so this blue band fills any leftover space
            down to the footer on tall screens, instead of leaving a pale gap) */}
       <section className="py-12 bg-primary-700 text-white flex-grow flex flex-col justify-center">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-3">{t.ctaHeading}</h2>
-          <p className="text-primary-100 mb-6 max-w-xl mx-auto">
+          <p className="text-primary-100 mb-5 max-w-xl mx-auto">
             {t.ctaText}
           </p>
+          {/* Benefit chips — make the final impression sell the doctor side. */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-6 text-xs sm:text-sm">
+            {t.ctaChips.map((chip, i) => (
+              <span key={i} className="inline-flex items-center bg-white/12 border border-white/20 rounded-full px-3 py-1.5 font-medium">{chip}</span>
+            ))}
+          </div>
           {!isAuthenticated && (
             <div className="flex flex-wrap justify-center items-center gap-3">
               <Link to="/register?role=doctor" className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
