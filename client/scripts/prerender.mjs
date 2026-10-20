@@ -70,6 +70,95 @@ function ogCardFor(specialization) {
   return `${SITE}/og/blog/${slug}.png`;
 }
 
+// ---- Doctor share card (Cloudinary, composed from the doctor's own photo) ----
+const CLOUD_NAME = 'g6uc48vt';
+
+// Encode overlay text for a Cloudinary transformation segment. encodeURIComponent
+// already handles spaces (%20), unicode, etc. On top of that, ',' and '/' are
+// Cloudinary transformation delimiters, so they must be escaped to their
+// percent form — but we must NOT blanket-escape '%' (that would turn the %20
+// from encodeURIComponent into %2520 and render literal "%20" on the card).
+function clText(s) {
+  return encodeURIComponent(String(s || '').trim())
+    .replace(/,/g, '%2C')
+    .replace(/\//g, '%2F');
+}
+
+// Pull the Cloudinary public id out of a stored image URL (strip transforms,
+// version prefix, and extension). Returns null if it isn't a Cloudinary URL.
+function cloudinaryPublicId(photoUrl) {
+  if (!photoUrl || typeof photoUrl !== 'string') return null;
+  if (!photoUrl.includes('res.cloudinary.com') || !photoUrl.includes('/upload/')) return null;
+  let tail = photoUrl.split('/upload/')[1] || '';
+  const parts = tail.split('/');
+  while (parts.length && /^v\d+$/.test(parts[0]) === false && parts[0].includes(',')) parts.shift();
+  if (parts.length && /^v\d+$/.test(parts[0])) parts.shift();
+  tail = parts.join('/');
+  return tail.replace(/\.[a-zA-Z0-9]+$/, '') || null;
+}
+
+// Compose the 1200x630 doctor share card as a single Cloudinary URL: the
+// doctor's photo filled + darkened as the backdrop, a circular face portrait on
+// the left, and name / specialty / fee / brand overlaid. Falls back to the
+// default banner when there's no usable Cloudinary photo.
+function doctorCardUrl(doctor) {
+  const pid = cloudinaryPublicId(doctor.profilePhoto);
+  if (!pid) return OG_IMAGE;
+  const pidLayer = pid.replace(/\//g, ':');
+  const name = `Dr. ${String(doctor.name || '').trim()}`.replace(/\s+/g, ' ').trim();
+  const spec = (doctor.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
+  const feeLine = Number(doctor.consultationFee) > 0
+    ? `Rs. ${doctor.consultationFee} consultation`
+    : 'Book an appointment online';
+  const t = [
+    'w_1200,h_630,c_fill,g_auto,b_rgb:1d4ed8,e_brightness:-30,q_auto,f_jpg',
+    `l_${pidLayer},w_300,h_300,c_fill,g_face,r_max,bo_8px_solid_white/fl_layer_apply,g_west,x_90`,
+    `l_text:Arial_62_bold:${clText(name)},co_white/fl_layer_apply,g_north_west,x_470,y_210`,
+    `l_text:Arial_36:${clText(spec)},co_rgb:dbeafe/fl_layer_apply,g_north_west,x_470,y_300`,
+    `l_text:Arial_34_bold:${clText(feeLine)},co_white/fl_layer_apply,g_north_west,x_470,y_365`,
+    `l_text:Arial_28_bold:${clText('ProMedicoz · Book online · No commission')},co_rgb:bfdbfe/fl_layer_apply,g_south_west,x_90,y_55`,
+  ].join('/');
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${t}/${pid}.jpg`;
+}
+
+// Fetch the live doctor list so we can prerender a per-doctor /dr/:slug page
+// with its own OG card. Best-effort: if the API is unreachable at build time,
+// we simply skip doctor pages (they still work as normal SPA routes with the
+// default banner) rather than failing the whole build.
+async function fetchDoctorRoutes() {
+  const API = 'https://docconnect-fcg6.onrender.com/api/doctors?limit=200';
+  try {
+    const r = await fetch(API, { headers: { accept: 'application/json' } });
+    if (!r.ok) { console.warn(`[prerender] doctor list fetch failed (${r.status}); skipping /dr pages.`); return []; }
+    const data = await r.json();
+    const list = (data && data.doctors) || [];
+    const routes = [];
+    for (const d of list) {
+      if (!d || !d.slug || !d.name) continue;
+      const name = `Dr. ${String(d.name).trim()}`.replace(/\s+/g, ' ').trim();
+      const spec = (d.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
+      const city = d.city ? ` in ${String(d.city).trim()}` : '';
+      routes.push({
+        path: `/dr/${d.slug}`,
+        title: `${name} — ${spec}`,
+        description: `Book an appointment with ${name}, ${spec}${city}, on ${SITE_NAME}. ` +
+          (Number(d.consultationFee) > 0 ? `Consultation fee Rs. ${d.consultationFee}. ` : '') +
+          'Consult by video, phone, or in person.',
+        type: 'profile',
+        ogImage: doctorCardUrl(d),
+        // Doctor pages are personal landing pages, not something we want in the
+        // sitemap/index alongside the canonical /doctors list — mark noSitemap.
+        noSitemap: true,
+      });
+    }
+    console.log(`[prerender] Fetched ${routes.length} doctor pages for /dr/:slug.`);
+    return routes;
+  } catch (e) {
+    console.warn(`[prerender] doctor list fetch error (${e.message}); skipping /dr pages.`);
+    return [];
+  }
+}
+
 // ---- Escape a value for safe insertion into an HTML attribute ----
 // Titles/descriptions contain &, quotes, < > and em-dashes — escape the ones
 // that would break an attribute or the markup. (Em-dashes etc. are valid UTF-8
@@ -159,6 +248,11 @@ async function buildRoutes() {
       ogImage: `${SITE}/og/blog/${slug}.png`,
     });
   }
+
+  // Per-doctor /dr/:slug pages (branded share card from the doctor's photo).
+  // Best-effort: skipped if the API is unreachable at build time.
+  const doctorRoutes = await fetchDoctorRoutes();
+  routes.push(...doctorRoutes);
 
   // Dedupe by path (defensive — e.g. any accidental duplicate article slug).
   const seen = new Set();
@@ -344,7 +438,7 @@ async function main() {
   // Regenerate sitemap.xml from the same route list, so it always matches the
   // pages we actually ship (Vite already copied public/sitemap.xml into dist;
   // this overwrites it with the up-to-date one).
-  const sitemapCount = await writeSitemap(routes);
+  const sitemapCount = await writeSitemap(routes.filter((r) => !r.noSitemap));
 
   console.log(`[prerender] Wrote ${written} prerendered routes (static pages + ${routes.filter(r => r.path.startsWith('/blog/')).length} articles + specializations).`);
   console.log(`[prerender] Wrote dist/sitemap.xml with ${sitemapCount} URLs.`);
