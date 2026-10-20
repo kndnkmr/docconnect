@@ -70,6 +70,17 @@ function ogCardFor(specialization) {
   return `${SITE}/og/blog/${slug}.png`;
 }
 
+// Format a doctor's display name the same way the app does: strip any
+// doctor-typed leading "Dr"/"Dr." (so a stored "Dr Akash verma" doesn't become
+// "Dr. Dr Akash verma"), collapse whitespace, then prefix a single "Dr.".
+function formatDoctorName(raw) {
+  const cleaned = String(raw || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^dr\.?\s+/i, '');
+  return cleaned ? `Dr. ${cleaned}` : 'Doctor';
+}
+
 // ---- Doctor share card (Cloudinary, composed from the doctor's own photo) ----
 const CLOUD_NAME = 'g6uc48vt';
 
@@ -105,7 +116,7 @@ function doctorCardUrl(doctor) {
   const pid = cloudinaryPublicId(doctor.profilePhoto);
   if (!pid) return OG_IMAGE;
   const pidLayer = pid.replace(/\//g, ':');
-  const name = `Dr. ${String(doctor.name || '').trim()}`.replace(/\s+/g, ' ').trim();
+  const name = formatDoctorName(doctor.name);
   const spec = (doctor.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
   const feeLine = Number(doctor.consultationFee) > 0
     ? `Rs. ${doctor.consultationFee} consultation`
@@ -135,7 +146,7 @@ async function fetchDoctorRoutes() {
     const routes = [];
     for (const d of list) {
       if (!d || !d.slug || !d.name) continue;
-      const name = `Dr. ${String(d.name).trim()}`.replace(/\s+/g, ' ').trim();
+      const name = formatDoctorName(d.name);
       const spec = (d.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
       const city = d.city ? ` in ${String(d.city).trim()}` : '';
       routes.push({
