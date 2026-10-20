@@ -49,7 +49,7 @@ const TXT = {
     shareText:
       '🏥 Found a great way to see a doctor: *ProMedicoz*\n\n' +
       '✅ Verified doctors — video, phone, or in-person\n' +
-      '💸 Fair, honest fees — you pay the doctor directly, no commission\n' +
+      '🧾 Fair, honest fees — you pay the doctor directly, no commission\n' +
       '⏱️ Book in under 2 minutes\n\n' +
       '👉 ' + SITE_URL + '\n\n' +
       'Sharing because good, affordable healthcare is worth passing on. ❤️',
@@ -88,7 +88,7 @@ const TXT = {
     shareText:
       '🏥 डॉक्टर दिखाने का एक बढ़िया तरीका मिला: *ProMedicoz*\n\n' +
       '✅ सत्यापित डॉक्टर — वीडियो, फ़ोन या क्लिनिक पर\n' +
-      '💸 वाजिब और ईमानदार फ़ीस — पैसे सीधे डॉक्टर को, कोई कमीशन नहीं\n' +
+      '🧾 वाजिब और ईमानदार फ़ीस — पैसे सीधे डॉक्टर को, कोई कमीशन नहीं\n' +
       '⏱️ 2 मिनट से भी कम में बुक करें\n\n' +
       '👉 ' + SITE_URL + '\n\n' +
       'शेयर इसलिए, क्योंकि अच्छी और सस्ती सेहत-सुविधा सबके काम आती है। ❤️',
@@ -200,7 +200,7 @@ function InstallApp() {
         <div className="grid md:grid-cols-2 gap-6 -mt-8 relative z-10">
           {/* ---- Install ---- */}
           <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">{t.installHeading}</h2>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">{t.installHeading}</h2>
 
             {isInstalled ? (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 text-sm">
@@ -218,16 +218,26 @@ function InstallApp() {
                 )}
 
                 <div className="mb-5">
-                  <p className="font-medium text-gray-800 text-sm mb-1">{t.androidTitle}</p>
-                  <ol className="list-decimal ml-5 text-sm text-gray-600 space-y-1">
-                    {t.androidSteps.map((step, i) => <li key={i}>{step}</li>)}
+                  <p className="font-semibold text-gray-800 text-sm mb-2">{t.androidTitle}</p>
+                  <ol className="space-y-2">
+                    {t.androidSteps.map((step, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-50 text-blue-600 text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                        <span className="leading-relaxed pt-0.5">{step}</span>
+                      </li>
+                    ))}
                   </ol>
                 </div>
 
                 <div>
-                  <p className="font-medium text-gray-800 text-sm mb-1">{t.iosTitle}</p>
-                  <ol className="list-decimal ml-5 text-sm text-gray-600 space-y-1">
-                    {t.iosSteps.map((step, i) => <li key={i}>{step}</li>)}
+                  <p className="font-semibold text-gray-800 text-sm mb-2">{t.iosTitle}</p>
+                  <ol className="space-y-2">
+                    {t.iosSteps.map((step, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-50 text-red-500 text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                        <span className="leading-relaxed pt-0.5">{step}</span>
+                      </li>
+                    ))}
                   </ol>
                 </div>
 
@@ -238,7 +248,7 @@ function InstallApp() {
 
           {/* ---- Share ---- */}
           <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">{t.shareHeading}</h2>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">{t.shareHeading}</h2>
 
             <div className="flex flex-col gap-3">
               {/* Native share (mobile share sheet) + copy link */}
