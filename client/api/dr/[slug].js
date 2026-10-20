@@ -156,14 +156,27 @@ function injectMeta(shell, { title, description, image, url }) {
 }
 
 export default async function handler(req, res) {
-  const slug = String(req.query.slug || '').trim().toLowerCase();
+  // Prefer the route param, but fall back to parsing the slug out of the URL
+  // path — this makes the function work whether it's reached via the
+  // /dr/:slug -> /api/dr/:slug rewrite or hit directly, regardless of how
+  // Vercel populates req.query for the dynamic segment.
+  let slug = String((req.query && req.query.slug) || '').trim().toLowerCase();
+  if (!slug) {
+    const rawPath = String(req.url || '').split('?')[0];
+    const m = rawPath.match(/\/(?:api\/)?dr\/([^/]+)/i);
+    if (m && m[1]) {
+      try { slug = decodeURIComponent(m[1]).trim().toLowerCase(); }
+      catch { slug = m[1].trim().toLowerCase(); }
+    }
+  }
   const canonical = `${SITE}/dr/${encodeURIComponent(slug)}`;
 
   const shell = await loadShell();
 
   // If we can't read the shell, redirect to the app root rewrite as a last
   // resort (never loops: destination is index.html-served content, not /dr/).
-  const serveShellPlain = async () => {
+  const serveShellPlain = async (reason) => {
+    res.setHeader('X-OG-Doctor', `fallback:${reason || 'unknown'}`);
     if (shell) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -175,16 +188,16 @@ export default async function handler(req, res) {
     }
   };
 
-  if (!slug) return serveShellPlain();
+  if (!slug) return serveShellPlain('no-slug');
 
   try {
     const r = await fetch(`${API_BASE}/doctors/by-slug/${encodeURIComponent(slug)}`, {
       headers: { accept: 'application/json' },
     });
-    if (!r.ok) return serveShellPlain();
+    if (!r.ok) return serveShellPlain(`api-${r.status}`);
     const data = await r.json();
     const doctor = data && data.doctor;
-    if (!doctor || !doctor.name) return serveShellPlain();
+    if (!doctor || !doctor.name) return serveShellPlain('no-doctor');
 
     const name = `Dr. ${doctor.name}`.trim();
     const spec = doctor.specialization || 'Doctor';
@@ -200,15 +213,16 @@ export default async function handler(req, res) {
       ? injectMeta(shell, { title, description, image, url: canonical })
       : null;
 
-    if (!html) return serveShellPlain();
+    if (!html) return serveShellPlain('no-shell');
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-OG-Doctor', `ok:${slug}`);
     // Cache the rendered shell at the edge so repeat crawls/visits are fast,
     // but refresh often enough that a doctor's profile edit shows within minutes.
     res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=86400');
     res.end(html);
-  } catch {
-    return serveShellPlain();
+  } catch (err) {
+    return serveShellPlain(`error-${(err && err.message) ? err.message.slice(0, 40) : 'x'}`);
   }
 }
