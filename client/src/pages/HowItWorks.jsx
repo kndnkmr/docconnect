@@ -95,56 +95,66 @@ function HowItWorks() {
   const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div>
       <SEO title="How to Book a Doctor Online in India — 4 Simple Steps" description="How ProMedicoz works for patients: find a verified doctor, book a slot, pay the doctor directly via UPI after confirmation, and consult by video, phone, or in person — in 4 simple steps." path="/how-it-works" />
 
-      {/* Language toggle (patient-facing page) */}
-      <div className="flex justify-center mb-6">
-        <div className="inline-flex items-center bg-gray-100 rounded-full p-1 text-sm">
-          <button
-            onClick={() => changeLang('en')}
-            className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            English
-          </button>
-          <button
-            onClick={() => changeLang('hi')}
-            className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            हिंदी
-          </button>
-        </div>
-      </div>
+      {/* Gradient hero band — matches the rest of the site. Decorative layers
+          are pointer-events-none. Language toggle lives inside. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+        <div className="pointer-events-none absolute -top-16 -left-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-20 -right-16 w-80 h-80 bg-cyan-300/15 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="relative container mx-auto px-4 py-12 sm:py-16 max-w-3xl text-center">
+          {/* Language toggle */}
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
+              <button
+                onClick={() => changeLang('en')}
+                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLang('hi')}
+                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+              >
+                हिंदी
+              </button>
+            </div>
+          </div>
 
-      {/* Hero */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-800">{t.heroTitle}</h1>
-        <p className="text-gray-600 mt-3 max-w-2xl mx-auto">{t.heroSubtitle}</p>
-        <div className="flex flex-wrap justify-center gap-3 mt-5">
-          <Link to="/doctors" className="btn btn-primary px-8">{t.findDoctor}</Link>
-          <Link to="/register" className="btn btn-outline px-8">{t.createAccount}</Link>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{t.heroTitle}</h1>
+          <p className="text-primary-100 mt-3 max-w-2xl mx-auto text-sm sm:text-base">{t.heroSubtitle}</p>
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            <Link to="/doctors" className="btn bg-white text-primary-700 hover:bg-gray-100 px-8 shadow-sm">{t.findDoctor}</Link>
+            <Link to="/register" className="btn border border-white/60 text-white hover:bg-white/10 px-8">{t.createAccount}</Link>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
-        {/* Steps — numbered-circle visual (matches the step style used in
-            blog articles and the dashboard onboarding) so the core "4 steps"
-            reads as a clear, friendly flow rather than a plain list. */}
+      <div className="container mx-auto px-4 py-10 max-w-3xl space-y-8 text-gray-700 text-sm leading-relaxed">
+        {/* Steps — connected vertical timeline so the core "4 steps" reads as a
+            clear flow. Step 4 (the payoff) is green. */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">{t.stepsHeading}</h2>
-          <ol className="space-y-3">
-            {t.steps.map((s, i) => (
-              <li key={i} className="flex gap-3 items-start">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
-                <span className="pt-1"><strong className="text-gray-800">{s.t}</strong> {s.d}</span>
-              </li>
-            ))}
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-5">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.stepsHeading}
+          </h2>
+          <ol className="relative space-y-5">
+            <span className="absolute left-4 top-2 bottom-2 w-0.5 bg-primary-100" aria-hidden="true" />
+            {t.steps.map((s, i) => {
+              const isLast = i === t.steps.length - 1;
+              return (
+                <li key={i} className="relative flex gap-3 items-start">
+                  <span className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full text-white text-sm font-bold flex items-center justify-center ${isLast ? 'bg-green-500' : 'bg-primary-600'}`}>{i + 1}</span>
+                  <span className="pt-1"><strong className="text-gray-800">{s.t}</strong> {s.d}</span>
+                </li>
+              );
+            })}
           </ol>
         </section>
 
         {/* Payment */}
-        <section className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.payHeading}</h2>
+        <section className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2"><span aria-hidden="true">💳</span>{t.payHeading.replace('💳 ', '')}</h2>
           <ul className="space-y-2">
             {t.pay.map((p, i) => (
               <li key={i} className="flex gap-2"><span>•</span><span>{p}</span></li>
@@ -154,7 +164,9 @@ function HowItWorks() {
 
         {/* Joining */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.joinHeading}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.joinHeading}
+          </h2>
           <ul className="list-disc ml-6 space-y-2">
             {t.join.map((j, i) => (
               <li key={i}>{j}</li>
@@ -164,7 +176,9 @@ function HowItWorks() {
 
         {/* Good to know */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">{t.knowHeading}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.knowHeading}
+          </h2>
           <ul className="list-disc ml-6 space-y-2">
             {t.know.map((k, i) => (
               <li key={i}>{k}</li>
@@ -173,8 +187,8 @@ function HowItWorks() {
         </section>
 
         {/* CTA */}
-        <section className="bg-primary-50 rounded-xl p-6 text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.ctaHeading}</h2>
+        <section className="bg-primary-50 border border-primary-100 rounded-2xl p-6 text-center">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t.ctaHeading}</h2>
           <div className="flex flex-wrap justify-center gap-3 mt-3">
             <Link to="/doctors" className="btn btn-primary px-8">{t.findDoctor}</Link>
             <Link to="/register" className="btn btn-outline px-8">{t.createAccount}</Link>
