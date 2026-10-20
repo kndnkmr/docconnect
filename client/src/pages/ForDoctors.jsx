@@ -6,23 +6,36 @@ function ForDoctors() {
     <div className="flex-grow flex flex-col">
       <SEO title="For Doctors — Keep 100% of Your Fee, No Commission" description="Join ProMedicoz free and grow your practice online: keep 100% of your fee (no commission), patients pay you directly via UPI, and consult by video, phone, or in person." path="/for-doctors" />
 
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+      {/* Gradient hero band — matches the rest of the site instead of a bare
+          heading on white. Decorative layers are pointer-events-none. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+        <div className="pointer-events-none absolute -top-16 -left-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-20 -right-16 w-80 h-80 bg-cyan-300/15 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="relative container mx-auto px-4 py-12 sm:py-16 max-w-3xl text-center">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">Grow your practice on ProMedicoz</h1>
+          <p className="text-primary-100 mt-3 max-w-2xl mx-auto text-sm sm:text-base">
+            Keep the patients you already have — even when they move cities — reach their families anywhere, and welcome new patients too. Consult online or in person, and keep 100% of your fee.
+          </p>
+          <Link to="/register?role=doctor" className="inline-block mt-6 bg-white text-primary-700 py-2.5 px-8 rounded-xl hover:bg-gray-100 transition-colors font-semibold shadow-sm">
+            Join as a Doctor
+          </Link>
+          {/* Benefit pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-6 text-xs sm:text-sm">
+            {['Keep 100% of your fee', 'No commission', 'No lock-in'].map((label, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 bg-white/12 border border-white/20 rounded-full px-3 py-1.5 font-medium">
+                <span className="text-cyan-200" aria-hidden="true">✓</span>{label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* Hero */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-800">Grow your practice on ProMedicoz</h1>
-        <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-          Keep the patients you already have — even when they move cities — reach their families anywhere, and welcome new patients too. Consult online or in person, and keep 100% of your fee. Free to join, no commission.
-        </p>
-        <Link to="/register?role=doctor" className="inline-block mt-5 bg-primary-600 text-white py-2.5 px-8 rounded-lg hover:bg-primary-700 transition-colors font-medium">
-          Join as a Doctor
-        </Link>
-      </div>
+      <div className="container mx-auto px-4 py-10 max-w-3xl">
 
       <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
         {/* Payment — the #1 question doctors ask */}
-        <section className="bg-green-50 border border-green-200 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">💰 How you get paid</h2>
+        <section className="bg-green-50 border border-green-200 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2"><span aria-hidden="true">🧾</span> How you get paid</h2>
           <ul className="space-y-2">
             <li className="flex gap-2"><span>✅</span><span><strong>You keep 100% of your fee.</strong> ProMedicoz charges no commission and takes no cut.</span></li>
             <li className="flex gap-2"><span>✅</span><span><strong>Patients pay you directly.</strong> The payment goes straight to your own UPI ID / QR code — ProMedicoz never collects, holds, or processes any money.</span></li>
@@ -36,8 +49,8 @@ function ForDoctors() {
         {/* Keep-your-patients benefit — the most persuasive reason for a
             practising doctor. Framed as retention + reaching their patients'
             families in other cities, not "join a platform". */}
-        <section className="bg-primary-50 border border-primary-200 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">🏠 Your own online clinic — keep the patients you already have</h2>
+        <section className="bg-primary-50 border border-primary-200 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2"><span aria-hidden="true">🏠</span> Your own online clinic — keep the patients you already have</h2>
           <p className="mb-3">
             This isn't just about finding new patients. It's about <strong>not losing the ones you already have</strong>.
             Patients move cities for work, study, or family. Their parents and relatives often live far from you. Today,
@@ -58,7 +71,7 @@ function ForDoctors() {
 
         {/* How patients reach you */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">How patients find and book you</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3"><span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />How patients find and book you</h2>
           <ol className="list-decimal ml-6 space-y-2">
             <li>Patients search by symptom, specialization, city, or the languages you speak, and see your profile — qualification, experience, fee, and reviews.</li>
             <li>A patient books an available slot from your schedule. You get notified (in-app, and by push/email if enabled).</li>
@@ -69,7 +82,7 @@ function ForDoctors() {
 
         {/* Consultation flow */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">How a consultation works</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3"><span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />How a consultation works</h2>
           <p className="mb-3">Each appointment moves through simple steps, and the dashboard guides you at every stage:</p>
           <ol className="list-decimal ml-6 space-y-2">
             <li><strong>Confirm</strong> the appointment request.</li>
@@ -83,7 +96,7 @@ function ForDoctors() {
 
         {/* Getting started */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">Getting started takes a few minutes</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3"><span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />Getting started takes a few minutes</h2>
           <ol className="list-decimal ml-6 space-y-2">
             <li><strong>Register</strong> with your name, email, and phone.</li>
             <li><strong>Verify your email</strong> (please check your spam folder — new-domain emails sometimes land there — mark it "Not spam" and click Verify).</li>
@@ -95,14 +108,14 @@ function ForDoctors() {
 
         {/* What you need */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">Who can join</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-3"><span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />Who can join</h2>
           <p>Registered medical practitioners with a valid medical license (registered with the National Medical Commission or a State Medical Council). You practise independently — ProMedicoz is a platform that connects you with patients, not your employer. See our <Link to="/terms" className="text-primary-600 hover:underline">Terms</Link> and <Link to="/medical-disclaimer" className="text-primary-600 hover:underline">Medical Disclaimer</Link>.</p>
         </section>
 
         {/* FAQ — leads with the two objections doctors raise most: losing
             existing patients, and why it's free. Written to reassure. */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Doctors' most common questions</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-4"><span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />Doctors' most common questions</h2>
           <div className="space-y-3">
             <details className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30">
               <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
