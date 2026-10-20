@@ -17,6 +17,9 @@ const TXT = {
     heroH1: "Quality healthcare, within everyone's reach",
     heroSub:
       'ProMedicoz connects patients across India with verified doctors — by video, phone, or in person. Finding the right care should be as simple as booking in a couple of minutes.',
+    pillVerified: 'Verified doctors',
+    pillNoCommission: 'No commission',
+    pillModes: 'Video · Phone · In-person',
 
     whyH: 'Why we exist',
     whyP1:
@@ -58,6 +61,9 @@ const TXT = {
     heroH1: 'अच्छी सेहत-सुविधा, सबकी पहुंच में',
     heroSub:
       'ProMedicoz भारत भर के मरीज़ों को सत्यापित डॉक्टरों से जोड़ता है — वीडियो, फ़ोन या क्लिनिक पर। सही इलाज पाना उतना ही आसान होना चाहिए जितना कुछ मिनटों में बुकिंग करना।',
+    pillVerified: 'सत्यापित डॉक्टर',
+    pillNoCommission: 'कोई कमीशन नहीं',
+    pillModes: 'वीडियो · फ़ोन · क्लिनिक',
 
     whyH: 'हम क्यों हैं',
     whyP1:
@@ -103,48 +109,68 @@ function AboutUs() {
   const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div>
       {/* SEO title/description stay ENGLISH on purpose — they feed Google's
           index and OG previews, and must not change with the on-screen toggle. */}
       <SEO title="About Us — Verified Doctors, Fair Fees, No Commission" description="ProMedicoz connects patients across India with verified doctors for video, phone, and in-person consultations — a free platform where you pay the doctor directly, with no commission, built to make quality healthcare easy to reach." path="/about" />
 
-      {/* Language toggle (patient-facing page) */}
-      <div className="flex justify-center mb-6">
-        <div className="inline-flex items-center bg-gray-100 rounded-full p-1 text-sm">
-          <button
-            onClick={() => changeLang('en')}
-            className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            English
-          </button>
-          <button
-            onClick={() => changeLang('hi')}
-            className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            हिंदी
-          </button>
-        </div>
-      </div>
+      {/* Gradient hero band — brings the About page in line with the rest of
+          the site (Home/booking/profile) instead of a bare heading on white.
+          Decorative layers are pointer-events-none. Language toggle lives in
+          the band so a Hindi-speaking visitor sees it immediately. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+        <div className="pointer-events-none absolute -top-16 -left-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-20 -right-16 w-80 h-80 bg-cyan-300/15 rounded-full blur-3xl" aria-hidden="true" />
+        <div className="relative container mx-auto px-4 py-12 sm:py-16 max-w-3xl text-center">
+          {/* Language toggle */}
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
+              <button
+                onClick={() => changeLang('en')}
+                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLang('hi')}
+                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
+              >
+                हिंदी
+              </button>
+            </div>
+          </div>
 
-      {/* Hero */}
-      <div className="text-center mb-10">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <span className="text-3xl">🏥</span>
-          <span className="text-2xl font-bold text-primary-600">ProMedicoz</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-800">{t.heroH1}</h1>
-        <p className="text-gray-600 mt-3 max-w-2xl mx-auto">{t.heroSub}</p>
-      </div>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-2xl" aria-hidden="true">🏥</span>
+            <span className="text-xl font-bold">ProMedicoz</span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{t.heroH1}</h1>
+          <p className="text-primary-100 mt-3 max-w-2xl mx-auto text-sm sm:text-base">{t.heroSub}</p>
 
-      <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
+          {/* Trust pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-6 text-xs sm:text-sm">
+            {[t.pillVerified, t.pillNoCommission, t.pillModes].map((label, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 bg-white/12 border border-white/20 rounded-full px-3 py-1.5 font-medium">
+                <span className="text-cyan-200" aria-hidden="true">✓</span>{label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-10 max-w-3xl space-y-8 text-gray-700 text-sm leading-relaxed">
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.whyH}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-2">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.whyH}
+          </h2>
           <p>{t.whyP1}</p>
           <p className="mt-3">{t.whyP2}</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">{t.doH}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-4">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.doH}
+          </h2>
           {/* Each "what we do" point is a card with a circular icon badge and a
               subtle hover lift, so the section reads as a set of features
               rather than a flat bulleted list. */}
@@ -161,13 +187,15 @@ function AboutUs() {
           </ul>
         </section>
 
-        <section className="bg-green-50 border border-green-100 rounded-xl p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.freeH}</h2>
+        <section className="bg-green-50 border border-green-100 rounded-2xl p-6">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-gray-800 mb-2"><span aria-hidden="true">🧾</span>{t.freeH}</h2>
           <p>{t.freeP}</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.platH}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-2">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.platH}
+          </h2>
           <p>
             {t.platP}{' '}
             {t.platLinks}{' '}
@@ -179,13 +207,15 @@ function AboutUs() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.trustH}</h2>
+          <h2 className="flex items-center gap-2.5 text-xl font-bold text-gray-800 mb-2">
+            <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />{t.trustH}
+          </h2>
           <p>{t.trustP}</p>
         </section>
 
         {/* CTAs */}
-        <section className="bg-primary-50 rounded-xl p-6 text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{t.ctaH}</h2>
+        <section className="bg-primary-50 border border-primary-100 rounded-2xl p-6 text-center">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t.ctaH}</h2>
           <p className="text-gray-600 mb-4">{t.ctaP}</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/doctors" className="btn btn-primary">{t.findDoctor}</Link>
