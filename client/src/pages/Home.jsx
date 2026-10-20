@@ -88,13 +88,19 @@ const TXT = {
       { title: 'Doctor confirms', desc: 'Usually within a few hours — you get notified.', cta: 'How it works →' },
       { title: 'Pay & consult', desc: 'Pay the doctor directly — no commission. Then consult.', cta: 'Learn more →' },
     ],
+    faqCats: { all: 'All', booking: 'Booking', payments: 'Payments', consult: 'Consultation' },
+    faqHelpTitle: 'Still have questions?',
+    faqHelpText: "We're happy to help you find the right doctor or sort out a booking.",
+    faqHelpWhatsApp: '💬 Chat on WhatsApp',
+    faqHelpEmail: '✉️ Email support',
+    faqHelpHow: '📖 How it works',
     faqs: [
-      { q: 'How do I book a doctor on ProMedicoz?', a: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking. The doctor confirms within hours.' },
-      { q: 'Is ProMedicoz free to use?', a: 'Signing up and browsing doctors is free. You only pay the consultation fee directly to the doctor via UPI when your appointment is confirmed.' },
-      { q: 'Can I consult a doctor online through video call?', a: 'Yes, ProMedicoz supports video, phone, and in-person consultations. Choose your preferred mode while booking.' },
-      { q: 'How do I know if a doctor is good?', a: 'Each doctor profile shows their qualification, years of experience, consultation fee, and patient reviews with star ratings.' },
-      { q: 'Can I book an appointment for a family member?', a: 'Yes, you can add family members to your account and book appointments on their behalf.' },
-      { q: 'What if I need to cancel my appointment?', a: 'You can cancel from your dashboard at any time before the appointment. There are no cancellation charges.' },
+      { cat: 'booking', q: 'How do I book a doctor on ProMedicoz?', a: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking. The doctor confirms within hours.' },
+      { cat: 'payments', q: 'Is ProMedicoz free to use?', a: 'Signing up and browsing doctors is free. You only pay the consultation fee directly to the doctor via UPI when your appointment is confirmed.' },
+      { cat: 'consult', q: 'Can I consult a doctor online through video call?', a: 'Yes, ProMedicoz supports video, phone, and in-person consultations. Choose your preferred mode while booking.' },
+      { cat: 'booking', q: 'How do I know if a doctor is good?', a: 'Each doctor profile shows their qualification, years of experience, consultation fee, and patient reviews with star ratings.' },
+      { cat: 'booking', q: 'Can I book an appointment for a family member?', a: 'Yes, you can add family members to your account and book appointments on their behalf.' },
+      { cat: 'booking', q: 'What if I need to cancel my appointment?', a: 'You can cancel from your dashboard at any time before the appointment. There are no cancellation charges.' },
     ],
   },
   hi: {
@@ -150,13 +156,19 @@ const TXT = {
       { title: 'डॉक्टर पुष्टि करते हैं', desc: 'आमतौर पर कुछ ही घंटों में — आपको सूचना मिलती है।', cta: 'कैसे काम करता है →' },
       { title: 'भुगतान करें और परामर्श लें', desc: 'पैसे सीधे डॉक्टर को — कोई कमीशन नहीं। फिर परामर्श।', cta: 'और जानें →' },
     ],
+    faqCats: { all: 'सभी', booking: 'बुकिंग', payments: 'भुगतान', consult: 'परामर्श' },
+    faqHelpTitle: 'अभी भी सवाल हैं?',
+    faqHelpText: 'सही डॉक्टर खोजने या बुकिंग में हम आपकी मदद के लिए तैयार हैं।',
+    faqHelpWhatsApp: '💬 WhatsApp पर चैट करें',
+    faqHelpEmail: '✉️ ईमेल सहायता',
+    faqHelpHow: '📖 कैसे काम करता है',
     faqs: [
-      { q: 'ProMedicoz पर डॉक्टर कैसे बुक करें?', a: 'विशेषज्ञता या लक्षण के अनुसार खोजें, डॉक्टर चुनें, तारीख और समय चुनें, और अपनी बुकिंग की पुष्टि करें। डॉक्टर कुछ ही घंटों में पुष्टि कर देते हैं।' },
-      { q: 'क्या ProMedicoz उपयोग करने के लिए मुफ़्त है?', a: 'साइन अप करना और डॉक्टर ब्राउज़ करना मुफ़्त है। अपॉइंटमेंट की पुष्टि होने पर आप केवल परामर्श शुल्क सीधे डॉक्टर को UPI के ज़रिए देते हैं।' },
-      { q: 'क्या मैं वीडियो कॉल से ऑनलाइन डॉक्टर से परामर्श कर सकता हूं?', a: 'हां, ProMedicoz वीडियो, फ़ोन और क्लिनिक पर परामर्श की सुविधा देता है। बुकिंग के समय अपना पसंदीदा तरीका चुनें।' },
-      { q: 'मुझे कैसे पता चलेगा कि डॉक्टर अच्छा है?', a: 'हर डॉक्टर की प्रोफ़ाइल में उनकी योग्यता, अनुभव, परामर्श शुल्क, और स्टार रेटिंग के साथ मरीज़ों की समीक्षाएं दिखती हैं।' },
-      { q: 'क्या मैं परिवार के किसी सदस्य के लिए अपॉइंटमेंट बुक कर सकता हूं?', a: 'हां, आप अपने खाते में परिवार के सदस्यों को जोड़ सकते हैं और उनकी ओर से अपॉइंटमेंट बुक कर सकते हैं।' },
-      { q: 'अगर मुझे अपना अपॉइंटमेंट रद्द करना हो तो क्या करूं?', a: 'आप अपॉइंटमेंट से पहले कभी भी अपने डैशबोर्ड से इसे रद्द कर सकते हैं। कोई रद्दीकरण शुल्क नहीं है।' },
+      { cat: 'booking', q: 'ProMedicoz पर डॉक्टर कैसे बुक करें?', a: 'विशेषज्ञता या लक्षण के अनुसार खोजें, डॉक्टर चुनें, तारीख और समय चुनें, और अपनी बुकिंग की पुष्टि करें। डॉक्टर कुछ ही घंटों में पुष्टि कर देते हैं।' },
+      { cat: 'payments', q: 'क्या ProMedicoz उपयोग करने के लिए मुफ़्त है?', a: 'साइन अप करना और डॉक्टर ब्राउज़ करना मुफ़्त है। अपॉइंटमेंट की पुष्टि होने पर आप केवल परामर्श शुल्क सीधे डॉक्टर को UPI के ज़रिए देते हैं।' },
+      { cat: 'consult', q: 'क्या मैं वीडियो कॉल से ऑनलाइन डॉक्टर से परामर्श कर सकता हूं?', a: 'हां, ProMedicoz वीडियो, फ़ोन और क्लिनिक पर परामर्श की सुविधा देता है। बुकिंग के समय अपना पसंदीदा तरीका चुनें।' },
+      { cat: 'booking', q: 'मुझे कैसे पता चलेगा कि डॉक्टर अच्छा है?', a: 'हर डॉक्टर की प्रोफ़ाइल में उनकी योग्यता, अनुभव, परामर्श शुल्क, और स्टार रेटिंग के साथ मरीज़ों की समीक्षाएं दिखती हैं।' },
+      { cat: 'booking', q: 'क्या मैं परिवार के किसी सदस्य के लिए अपॉइंटमेंट बुक कर सकता हूं?', a: 'हां, आप अपने खाते में परिवार के सदस्यों को जोड़ सकते हैं और उनकी ओर से अपॉइंटमेंट बुक कर सकते हैं।' },
+      { cat: 'booking', q: 'अगर मुझे अपना अपॉइंटमेंट रद्द करना हो तो क्या करूं?', a: 'आप अपॉइंटमेंट से पहले कभी भी अपने डैशबोर्ड से इसे रद्द कर सकते हैं। कोई रद्दीकरण शुल्क नहीं है।' },
     ],
   },
 };
@@ -166,6 +178,8 @@ function Home() {
   const { canInstall, promptInstall } = usePwa();
   const navigate = useNavigate();
   const [symptomSearch, setSymptomSearch] = useState('');
+  // FAQ category filter ('all' | 'booking' | 'payments' | 'consult').
+  const [faqCat, setFaqCat] = useState('all');
 
   // Hero Share: use the phone's native share sheet when available; otherwise
   // send the user to the /install page which has all the per-platform share
@@ -851,37 +865,83 @@ function Home() {
         })()}
       </section>
 
-      {/* ---- FAQs for Google "People Also Ask" ---- */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4 max-w-3xl">
+      {/* ---- FAQs for Google "People Also Ask" ---- A two-column "help hub":
+           a sticky help card on the left (turns a passive FAQ into a way to
+           reach us), and a category-filterable accordion on the right. The
+           FAQPage schema (above, in <Helmet>) is unaffected — it indexes every
+           Q&A regardless of the on-screen filter. */}
+      <section className="py-12 bg-white bg-dotted">
+        <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">{t.faqHeading}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t.faqHeading}</h2>
             <span className="inline-block mt-2 h-1 w-12 rounded-full bg-primary-500" aria-hidden="true"></span>
           </div>
-          <div className="space-y-3">
-            {t.faqs.map((faq, idx) => (
-              // Each FAQ is a <details> card that lifts on hover and gets a
-              // primary tint + ring when open. The chevron sits in a circular
-              // badge that turns primary and rotates as it opens, so the whole
-              // row clearly reads as an interactive accordion.
-              <details
-                key={idx}
-                className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30"
-              >
-                <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
-                  <span className="flex items-start gap-2.5">
-                    <span className="text-primary-500 shrink-0" aria-hidden="true">❓</span>
-                    {faq.q}
-                  </span>
-                  <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </summary>
-                <p className="text-gray-600 text-sm mt-3 pl-7 leading-relaxed">{faq.a}</p>
-              </details>
-            ))}
+
+          <div className="grid lg:grid-cols-[260px_1fr] gap-6 items-start">
+            {/* Left: help card (sticky on desktop) */}
+            <div className="lg:sticky lg:top-24 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-700 to-primary-900 text-white p-6 shadow-md">
+              <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" aria-hidden="true" />
+              <div className="relative z-10">
+                <div className="text-3xl mb-3" aria-hidden="true">💬</div>
+                <h3 className="text-lg font-bold leading-snug">{t.faqHelpTitle}</h3>
+                <p className="text-primary-100 text-sm mt-1.5 leading-relaxed">{t.faqHelpText}</p>
+                <div className="mt-4 space-y-2">
+                  <a
+                    href={`https://wa.me/${(import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900')}?text=${encodeURIComponent('Hi ProMedicoz, I have a question.')}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="block w-full text-center bg-green-500 hover:bg-green-600 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors"
+                  >
+                    {t.faqHelpWhatsApp}
+                  </a>
+                  <a href="mailto:support@promedicoz.in" className="block w-full text-center bg-white/15 hover:bg-white/25 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors">
+                    {t.faqHelpEmail}
+                  </a>
+                  <Link to="/how-it-works" className="block w-full text-center bg-white/15 hover:bg-white/25 text-white rounded-lg py-2.5 text-sm font-semibold transition-colors">
+                    {t.faqHelpHow}
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: category pills + accordion */}
+            <div>
+              {/* Filter pills */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {['all', 'booking', 'payments', 'consult'].map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setFaqCat(c)}
+                    className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${faqCat === c ? 'bg-primary-600 text-white' : 'bg-primary-50 text-primary-700 border border-primary-100 hover:bg-primary-100'}`}
+                  >
+                    {t.faqCats[c]}
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {t.faqs
+                  .filter((faq) => faqCat === 'all' || faq.cat === faqCat)
+                  .map((faq, idx) => (
+                  <details
+                    key={`${faqCat}-${idx}`}
+                    className="group bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary-200 open:border-primary-200 open:ring-1 open:ring-primary-100 open:bg-primary-50/30"
+                  >
+                    <summary className="font-semibold text-gray-800 cursor-pointer list-none flex justify-between items-center gap-4 group-open:text-primary-700">
+                      <span className="min-w-0">
+                        <span className="inline-block mb-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-semibold uppercase tracking-wide">{t.faqCats[faq.cat]}</span>
+                        <span className="block">{faq.q}</span>
+                      </span>
+                      <span className="flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-gray-100 text-gray-500 transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 group-open:bg-primary-600 group-open:text-white group-open:rotate-180">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </span>
+                    </summary>
+                    <p className="text-gray-600 text-sm mt-3 leading-relaxed">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
