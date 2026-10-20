@@ -81,6 +81,49 @@ function formatDoctorName(raw) {
   return cleaned ? `Dr. ${cleaned}` : 'Doctor';
 }
 
+// Hindi display name: same "Dr"-prefix strip, then the Hindi honorific "डॉ.".
+// The person's name itself stays in its original script (we don't transliterate
+// names) — only the honorific is localised.
+function formatDoctorNameHi(raw) {
+  const cleaned = String(raw || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^dr\.?\s+/i, '');
+  return cleaned ? `डॉ. ${cleaned}` : 'डॉक्टर';
+}
+
+// Map an English specialization to a Hindi label for the share card. Falls back
+// to the original text if we don't have a Hindi name for it (better than
+// dropping it). Mirrors SPEC_LABEL_HI used on the home search suggestion.
+const SPEC_LABEL_HI = {
+  'General Physician': 'सामान्य चिकित्सक',
+  'Internal Medicine': 'सामान्य चिकित्सक',
+  'Family Medicine': 'सामान्य चिकित्सक',
+  'Gynaecologist': 'स्त्री रोग विशेषज्ञ',
+  'Gynecologist': 'स्त्री रोग विशेषज्ञ',
+  'Obstetrician and Gynaecologist': 'स्त्री एवं प्रसूति रोग विशेषज्ञ',
+  'Obstetrician and Gynecologist': 'स्त्री एवं प्रसूति रोग विशेषज्ञ',
+  'Cardiologist': 'हृदय रोग विशेषज्ञ',
+  'Dermatologist': 'त्वचा रोग विशेषज्ञ',
+  'Orthopedic': 'हड्डी रोग विशेषज्ञ',
+  'Pediatrician': 'बाल रोग विशेषज्ञ',
+  'Gastroenterologist': 'पेट व पाचन रोग विशेषज्ञ',
+  'ENT Specialist': 'कान-नाक-गला विशेषज्ञ',
+  'Psychiatrist': 'मनोचिकित्सक',
+  'Neurologist': 'न्यूरोलॉजिस्ट',
+  'Ophthalmologist': 'नेत्र रोग विशेषज्ञ',
+  'Pulmonologist': 'फेफड़ा रोग विशेषज्ञ',
+  'Endocrinologist': 'मधुमेह व हार्मोन विशेषज्ञ',
+  'Dentist': 'दंत चिकित्सक',
+  'Urologist': 'मूत्र रोग विशेषज्ञ',
+  'Physiotherapist': 'फिजियोथेरेपिस्ट',
+  'Nephrologist': 'गुर्दा रोग विशेषज्ञ',
+};
+function specLabelHi(spec) {
+  const key = (spec || '').replace(/\s+/g, ' ').trim();
+  return SPEC_LABEL_HI[key] || key || 'डॉक्टर';
+}
+
 // ---- Doctor share card (Cloudinary, composed from the doctor's own photo) ----
 const CLOUD_NAME = 'g6uc48vt';
 
@@ -118,16 +161,24 @@ function doctorCardUrl(doctor) {
   const pidLayer = pid.replace(/\//g, ':');
   const name = formatDoctorName(doctor.name);
   const spec = (doctor.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
-  const feeLine = Number(doctor.consultationFee) > 0
-    ? `Rs. ${doctor.consultationFee} consultation`
-    : 'Book an appointment online';
+  // Hindi-first card (our audience is largely Hindi-speaking). Name uses the
+  // Hindi honorific डॉ. with the doctor's own name; specialty is the Hindi
+  // label; fee + tagline are Hindi. The overlay font MUST be a Devanagari-
+  // capable one — Arial renders Hindi as empty boxes; "Noto Sans" renders it
+  // correctly (verified on this Cloudinary account).
+  const nameHi = formatDoctorNameHi(doctor.name);
+  const specHi = specLabelHi(doctor.specialization);
+  const feeLineHi = Number(doctor.consultationFee) > 0
+    ? `Rs. ${doctor.consultationFee} परामर्श`
+    : 'ऑनलाइन अपॉइंटमेंट बुक करें';
+  const FONT = 'Noto%20Sans'; // Devanagari-capable
   const t = [
     'w_1200,h_630,c_fill,g_auto,b_rgb:1d4ed8,e_brightness:-30,q_auto,f_jpg',
     `l_${pidLayer},w_300,h_300,c_fill,g_face,r_max,bo_8px_solid_white/fl_layer_apply,g_west,x_90`,
-    `l_text:Arial_62_bold:${clText(name)},co_white/fl_layer_apply,g_north_west,x_470,y_210`,
-    `l_text:Arial_36:${clText(spec)},co_rgb:dbeafe/fl_layer_apply,g_north_west,x_470,y_300`,
-    `l_text:Arial_34_bold:${clText(feeLine)},co_white/fl_layer_apply,g_north_west,x_470,y_365`,
-    `l_text:Arial_28_bold:${clText('ProMedicoz · Book online · No commission')},co_rgb:bfdbfe/fl_layer_apply,g_south_west,x_90,y_55`,
+    `l_text:${FONT}_60_bold:${clText(nameHi)},co_white/fl_layer_apply,g_north_west,x_470,y_205`,
+    `l_text:${FONT}_36:${clText(specHi)},co_rgb:dbeafe/fl_layer_apply,g_north_west,x_470,y_300`,
+    `l_text:${FONT}_34_bold:${clText(feeLineHi)},co_white/fl_layer_apply,g_north_west,x_470,y_365`,
+    `l_text:${FONT}_27_bold:${clText('ProMedicoz · ऑनलाइन बुक करें · कोई कमीशन नहीं')},co_rgb:bfdbfe/fl_layer_apply,g_south_west,x_90,y_55`,
   ].join('/');
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${t}/${pid}.jpg`;
 }
@@ -146,15 +197,17 @@ async function fetchDoctorRoutes() {
     const routes = [];
     for (const d of list) {
       if (!d || !d.slug || !d.name) continue;
-      const name = formatDoctorName(d.name);
-      const spec = (d.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
-      const city = d.city ? ` in ${String(d.city).trim()}` : '';
+      // Hindi-first preview text (title + description shown next to the card in
+      // WhatsApp/social). Kept in Hindi to match the card and our audience.
+      const nameHi = formatDoctorNameHi(d.name);
+      const specHi = specLabelHi(d.specialization);
+      const cityHi = d.city ? ` · ${String(d.city).trim()}` : '';
       routes.push({
         path: `/dr/${d.slug}`,
-        title: `${name} — ${spec}`,
-        description: `Book an appointment with ${name}, ${spec}${city}, on ${SITE_NAME}. ` +
-          (Number(d.consultationFee) > 0 ? `Consultation fee Rs. ${d.consultationFee}. ` : '') +
-          'Consult by video, phone, or in person.',
+        title: `${nameHi} — ${specHi}${cityHi}`,
+        description: `${nameHi} (${specHi}) से ProMedicoz पर ऑनलाइन अपॉइंटमेंट बुक करें। ` +
+          (Number(d.consultationFee) > 0 ? `परामर्श शुल्क Rs. ${d.consultationFee}। ` : '') +
+          'वीडियो, फ़ोन या क्लिनिक पर परामर्श। पैसे सीधे डॉक्टर को, कोई कमीशन नहीं।',
         type: 'profile',
         ogImage: doctorCardUrl(d),
         // Doctor pages are personal landing pages, not something we want in the
