@@ -309,6 +309,9 @@ export const adminAPI = {
   // Get all users (with optional filters)
   getUsers: (params) => API.get('/admin/users', { params }),
 
+  // Get one user's full record + recent appointments (detail drill-down)
+  getUser: (id) => API.get(`/admin/users/${id}`),
+
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
 

@@ -1180,4 +1180,41 @@ const fixEmailIndexAdmin = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
+// ============================================
+// GET USER BY ID - Full detail drill-down (admin)
+// ============================================
+// Endpoint: GET /api/admin/users/:id
+// Returns the complete user record (minus password) PLUS a compact appointment
+// history, so the admin can click a name anywhere (Users list, Appointments
+// list) and see everything about that person in one place — medical info and
+// family members (patients), or full professional profile (doctors). The
+// Appointments list only populates a few patient fields, so this endpoint is
+// what lets that name open the same rich view as the Users tab.
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Recent appointments for this user, as patient OR doctor. Capped and
+    // lightly populated — enough for an at-a-glance history, not a full export.
+    const match = user.role === 'doctor' ? { doctor: user._id } : { patient: user._id };
+    const appointments = await Appointment.find(match)
+      .populate('doctor', 'name specialization')
+      .populate('patient', 'name patientId')
+      .sort({ date: -1 })
+      .limit(20)
+      .select('date timeSlot status consultationType reason paymentStatus amountCollected doctor patient');
+
+    res.json({ user, appointments });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    console.error('Get user by id error:', error.message);
+    res.status(500).json({ message: 'Error fetching user details' });
+  }
+};
+
+module.exports = { getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };

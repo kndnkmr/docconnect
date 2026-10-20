@@ -65,6 +65,35 @@ function AdminDashboard() {
   // closed). No extra fetch needed: the users list already returns full
   // records (minus password), so this just presents what's loaded.
   const [detailUser, setDetailUser] = useState(null);
+  // Recent appointments for the user in the detail modal, and a flag while the
+  // full record is still being fetched (the modal opens instantly with the
+  // partial data we already have, then fills in).
+  const [detailAppointments, setDetailAppointments] = useState([]);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  // Open the detail drill-down for a user. `partial` is whatever we already
+  // have on hand (a full users-list row, or the lightly-populated apt.patient /
+  // apt.doctor from the Appointments tab). We show it immediately, then fetch
+  // the COMPLETE record (medical info, family, full profile) + recent
+  // appointments so the modal is always rich regardless of where it was opened.
+  const openUserDetail = async (partial) => {
+    if (!partial || !partial._id) return;
+    setDetailUser(partial);
+    setDetailAppointments([]);
+    setDetailLoading(true);
+    try {
+      const { data } = await adminAPI.getUser(partial._id);
+      if (data?.user) setDetailUser(data.user);
+      if (Array.isArray(data?.appointments)) setDetailAppointments(data.appointments);
+    } catch {
+      // Keep the partial data shown; just note we couldn't enrich it.
+      toast.error('Could not load full details — showing what we have.');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const closeUserDetail = () => { setDetailUser(null); setDetailAppointments([]); setDetailLoading(false); };
 
   // Edit-profile modal (admin edits a doctor's professional profile + how they
   // consult). `profileDoctor` is the doctor being edited (null = closed).
@@ -1015,7 +1044,7 @@ function AdminDashboard() {
                       <td className="px-4 py-3 text-sm">
                         {/* Click the name to open the full detail drill-down. */}
                         <button
-                          onClick={() => setDetailUser(user)}
+                          onClick={() => openUserDetail(user)}
                           className="text-left font-medium text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1"
                           title="View full details"
                         >
@@ -1275,14 +1304,37 @@ function AdminDashboard() {
                   {appointments.map((apt) => (
                     <tr key={apt._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm">
-                        <div className="text-gray-800 font-medium">
-                          {apt.patient?.name || 'Unknown'}
-                          {apt.patient?.patientId && <span className="text-gray-400 font-mono text-xs ml-1">({apt.patient.patientId})</span>}
-                        </div>
+                        {/* Click the patient name to open their full detail
+                            drill-down (fetches the complete record). */}
+                        {apt.patient?._id ? (
+                          <button
+                            onClick={() => openUserDetail(apt.patient)}
+                            className="text-left font-medium text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1"
+                            title="View patient details"
+                          >
+                            {apt.patient?.name || 'Unknown'}
+                            {apt.patient?.patientId && <span className="text-gray-400 font-mono text-xs">({apt.patient.patientId})</span>}
+                            <span className="text-gray-300 text-xs" aria-hidden="true">›</span>
+                          </button>
+                        ) : (
+                          <div className="text-gray-800 font-medium">{apt.patient?.name || 'Unknown'}</div>
+                        )}
                         <div className="text-gray-500 text-xs">{apt.patient?.phone || apt.patient?.email}</div>
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        <div className="text-gray-800 font-medium">{apt.doctor?.name || 'Unknown'}</div>
+                        {/* Click the doctor name to open their full profile. */}
+                        {apt.doctor?._id ? (
+                          <button
+                            onClick={() => openUserDetail(apt.doctor)}
+                            className="text-left font-medium text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1"
+                            title="View doctor details"
+                          >
+                            {apt.doctor?.name || 'Unknown'}
+                            <span className="text-gray-300 text-xs" aria-hidden="true">›</span>
+                          </button>
+                        ) : (
+                          <div className="text-gray-800 font-medium">{apt.doctor?.name || 'Unknown'}</div>
+                        )}
                         <div className="text-gray-500 text-xs">{apt.doctor?.specialization}</div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">{formatDate(apt.date)}</td>
@@ -1846,7 +1898,7 @@ function AdminDashboard() {
         );
         const statusLabel = u.isDeleted ? 'Deleted' : u.isSuspended ? 'Deactivated' : 'Active';
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setDetailUser(null)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={closeUserDetail}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               {/* Header */}
               <div className="flex items-start justify-between gap-3 p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
@@ -1864,10 +1916,11 @@ function AdminDashboard() {
                         u.isDeleted ? 'bg-gray-200 text-gray-600' : u.isSuspended ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'
                       }`}>{statusLabel}</span>
                       {u.isAdminVerified && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">✓ Verified</span>}
+                      {detailLoading && <span className="text-xs text-gray-400">loading…</span>}
                     </div>
                   </div>
                 </div>
-                <button onClick={() => setDetailUser(null)} className="text-gray-400 hover:text-gray-600 text-xl leading-none flex-shrink-0" aria-label="Close">✕</button>
+                <button onClick={closeUserDetail} className="text-gray-400 hover:text-gray-600 text-xl leading-none flex-shrink-0" aria-label="Close">✕</button>
               </div>
 
               {/* Body */}
@@ -1937,11 +1990,42 @@ function AdminDashboard() {
                 {isPatient && !(u.bloodGroup || u.allergies || u.currentMedications || u.medicalHistory || u.emergencyContactName || u.insuranceProvider) && (!u.familyMembers || u.familyMembers.length === 0) && (
                   <p className="text-sm text-gray-400 italic">This patient hasn't added any medical info or family members yet.</p>
                 )}
+
+                {/* Recent appointments (fetched with the full record). Shows the
+                    person's booking history at a glance — the other party, when,
+                    status, and payment. */}
+                {detailAppointments.length > 0 && (
+                  <Section title={`Recent appointments (${detailAppointments.length})`}>
+                    <div className="divide-y divide-gray-100">
+                      {detailAppointments.map((a) => (
+                        <div key={a._id} className="py-2 text-sm flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <span className="font-medium text-gray-800">
+                              {isDoctor ? (a.patient?.name || 'Patient') : `Dr. ${a.doctor?.name || 'Doctor'}`}
+                            </span>
+                            <div className="text-gray-500 text-xs mt-0.5">
+                              {formatDate(a.date)}{a.timeSlot ? ` · ${a.timeSlot}` : ''}{a.consultationType ? ` · ${a.consultationType}` : ''}
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end flex-shrink-0">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(a.status)}`}>{a.status}</span>
+                            {a.paymentStatus === 'paid' && a.amountCollected > 0 && (
+                              <span className="text-[11px] text-green-600 mt-1">Rs. {a.amountCollected}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Section>
+                )}
+                {!detailLoading && detailAppointments.length === 0 && (
+                  <p className="text-sm text-gray-400 italic">No appointments on record.</p>
+                )}
               </div>
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-100 sticky bottom-0 bg-white">
-                <button onClick={() => setDetailUser(null)} className="px-5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Close</button>
+                <button onClick={closeUserDetail} className="px-5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Close</button>
               </div>
             </div>
           </div>

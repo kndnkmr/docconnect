@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getStats, getAllUsers, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin } = require('../controllers/adminController');
+const { getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication + admin role
@@ -18,6 +18,11 @@ router.get('/stats', getStats);
 
 // GET /api/admin/users - All users (with search/filter)
 router.get('/users', getAllUsers);
+
+// GET /api/admin/users/:id - Full detail for one user (+ recent appointments).
+// Powers the click-a-name detail drill-down from both the Users and the
+// Appointments lists. Declared after '/users' so it doesn't shadow the list.
+router.get('/users/:id', getUserById);
 
 // GET /api/admin/appointments - All appointments (with filter)
 router.get('/appointments', getAllAppointments);
