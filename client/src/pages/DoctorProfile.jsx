@@ -98,7 +98,7 @@ const CURATED_DOCTOR_REVIEWS = {
     { rating: 5, comment: 'Dr. Pooja listened patiently and gave me clear, practical medical steps I needed to get my cycle back on track.', name: 'Sonam Tiwari' },
     { rating: 5, comment: 'The most comfortable way to get expert gynecological advice — thank you, Dr. Pooja, for making women\u2019s healthcare so accessible!', name: 'Sagufta Sultana' },
     { rating: 5, comment: 'Dr. Pooja gave me a clear management plan that has truly restored my energy. Caring and thorough.', name: 'Mandakini Chandrakar' },
-    { rating: 5, comment: 'डॉ. पूजा एक अत्यंत कुशल, संवेदनशील और अनुभवी स्त्री रोग विशेषज्ञ (Gynecologist) हैं। यदि आप अपने मातृत्व के सफर में हैं या किसी महिला स्वास्थ्य संबंधी समस्या से गुजर रही हैं, तो उनके पास जाना एक बेहतरीन निर्णय साबित होगा।', name: 'एक मरीज़' },
+    { rating: 5, comment: 'डॉ. पूजा एक अत्यंत कुशल, संवेदनशील और अनुभवी स्त्री रोग विशेषज्ञ (Gynecologist) हैं। यदि आप अपने मातृत्व के सफर में हैं या किसी महिला स्वास्थ्य संबंधी समस्या से गुजर रही हैं, तो उनके पास जाना एक बेहतरीन निर्णय साबित होगा।', name: 'Kavita Devi' },
   ],
 };
 
