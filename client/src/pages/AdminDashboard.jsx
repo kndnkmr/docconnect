@@ -58,6 +58,14 @@ function AdminDashboard() {
   const [availSaving, setAvailSaving] = useState(false);
   const AVAIL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+  // User-detail modal — opened by clicking a row's name. Read-only drill-down
+  // of everything we already have for that user (identity, contact, status,
+  // and for patients their medical info + family members, for doctors their
+  // full professional profile). `detailUser` is the user being viewed (null =
+  // closed). No extra fetch needed: the users list already returns full
+  // records (minus password), so this just presents what's loaded.
+  const [detailUser, setDetailUser] = useState(null);
+
   // Edit-profile modal (admin edits a doctor's professional profile + how they
   // consult). `profileDoctor` is the doctor being edited (null = closed).
   const [profileDoctor, setProfileDoctor] = useState(null);
@@ -1004,7 +1012,17 @@ function AdminDashboard() {
                 <tbody className="divide-y">
                   {users.map((user) => (
                     <tr key={user._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-800 font-medium">{user.name}</td>
+                      <td className="px-4 py-3 text-sm">
+                        {/* Click the name to open the full detail drill-down. */}
+                        <button
+                          onClick={() => setDetailUser(user)}
+                          className="text-left font-medium text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1"
+                          title="View full details"
+                        >
+                          {user.name}
+                          <span className="text-gray-300 text-xs" aria-hidden="true">›</span>
+                        </button>
+                      </td>
                       <td className="px-4 py-3 text-sm text-gray-500 font-mono">{user.patientId || '-'}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{user.phone || '-'}</td>
@@ -1802,6 +1820,133 @@ function AdminDashboard() {
         </div>
       )}
       </main>
+
+      {/* ===== User detail modal (read-only drill-down, opened by name click) ===== */}
+      {detailUser && (() => {
+        const u = detailUser;
+        const isPatient = u.role === 'patient';
+        const isDoctor = u.role === 'doctor';
+        // Small helpers so the modal stays tidy and never renders an empty row.
+        const Row = ({ label, value }) => (
+          value !== undefined && value !== null && value !== '' ? (
+            <div className="flex gap-3 py-1.5 text-sm">
+              <span className="w-36 flex-shrink-0 text-gray-500">{label}</span>
+              <span className="text-gray-800 break-words min-w-0">{value}</span>
+            </div>
+          ) : null
+        );
+        const Section = ({ title, children }) => (
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1.5 flex items-center gap-2">
+              <span className="w-1.5 h-4 rounded-full bg-primary-500" aria-hidden="true" />
+              {title}
+            </h4>
+            <div className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2">{children}</div>
+          </div>
+        );
+        const statusLabel = u.isDeleted ? 'Deleted' : u.isSuspended ? 'Deactivated' : 'Active';
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setDetailUser(null)}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3 p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-11 h-11 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
+                    {(u.name || '?').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold text-gray-800 truncate">{u.name}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        isDoctor ? 'bg-blue-100 text-blue-700' : u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
+                      }`}>{u.role}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        u.isDeleted ? 'bg-gray-200 text-gray-600' : u.isSuspended ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'
+                      }`}>{statusLabel}</span>
+                      {u.isAdminVerified && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">✓ Verified</span>}
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setDetailUser(null)} className="text-gray-400 hover:text-gray-600 text-xl leading-none flex-shrink-0" aria-label="Close">✕</button>
+              </div>
+
+              {/* Body */}
+              <div className="p-5 space-y-5">
+                <Section title="Identity & contact">
+                  <Row label="Name" value={u.name} />
+                  {isPatient && <Row label="Patient ID" value={u.patientId || '—'} />}
+                  <Row label="Email" value={u.email || '— (phone-only)'} />
+                  <Row label="Phone" value={u.phone || '—'} />
+                  {isDoctor && <Row label="WhatsApp" value={u.whatsappNumber || '—'} />}
+                  <Row label="Joined" value={formatDate(u.createdAt)} />
+                  {u.lastLoginAt && <Row label="Last login" value={formatDate(u.lastLoginAt)} />}
+                  {u.isSuspended && u.suspendedReason && <Row label="Deactivated reason" value={u.suspendedReason} />}
+                </Section>
+
+                {/* Doctor professional details */}
+                {isDoctor && (
+                  <Section title="Professional">
+                    <Row label="Specialization" value={u.specialization || '—'} />
+                    <Row label="Qualification" value={u.qualification || '—'} />
+                    <Row label="Reg. number" value={u.medicalRegistrationNo || '—'} />
+                    <Row label="Experience" value={u.experience ? `${u.experience} yrs` : '—'} />
+                    <Row label="Consultation fee" value={u.consultationFee ? `Rs. ${u.consultationFee}` : '—'} />
+                    <Row label="Consultation modes" value={(u.consultationModes || []).join(', ') || '—'} />
+                    <Row label="Languages" value={(u.languagesSpoken || []).join(', ') || '—'} />
+                    <Row label="City" value={u.city || '—'} />
+                    <Row label="Clinic address" value={u.clinicAddress || '—'} />
+                    <Row label="Booking page" value={u.slug ? `/dr/${u.slug}` : '— (not set)'} />
+                    {u.bio && <Row label="Bio" value={u.bio} />}
+                  </Section>
+                )}
+
+                {/* Patient medical info — all fields the patient set in Account
+                    Settings. Only render the section if they filled anything in. */}
+                {isPatient && (u.bloodGroup || u.allergies || u.currentMedications || u.medicalHistory || u.emergencyContactName || u.emergencyContactPhone || u.insuranceProvider || u.insurancePolicyNumber) && (
+                  <Section title="Medical information">
+                    <Row label="Blood group" value={u.bloodGroup || '—'} />
+                    <Row label="Allergies" value={u.allergies || '—'} />
+                    <Row label="Current medications" value={u.currentMedications || '—'} />
+                    <Row label="Medical history" value={u.medicalHistory || '—'} />
+                    <Row label="Emergency contact" value={u.emergencyContactName ? `${u.emergencyContactName}${u.emergencyContactPhone ? ` · ${u.emergencyContactPhone}` : ''}` : '—'} />
+                    <Row label="Insurance" value={u.insuranceProvider ? `${u.insuranceProvider}${u.insurancePolicyNumber ? ` · ${u.insurancePolicyNumber}` : ''}` : '—'} />
+                  </Section>
+                )}
+
+                {/* Patient family members (embedded on the user doc) */}
+                {isPatient && Array.isArray(u.familyMembers) && u.familyMembers.length > 0 && (
+                  <Section title={`Family members (${u.familyMembers.length})`}>
+                    <div className="divide-y divide-gray-100">
+                      {u.familyMembers.map((m, i) => (
+                        <div key={i} className="py-2 text-sm">
+                          <span className="font-medium text-gray-800">{m.name}</span>
+                          <span className="text-gray-500">
+                            {m.relationship ? ` · ${m.relationship}` : ''}
+                            {m.gender ? ` · ${m.gender}` : ''}
+                            {m.age != null ? ` · ${m.age} yrs` : ''}
+                            {m.phone ? ` · ${m.phone}` : ''}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </Section>
+                )}
+
+                {/* Patient with no profile detail filled in — be explicit
+                    rather than showing a bare identity block with no context. */}
+                {isPatient && !(u.bloodGroup || u.allergies || u.currentMedications || u.medicalHistory || u.emergencyContactName || u.insuranceProvider) && (!u.familyMembers || u.familyMembers.length === 0) && (
+                  <p className="text-sm text-gray-400 italic">This patient hasn't added any medical info or family members yet.</p>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-100 sticky bottom-0 bg-white">
+                <button onClick={() => setDetailUser(null)} className="px-5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Close</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ===== Edit Availability modal (admin sets a doctor's schedule) ===== */}
       {availDoctor && (
