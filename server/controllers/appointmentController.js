@@ -383,6 +383,12 @@ const updateAppointmentStatus = async (req, res) => {
 
     // Update ONLY the fields that should change — protect timeSlot and date
     appointment.status = status;
+    // Stamp when it became completed, so the review-request job can wait a few
+    // hours before nudging the patient to rate (and only for genuinely-finished
+    // consults). Set once; don't overwrite if somehow re-marked.
+    if (status === 'completed' && !appointment.completedAt) {
+      appointment.completedAt = new Date();
+    }
     if (notes) {
       appointment.notes = notes;
     }

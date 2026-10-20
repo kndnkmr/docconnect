@@ -175,6 +175,12 @@ function DoctorProfile({ clinicMode = false }) {
     return t.nextOn(nextSlot.dayName, nextSlot.time);
   })();
 
+  // The booking page this doctor's "Book" action leads to. Passed as the
+  // return-to target on the login/register links so a logged-out patient who
+  // taps "Log in to Book" is brought straight back here to book after auth,
+  // instead of being dumped on an empty dashboard (the #1 conversion leak).
+  const bookingPath = doctor ? `/book-appointment/${doctor._id}` : '/doctors';
+
   // Shared click handler for any "book" entry point (keeps analytics consistent).
   const trackBook = (authState) => trackEvent('book_appointment_click', {
     doctor_id: doctor?._id,
@@ -580,6 +586,7 @@ function DoctorProfile({ clinicMode = false }) {
               <div className="mt-4 lg:hidden">
                 <Link
                   to="/login"
+                  state={{ from: bookingPath }}
                   onClick={() => trackEvent('book_appointment_click', {
                     doctor_id: doctor._id,
                     doctor_specialization: doctor.specialization || 'unknown',
@@ -591,7 +598,7 @@ function DoctorProfile({ clinicMode = false }) {
                 </Link>
                 <p className="mt-2 text-sm text-gray-500">
                   {t.noAccount}{' '}
-                  <Link to="/register" className="text-primary-600 hover:underline font-medium whitespace-nowrap">{t.signUpFree}</Link>
+                  <Link to="/register" state={{ from: bookingPath }} className="text-primary-600 hover:underline font-medium whitespace-nowrap">{t.signUpFree}</Link>
                 </p>
               </div>
             )}
@@ -824,6 +831,7 @@ function DoctorProfile({ clinicMode = false }) {
             <>
               <Link
                 to="/login"
+                state={{ from: bookingPath }}
                 onClick={() => trackEvent('book_appointment_click', { doctor_id: doctor._id, doctor_specialization: doctor.specialization || 'unknown', auth_state: 'logged_out' })}
                 className="btn btn-primary w-full justify-center"
               >
@@ -831,7 +839,7 @@ function DoctorProfile({ clinicMode = false }) {
               </Link>
               <p className="mt-2 text-xs text-gray-500 text-center">
                 {t.noAccount}{' '}
-                <Link to="/register" className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
+                <Link to="/register" state={{ from: bookingPath }} className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
               </p>
             </>
           ) : null}
@@ -886,6 +894,7 @@ function DoctorProfile({ clinicMode = false }) {
             ) : !isAuthenticated ? (
               <Link
                 to="/login"
+                state={{ from: bookingPath }}
                 onClick={() => trackBook('logged_out')}
                 className="btn btn-primary flex-shrink-0"
               >

@@ -15,7 +15,7 @@ import { lazy, Suspense } from 'react';
 // lazy + Suspense = load a page's code only when it's first visited
 // (code-splitting), instead of shipping it in the initial bundle.
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 // Routes = container for all route definitions
 // Route = defines one path → component mapping
 // Navigate = redirects to another route
@@ -72,6 +72,7 @@ import AdminDashboard from './pages/AdminDashboard';
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   // While checking auth status, show loading
   if (loading) {
@@ -82,9 +83,13 @@ function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // Not logged in → redirect to login page
+  // Not logged in → redirect to login, REMEMBERING where they were headed so
+  // Login/Register can send them straight back after auth (e.g. a patient who
+  // tapped "Book" on a doctor is returned to that booking page, not dumped on
+  // an empty dashboard). Includes the query string (carries ?date=&slot=).
   if (!user) {
-    return <Navigate to="/login" replace />;
+    const from = `${location.pathname}${location.search}`;
+    return <Navigate to="/login" state={{ from }} replace />;
     // "replace" = don't add this redirect to browser history
     // So pressing "Back" won't loop between login and protected page
   }

@@ -119,6 +119,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
 const { sendCallStartReminders } = require('./utils/callReminder');
 const { sendAppointmentReminders } = require('./utils/appointmentReminder');
+const { sendReviewRequests } = require('./utils/reviewRequest');
 const { fixEmailIndex } = require('./utils/fixIndexes');
 const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
@@ -174,6 +175,12 @@ mongoose.connect(process.env.MONGODB_URI)
     // (any consultation type) to cut no-shows. Same once-a-minute cadence;
     // dedupes via reminderSentAt so nobody gets reminded twice.
     setInterval(sendAppointmentReminders, 60 * 1000);
+
+    // A few hours after a consultation is marked completed, nudge the patient
+    // once to rate their doctor (unless they already did) — grows reviews and
+    // brings patients back. Same once-a-minute cadence; dedupes via
+    // reviewRequestSentAt so nobody gets asked twice.
+    setInterval(sendReviewRequests, 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);

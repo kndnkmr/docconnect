@@ -10,7 +10,7 @@
 // - Patient: browse doctors, book appointments
 
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
@@ -40,6 +40,11 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Where the user was headed before auth (carried through from a "Log in to
+  // Book" link that also offers "create an account"), so a brand-new patient
+  // who signs up mid-booking is returned to that booking page.
+  const returnTo = location.state?.from || null;
 
   // ---- Handle input changes ----
   // ONE handler for ALL fields (instead of one per field)
@@ -103,7 +108,10 @@ function Register() {
       login(token, user);
 
       toast.success('Account created successfully! Welcome to ProMedicoz.');
-      navigate('/dashboard');
+      // A new doctor always lands on their dashboard to finish onboarding; a
+      // new patient is returned to wherever they were headed (e.g. the booking
+      // page), falling back to the dashboard.
+      navigate(user.role === 'doctor' ? '/dashboard' : (returnTo || '/dashboard'), { replace: true });
 
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed. Please try again.';

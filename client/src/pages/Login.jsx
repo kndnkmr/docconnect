@@ -17,7 +17,7 @@
 // This gives us full control (validation, formatting, etc.)
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
@@ -40,6 +40,12 @@ function Login() {
 
   const navigate = useNavigate();
   // For redirecting after successful login
+
+  const location = useLocation();
+  // Where the user was headed before being bounced to login (set by
+  // ProtectedRoute, or by a "Log in to Book" link). Used to return them there
+  // after a successful login instead of dumping them on the dashboard.
+  const returnTo = location.state?.from || null;
 
   // ---- Handle form submission ----
   const handleSubmit = async (e) => {
@@ -72,10 +78,16 @@ function Login() {
 
       toast.success(`Welcome back, ${user.name}!`);
 
-      // Send each role to its home: admins to the Admin Panel, everyone else
-      // (patients/doctors) to the dashboard. Admins are neither patient nor
-      // doctor, so the generic dashboard isn't meaningful for them.
-      navigate(user.role === 'admin' ? '/admin' : '/dashboard');
+      // Admins always go to the Admin Panel (a patient booking page etc. is
+      // never meaningful for them). Everyone else is returned to where they
+      // were headed before login (e.g. the doctor's booking page they tapped
+      // "Book" on), falling back to the dashboard. `replace` so Back doesn't
+      // land on the login screen again.
+      if (user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate(returnTo || '/dashboard', { replace: true });
+      }
 
     } catch (error) {
       // error.response.data.message = the error message from our backend

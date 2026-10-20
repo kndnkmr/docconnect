@@ -213,6 +213,24 @@ const appointmentSchema = new mongoose.Schema({
     default: null
   },
 
+  // When this appointment was marked 'completed' (set by the status-update
+  // paths). Used by the review-request job to wait a few hours after the
+  // consult before nudging the patient to rate — so the ask lands after they've
+  // actually had the consultation, not the instant the doctor clicks complete.
+  completedAt: {
+    type: Date,
+    default: null
+  },
+
+  // Set the first (and only) time the "please rate your consultation" push has
+  // been sent for this appointment (server/utils/reviewRequest.js), so that
+  // once-a-minute job never nudges the same appointment twice. Same idempotency
+  // pattern as reminderSentAt / callReminderSentAt.
+  reviewRequestSentAt: {
+    type: Date,
+    default: null
+  },
+
   // ---- Teleconsultation consent (captured at booking, for legal record) ----
   consentGiven: {
     type: Boolean,
