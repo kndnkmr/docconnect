@@ -193,6 +193,146 @@ const TXT = {
   },
 };
 
+// ============================================
+// Symptom → specialization mapping (Hindi-first)
+// ============================================
+// Most ProMedicoz patients are Hindi/Hinglish speakers, so this map is built
+// Hindi-first: every entry carries English PLUS Hindi in BOTH Hinglish (Roman,
+// how people actually type on a phone — "kamar dard", with common misspellings)
+// AND Devanagari (how a Hindi-keyboard user types — "कमर दर्द"). It also matches
+// bare body-part words ("kamar", "ghutna", "sir") and everyday phrasings
+// ("saans nahi aa rahi", "nind nahi aati"), since people rarely type the
+// textbook term.
+//
+// ORDER MATTERS: the matcher returns the FIRST entry whose keyword is a
+// substring of the input. More-specific pain terms (sir dard, pet dard, kamar
+// dard, seene mein dard) are each qualified and come before broad entries, so
+// "sir dard" → Neurologist, not a generic pain rule. There is deliberately NO
+// bare "dard"/"pain"/"दर्द" keyword — on its own it's ambiguous.
+//
+// Defined at module scope (not inside the component) so it isn't rebuilt on
+// every render. `SPEC_LABEL_HI` gives the Hindi display name so a Hindi user
+// sees "सुझाव: हड्डी रोग विशेषज्ञ", not the English specialization — while the
+// URL still uses the English key the backend matches.
+const SYMPTOM_MAPPING = [
+  // Head / neuro — "sir dard" (headache) + spelling variants; "chakkar" (dizzy).
+  { keywords: ['head', 'migraine', 'brain', 'nerve', 'seizure', 'numbness', 'dizziness', 'vertigo',
+               'sir dard', 'sar dard', 'sardard', 'sir me dard', 'sar me dard', 'sir', 'migrain',
+               'chakkar', 'chakar', 'behoshi', 'jhunjhuni', 'lakwa', 'daura', 'mirgi', 'yaddasht',
+               'सिरदर्द', 'सिर दर्द', 'सर दर्द', 'सिर में दर्द', 'सिर', 'चक्कर', 'बेहोशी', 'झुनझुनी',
+               'माइग्रेन', 'दौरा', 'मिर्गी', 'लकवा', 'नस'], specialization: 'Neurologist' },
+  // Women's health
+  { keywords: ['pregnan', 'ivf', 'period', 'menstrual', 'pcod', 'pcos', 'fertility', 'gynae', 'uterus', 'ovary',
+               'garbh', 'garbhvati', 'garbhavastha', 'pregnency', 'mahwari', 'mahavari', 'masik', 'mahina',
+               'mahine', 'bachchedani', 'bacchedani', 'gynic', 'maa banna', 'safed pani', 'likoria',
+               'गर्भ', 'गर्भवती', 'गर्भावस्था', 'माहवारी', 'मासिक', 'महीना', 'महीने', 'पीरियड',
+               'बच्चेदानी', 'गर्भाशय', 'सफेद पानी', 'ल्यूकोरिया', 'प्रसव', 'डिलीवरी'], specialization: 'Gynaecologist' },
+  // Heart / BP — "seene mein dard" (chest pain), "dhadkan" (palpitation).
+  { keywords: ['heart', 'chest pain', 'bp', 'blood pressure', 'cholesterol', 'palpitation',
+               'dil', 'dil ki', 'seene mein dard', 'seene me dard', 'seene', 'sine mein dard', 'sine me dard',
+               'chhati mein dard', 'chhati', 'chaati', 'raktchap', 'rakt chap', 'dhadkan', 'dhadkan tez',
+               'दिल', 'हृदय', 'सीने में दर्द', 'सीने', 'छाती में दर्द', 'छाती', 'रक्तचाप', 'बीपी',
+               'धड़कन', 'कोलेस्ट्रॉल', 'दिल की बीमारी'], specialization: 'Cardiologist' },
+  // Bones / joints — "kamar dard" (back pain), "ghutna" (knee), "jodo me dard".
+  { keywords: ['bone', 'joint', 'knee', 'back pain', 'spine', 'fracture', 'shoulder', 'arthritis',
+               'kamar dard', 'kamar me dard', 'kamar mein dard', 'kamar', 'ghutna', 'ghutne', 'ghutno',
+               'ghutne me dard', 'jodo', 'jodon', 'jod', 'jodo me dard', 'jodon mein dard', 'haddi',
+               'haddi me dard', 'kandha', 'kandhe', 'reed', 'reedh', 'gardan', 'gardan dard', 'gathiya',
+               'moch', 'tang dard', 'pair dard', 'paer dard', 'frakchar',
+               'कमर दर्द', 'कमर में दर्द', 'कमर', 'घुटना', 'घुटने', 'घुटनों', 'जोड़', 'जोड़ों',
+               'जोड़ों में दर्द', 'हड्डी', 'कंधा', 'कंधे', 'रीढ़', 'गर्दन', 'गठिया', 'मोच', 'फ्रैक्चर'], specialization: 'Orthopedic' },
+  // ENT — ear / nose / throat. Placed BEFORE Skin so "gale me kharash" (sore
+  // throat) wins over the "rash"-inside-"kharash" substring on the skin entry.
+  { keywords: ['ear', 'nose', 'throat', 'sinus', 'hearing', 'tonsil', 'snoring',
+               'kaan', 'kan', 'kaan dard', 'kaan me dard', 'naak', 'nak', 'naak band', 'gala', 'gale',
+               'gale me dard', 'gale mein kharash', 'kharash', 'tonsil', 'kharate', 'kharaat', 'sunai nahi',
+               'bahrapan', 'awaz baith',
+               'कान', 'कान दर्द', 'कान में दर्द', 'नाक', 'नाक बंद', 'गला', 'गले में दर्द', 'गले में खराश',
+               'खराश', 'टॉन्सिल', 'खर्राटे', 'सुनाई नहीं', 'बहरापन', 'साइनस'], specialization: 'ENT Specialist' },
+  // Skin / hair. Placed AFTER the ENT entry (above) on purpose: the short
+  // English token "rash" is a substring of "khaRASH" (gale ki kharash = sore
+  // throat), so ENT must get first crack at throat complaints before this
+  // entry's "rash" can mis-catch them.
+  { keywords: ['skin', 'acne', 'hair', 'rash', 'itch', 'pimple', 'dandruff', 'allergy', 'eczema', 'fungal',
+               'twacha', 'khujli', 'khujali', 'khaj', 'baal', 'baal jhadna', 'baal girna', 'ganjapan',
+               'daane', 'daana', 'phunsi', 'phunsiyan', 'daad', 'chhai', 'jhaiyan', 'kil', 'muhase', 'muhaase',
+               'rusi', 'daag', 'chakatte',
+               'त्वचा', 'खुजली', 'खाज', 'बाल', 'बाल झड़ना', 'गंजापन', 'दाने', 'फुंसी', 'मुहांसे', 'कील',
+               'दाद', 'झाइयां', 'रूसी', 'एलर्जी', 'चकत्ते', 'दाग'], specialization: 'Dermatologist' },
+  // Children
+  { keywords: ['child', 'baby', 'infant', 'kid', 'vaccination', 'newborn', 'paediatric', 'pediatric',
+               'bachcha', 'bachche', 'bacche', 'bachchon', 'shishu', 'tika', 'tikakaran', 'navjat', 'baccha',
+               'बच्चा', 'बच्चे', 'बच्चों', 'शिशु', 'टीका', 'टीकाकरण', 'नवजात'], specialization: 'Pediatrician' },
+  // Dental
+  { keywords: ['tooth', 'teeth', 'dental', 'gum', 'cavity', 'braces',
+               'daant', 'dant', 'daant dard', 'daant me dard', 'daanton', 'danton', 'masude', 'masoode',
+               'daant dard', 'kida', 'pyorrhea',
+               'दांत', 'दाँत', 'दंत', 'दांत दर्द', 'दांत में दर्द', 'मसूड़े', 'मसूड़ों', 'कैविटी', 'कीड़ा'], specialization: 'Dentist' },
+  // Eyes
+  { keywords: ['eye', 'vision', 'glass', 'cataract', 'spectacle',
+               'aankh', 'aankhon', 'ankhon', 'ankh', 'aankh me dard', 'aankhon me dard', 'drishti', 'najar',
+               'nazar', 'kamjor nazar', 'motiyabind', 'chashma', 'dhundhla',
+               'आँख', 'आंख', 'आँखों', 'आंखों', 'आँख में दर्द', 'दृष्टि', 'नज़र', 'नजर', 'कमज़ोर नज़र',
+               'मोतियाबिंद', 'चश्मा', 'धुंधला'], specialization: 'Ophthalmologist' },
+  // Mental health — everyday phrasings ("nind nahi aati", "ghabrahat hoti hai").
+  { keywords: ['depress', 'anxiety', 'stress', 'sleep', 'mental', 'panic', 'mood',
+               'tanav', 'tanaav', 'chinta', 'ghabrahat', 'ghabrahaat', 'neend', 'nind', 'nind nahi',
+               'neend nahi', 'avsad', 'avsaad', 'udaasi', 'udasi', 'mansik', 'dar lagta', 'man nahi lagta',
+               'akelapan', 'gussa',
+               'तनाव', 'चिंता', 'घबराहट', 'नींद', 'नींद नहीं', 'अवसाद', 'उदासी', 'मानसिक', 'डिप्रेशन',
+               'डर', 'अकेलापन', 'गुस्सा'], specialization: 'Psychiatrist' },
+  // Digestion — "pet dard", gas, acidity, ulti, dast, kabz.
+  { keywords: ['stomach', 'digest', 'acid', 'gastric', 'liver', 'constipat', 'diarr', 'bloat', 'vomit',
+               'pet dard', 'pet me dard', 'pet mein dard', 'pet', 'pait', 'pait dard', 'gas', 'gais',
+               'acidity', 'tezab', 'tejaab', 'khatta dakar', 'kabz', 'kabj', 'dast', 'loose motion',
+               'ulti', 'ulty', 'ultee', 'jee michla', 'jigar', 'pachan', 'badhazmi', 'bhookh nahi',
+               'पेट दर्द', 'पेट में दर्द', 'पेट', 'गैस', 'अम्लता', 'तेज़ाब', 'खट्टी डकार', 'कब्ज',
+               'दस्त', 'लूज मोशन', 'उल्टी', 'जी मिचलाना', 'जिगर', 'पाचन', 'बदहजमी', 'भूख नहीं'], specialization: 'Gastroenterologist' },
+  // Urinary / kidney
+  { keywords: ['urine', 'kidney', 'bladder', 'prostate', 'uti',
+               'peshab', 'pesab', 'peshaab', 'peshab me jalan', 'jalan', 'gurda', 'gurde', 'gurde me dard',
+               'mutra', 'pathri', 'stone',
+               'पेशाब', 'पेशाब में जलन', 'जलन', 'गुर्दा', 'गुर्दे', 'गुर्दे में दर्द', 'मूत्र', 'पथरी', 'किडनी'], specialization: 'Urologist' },
+  // Endocrine / diabetes / thyroid
+  { keywords: ['diabetes', 'thyroid', 'hormone', 'sugar', 'obesity',
+               'madhumeh', 'sugar ki bimari', 'sugar badh', 'thyroid', 'thaayrayd', 'harmon', 'motapa',
+               'wajan badh', 'wajan kam',
+               'मधुमेह', 'शुगर', 'थायराइड', 'हार्मोन', 'मोटापा', 'वजन'], specialization: 'Endocrinologist' },
+  // Lungs / respiratory — "saans nahi aa rahi" (breathlessness).
+  { keywords: ['lung', 'breath', 'asthma', 'wheez', 'pneumonia', 'tb', 'tuberculosis',
+               'saans', 'sans', 'saans nahi', 'saans fulna', 'saans phoolna', 'dama', 'damaa', 'phephde',
+               'phephda', 'nimoniya', 'balgam', 'lagatar khansi',
+               'साँस', 'सांस', 'साँस नहीं', 'सांस फूलना', 'दमा', 'फेफड़े', 'फेफड़ा', 'निमोनिया',
+               'अस्थमा', 'बलगम', 'टीबी'], specialization: 'Pulmonologist' },
+  // General — fever, cold, cough, weakness. Last specific entry so a more
+  // specific symptom wins first, but still ahead of the default fallback.
+  { keywords: ['fever', 'cold', 'cough', 'flu', 'infection', 'weakness', 'fatigue', 'body ache',
+               'bukhar', 'bukar', 'bukhaar', 'sardi', 'khansi', 'khaansi', 'khasi', 'jukaam', 'jukam',
+               'kamzori', 'kamjori', 'thakan', 'thakaan', 'badan dard', 'badan tut', 'kapkapi', 'bimar', 'bimari',
+               'बुखार', 'सर्दी', 'खांसी', 'खाँसी', 'जुकाम', 'कमज़ोरी', 'कमजोरी', 'थकान', 'बदन दर्द',
+               'कंपकंपी', 'बीमार', 'बीमारी'], specialization: 'General Physician' },
+];
+
+// Hindi display label for each specialization — so a Hindi-speaking patient
+// sees the suggestion in Hindi, not the English specialization name.
+const SPEC_LABEL_HI = {
+  'General Physician': 'सामान्य चिकित्सक',
+  'Neurologist': 'न्यूरोलॉजिस्ट (मस्तिष्क व नस रोग)',
+  'Gynaecologist': 'स्त्री रोग विशेषज्ञ',
+  'Cardiologist': 'हृदय रोग विशेषज्ञ',
+  'Orthopedic': 'हड्डी रोग विशेषज्ञ',
+  'Dermatologist': 'त्वचा रोग विशेषज्ञ',
+  'Pediatrician': 'बाल रोग विशेषज्ञ',
+  'Dentist': 'दंत चिकित्सक',
+  'Ophthalmologist': 'नेत्र रोग विशेषज्ञ',
+  'Psychiatrist': 'मनोचिकित्सक',
+  'ENT Specialist': 'कान-नाक-गला विशेषज्ञ',
+  'Gastroenterologist': 'पेट व पाचन रोग विशेषज्ञ',
+  'Urologist': 'मूत्र रोग विशेषज्ञ',
+  'Endocrinologist': 'मधुमेह व हार्मोन विशेषज्ञ',
+  'Pulmonologist': 'फेफड़ा रोग विशेषज्ञ',
+};
+
 function Home() {
   const { isAuthenticated } = useAuth();
   const { canInstall, promptInstall } = usePwa();
@@ -299,82 +439,8 @@ function Home() {
   }, []);
 
   const getSpecializationFromSymptom = (input) => {
-    const lower = input.toLowerCase();
-    // Symptom → specialization keyword map. Each entry carries English PLUS
-    // Hindi terms in BOTH Hinglish (Roman, how most people type on a phone —
-    // "kamar dard") and Devanagari (how a Hindi-keyboard user types — "कमर
-    // दर्द"), so a Hindi-speaking patient gets the right specialist instead of
-    // always falling through to General Physician.
-    //
-    // ORDER MATTERS: the loop returns the FIRST entry with a matching
-    // substring, so more-specific pain terms (sir dard, pet dard, kamar dard)
-    // are each qualified and listed before broad entries. There is deliberately
-    // NO bare "dard"/"pain" keyword — it's ambiguous on its own.
-    const mapping = [
-      // Head / neuro — "sir dard" (headache) qualified so it's not generic pain.
-      { keywords: ['head', 'migraine', 'brain', 'nerve', 'seizure', 'numbness', 'dizziness',
-                   'sir dard', 'sardard', 'chakkar', 'migrain', 'lakwa', 'daura',
-                   'सिरदर्द', 'सिर दर्द', 'चक्कर', 'माइग्रेन', 'दौरा', 'लकवा'], specialization: 'Neurologist' },
-      // Women's health
-      { keywords: ['pregnan', 'ivf', 'period', 'menstrual', 'pcod', 'pcos', 'fertility', 'gynae', 'uterus', 'ovary',
-                   'garbh', 'mahwari', 'masik', 'mahina', 'garbhavastha', 'bachchedani', 'gynic',
-                   'गर्भ', 'गर्भावस्था', 'माहवारी', 'मासिक', 'महीना', 'पीरियड', 'बच्चेदानी', 'गर्भाशय'], specialization: 'Gynaecologist' },
-      // Heart / BP — "seene mein dard" (chest pain).
-      { keywords: ['heart', 'chest pain', 'bp', 'blood pressure', 'cholesterol', 'palpitation',
-                   'dil', 'seene mein dard', 'seene', 'chhati', 'raktchap', 'dhadkan',
-                   'दिल', 'हृदय', 'सीने में दर्द', 'छाती', 'रक्तचाप', 'धड़कन', 'कोलेस्ट्रॉल'], specialization: 'Cardiologist' },
-      // Bones / joints — "kamar dard" (back pain), "ghutna" (knee), etc.
-      { keywords: ['bone', 'joint', 'knee', 'back pain', 'spine', 'fracture', 'shoulder', 'arthritis',
-                   'kamar dard', 'kamar', 'ghutna', 'ghutne', 'jodo', 'jodon', 'jod', 'haddi', 'kandha',
-                   'kandhe', 'reed', 'gathiya', 'moch',
-                   'कमर दर्द', 'कमर', 'घुटना', 'घुटने', 'जोड़', 'जोड़ों', 'हड्डी', 'कंधा', 'रीढ़', 'गठिया', 'फ्रैक्चर'], specialization: 'Orthopedic' },
-      // Skin / hair
-      { keywords: ['skin', 'acne', 'hair', 'rash', 'itch', 'pimple', 'dandruff', 'allergy',
-                   'twacha', 'khujli', 'khaj', 'baal', 'daane', 'daana', 'phunsi', 'daad', 'chhai',
-                   'त्वचा', 'खुजली', 'खाज', 'बाल', 'दाने', 'फुंसी', 'मुहांसे', 'दाद', 'एलर्जी'], specialization: 'Dermatologist' },
-      // Children
-      { keywords: ['child', 'baby', 'infant', 'kid', 'vaccination', 'newborn',
-                   'bachcha', 'bachche', 'bacche', 'shishu', 'tika', 'navjat',
-                   'बच्चा', 'बच्चे', 'शिशु', 'टीका', 'नवजात'], specialization: 'Pediatrician' },
-      // Dental
-      { keywords: ['tooth', 'teeth', 'dental', 'gum', 'cavity', 'braces',
-                   'daant', 'dant', 'daanton', 'masude', 'daant dard',
-                   'दांत', 'दाँत', 'दंत', 'मसूड़े', 'कैविटी'], specialization: 'Dentist' },
-      // Eyes
-      { keywords: ['eye', 'vision', 'glass', 'cataract', 'spectacle',
-                   'aankh', 'aankhon', 'ankhon', 'drishti', 'motiyabind', 'chashma', 'najar', 'nazar',
-                   'आँख', 'आंख', 'आँखों', 'दृष्टि', 'मोतियाबिंद', 'चश्मा', 'नज़र'], specialization: 'Ophthalmologist' },
-      // Mental health
-      { keywords: ['depress', 'anxiety', 'stress', 'sleep', 'mental', 'panic', 'mood',
-                   'tanav', 'chinta', 'ghabrahat', 'neend', 'avsad', 'udaasi', 'mansik',
-                   'तनाव', 'चिंता', 'घबराहट', 'नींद', 'अवसाद', 'उदासी', 'मानसिक', 'डिप्रेशन'], specialization: 'Psychiatrist' },
-      // ENT
-      { keywords: ['ear', 'nose', 'throat', 'sinus', 'hearing', 'tonsil', 'snoring',
-                   'kaan', 'naak', 'gala', 'gale', 'kharate', 'kharaat', 'sunai',
-                   'कान', 'नाक', 'गला', 'गले', 'टॉन्सिल', 'खर्राटे', 'साइनस'], specialization: 'ENT Specialist' },
-      // Digestion — "pet dard" (stomach ache), gas, acidity.
-      { keywords: ['stomach', 'digest', 'acid', 'gastric', 'liver', 'constipat', 'diarr', 'bloat',
-                   'pet dard', 'pet', 'gas', 'acidity', 'tezab', 'kabz', 'dast', 'ulti', 'jigar', 'pachan',
-                   'पेट दर्द', 'पेट', 'गैस', 'अम्लता', 'तेज़ाब', 'कब्ज', 'दस्त', 'उल्टी', 'जिगर', 'पाचन'], specialization: 'Gastroenterologist' },
-      // Urinary / kidney
-      { keywords: ['urine', 'kidney', 'bladder', 'prostate',
-                   'peshab', 'pesab', 'gurda', 'gurde', 'mutra', 'pathri',
-                   'पेशाब', 'गुर्दा', 'गुर्दे', 'मूत्र', 'पथरी', 'किडनी'], specialization: 'Urologist' },
-      // Endocrine / diabetes
-      { keywords: ['diabetes', 'thyroid', 'hormone', 'sugar',
-                   'madhumeh', 'thaayrayd', 'harmon',
-                   'मधुमेह', 'शुगर', 'थायराइड', 'हार्मोन'], specialization: 'Endocrinologist' },
-      // Lungs / respiratory
-      { keywords: ['lung', 'breath', 'asthma', 'wheez', 'pneumonia',
-                   'saans', 'dama', 'phephde', 'phephda', 'nimoniya',
-                   'साँस', 'सांस', 'दमा', 'फेफड़े', 'फेफड़ा', 'निमोनिया', 'अस्थमा'], specialization: 'Pulmonologist' },
-      // General — fever, cold, cough, weakness. Last of the specific entries so
-      // a more-specific symptom wins, but still before the default fallback.
-      { keywords: ['fever', 'cold', 'cough', 'flu', 'infection', 'weakness', 'fatigue',
-                   'bukhar', 'sardi', 'khansi', 'jukaam', 'jukam', 'kamzori', 'thakan', 'bimar',
-                   'बुखार', 'सर्दी', 'खांसी', 'खाँसी', 'जुकाम', 'कमज़ोरी', 'थकान', 'बीमार'], specialization: 'General Physician' },
-    ];
-    for (const entry of mapping) {
+    const lower = input.toLowerCase().trim();
+    for (const entry of SYMPTOM_MAPPING) {
       if (entry.keywords.some(keyword => lower.includes(keyword))) {
         return entry.specialization;
       }
@@ -521,11 +587,18 @@ function Home() {
                 />
               </div>
 
-              {symptomSearch && (
-                <p className="text-xs text-gray-500 mt-2 px-1">
-                  {t.suggested}: <span className="font-semibold text-primary-700">{getSpecializationFromSymptom(symptomSearch)}</span>
-                </p>
-              )}
+              {symptomSearch && (() => {
+                // The matched specialization (English key — used for the URL/
+                // backend). For a Hindi user, show its Hindi label so the
+                // suggestion reads naturally in their language.
+                const matchedSpec = getSpecializationFromSymptom(symptomSearch);
+                const display = lang === 'hi' ? (SPEC_LABEL_HI[matchedSpec] || matchedSpec) : matchedSpec;
+                return (
+                  <p className="text-xs text-gray-500 mt-2 px-1">
+                    {t.suggested}: <span className="font-semibold text-primary-700">{display}</span>
+                  </p>
+                );
+              })()}
 
               <Link
                 to={symptomSearch
