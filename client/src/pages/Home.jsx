@@ -27,6 +27,8 @@ const CURATED_REVIEWS = [
   { stars: 5, text: "Managing PCOS/PCOD symptoms can be overwhelming, but Dr. Pooja's expert guidance during our virtual consultation gave me the exact dietary and medical steps I needed to get my cycle back on track.", name: 'Sonam Tiwari', spec: 'consulted Dr. Pooja' },
   { stars: 5, text: 'The most comfortable way to get expert gynecological advice — thank you, Dr. Pooja, for making women\'s healthcare so accessible!', name: 'Sagufta Sultana', spec: 'consulted Dr. Pooja' },
   { stars: 5, text: 'Navigating menopause symptoms was becoming exhausting, but Dr. Pooja\'s online consultation changed everything. She carefully analyzed my hot flashes and mood shifts, creating a personalized management plan that has truly restored my energy.', name: 'Mandakini Chandrakar', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'डॉ. पूजा एक अत्यंत कुशल, संवेदनशील और अनुभवी स्त्री रोग विशेषज्ञ हैं। यदि आप अपने मातृत्व के सफर में हैं या किसी महिला स्वास्थ्य संबंधी समस्या से गुजर रही हैं, तो उनके पास जाना एक बेहतरीन निर्णय साबित होगा।', name: 'कविता देवी', spec: 'consulted Dr. Pooja' },
+  { stars: 5, text: 'डॉ. पूजा मरीज की पूरी बात को बहुत धैर्य के साथ सुनती हैं। वे कभी भी जल्दबाजी में नहीं दिखतीं।', name: 'वीना देवी', spec: 'consulted Dr. Pooja' },
 ];
 
 // Bilingual UI strings for the patient-facing home page (Phase 1).
