@@ -11,7 +11,7 @@
 // Bumping CACHE_NAME on each meaningful change forces old caches to be cleared,
 // so users pick up new versions without manually clearing their browser cache.
 
-const CACHE_NAME = 'promedicoz-v4';
+const CACHE_NAME = 'promedicoz-v5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
