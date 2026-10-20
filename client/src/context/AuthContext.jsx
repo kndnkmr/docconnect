@@ -142,6 +142,9 @@ export function AuthProvider({ children }) {
     // user?.role = "if user exists, get their role" (optional chaining)
     // Prevents error when user is null
     isPatient: user?.role === 'patient',
+    isAdmin: user?.role === 'admin',
+    // Admins are neither doctor nor patient — they belong in the Admin Panel
+    // (/admin), not the generic /dashboard patient/doctor view.
   };
 
   // ---- Render the Provider ----

@@ -43,7 +43,8 @@ function BottomNav() {
     ? [
         { path: '/', icon: '🏠', label: 'Home' },
         { path: '/doctors', icon: '🔍', label: 'Doctors' },
-        { path: '/dashboard', icon: '📋', label: 'Appointments' },
+        // Admin's "work" area is the Admin Panel, not the generic dashboard.
+        { path: '/admin', icon: '🛠️', label: 'Admin' },
         { path: '/blog', icon: '📝', label: 'Blog' },
       ]
     : [

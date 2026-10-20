@@ -113,13 +113,22 @@ const PATIENT_TXT = {
 };
 
 function Dashboard() {
-  const { user, isDoctor, isPatient } = useAuth();
+  const { user, isDoctor, isPatient, isAdmin } = useAuth();
   // Patient-only Hindi: pick the dictionary only for a Hindi-choosing patient;
   // doctors always get English regardless of the stored language.
   const _lang = (typeof localStorage !== 'undefined' && localStorage.getItem('promedicoz_lang')) || 'en';
   const pt = PATIENT_TXT[isPatient && _lang === 'hi' ? 'hi' : 'en'];
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // Admins don't belong on the generic patient/doctor dashboard — their home
+  // is the Admin Panel. Send them there if they land here (bookmark, the
+  // navbar "Dashboard" link, or a stale tab after refresh). `replace` so Back
+  // doesn't bounce them straight back into this page.
+  useEffect(() => {
+    if (isAdmin) navigate('/admin', { replace: true });
+  }, [isAdmin, navigate]);
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   // Open directly on the requested tab if a valid ?tab= is present in the URL

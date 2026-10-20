@@ -72,8 +72,10 @@ function Login() {
 
       toast.success(`Welcome back, ${user.name}!`);
 
-      // Redirect to dashboard
-      navigate('/dashboard');
+      // Send each role to its home: admins to the Admin Panel, everyone else
+      // (patients/doctors) to the dashboard. Admins are neither patient nor
+      // doctor, so the generic dashboard isn't meaningful for them.
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard');
 
     } catch (error) {
       // error.response.data.message = the error message from our backend

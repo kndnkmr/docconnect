@@ -128,12 +128,16 @@ function Navbar() {
 
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
-                  Dashboard
-                </Link>
-                {user.role === 'admin' && (
+                {/* Admins go straight to the Admin Panel — the generic
+                    patient/doctor dashboard isn't meaningful for them, so we
+                    show one clear link instead of both. */}
+                {user.role === 'admin' ? (
                   <Link to="/admin" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
                     Admin Panel
+                  </Link>
+                ) : (
+                  <Link to="/dashboard" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                    Dashboard
                   </Link>
                 )}
                 <div className="flex items-center gap-3">
@@ -233,12 +237,13 @@ function Navbar() {
                       <div className="text-xs text-gray-500 capitalize">{user.role}</div>
                     </div>
                   </div>
-                  <Link to="/dashboard" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                    Dashboard
-                  </Link>
-                  {user.role === 'admin' && (
+                  {user.role === 'admin' ? (
                     <Link to="/admin" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                       Admin Panel
+                    </Link>
+                  ) : (
+                    <Link to="/dashboard" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                      Dashboard
                     </Link>
                   )}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-600 hover:bg-red-50 rounded-lg px-3 py-2.5 transition-colors">
