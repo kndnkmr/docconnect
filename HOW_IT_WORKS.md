@@ -1485,6 +1485,103 @@ have anything to react to.
 
 ---
 
+### "My Clinic" — Doctor-Owned Branded Booking Page (`/dr/:slug`)
+
+The strategic goal: make a doctor treat ProMedicoz as *their own* app so they
+actively promote it. A marketplace listing (one doctor among many) gives them
+no reason to send their own patients here. A page that is *only about them*
+does — sharing it promotes themselves.
+
+- **Vanity slug.** `User.slug` (unique + sparse, `default: undefined` — same
+  sparse-index rule as `email`/`patientId`, so non-doctors don't collide on a
+  shared value). Generated from the doctor's name by `slugifyName()` +
+  `User.generateUniqueSlug()` (strips a leading "Dr.", lowercases, hyphenates,
+  appends `-2`, `-3`… on collision). A `pre('save')` hook assigns it the first
+  time a doctor is saved without one, and `utils/backfillSlugs.js` (run on
+  startup, idempotent) gives every pre-existing doctor one. "Pooja Singh" →
+  `pooja-singh` → `promedicoz.in/dr/pooja-singh`.
+- **The page.** `GET /api/doctors/by-slug/:slug` resolves the doctor (and
+  `$inc`s a `pageViews` counter, fire-and-forget). The frontend renders the
+  SAME `DoctorProfile` component with a `clinicMode` prop rather than a second
+  copy that could drift: in clinic mode it fetches by slug, locks the resolved
+  Mongo id into state so every downstream call (reviews, free slots, booking)
+  works unchanged, shows a quiet "Verified clinic page" co-brand bar, drops the
+  "back to all doctors" nav, and moves the only "explore more doctors" link to
+  the footer. The old `/doctors/:id` URL is untouched.
+- **Why reuse, not duplicate:** DoctorProfile already has ~700 lines of
+  bilingual logic (reviews, curated reviews, availability, sticky booking bar,
+  share). A second branded page would inevitably fall out of sync. `clinicMode`
+  is a thin presentational switch over identical data/logic.
+
+### "Promote Me" — Doctor Dashboard Tab (`dashboard/PromoteMe.jsx`)
+
+Turns the branded page into a shareable asset and gives the doctor a reason to
+open the app daily:
+
+- Personal link with copy + the Web Share API (native share sheet on mobile,
+  the same pattern already used for sharing prescriptions).
+- **QR code** (`qrcode.react`'s `QRCodeCanvas`) with a PNG download (rasterized
+  from the canvas).
+- **Printable A5 "clinic card" poster** (PDF) built with `jsPDF` (lazy-imported
+  so it never weighs down other pages) — header band, the QR, the booking URL,
+  "Powered by ProMedicoz" — for the reception desk / notice board.
+- One-tap share to WhatsApp (wa.me), Instagram (copy for bio), Google Business
+  (copy), and SMS.
+- **Live "this month" stats strip** — `GET /api/doctors/me/stats` (doctor-only)
+  computes, from the doctor's OWN appointments + reviews: consultations this
+  month, earnings collected this month and all-time (sum of `amountCollected`
+  on `paid` appointments), unique vs repeat patients, rating, page views, and
+  link bookings. Nothing is invented; if it fails to load the strip just hides.
+- `POST /api/doctors/:id/link-booking` is a best-effort counter the branded
+  page pings when a visitor taps "Book" (always 200, never blocks booking).
+
+### Admins Land on the Admin Panel (not the generic dashboard)
+
+An admin is neither patient nor doctor, so the shared `/dashboard` (with its
+`isDoctor`/`isPatient` branches) was never meaningful for them — it showed an
+odd "welcome + appointments" view.
+
+- `AuthContext` now exposes `isAdmin`.
+- `Login.jsx` routes `role === 'admin'` to `/admin`, everyone else to
+  `/dashboard`.
+- `Dashboard.jsx` has a guard effect: an admin who lands there is
+  `navigate('/admin', { replace: true })`'d away.
+- `Navbar.jsx` and `BottomNav.jsx` show admins a single "Admin Panel" link
+  instead of a confusing "Dashboard" + "Admin Panel" pair.
+
+### Admin User Detail Drill-Down
+
+Clicking a user's **name** anywhere in the admin panel (the Users list OR the
+Appointments list) opens a read-only detail modal.
+
+- `GET /api/admin/users/:id` returns the complete user record (minus password)
+  plus their recent appointments (as patient or doctor), so the modal is rich
+  regardless of where it was opened — the Appointments list only populates a
+  few patient fields, so the modal fetches the full record on open (showing the
+  partial data instantly, then filling in).
+- Shows: identity/contact; for patients their medical info + family members
+  (both already embedded on the user doc); for doctors their full professional
+  profile; and a "Recent appointments" section (other party, date/time, status,
+  amount paid).
+
+### Rupees Shown as "Rs." (not ₹)
+
+The ₹ glyph renders as an empty box or a "$"-looking mark on some Indian
+devices/fonts, which is misleading on a fee. All fee displays use the plain
+`Rs.` prefix instead. (Doctor avatars likewise use a gender-neutral 🧑‍⚕️
+fallback — there's no gender field on a doctor, so never assume one.)
+
+### Blog List Redesign
+
+The blog LIST cards are now category-colored (a `SPEC_THEME` map drives each
+card's header gradient, specialty chip, and link accent per specialty, falling
+back to brand blue), with a featured hero article on the default view and a 🔥
+"Most read" badge on the single most-read card — so the grid reads like a
+browsable magazine instead of identical blue tiles. All existing logic (search,
+category chips, Most Read / Most Loved / Start Here, read counts) is unchanged.
+
+---
+
 ## How to Make Changes (Future You)
 
 1. Open this project in Kiro (or any editor)

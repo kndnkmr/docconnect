@@ -14,6 +14,12 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 Notable improvements layered on since the core build:
 
+- **"My Clinic" — a doctor-owned branded booking page** — every doctor gets a vanity URL (`/dr/:slug`, e.g. `promedicoz.in/dr/pooja-singh`, auto-generated from their name and backfilled for existing doctors) that shows ONLY them — their photo, credentials, fee, live availability, and reviews — with ProMedicoz as a quiet "Verified clinic page" trust mark and only a small "explore more doctors" link in the footer. It reuses the full doctor-profile logic in a single-doctor "clinic mode", so a patient who opens the doctor's shared link stays focused on booking with them. The old `/doctors/:id` URL still works.
+- **"Promote Me" doctor dashboard tab** — turns that page into a shareable asset: the doctor's personal link with copy + native share sheet, a downloadable QR code (PNG), a printable A5 "clinic card" poster (PDF, with the QR, for the reception desk), one-tap share to WhatsApp / Instagram / Google Business / SMS, and a live "this month" stats strip (page views, bookings from their link, earnings collected, rating, consultations, repeat patients) — all computed from the doctor's own real data, as the reason to open the app daily.
+- **Role-aware landing** — admins now go straight to the Admin Panel on login (and are redirected there if they ever land on the generic patient/doctor dashboard), with the navbar/bottom-nav showing a single clear "Admin Panel" link instead of a confusing "Dashboard" + "Admin Panel" pair. An admin is neither patient nor doctor, so the generic dashboard is never shown to them.
+- **Admin user drill-down** — clicking a user's name anywhere in the admin panel (Users list OR Appointments list) opens a detail modal with their full record: identity/contact, patient medical info + family members, or a doctor's full professional profile, plus a "Recent appointments" history (other party, date/time, status, amount paid). Backed by a new `GET /api/admin/users/:id`.
+- **Rupees shown as "Rs."** everywhere instead of the ₹ glyph, which renders as a box or a "$"-looking mark on some Indian devices/fonts.
+- **Site-wide "out of the box" UI pass** — consistent gradient heroes and accent-bar section headings across Home, DoctorProfile, DoctorList, BookAppointment, BookingConfirmation, Login/Register, Dashboard cards, the blog list (category-colored article cards + featured hero), AboutUs, ForDoctors, InstallApp, HowItWorks, and the FAQ help-hub.
 - **Blog scaled to 370+ articles** — comprehensive coverage of conditions, symptoms, first aid, life stages, tests/procedures, lifestyle, public health, and everyday "why does this happen?" explainers. Internal auto-linking connects related articles.
 - **Fully bilingual blog (English + Hinglish)** — every article now carries a `contentHi` Hindi-in-Roman-script ("Hinglish") version alongside the English one, with a per-article EN/हिंदी toggle. Medical terms are kept in English; all safety framing (emergency numbers, red flags, "see a doctor" lines) is preserved in both.
 - **UI polish pass** — frosted-glass top navbar + modernized mobile bottom nav (active-tab pill, safe-area padding), interactive footer link columns (icons, hover arrow-slide, accent bars), accordion FAQ with animated chevron badges, a connected "How ProMedicoz Works" step flow, a faster auto-scrolling testimonials marquee that merges live API reviews with curated real reviews, and hover-lift treatments on the Install App and About Us pages.
@@ -111,6 +117,10 @@ Notable improvements layered on since the core build:
 - "Get the App" page (`/install`, bilingual EN/हिंदी): one-tap install on Android/Chrome, clear step-by-step "Add to Home Screen" instructions for iPhone/Safari (where no install button is possible), plus a full Share section — native share sheet, direct per-platform buttons (WhatsApp, Facebook, Telegram, X, LinkedIn, Email), copy-link, a ready-to-post caption with a "Copy caption" button, and a client-side QR code of the site. Surfaced in the navbar, a Home-page strip, and the footer (role-neutral)
 - Social link previews: Open Graph + Twitter large-image tags in the static HTML (so Facebook/WhatsApp/LinkedIn show a proper card), pointing at a 1200×630 branded `og-image.png`. Ready-to-post branded social graphics ship in `client/public/social/` (a vertical 1080×1920 Story image, a 1080×1080 square, and health-tip / doctor-recruitment / "book in 2 minutes" posts)
 - Doctors can share their own public profile with their existing patients from the dashboard (WhatsApp share + copy profile link) — the highest-trust, zero-cost way to bring patients onto the platform
+- "My Clinic" branded booking page per doctor (`/dr/:slug`): a single-doctor page a doctor can treat as their own online clinic — only they are shown (photo, credentials, fee, live availability, reviews), ProMedicoz sits as a quiet trust mark, and the full doctor-profile/booking logic is reused in a "clinic mode" so there's no second page to drift out of sync. Slugs are auto-generated from the doctor's name (unique, with a numeric suffix on collision) and backfilled for pre-existing doctors; the old `/doctors/:id` URL keeps working
+- "Promote Me" dashboard tab for doctors: personal link + copy + native share, a downloadable QR code (PNG), a printable A5 clinic-card poster (PDF with the QR), one-tap share to WhatsApp/Instagram/Google Business/SMS, and a live this-month stats strip (page views, bookings from their link, earnings collected, rating, consultations, repeat patients) — the payoff that makes sharing worthwhile and the app worth opening daily
+- Admin user drill-down: clicking a user's name in the admin Users OR Appointments list opens a read-only detail modal — identity/contact, patient medical info + family members (or a doctor's full professional profile), plus a recent-appointment history (other party, date/time, status, amount paid)
+- Admins land on the Admin Panel (not the generic patient/doctor dashboard): routed there on login and redirected away from `/dashboard` if they land there, with a single clear "Admin Panel" nav link
 - Free phone-reach without a paid SMS/WhatsApp API: Web Push delivers booking/confirmation/message/call alerts to phones automatically (a prominent, benefit-driven enable prompt drives opt-in), and doctors get an optional one-tap "message on WhatsApp" button on a confirmed appointment (opens WhatsApp with a pre-filled note; the doctor sends it — the appointment is already confirmed in-app)
 - Doctor names are cleaned for display everywhere (strips a doctor-typed "Dr"/"Dr." prefix and title-cases the name, so "Dr akash verma" shows as "Dr. Akash Verma") — display only; the stored name is unchanged
 - Auto-update PWA: service worker serves HTML network-first and auto-refreshes to the latest version on each deploy (no manual cache clearing needed), with an "Updating to the latest version…" toast
@@ -124,7 +134,7 @@ Notable improvements layered on since the core build:
 - Email verification for doctors (must verify email to appear in patient search) — verification is idempotent, so an email security scanner pre-visiting the link (common with Outlook Safe Links and similar) no longer causes a false "expired" error on the doctor's real click
 - Dashboard verification banner with "Resend Email" button for unverified doctors (includes a "check your spam folder" note, since new-domain verification emails can land there)
 - Admin email-verification bypass: when a doctor's verification email is stuck in spam, the admin can mark that doctor's email verified directly from the Users table (`✅ Verify Email`), making them live for patients without waiting on the email. This is separate from the `✅ Verify` admin trust badge (credential check) — one clears the email gate, the other is the "admin verified" badge
-- Consultation fees displayed in ₹ (Indian Rupees)
+- Consultation fees shown as "Rs." (Indian Rupees) — deliberately not the ₹ glyph, which renders as a box or a "$"-looking mark on some devices/fonts
 - "Next available" slot shown on each doctor card (e.g. "Next available at 3:30 PM" with an "Available Today" pill, or "Next available tomorrow at 11:00 PM") — computed from real free slots (skips past + booked times), so it never misleads patients
 - Share doctor profile via WhatsApp (word-of-mouth marketing)
 - Booking confirmation page with full summary
@@ -520,7 +530,10 @@ Add the same three values to your hosting provider's environment variables (e.g.
 |--------|----------|--------|-------------|
 | GET | /api/doctors | Public | Browse/search doctors (?specialization=, ?city=, ?name=, ?maxFee=, ?availableToday=, ?page=, ?limit=) |
 | GET | /api/doctors/cities | Public | Distinct cities with active doctors (optionally ?specialization=) — powers local SEO city pages |
+| GET | /api/doctors/me/stats | Doctor only | Own "Promote Me" stats (consultations/earnings this month, unique + repeat patients, rating, page views, link bookings) — all computed from the doctor's own appointments + reviews |
+| GET | /api/doctors/by-slug/:slug | Public | Resolve a doctor by their vanity handle for the branded `/dr/:slug` page (increments a page-view counter) |
 | GET | /api/doctors/:id | Public | View doctor profile |
+| POST | /api/doctors/:id/link-booking | Public | Best-effort counter: the branded page pings this when a visitor taps "Book" from it (always 200) |
 | PUT | /api/doctors/profile | Doctor only | Update own profile |
 
 ### Appointments
@@ -584,6 +597,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 |--------|----------|--------|-------------|
 | GET | /api/admin/stats | Admin only | Dashboard stats |
 | GET | /api/admin/users | Admin only | List all users (supports ?role=, ?search= by name/email/phone/Patient ID) |
+| GET | /api/admin/users/:id | Admin only | Full detail for one user (complete record + recent appointments) — powers the click-a-name detail drill-down from the Users and Appointments lists |
 | GET | /api/admin/appointments | Admin only | List all appointments |
 | GET | /api/admin/analytics | Admin only | Revenue + call analytics (calls, minutes, per-doctor) |
 | POST | /api/admin/migrate-images | Admin only | One-time base64 → Cloudinary migration (safety net) |
