@@ -75,7 +75,7 @@ const TXT = {
     specAll: 'All specialities',
     browseAll: '🔍 Browse All Specializations →',
     howHeading: 'How ProMedicoz Works',
-    howSubtitle: 'Book a consultation in 4 simple steps',
+    howSubtitle: 'From search to consultation — in about 2 minutes',
     testimonialsHeading: 'What Our Patients Say',
     testimonialsSubtitle: 'Real reviews from real patients',
     faqHeading: 'Frequently Asked Questions',
@@ -83,10 +83,10 @@ const TXT = {
     ctaText: 'Join ProMedicoz to reach more patients, manage your schedule, and grow your practice effortlessly.',
     ctaButton: 'Register Now',
     steps: [
-      { title: 'Create Account', desc: 'Sign up free in seconds.', cta: 'Register →' },
-      { title: 'Find a Doctor', desc: 'Browse by specialization or fee.', cta: 'Browse →' },
-      { title: 'Book a Slot', desc: 'Pick date, time & consultation type.', cta: 'Book Now →' },
-      { title: 'Get Confirmed', desc: 'Doctor confirms, you get notified.', cta: 'Dashboard →' },
+      { title: 'Find a doctor', desc: 'Search by symptom, specialty, city or language.', cta: 'Search →' },
+      { title: 'Book a slot', desc: 'Pick a time & how to consult — video, phone or clinic.', cta: 'Book →' },
+      { title: 'Doctor confirms', desc: 'Usually within a few hours — you get notified.', cta: 'How it works →' },
+      { title: 'Pay & consult', desc: 'Pay the doctor directly — no commission. Then consult.', cta: 'Learn more →' },
     ],
     faqs: [
       { q: 'How do I book a doctor on ProMedicoz?', a: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking. The doctor confirms within hours.' },
@@ -137,7 +137,7 @@ const TXT = {
     specAll: 'सभी विशेषज्ञताएं',
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
     howHeading: 'ProMedicoz कैसे काम करता है',
-    howSubtitle: '4 आसान चरणों में परामर्श बुक करें',
+    howSubtitle: 'खोज से परामर्श तक — लगभग 2 मिनट में',
     testimonialsHeading: 'हमारे मरीज़ क्या कहते हैं',
     testimonialsSubtitle: 'असली मरीज़ों की असली समीक्षाएं',
     faqHeading: 'अक्सर पूछे जाने वाले प्रश्न',
@@ -145,10 +145,10 @@ const TXT = {
     ctaText: 'अधिक मरीज़ों तक पहुंचने, अपना शेड्यूल प्रबंधित करने और अपनी प्रैक्टिस बढ़ाने के लिए ProMedicoz से जुड़ें।',
     ctaButton: 'अभी रजिस्टर करें',
     steps: [
-      { title: 'खाता बनाएं', desc: 'कुछ ही सेकंड में मुफ़्त साइन अप करें।', cta: 'रजिस्टर →' },
-      { title: 'डॉक्टर खोजें', desc: 'विशेषज्ञता या शुल्क के अनुसार खोजें।', cta: 'देखें →' },
-      { title: 'स्लॉट बुक करें', desc: 'तारीख, समय और परामर्श का तरीका चुनें।', cta: 'अभी बुक करें →' },
-      { title: 'पुष्टि पाएं', desc: 'डॉक्टर पुष्टि करता है, आपको सूचना मिलती है।', cta: 'डैशबोर्ड →' },
+      { title: 'डॉक्टर खोजें', desc: 'लक्षण, विशेषज्ञता, शहर या भाषा से खोजें।', cta: 'खोजें →' },
+      { title: 'स्लॉट बुक करें', desc: 'समय और परामर्श का तरीका चुनें — वीडियो, फ़ोन या क्लिनिक।', cta: 'बुक करें →' },
+      { title: 'डॉक्टर पुष्टि करते हैं', desc: 'आमतौर पर कुछ ही घंटों में — आपको सूचना मिलती है।', cta: 'कैसे काम करता है →' },
+      { title: 'भुगतान करें और परामर्श लें', desc: 'पैसे सीधे डॉक्टर को — कोई कमीशन नहीं। फिर परामर्श।', cta: 'और जानें →' },
     ],
     faqs: [
       { q: 'ProMedicoz पर डॉक्टर कैसे बुक करें?', a: 'विशेषज्ञता या लक्षण के अनुसार खोजें, डॉक्टर चुनें, तारीख और समय चुनें, और अपनी बुकिंग की पुष्टि करें। डॉक्टर कुछ ही घंटों में पुष्टि कर देते हैं।' },
@@ -747,10 +747,10 @@ function Home() {
             <div className="hidden lg:block absolute top-7 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-primary-200" aria-hidden="true"></div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
               {[
-                { step: 1, icon: '👤', to: '/register' },
-                { step: 2, icon: '🔍', to: '/doctors' },
-                { step: 3, icon: '📅', to: '/doctors' },
-                { step: 4, icon: '✅', to: '/dashboard' },
+                { step: 1, icon: '🔍', to: '/doctors' },
+                { step: 2, icon: '📅', to: '/doctors' },
+                { step: 3, icon: '✅', to: '/how-it-works' },
+                { step: 4, icon: '🧾', to: '/how-it-works' },
               ].map(({ step, icon, to }) => {
                 const s = t.steps[step - 1];
                 return (
