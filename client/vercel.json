@@ -1,5 +1,11 @@
 {
+  "functions": {
+    "api/dr/[slug].js": {
+      "includeFiles": "dist/index.html"
+    }
+  },
   "rewrites": [
+    { "source": "/dr/:slug", "destination": "/api/dr/:slug" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
