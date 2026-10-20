@@ -16,6 +16,36 @@ function formatViews(n) {
   return String(n);
 }
 
+// Per-specialty colour theme for article cards. Each entry drives the card's
+// header gradient, the specialty chip, and the "Read article →" accent — so
+// the grid reads like a lively, browsable magazine instead of 55 identical
+// blue tiles. Anything unmapped falls back to the primary (blue) theme, so new
+// specialties still look correct, just in brand blue.
+const SPEC_THEME = {
+  Cardiologist:        { grad: 'from-rose-400 to-rose-600',      chipBg: 'bg-rose-50',    chipText: 'text-rose-700',    link: 'text-rose-600',    border: 'hover:border-rose-200' },
+  Gynaecologist:       { grad: 'from-pink-400 to-pink-600',      chipBg: 'bg-pink-50',    chipText: 'text-pink-700',    link: 'text-pink-600',    border: 'hover:border-pink-200' },
+  Psychiatrist:        { grad: 'from-violet-400 to-violet-600',  chipBg: 'bg-violet-50',  chipText: 'text-violet-700',  link: 'text-violet-600',  border: 'hover:border-violet-200' },
+  Gastroenterologist:  { grad: 'from-emerald-400 to-emerald-600',chipBg: 'bg-emerald-50', chipText: 'text-emerald-700', link: 'text-emerald-600', border: 'hover:border-emerald-200' },
+  Endocrinologist:     { grad: 'from-amber-400 to-amber-600',    chipBg: 'bg-amber-50',   chipText: 'text-amber-700',   link: 'text-amber-600',   border: 'hover:border-amber-200' },
+  Orthopedic:          { grad: 'from-orange-400 to-orange-600',  chipBg: 'bg-orange-50',  chipText: 'text-orange-700',  link: 'text-orange-600',  border: 'hover:border-orange-200' },
+  Physiotherapist:     { grad: 'from-orange-400 to-orange-600',  chipBg: 'bg-orange-50',  chipText: 'text-orange-700',  link: 'text-orange-600',  border: 'hover:border-orange-200' },
+  Dermatologist:       { grad: 'from-fuchsia-400 to-fuchsia-600',chipBg: 'bg-fuchsia-50', chipText: 'text-fuchsia-700', link: 'text-fuchsia-600', border: 'hover:border-fuchsia-200' },
+  Pediatrician:        { grad: 'from-sky-400 to-sky-600',        chipBg: 'bg-sky-50',     chipText: 'text-sky-700',     link: 'text-sky-600',     border: 'hover:border-sky-200' },
+  Neurologist:         { grad: 'from-indigo-400 to-indigo-600',  chipBg: 'bg-indigo-50',  chipText: 'text-indigo-700',  link: 'text-indigo-600',  border: 'hover:border-indigo-200' },
+  Ophthalmologist:     { grad: 'from-teal-400 to-teal-600',      chipBg: 'bg-teal-50',    chipText: 'text-teal-700',    link: 'text-teal-600',    border: 'hover:border-teal-200' },
+  'ENT Specialist':    { grad: 'from-cyan-400 to-cyan-600',      chipBg: 'bg-cyan-50',    chipText: 'text-cyan-700',    link: 'text-cyan-600',    border: 'hover:border-cyan-200' },
+  Urologist:           { grad: 'from-cyan-400 to-cyan-600',      chipBg: 'bg-cyan-50',    chipText: 'text-cyan-700',    link: 'text-cyan-600',    border: 'hover:border-cyan-200' },
+  Pulmonologist:       { grad: 'from-blue-400 to-blue-600',      chipBg: 'bg-blue-50',    chipText: 'text-blue-700',    link: 'text-blue-600',    border: 'hover:border-blue-200' },
+  Dentist:             { grad: 'from-slate-400 to-slate-600',    chipBg: 'bg-slate-100',  chipText: 'text-slate-700',   link: 'text-slate-600',   border: 'hover:border-slate-300' },
+  'General Physician': { grad: 'from-primary-400 to-primary-600',chipBg: 'bg-primary-50', chipText: 'text-primary-700', link: 'text-primary-600', border: 'hover:border-primary-200' },
+};
+
+const FALLBACK_THEME = { grad: 'from-primary-400 to-primary-600', chipBg: 'bg-primary-50', chipText: 'text-primary-700', link: 'text-primary-600', border: 'hover:border-primary-200' };
+
+function themeFor(spec) {
+  return SPEC_THEME[spec] || FALLBACK_THEME;
+}
+
 // Broad, friendly categories so ~55 articles feel browsable instead of
 // overwhelming. Each maps to one or more of the underlying `specialization`
 // values used on the articles. New specialties fall into "More" until mapped.
@@ -87,6 +117,21 @@ function BlogList() {
 
   // Show the "Start Here" strip only on the default, unfiltered view.
   const showStartHere = category === 'All' && !q;
+
+  // Featured hero — one standout article at the top of the default view. We
+  // pick the genuinely most-read article when we have view data; otherwise the
+  // newest. It's pulled out of the grid below so it isn't shown twice. Only on
+  // the default, unfiltered view so it never competes with search results.
+  const featured = showStartHere
+    ? (sorted
+        .map((a) => ({ a, count: views[a.slug] || 0 }))
+        .sort((x, y) => y.count - x.count)[0]?.a) || sorted[0]
+    : null;
+  // The slug of the single most-read article overall — used to stamp a "🔥
+  // Most read" badge on exactly one card in the grid.
+  const topReadSlug = Object.keys(views).length
+    ? Object.entries(views).sort((a, b) => (b[1] || 0) - (a[1] || 0))[0]?.[0]
+    : null;
   const startHere = showStartHere
     ? START_HERE_SLUGS.map((s) => articles.find((a) => a.slug === s)).filter(Boolean)
     : [];
@@ -276,6 +321,44 @@ function BlogList() {
           </div>
         )}
 
+        {/* Featured read — one standout article as a wide 2-panel hero at the
+            top of the default view. Gives first-time visitors a clear, inviting
+            entry point instead of a flat wall of equal cards. */}
+        {featured && (
+          <div className="max-w-5xl mx-auto mb-8">
+            <h2 className="text-lg font-semibold text-gray-800 mb-1 flex items-center gap-2">
+              <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />
+              Featured read
+            </h2>
+            <p className="text-gray-500 text-sm mb-4">A great place to start today.</p>
+            <Link
+              to={`/blog/${featured.slug}`}
+              className="card-lift group flex flex-col sm:flex-row bg-white rounded-2xl shadow-md overflow-hidden"
+            >
+              <div className={`sm:w-64 flex-shrink-0 bg-gradient-to-br ${themeFor(featured.specialization).grad} flex items-center justify-center py-10 sm:py-0`}>
+                <span className="text-6xl drop-shadow-sm">{featured.image}</span>
+              </div>
+              <div className="p-6 flex flex-col justify-center">
+                <span className={`self-start px-2.5 py-0.5 rounded-full text-xs font-semibold ${themeFor(featured.specialization).chipBg} ${themeFor(featured.specialization).chipText}`}>
+                  {featured.specialization}
+                </span>
+                <h3 className="font-bold text-gray-900 text-xl mt-3 leading-snug">{featured.title}</h3>
+                <p className="text-gray-500 text-sm mt-2 line-clamp-2">{featured.description}</p>
+                <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
+                  <span>{featured.readTime} read</span>
+                  {views[featured.slug] > 0 && (
+                    <>
+                      <span>•</span>
+                      <span>👁 {formatViews(views[featured.slug])} reads</span>
+                    </>
+                  )}
+                </div>
+                <span className={`text-sm font-semibold mt-3 inline-block ${themeFor(featured.specialization).link}`}>Read article →</span>
+              </div>
+            </Link>
+          </div>
+        )}
+
         {filtered.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔍</div>
@@ -303,35 +386,58 @@ function BlogList() {
               </button>
             </div>
           )}
+          {/* Section heading for the main grid on the default view (when there
+              are curated strips above it, this labels where "everything" starts). */}
+          {showStartHere && (
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-5 rounded-full bg-primary-600" aria-hidden="true" />
+              All articles
+            </h2>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((article) => (
-              <Link
-                key={article.slug}
-                to={`/blog/${article.slug}`}
-                className="card-lift bg-white rounded-xl shadow-md overflow-hidden block"
-              >
-                <div className="h-32 bg-gradient-to-r from-primary-100 to-primary-200 flex items-center justify-center">
-                  <span className="text-5xl">{article.image}</span>
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className="px-2 py-0.5 bg-primary-50 text-primary-700 rounded text-xs font-medium">{article.specialization}</span>
-                    <span className="text-xs text-gray-400">{article.readTime} read</span>
-                    {/* Per-card read count — only shown for articles that have
-                        been read, so fresh articles don't display "0 reads". */}
-                    {views[article.slug] > 0 && (
-                      <>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-400">👁 {formatViews(views[article.slug])}</span>
-                      </>
-                    )}
-                  </div>
-                  <h2 className="font-semibold text-gray-800 mb-2 line-clamp-2">{article.title}</h2>
-                  <p className="text-gray-500 text-sm line-clamp-2">{article.description}</p>
-                  <span className="text-primary-600 text-sm font-medium mt-3 inline-block">Read article →</span>
-                </div>
-              </Link>
-            ))}
+            {/* On the default view the featured article is already shown as the
+                hero above, so drop it from the grid to avoid a duplicate. */}
+            {filtered
+              .filter((article) => !(featured && article.slug === featured.slug))
+              .map((article) => {
+                const theme = themeFor(article.specialization);
+                const isTopRead = topReadSlug && article.slug === topReadSlug;
+                return (
+                  <Link
+                    key={article.slug}
+                    to={`/blog/${article.slug}`}
+                    className={`card-lift bg-white rounded-2xl shadow-md border border-transparent ${theme.border} overflow-hidden block transition-all`}
+                  >
+                    {/* Category-colored header — gives each card a distinct,
+                        topic-driven look so the grid reads like a magazine. */}
+                    <div className={`relative h-28 bg-gradient-to-br ${theme.grad} flex items-center justify-center`}>
+                      <span className="text-5xl drop-shadow-sm">{article.image}</span>
+                      {isTopRead && (
+                        <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm text-rose-600 text-[11px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                          🔥 Most read
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${theme.chipBg} ${theme.chipText}`}>{article.specialization}</span>
+                        <span className="text-xs text-gray-400">{article.readTime} read</span>
+                        {/* Per-card read count — only shown for articles that
+                            have been read, so fresh articles don't show "0". */}
+                        {views[article.slug] > 0 && (
+                          <>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-400">👁 {formatViews(views[article.slug])}</span>
+                          </>
+                        )}
+                      </div>
+                      <h2 className="font-semibold text-gray-800 mb-2 line-clamp-2">{article.title}</h2>
+                      <p className="text-gray-500 text-sm line-clamp-2">{article.description}</p>
+                      <span className={`text-sm font-semibold mt-3 inline-block ${theme.link}`}>Read article →</span>
+                    </div>
+                  </Link>
+                );
+              })}
           </div>
           </div>
         )}
