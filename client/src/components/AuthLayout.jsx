@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 // `points` prop (e.g. the doctor-join flow could emphasise different things).
 const DEFAULT_POINTS = [
   { icon: '✅', title: 'Verified doctors', desc: 'Every doctor’s credentials are checked before they can consult.' },
-  { icon: '💸', title: 'Fair, honest fees', desc: 'Pay the doctor directly — no hidden platform commission.' },
+  { icon: '🧾', title: 'Fair, honest fees', desc: 'Pay the doctor directly — no hidden platform commission.' },
   { icon: '📱', title: 'Video, phone or in-person', desc: 'Consult the way that suits you, from anywhere in India.' },
   { icon: '🔒', title: 'Private & secure', desc: 'Your health information stays confidential.' },
 ];

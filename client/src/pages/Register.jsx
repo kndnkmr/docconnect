@@ -161,18 +161,21 @@ function Register() {
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
               </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                autoFocus
-                value={formData.name}
-                onChange={handleChange}
-                placeholder={formData.role === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required
-              />
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">👤</span>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  autoFocus
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder={formData.role === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
+                  className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
+                  required
+                />
+              </div>
             </div>
 
             {/* Email Field (optional for patients) */}
@@ -180,17 +183,20 @@ function Register() {
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address {formData.role === 'patient' && <span className="text-gray-400">(optional)</span>}
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required={formData.role === 'doctor'}
-              />
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">✉️</span>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
+                  required={formData.role === 'doctor'}
+                />
+              </div>
             </div>
 
             {/* Phone Number Field (required for patients if no email) */}
@@ -198,19 +204,22 @@ function Register() {
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                 Phone Number {formData.role === 'patient' && !formData.email && <span className="text-red-500">*</span>}
               </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputMode="numeric"
-                autoComplete="tel"
-                maxLength={10}
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="9876543210 (10 digits, +91 added automatically)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                required={formData.role === 'patient' && !formData.email}
-              />
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">📱</span>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  maxLength={10}
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="9876543210 (10 digits, +91 added automatically)"
+                  className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
+                  required={formData.role === 'patient' && !formData.email}
+                />
+              </div>
               {formData.role === 'patient' && (
                 <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed). We'll add +91 automatically.</p>
               )}
@@ -222,6 +231,7 @@ function Register() {
                 Password
               </label>
               <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">🔒</span>
                 <input
                   id="password"
                   name="password"
@@ -230,7 +240,7 @@ function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 6 characters"
-                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-11 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required
                   minLength={6}
                 />
@@ -251,6 +261,7 @@ function Register() {
                 Confirm Password
               </label>
               <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">🔒</span>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -259,7 +270,7 @@ function Register() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter your password"
-                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-11 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required
                 />
               </div>
