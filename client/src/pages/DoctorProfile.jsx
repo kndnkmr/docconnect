@@ -37,6 +37,7 @@ const TXT = {
     inPerson: '🏥 In-Person', video: '📹 Video', phone: '📞 Phone',
     speaks: 'Speaks', bookAppointment: 'Book Appointment',
     messageWhatsApp: 'Message on WhatsApp', shareWhatsApp: 'Share via WhatsApp',
+    shareMsg: (name, spec, url) => `Consult ${name} (${spec}) online on ProMedicoz — video, phone, or in-person. Book here: ${url}`,
     loginToBook: 'Log in to Book Appointment', noAccount: 'New to ProMedicoz?', signUpFree: 'Create a free account →',
     about: 'About', clinicAddress: 'Clinic Address', getDirections: '📍 Get Directions',
     patientReviews: 'Patient Reviews', noReviews: 'No reviews yet. Be the first to consult and rate!',
@@ -63,6 +64,7 @@ const TXT = {
     inPerson: '🏥 क्लिनिक पर', video: '📹 वीडियो', phone: '📞 फ़ोन',
     speaks: 'बोलते हैं', bookAppointment: 'अपॉइंटमेंट बुक करें',
     messageWhatsApp: 'WhatsApp पर संदेश भेजें', shareWhatsApp: 'WhatsApp पर साझा करें',
+    shareMsg: (name, spec, url) => `${name} (${spec}) से ProMedicoz पर ऑनलाइन परामर्श लें — वीडियो, फ़ोन या क्लिनिक पर। यहाँ बुक करें: ${url}`,
     loginToBook: 'अपॉइंटमेंट बुक करने के लिए लॉग इन करें', noAccount: 'ProMedicoz पर नए हैं?', signUpFree: 'मुफ़्त खाता बनाएं →',
     about: 'परिचय', clinicAddress: 'क्लिनिक का पता', getDirections: '📍 रास्ता देखें',
     patientReviews: 'मरीज़ों की समीक्षाएं', noReviews: 'अभी कोई समीक्षा नहीं। पहले परामर्श लें और रेटिंग दें!',
@@ -572,11 +574,22 @@ function DoctorProfile({ clinicMode = false }) {
 
               <button
                 onClick={() => {
-                  const shareUrl = window.location.href;
-                  const shareText = `Check out ${formatDoctorName(doctor.name)} (${doctor.specialization || 'Doctor'}) on ProMedicoz - ${shareUrl}`;
-                  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+                  // Always share the vanity /dr/:slug URL — that's the page with
+                  // the rich share card (doctor photo + name). Fall back to the
+                  // current URL only if a slug somehow isn't set. The pre-filled
+                  // message follows the patient's language toggle.
+                  const shareUrl = doctor.slug
+                    ? `https://www.promedicoz.in/dr/${doctor.slug}`
+                    : window.location.href;
+                  const shareText = t.shareMsg(formatDoctorName(doctor.name), doctor.specialization || (lang === 'hi' ? 'डॉक्टर' : 'Doctor'), shareUrl);
                   trackEvent('share_doctor', { doctor_id: doctor._id, method: 'whatsapp' });
-                  window.open(whatsappUrl, '_blank');
+                  // Native share sheet when available (lets the user pick any
+                  // app), falling back to WhatsApp web.
+                  if (navigator.share) {
+                    navigator.share({ title: formatDoctorName(doctor.name), text: shareText, url: shareUrl }).catch(() => {});
+                  } else {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                  }
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
               >
