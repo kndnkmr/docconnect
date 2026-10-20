@@ -220,7 +220,7 @@ function PromoteMe() {
           <div className="flex-1 flex items-center justify-center">
             <div className="w-28 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
               <div className="bg-primary-700 text-white text-[10px] font-bold py-2">Dr. {user?.name?.split(' ')[0] || ''}</div>
-              <div className="py-3 text-3xl">👩‍⚕️</div>
+              <div className="py-3 text-3xl">🧑‍⚕️</div>
               <div className="pb-3 px-1 text-[9px] text-gray-500">Scan to book</div>
             </div>
           </div>
