@@ -816,6 +816,9 @@ function Dashboard() {
     return now >= (start - CALL_GRACE_BEFORE) && now <= (end + CALL_GRACE_AFTER);
   };
   const getStatusColor = (status) => ({ pending: 'bg-yellow-100 text-yellow-800', confirmed: 'bg-green-100 text-green-800', completed: 'bg-blue-100 text-blue-800', cancelled: 'bg-red-100 text-red-800' }[status] || 'bg-gray-100 text-gray-800');
+  // Solid accent colour for the card's left edge strip — lets a patient/doctor
+  // read an appointment's status at a glance before reading any text.
+  const getStatusAccent = (status) => ({ pending: 'bg-yellow-400', confirmed: 'bg-green-500', completed: 'bg-blue-500', cancelled: 'bg-red-400' }[status] || 'bg-gray-300');
   // Raw status values ("completed") read as terse/ambiguous next to a
   // patient's name — spell them out for the badge instead of changing the
   // underlying status values themselves.
@@ -1333,16 +1336,18 @@ function Dashboard() {
                     ? doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === apt._id)
                     : false;
                   return (
-                  <div key={apt._id} className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div key={apt._id} className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden p-6 pl-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    {/* Status accent strip — read the appointment's state at a glance. */}
+                    <span className={`absolute left-0 inset-y-0 w-1.5 ${getStatusAccent(apt.status)}`} aria-hidden="true" />
                     <div className="flex-grow">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : apt.patient?.name || 'Unknown Patient'}</h3>
+                      <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-2.5">
+                        <h3 className="font-bold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : apt.patient?.name || 'Unknown Patient'}</h3>
                         {isDoctor && apt.patient?.patientId && <span className="text-xs text-gray-400 font-mono">{apt.patient.patientId}</span>}
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{getStatusLabel(apt.status)}</span>
                       </div>
-                      <p className="text-gray-600 text-sm">{formatDate(apt.date)} • {apt.timeSlot}</p>
-                      {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
-                      <p className="text-gray-500 text-sm mt-1">Reason: {apt.reason}</p>
+                      <p className="text-gray-600 text-sm flex items-center gap-1.5"><span aria-hidden="true">📅</span> {formatDate(apt.date)} <span className="text-gray-300">·</span> <span aria-hidden="true">🕐</span> {apt.timeSlot}</p>
+                      {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">📞 Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
+                      <p className="text-gray-500 text-sm mt-1">📝 Reason: {apt.reason}</p>
                       {apt.symptoms?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                           {apt.symptoms.map((s) => (
