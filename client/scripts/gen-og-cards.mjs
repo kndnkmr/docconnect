@@ -34,25 +34,29 @@ const OUT_DIR = join(CLIENT_DIR, 'public', 'og', 'blog');
 // text) + a one-line tagline. Colours mirror SPEC_THEME in BlogList.jsx (the
 // -600/-800 Tailwind shades, as hex) so the card matches the on-site card.
 const CARDS = {
-  'general-physician': { label: 'General Physician', tagline: 'Fever, cough, checkups & everyday health', from: '#2563eb', to: '#1e3a8a' },
-  'gynaecologist':     { label: 'Gynaecologist',     tagline: "Women's health, pregnancy & periods",     from: '#db2777', to: '#9d174d' },
-  'cardiologist':      { label: 'Cardiologist',      tagline: 'Heart, blood pressure & cholesterol',     from: '#e11d48', to: '#9f1239' },
-  'dermatologist':     { label: 'Dermatologist',     tagline: 'Skin, hair & nail care',                  from: '#c026d3', to: '#86198f' },
-  'orthopedic':        { label: 'Orthopedic',        tagline: 'Bones, joints, back & spine',             from: '#ea580c', to: '#9a3412' },
-  'pediatrician':      { label: 'Pediatrician',      tagline: "Children's health & vaccinations",        from: '#0284c7', to: '#075985' },
-  'gastroenterologist':{ label: 'Gastroenterologist',tagline: 'Stomach, acidity & digestion',            from: '#059669', to: '#065f46' },
-  'ent-specialist':    { label: 'ENT Specialist',    tagline: 'Ear, nose & throat',                      from: '#0891b2', to: '#155e75' },
-  'psychiatrist':      { label: 'Psychiatrist',      tagline: 'Mental health, stress & sleep',           from: '#7c3aed', to: '#5b21b6' },
-  'neurologist':       { label: 'Neurologist',       tagline: 'Brain, nerves & headaches',               from: '#4f46e5', to: '#3730a3' },
-  'ophthalmologist':   { label: 'Ophthalmologist',   tagline: 'Eyes & vision care',                      from: '#0d9488', to: '#115e59' },
-  'pulmonologist':     { label: 'Pulmonologist',     tagline: 'Lungs, breathing & asthma',               from: '#2563eb', to: '#1e40af' },
-  'endocrinologist':   { label: 'Endocrinologist',   tagline: 'Diabetes, thyroid & hormones',            from: '#d97706', to: '#92400e' },
-  'dentist':           { label: 'Dentist',           tagline: 'Teeth & gum care',                        from: '#475569', to: '#1e293b' },
-  'urologist':         { label: 'Urologist',         tagline: 'Kidney, urinary & prostate',              from: '#0891b2', to: '#155e75' },
-  'physiotherapist':   { label: 'Physiotherapist',   tagline: 'Movement, pain & recovery',               from: '#ea580c', to: '#9a3412' },
-  'nephrologist':      { label: 'Nephrologist',      tagline: 'Kidney care',                             from: '#0891b2', to: '#155e75' },
+  // Hindi-first: our blog audience is largely Hindi-speaking, so the share
+  // cards (what shows in a WhatsApp status) are in Hindi. rsvg-convert renders
+  // Devanagari fine with the system font (verified). Labels are the Hindi
+  // specialty names; taglines are short Hindi topic lines.
+  'general-physician': { label: 'सामान्य चिकित्सक',      tagline: 'बुखार, खांसी, जांच व रोज़मर्रा की सेहत', from: '#2563eb', to: '#1e3a8a' },
+  'gynaecologist':     { label: 'स्त्री रोग विशेषज्ञ',    tagline: 'महिला स्वास्थ्य, गर्भावस्था व मासिक',    from: '#db2777', to: '#9d174d' },
+  'cardiologist':      { label: 'हृदय रोग विशेषज्ञ',      tagline: 'हृदय, रक्तचाप व कोलेस्ट्रॉल',           from: '#e11d48', to: '#9f1239' },
+  'dermatologist':     { label: 'त्वचा रोग विशेषज्ञ',     tagline: 'त्वचा, बाल व नाखून की देखभाल',          from: '#c026d3', to: '#86198f' },
+  'orthopedic':        { label: 'हड्डी रोग विशेषज्ञ',     tagline: 'हड्डी, जोड़, कमर व रीढ़',               from: '#ea580c', to: '#9a3412' },
+  'pediatrician':      { label: 'बाल रोग विशेषज्ञ',       tagline: 'बच्चों की सेहत व टीकाकरण',             from: '#0284c7', to: '#075985' },
+  'gastroenterologist':{ label: 'पेट व पाचन विशेषज्ञ',    tagline: 'पेट, अम्लता व पाचन',                   from: '#059669', to: '#065f46' },
+  'ent-specialist':    { label: 'कान-नाक-गला विशेषज्ञ',   tagline: 'कान, नाक व गला',                       from: '#0891b2', to: '#155e75' },
+  'psychiatrist':      { label: 'मनोचिकित्सक',            tagline: 'मानसिक स्वास्थ्य, तनाव व नींद',         from: '#7c3aed', to: '#5b21b6' },
+  'neurologist':       { label: 'न्यूरोलॉजिस्ट',          tagline: 'मस्तिष्क, नसें व सिरदर्द',             from: '#4f46e5', to: '#3730a3' },
+  'ophthalmologist':   { label: 'नेत्र रोग विशेषज्ञ',     tagline: 'आँख व दृष्टि की देखभाल',               from: '#0d9488', to: '#115e59' },
+  'pulmonologist':     { label: 'फेफड़ा रोग विशेषज्ञ',    tagline: 'फेफड़े, साँस व दमा',                   from: '#2563eb', to: '#1e40af' },
+  'endocrinologist':   { label: 'मधुमेह व हार्मोन विशेषज्ञ', tagline: 'मधुमेह, थायराइड व हार्मोन',         from: '#d97706', to: '#92400e' },
+  'dentist':           { label: 'दंत चिकित्सक',           tagline: 'दांत व मसूड़ों की देखभाल',             from: '#475569', to: '#1e293b' },
+  'urologist':         { label: 'मूत्र रोग विशेषज्ञ',     tagline: 'गुर्दा, मूत्र व प्रोस्टेट',            from: '#0891b2', to: '#155e75' },
+  'physiotherapist':   { label: 'फिजियोथेरेपिस्ट',        tagline: 'चलना-फिरना, दर्द व रिकवरी',            from: '#ea580c', to: '#9a3412' },
+  'nephrologist':      { label: 'गुर्दा रोग विशेषज्ञ',    tagline: 'गुर्दे की देखभाल',                     from: '#0891b2', to: '#155e75' },
   // Generic fallback card used when an article's specialty has no card.
-  'default':           { label: 'ProMedicoz Health', tagline: 'Expert health articles for India',        from: '#2563eb', to: '#1e3a8a' },
+  'default':           { label: 'ProMedicoz हेल्थ',       tagline: 'भारत के लिए विशेषज्ञ स्वास्थ्य लेख',     from: '#2563eb', to: '#1e3a8a' },
 };
 
 // XML-escape text going into the SVG.
@@ -64,7 +68,13 @@ function esc(s) {
 // soft corner glow, a faint oversized medical "+" motif, the category label,
 // a tagline, and the ProMedicoz wordmark + "Health Blog" kicker.
 function cardSvg({ label, tagline, from, to }) {
-  const fontStack = 'Helvetica, Arial, sans-serif';
+  // Devanagari-capable font stack (macOS system fonts first, with Noto as a
+  // cross-platform fallback). The Latin brand word ("ProMedicoz") uses the same
+  // stack — these fonts carry Latin glyphs too, so it stays consistent.
+  const fontStack = 'Kohinoor Devanagari, Devanagari Sangam MN, Noto Sans Devanagari, Noto Sans, Arial, sans-serif';
+  // Hindi labels are often longer/taller than the English ones — shrink the
+  // headline a bit and keep it on one line within the frame.
+  const labelSize = label.length > 16 ? 66 : 82;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -81,17 +91,17 @@ function cardSvg({ label, tagline, from, to }) {
     <rect x="915" y="300" width="230" height="78" rx="14"/>
     <rect x="991" y="224" width="78" height="230" rx="14"/>
   </g>
-  <!-- kicker -->
-  <text x="90" y="150" font-family="${fontStack}" font-size="30" font-weight="bold" letter-spacing="3" fill="#ffffff" opacity="0.85">PROMEDICOZ HEALTH BLOG</text>
+  <!-- kicker (Hindi) -->
+  <text x="90" y="150" font-family="${fontStack}" font-size="32" font-weight="bold" fill="#ffffff" opacity="0.9">ProMedicoz · स्वास्थ्य ब्लॉग</text>
   <!-- category label -->
-  <text x="90" y="330" font-family="${fontStack}" font-size="92" font-weight="bold" fill="#ffffff">${esc(label)}</text>
-  <!-- tagline -->
-  <text x="90" y="400" font-family="${fontStack}" font-size="38" fill="#ffffff" opacity="0.92">${esc(tagline)}</text>
-  <!-- footer wordmark + trust line -->
-  <text x="90" y="560" font-family="${fontStack}" font-size="34" font-weight="bold" fill="#ffffff">ProMedicoz</text>
-  <text x="90" y="600" font-family="${fontStack}" font-size="24" fill="#ffffff" opacity="0.85">Find &amp; book verified doctors online</text>
+  <text x="90" y="335" font-family="${fontStack}" font-size="${labelSize}" font-weight="bold" fill="#ffffff">${esc(label)}</text>
   <!-- accent underline under the label -->
-  <rect x="92" y="352" width="120" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  <rect x="92" y="360" width="120" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  <!-- tagline -->
+  <text x="90" y="425" font-family="${fontStack}" font-size="38" fill="#ffffff" opacity="0.92">${esc(tagline)}</text>
+  <!-- footer wordmark + trust line (Hindi) -->
+  <text x="90" y="560" font-family="${fontStack}" font-size="34" font-weight="bold" fill="#ffffff">ProMedicoz</text>
+  <text x="90" y="600" font-family="${fontStack}" font-size="25" fill="#ffffff" opacity="0.88">वेरिफाइड डॉक्टर · ऑनलाइन बुक करें</text>
 </svg>`;
 }
 

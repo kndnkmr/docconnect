@@ -303,16 +303,26 @@ function BlogArticle() {
   // Share the article (grows reach via word of mouth — the safe alternative
   // to a public comment section on a health blog).
   const articleUrl = `https://www.promedicoz.in/blog/${slug}`;
-  const shareText = article ? `${article.title} — ProMedicoz\n${articleUrl}` : articleUrl;
+  // Hindi-reading users (Hinglish mode) get a warm Hinglish caption so a
+  // WhatsApp-status share reads naturally in their language. The article TITLE
+  // stays English because the blog has no Hindi title (its Hindi version is
+  // Hinglish body text with English headings) — so a Hinglish caption + the
+  // English title is the honest, natural message.
+  const inHindi = lang === 'hi' && hasHindi;
+  const shareText = article
+    ? (inHindi
+        ? `${article.title}\n\nYeh health jaankari apne parivaar aur doston ke saath share karein 🙏\n${articleUrl}`
+        : `${article.title} — ProMedicoz\n${articleUrl}`)
+    : articleUrl;
   const copyLink = async () => {
     trackEvent('share_article', { article_slug: slug, method: 'copy_link' });
-    try { await navigator.clipboard.writeText(articleUrl); toast.success('Link copied!'); }
-    catch { window.prompt('Copy this link:', articleUrl); }
+    try { await navigator.clipboard.writeText(articleUrl); toast.success(inHindi ? 'Link copy ho gaya!' : 'Link copied!'); }
+    catch { window.prompt(inHindi ? 'Yeh link copy karein:' : 'Copy this link:', articleUrl); }
   };
   const nativeShare = async () => {
     trackEvent('share_article', { article_slug: slug, method: 'native_share' });
     if (navigator.share) {
-      try { await navigator.share({ title: article?.title, text: article?.title, url: articleUrl }); return; } catch { /* cancelled */ }
+      try { await navigator.share({ title: article?.title, text: shareText, url: articleUrl }); return; } catch { /* cancelled */ }
     }
     copyLink();
   };
@@ -324,11 +334,13 @@ function BlogArticle() {
   const shareInstagram = async () => {
     trackEvent('share_article', { article_slug: slug, method: 'instagram' });
     if (navigator.share) {
-      try { await navigator.share({ title: article?.title, text: article?.title, url: articleUrl }); return; } catch { /* cancelled */ }
+      try { await navigator.share({ title: article?.title, text: shareText, url: articleUrl }); return; } catch { /* cancelled */ }
     }
     try { await navigator.clipboard.writeText(articleUrl); }
-    catch { window.prompt('Copy this link:', articleUrl); }
-    toast('Link copied — open Instagram and paste it in your Story or bio 📸', { icon: '📸' });
+    catch { window.prompt(inHindi ? 'Yeh link copy karein:' : 'Copy this link:', articleUrl); }
+    toast(inHindi
+      ? 'Link copy ho gaya — Instagram kholein aur apni Story ya bio me paste karein 📸'
+      : 'Link copied — open Instagram and paste it in your Story or bio 📸', { icon: '📸' });
   };
 
   if (!article) {
@@ -525,7 +537,7 @@ function BlogArticle() {
             className="px-4 py-2 text-white rounded-lg text-sm font-medium bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] hover:opacity-90"
           >📸 Instagram</button>
           <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article?.title ? article.title + ' — ProMedicoz' : 'ProMedicoz')}&url=${encodeURIComponent(articleUrl)}`}
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article?.title ? `${article.title} — ProMedicoz` : 'ProMedicoz')}&url=${encodeURIComponent(articleUrl)}`}
             onClick={() => trackEvent('share_article', { article_slug: slug, method: 'twitter' })}
             target="_blank" rel="noopener noreferrer"
             className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800"
