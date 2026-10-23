@@ -261,14 +261,18 @@ function jsonLdTag(obj) {
 
 // Fetch helper with a timeout (Render free tier can cold-start slowly). Returns
 // parsed JSON or null — callers treat null as "skip", never fail the build.
-async function getJson(url, timeoutMs = 60000) {
-  try {
-    const r = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
-    if (!r.ok) return null;
-    return await r.json();
-  } catch {
-    return null;
+// Retries a few times: the free-tier API occasionally drops or stalls a single
+// request, and without a retry that silently cost us a city page on a build.
+async function getJson(url, timeoutMs = 60000, attempts = 3) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      const r = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
+      if (r.ok) return await r.json();
+    } catch { /* retry below */ }
+    if (i < attempts) await new Promise((res) => setTimeout(res, 2000 * i));
   }
+  console.warn(`[prerender] request failed after ${attempts} attempts: ${url}`);
+  return null;
 }
 
 // Crawler-readable summary of a doctor's public profile — only fields the app
@@ -475,12 +479,67 @@ async function buildRoutes() {
     if (!a || !a.slug) continue;
     const url = `${SITE}/blog/${a.slug}`;
     const card = ogCardFor(a.specialization);
+    const hasHindi = Array.isArray(a.contentHi) && a.contentHi.length > 0;
+    const urlHi = `${url}/hi`;
+    // hreflang pair: tells Google the English and Hinglish pages are
+    // translations of each other, so it shows the right one per searcher.
+    const hreflang = hasHindi
+      ? [{ lang: 'en', href: url }, { lang: 'hi', href: urlHi }, { lang: 'x-default', href: url }]
+      : null;
+
+    // Hinglish sibling page (/blog/:slug/hi) — its own indexable URL with the
+    // Hinglish text in the HTML, for Hindi searches like "kamar dard ka ilaj".
+    if (hasHindi) {
+      const introHi = (a.contentHi.find((b) => b && b.type === 'intro') || {}).text || '';
+      const descHi = String(introHi).replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+      routes.push({
+        path: `/blog/${a.slug}/hi`,
+        title: `${a.title} (Hindi mein)`,
+        description: (descHi.length > 160 ? `${descHi.slice(0, 157).trim()}…` : descHi) || a.description,
+        type: 'article',
+        ogImage: card,
+        htmlLang: 'hi',
+        hreflang,
+        bodyHtml:
+          `<article lang="hi"><h1>${inlineHtml(a.title)}</h1>\n` +
+          `${blocksToHtml(a.contentHi)}\n` +
+          `<p><a href="/blog/${a.slug}">Read in English</a> · <a href="/doctors">Doctor dhoondhein</a></p></article>`,
+        jsonLd: [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            '@id': `${urlHi}#article`,
+            headline: `${a.title} (Hindi mein)`,
+            description: descHi || a.description,
+            image: card,
+            datePublished: a.publishedDate,
+            dateModified: a.publishedDate,
+            inLanguage: 'hi',
+            articleSection: a.specialization,
+            author: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+            publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: `${SITE}/og-image.png` } },
+            mainEntityOfPage: urlHi,
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+              { '@type': 'ListItem', position: 2, name: 'Health Blog', item: `${SITE}/blog` },
+              { '@type': 'ListItem', position: 3, name: `${a.title} (Hindi mein)`, item: urlHi },
+            ],
+          },
+        ],
+      });
+    }
+
     routes.push({
       path: `/blog/${a.slug}`,
       title: a.title,
       description: a.description,
       type: 'article',
       ogImage: card,
+      hreflang,
       // Crawler-readable copy of the article (same text the app renders).
       bodyHtml:
         `<article><h1>${inlineHtml(a.title)}</h1><p>${inlineHtml(a.description)}</p>\n` +
@@ -645,6 +704,19 @@ function applyMeta(template, route) {
       `<div id="root"><div data-prerender="seo" hidden>\n${route.bodyHtml}\n</div></div>`,
       'root'
     );
+  }
+
+  // hreflang alternates (English <-> Hinglish article pairs).
+  if (Array.isArray(route.hreflang) && route.hreflang.length) {
+    const tags = route.hreflang
+      .map((h) => `<link rel="alternate" hreflang="${esc(h.lang)}" href="${esc(h.href)}" />`)
+      .join('\n    ');
+    html = html.replace('</head>', `    ${tags}\n  </head>`);
+  }
+
+  // Document language for the Hinglish pages.
+  if (route.htmlLang) {
+    replaceOnce('<html lang="en">', `<html lang="${esc(route.htmlLang)}">`, 'html-lang');
   }
 
   // Page-specific structured data (Article / Breadcrumb / Physician).

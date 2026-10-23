@@ -162,6 +162,10 @@ function App() {
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
+          {/* Hinglish version of an article as its own indexable page (for Hindi
+              searches). Same component, opened in Hindi; the in-page toggle
+              still works. /blog/:slug above is unchanged. */}
+          <Route path="/blog/:slug/hi" element={<BlogArticle defaultLang="hi" />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />

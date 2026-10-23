@@ -195,7 +195,10 @@ function renderBlock(block, idx, ctx) {
   }
 }
 
-function BlogArticle() {
+// `defaultLang` is 'en' for the normal /blog/:slug route (unchanged behaviour)
+// and 'hi' for the /blog/:slug/hi route, which opens the Hinglish version
+// directly so it can be indexed for Hindi searches.
+function BlogArticle({ defaultLang = 'en' }) {
   const { slug } = useParams();
   const article = articles.find(a => a.slug === slug);
 
@@ -204,10 +207,15 @@ function BlogArticle() {
   // English hard. The toggle only appears when contentHi exists; otherwise the
   // article stays English exactly as before. Default is always English.
   const hasHindi = Array.isArray(article?.contentHi) && article.contentHi.length > 0;
-  const [lang, setLang] = useState('en');
-  // If the reader navigates to a different article that has no Hinglish
-  // version, fall back to English so we never try to render a missing array.
-  useEffect(() => { setLang('en'); }, [slug]);
+  const [lang, setLang] = useState(defaultLang);
+  // Reset to the route's default language when the article changes. (If an
+  // article has no Hinglish version, activeContent below still falls back to
+  // English, so we never try to render a missing array.)
+  useEffect(() => { setLang(defaultLang); }, [slug, defaultLang]);
+  // The /hi route is a separate, indexable page only when a Hinglish version
+  // exists. Its canonical must point at itself (not the English page), or
+  // Google would treat it as a duplicate and drop it.
+  const isHindiPage = defaultLang === 'hi' && hasHindi;
   const activeContent = (lang === 'hi' && hasHindi) ? article.contentHi : article?.content;
 
   // ---- ❤️ Like ----
@@ -382,9 +390,9 @@ function BlogArticle() {
   return (
     <div className="container mx-auto px-4 py-8">
       <SEO
-        title={article.title}
+        title={isHindiPage ? `${article.title} (Hindi mein)` : article.title}
         description={article.description}
-        path={`/blog/${slug}`}
+        path={isHindiPage ? `/blog/${slug}/hi` : `/blog/${slug}`}
         type="article"
       />
       <Helmet>
