@@ -372,6 +372,118 @@ async function fetchCityRoutes(specSlugs, specializationData) {
 
 const API_BASE = 'https://docconnect-fcg6.onrender.com/api';
 
+// Raw public doctor list (filled by fetchDoctorRoutes) — reused for the
+// /doctors and home listing bodies.
+let DOCTORS_RAW = [];
+
+// Home page copy, MIRRORED from TXT.en in src/pages/Home.jsx (that file is JSX,
+// which this Node script can't import). If the home page wording changes,
+// update it here too so the crawler copy keeps matching what users see.
+const HOME_COPY = {
+  heroTitle: 'Find the Right Doctor & Book Instantly',
+  heroSubtitle: 'Consult trusted doctors across India — booked in under 2 minutes.',
+  trust: ['Verified doctors', 'Pay the doctor directly', 'Video, phone or in-person', 'No commission · fair fees'],
+  howHeading: 'How ProMedicoz Works',
+  steps: [
+    { title: 'Find a doctor', desc: 'Search by symptom, specialty, city or language.' },
+    { title: 'Book a slot', desc: 'Pick a time & how to consult — video, phone or clinic.' },
+    { title: 'Doctor confirms', desc: 'Usually within a few hours — you get notified.' },
+    { title: 'Pay & consult', desc: 'Pay the doctor directly — no commission. Then consult.' },
+  ],
+  faqHeading: 'Frequently Asked Questions',
+  faqs: [
+    { q: 'How do I book a doctor on ProMedicoz?', a: 'Search by specialization or symptom, pick a doctor, select a date and time slot, and confirm your booking. The doctor confirms within hours.' },
+    { q: 'Is ProMedicoz free to use?', a: 'Signing up and browsing doctors is free. You only pay the consultation fee directly to the doctor via UPI when your appointment is confirmed.' },
+    { q: 'Can I consult a doctor online through video call?', a: 'Yes, ProMedicoz supports video, phone, and in-person consultations. Choose your preferred mode while booking.' },
+    { q: 'How do I know if a doctor is good?', a: 'Each doctor profile shows their qualification, years of experience, consultation fee, and patient reviews with star ratings.' },
+    { q: 'Can I book an appointment for a family member?', a: 'Yes, you can add family members to your account and book appointments on their behalf.' },
+    { q: 'What if I need to cancel my appointment?', a: 'You can cancel from your dashboard at any time before the appointment. There are no cancellation charges.' },
+  ],
+  ctaHeading: 'Are You a Doctor?',
+  ctaText: 'Join ProMedicoz to reach more patients, manage your schedule, and grow your practice effortlessly.',
+};
+
+const linkItem = (href, text, extra = '') => `<li><a href="${escText(href)}">${escText(text)}</a>${extra ? ` — ${escText(extra)}` : ''}</li>`;
+const doctorLine = (d) => {
+  const spec = (d.specialization || '').replace(/\s+/g, ' ').trim();
+  const city = d.city ? String(d.city).trim() : '';
+  return linkItem(`/dr/${d.slug}`, formatDoctorName(d.name), [spec, city].filter(Boolean).join(', '));
+};
+
+// Attach crawler-readable bodies to the listing / info pages that were still
+// empty: home, /blog, /doctors, the info pages, and the specialization pages.
+// Same rules as the article bodies: hidden, replaced by React on mount, and
+// only content/links the page itself offers (no keyword padding).
+async function attachListingBodies(routes, articles, specializationData) {
+  const byPath = new Map(routes.map((r) => [r.path, r]));
+  const specSlugs = Object.keys(specializationData);
+  const latest = [...articles].sort((a, b) => String(b.publishedDate).localeCompare(String(a.publishedDate)));
+  const cityLinksFor = (slug) => routes.filter((r) => r.path.startsWith(`/specialization/${slug}/`));
+
+  // ---- Home ----
+  const home = byPath.get('/');
+  if (home) {
+    home.bodyHtml =
+      `<main><h1>${escText(HOME_COPY.heroTitle)}</h1><p>${escText(HOME_COPY.heroSubtitle)}</p>` +
+      `<ul>${HOME_COPY.trust.map((t) => `<li>${escText(t)}</li>`).join('')}</ul>` +
+      `<h2>Consult by Specialization</h2><ul>${specSlugs.map((s) => linkItem(`/specialization/${s}`, `${specializationData[s].title} doctors`)).join('')}</ul>` +
+      (DOCTORS_RAW.length ? `<h2>Doctors on ProMedicoz</h2><ul>${DOCTORS_RAW.map(doctorLine).join('')}</ul>` : '') +
+      `<h2>${escText(HOME_COPY.howHeading)}</h2><ol>${HOME_COPY.steps.map((s) => `<li><strong>${escText(s.title)}</strong> — ${escText(s.desc)}</li>`).join('')}</ol>` +
+      `<h2>Latest health articles</h2><ul>${latest.slice(0, 12).map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` +
+      `<h2>${escText(HOME_COPY.faqHeading)}</h2>${HOME_COPY.faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
+      `<h2>${escText(HOME_COPY.ctaHeading)}</h2><p>${escText(HOME_COPY.ctaText)} <a href="/for-doctors">For doctors</a></p></main>`;
+  }
+
+  // ---- /blog: every article (English + Hindi link), newest first ----
+  const blog = byPath.get('/blog');
+  if (blog) {
+    blog.bodyHtml =
+      `<main><h1>Health Blog</h1><p>Expert articles to help you make informed health decisions.</p><ul>` +
+      latest.map((a) => {
+        const hi = Array.isArray(a.contentHi) && a.contentHi.length
+          ? ` (<a href="/blog/${escText(a.slug)}/hi">Hindi mein</a>)` : '';
+        return `<li><a href="/blog/${escText(a.slug)}">${escText(a.title)}</a>${hi} — ${escText(a.specialization || '')}</li>`;
+      }).join('') +
+      `</ul></main>`;
+  }
+
+  // ---- /doctors: every public doctor ----
+  const doctors = byPath.get('/doctors');
+  if (doctors && DOCTORS_RAW.length) {
+    doctors.bodyHtml =
+      `<main><h1>Find &amp; Book Verified Doctors Online in India</h1>` +
+      `<p>Browse doctor profiles, check availability and fees, and book video, phone, or in-person appointments.</p>` +
+      `<ul>${DOCTORS_RAW.map(doctorLine).join('')}</ul>` +
+      `<h2>Browse by specialization</h2><ul>${specSlugs.map((s) => linkItem(`/specialization/${s}`, specializationData[s].title)).join('')}</ul></main>`;
+  }
+
+  // ---- Info pages: their own title + description, plus site navigation ----
+  for (const p of ['/about', '/how-it-works', '/for-doctors', '/install']) {
+    const r = byPath.get(p);
+    if (!r) continue;
+    r.bodyHtml =
+      `<main><h1>${escText(r.title)}</h1><p>${escText(r.description)}</p>` +
+      `<ul>${linkItem('/doctors', 'Find a doctor')}${linkItem('/blog', 'Health blog')}${linkItem('/how-it-works', 'How it works')}${linkItem('/for-doctors', 'For doctors')}</ul></main>`;
+  }
+
+  // ---- Specialization pages: description, doctors, cities, related articles ----
+  for (const slug of specSlugs) {
+    const r = byPath.get(`/specialization/${slug}`);
+    const d = specializationData[slug];
+    if (!r || !d) continue;
+    const list = await getJson(`${API_BASE}/doctors?specialization=${encodeURIComponent(d.title)}&limit=50`);
+    const docs = ((list && list.doctors) || []).filter((x) => x && x.slug && x.name);
+    const related = latest.filter((a) => (OG_CARD_SLUGS[a.specialization] || '') === slug).slice(0, 20);
+    const cities = cityLinksFor(slug);
+    r.bodyHtml =
+      `<main><h1>Best ${escText(d.title)} Doctors Online</h1><p>${escText(d.description)}</p>` +
+      (docs.length ? `<h2>${escText(d.title)} doctors</h2><ul>${docs.map(doctorLine).join('')}</ul>` : '') +
+      (cities.length ? `<h2>Find a ${escText(d.title.toLowerCase())} in your city</h2><ul>${cities.map((c) => linkItem(c.path, c.title.replace(/ - Book Appointment$/, ''))).join('')}</ul>` : '') +
+      (related.length ? `<h2>Related health articles</h2><ul>${related.map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` : '') +
+      `</main>`;
+  }
+}
+
 // Fetch the live doctor list so we can prerender a per-doctor /dr/:slug page
 // with its own OG card. Best-effort: if the API is unreachable at build time,
 // we simply skip doctor pages (they still work as normal SPA routes with the
@@ -383,6 +495,7 @@ async function fetchDoctorRoutes() {
     if (!r.ok) { console.warn(`[prerender] doctor list fetch failed (${r.status}); skipping /dr pages.`); return []; }
     const data = await r.json();
     const list = (data && data.doctors) || [];
+    DOCTORS_RAW = list.filter((d) => d && d.slug && d.name);
     const routes = [];
     for (const d of list) {
       if (!d || !d.slug || !d.name) continue;
@@ -601,6 +714,28 @@ async function buildRoutes() {
   const cityRoutes = await fetchCityRoutes(specSlugs, specializationData);
   routes.push(...cityRoutes);
 
+  // Crawler text for the listing / info / specialization pages.
+  await attachListingBodies(routes, articles, specializationData);
+
+  // Honest <lastmod> for the sitemap. Previously every URL said "today", which
+  // teaches Google to ignore the field. Now:
+  //   - articles (EN + HI): their real publish date (never in the future);
+  //   - pages whose content is live data (home, listings, doctor + city pages):
+  //     the build date, since they genuinely refresh on each deploy;
+  //   - fixed info/legal pages: no lastmod at all (we don't track their edits).
+  const today = new Date().toISOString().slice(0, 10);
+  const pubBySlug = new Map(articles.map((a) => [a.slug, a.publishedDate]));
+  for (const r of routes) {
+    const m = r.path.match(/^\/blog\/([^/]+)(\/hi)?$/);
+    if (m && pubBySlug.has(m[1])) {
+      const d = String(pubBySlug.get(m[1]) || '').slice(0, 10);
+      r.lastmod = /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= today ? d : today;
+    } else if (r.path === '/' || r.path === '/blog' || r.path === '/doctors'
+      || r.path.startsWith('/dr/') || r.path.startsWith('/specialization/')) {
+      r.lastmod = today;
+    }
+  }
+
   // Dedupe by path (defensive — e.g. any accidental duplicate article slug).
   const seen = new Set();
   return routes.filter((r) => {
@@ -753,14 +888,14 @@ function priorityFor(route) {
 }
 
 async function writeSitemap(routes) {
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const body = routes
     .map((route) => {
       const { priority, changefreq } = priorityFor(route);
       return [
         '  <url>',
         `    <loc>${esc(SITE + route.path)}</loc>`,
-        `    <lastmod>${today}</lastmod>`,
+        // Only emit a date we actually know (see the lastmod notes in buildRoutes).
+        ...(route.lastmod ? [`    <lastmod>${route.lastmod}</lastmod>`] : []),
         `    <changefreq>${changefreq}</changefreq>`,
         `    <priority>${priority}</priority>`,
         '  </url>',
@@ -770,6 +905,73 @@ async function writeSitemap(routes) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
   await writeFile(join(DIST, 'sitemap.xml'), xml, 'utf8');
   return routes.length;
+}
+
+// ---- llms.txt (https://llmstxt.org) ----
+// A short plain-text map of the site for AI assistants / AI search tools
+// (ChatGPT, Perplexity, etc.), pointing them at the canonical pages.
+async function writeLlmsTxt(routes) {
+  const pick = (prefix, max) => routes.filter((r) => r.path.startsWith(prefix)).slice(0, max);
+  const line = (r) => `- [${r.title}](${SITE}${r.path}): ${String(r.description || '').replace(/\s+/g, ' ').slice(0, 140)}`;
+  const specPages = routes.filter((r) => /^\/specialization\/[^/]+$/.test(r.path));
+  const txt = [
+    `# ${SITE_NAME}`,
+    '',
+    '> ProMedicoz is an Indian doctor-consultation platform: patients find verified doctors and book video, phone, or in-person appointments, paying the doctor directly by UPI with no platform commission. It also publishes 370+ health articles in English and Hinglish.',
+    '',
+    '## Main pages',
+    `- [Home](${SITE}/): Find and book verified doctors online in India`,
+    `- [Find a doctor](${SITE}/doctors): All doctors with profiles, fees and availability`,
+    `- [Health blog](${SITE}/blog): All health articles`,
+    `- [How it works](${SITE}/how-it-works): How booking, payment and consultation work`,
+    `- [For doctors](${SITE}/for-doctors): Join free, keep 100% of your fee`,
+    '',
+    '## Specialities',
+    ...specPages.map(line),
+    '',
+    '## Doctors',
+    ...pick('/dr/', 100).map(line),
+    '',
+    '## Recent articles',
+    ...routes.filter((r) => /^\/blog\/[^/]+$/.test(r.path)).sort((a, b) => String(b.lastmod).localeCompare(String(a.lastmod))).slice(0, 40).map(line),
+    '',
+    '## Optional',
+    `- [Sitemap](${SITE}/sitemap.xml): Every page, including Hindi (Hinglish) article versions at /blog/<slug>/hi`,
+    `- [Medical disclaimer](${SITE}/medical-disclaimer)`,
+    '',
+  ].join('\n');
+  await writeFile(join(DIST, 'llms.txt'), txt, 'utf8');
+}
+
+// ---- IndexNow (Bing, Yandex, and partners; Bing also powers ChatGPT search
+// and Copilot) ----
+// Pings only on real PRODUCTION deploys (VERCEL_ENV=production), never on local
+// or preview builds, and only for URLs that changed recently — IndexNow asks
+// sites not to resubmit unchanged pages. The key file lives in public/.
+// Best-effort: any failure is logged and ignored, it can never fail the build.
+const INDEXNOW_KEY = '957b5437b1cb5c5b4ccd88fd109bc3a5';
+async function pingIndexNow(routes) {
+  if (process.env.VERCEL_ENV !== 'production') {
+    console.log('[indexnow] skipped (not a production deploy)');
+    return;
+  }
+  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+  const urls = routes
+    .filter((r) => r.lastmod && r.lastmod >= weekAgo)
+    .map((r) => `${SITE}${r.path}`)
+    .slice(0, 10000);
+  if (!urls.length) { console.log('[indexnow] nothing changed recently'); return; }
+  try {
+    const r = await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ host: 'www.promedicoz.in', key: INDEXNOW_KEY, keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`, urlList: urls }),
+      signal: AbortSignal.timeout(15000),
+    });
+    console.log(`[indexnow] submitted ${urls.length} URLs -> HTTP ${r.status}`);
+  } catch (e) {
+    console.warn(`[indexnow] ping failed (ignored): ${e.message}`);
+  }
 }
 
 async function main() {
@@ -815,6 +1017,8 @@ async function main() {
   // pages we actually ship (Vite already copied public/sitemap.xml into dist;
   // this overwrites it with the up-to-date one).
   const sitemapCount = await writeSitemap(routes.filter((r) => !r.noSitemap));
+  await writeLlmsTxt(routes);
+  await pingIndexNow(routes);
 
   console.log(`[prerender] Wrote ${written} prerendered routes (static pages + ${routes.filter(r => r.path.startsWith('/blog/')).length} articles + specializations).`);
   console.log(`[prerender] Wrote dist/sitemap.xml with ${sitemapCount} URLs.`);
