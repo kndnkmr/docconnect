@@ -183,6 +183,191 @@ function doctorCardUrl(doctor) {
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${t}/${pid}.jpg`;
 }
 
+// ============================================
+// SEO body content (crawler-readable copy of what the app renders)
+// ============================================
+// The app is a client-rendered SPA, so the raw HTML used to ship an EMPTY
+// <div id="root"></div> — crawlers that don't run JavaScript (Bing partly, AI
+// search crawlers, Google's first pass) saw no article text at all. We now put
+// a plain-HTML copy of the SAME content inside #root, marked `hidden`, so:
+//   - users never see it (not even a flash before JS loads — design untouched);
+//   - React's createRoot().render() REPLACES everything inside #root on mount,
+//     so the live app renders exactly as before (app code untouched);
+//   - crawlers reading raw HTML get the full, real text.
+// It is the identical content users see once the page loads — not extra or
+// keyword text — so it's a faithful pre-render, not cloaking.
+
+// Escape plain text for HTML, then turn the blog's **bold** markers into
+// <strong> (the only inline formatting the article blocks use).
+function inlineHtml(text) {
+  return escText(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+function escText(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Render the structured article blocks (intro / heading / paragraph / list /
+// steps / table / callout) to semantic HTML.
+function blocksToHtml(blocks) {
+  if (!Array.isArray(blocks)) return '';
+  const out = [];
+  for (const b of blocks) {
+    if (!b || !b.type) continue;
+    switch (b.type) {
+      case 'intro':
+      case 'paragraph':
+        out.push(`<p>${inlineHtml(b.text)}</p>`);
+        break;
+      case 'heading':
+        out.push(`<h2>${inlineHtml(b.text)}</h2>`);
+        break;
+      case 'list':
+        out.push(`<ul>${(b.items || []).map((i) => `<li>${inlineHtml(i)}</li>`).join('')}</ul>`);
+        break;
+      case 'steps':
+        out.push(`<ol>${(b.items || []).map((i) => `<li>${inlineHtml(i)}</li>`).join('')}</ol>`);
+        break;
+      case 'table': {
+        const head = (b.headers || []).map((h) => `<th>${inlineHtml(h)}</th>`).join('');
+        const rows = (b.rows || []).map((r) => `<tr>${(r || []).map((c) => `<td>${inlineHtml(c)}</td>`).join('')}</tr>`).join('');
+        out.push(`<table>${head ? `<thead><tr>${head}</tr></thead>` : ''}<tbody>${rows}</tbody></table>`);
+        break;
+      }
+      case 'callout':
+        // Callouts carry either a `text` paragraph, an `items` bullet list
+        // (e.g. red-flag symptom lists), or both.
+        out.push(
+          `<aside>${b.title ? `<strong>${inlineHtml(b.title)}</strong> ` : ''}` +
+          `${b.text ? inlineHtml(b.text) : ''}` +
+          `${Array.isArray(b.items) && b.items.length ? `<ul>${b.items.map((i) => `<li>${inlineHtml(i)}</li>`).join('')}</ul>` : ''}` +
+          `</aside>`
+        );
+        break;
+      default:
+        if (b.text) out.push(`<p>${inlineHtml(b.text)}</p>`);
+    }
+  }
+  return out.join('\n');
+}
+
+// Safe JSON for an inline <script type="application/ld+json"> — escape '<' so a
+// stray "</script>" inside data can never break out of the tag.
+function jsonLdTag(obj) {
+  return `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
+}
+
+// Fetch helper with a timeout (Render free tier can cold-start slowly). Returns
+// parsed JSON or null — callers treat null as "skip", never fail the build.
+async function getJson(url, timeoutMs = 60000) {
+  try {
+    const r = await fetch(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(timeoutMs) });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
+// Crawler-readable summary of a doctor's public profile — only fields the app
+// already shows publicly on the profile page (no phone/UPI/private data).
+function doctorBodyHtml(d) {
+  const name = formatDoctorName(d.name);
+  const spec = (d.specialization || 'Doctor').replace(/\s+/g, ' ').trim();
+  const facts = [];
+  if (d.qualification) facts.push(`<li>Qualification: ${escText(d.qualification)}</li>`);
+  if (Number(d.experience) > 0) facts.push(`<li>Experience: ${escText(d.experience)} years</li>`);
+  if (d.city) facts.push(`<li>City: ${escText(String(d.city).trim())}</li>`);
+  if (Number(d.consultationFee) > 0) facts.push(`<li>Consultation fee: Rs. ${escText(d.consultationFee)}</li>`);
+  if (Array.isArray(d.consultationModes) && d.consultationModes.length) facts.push(`<li>Consultation: ${escText(d.consultationModes.join(', '))}</li>`);
+  if (Array.isArray(d.languagesSpoken) && d.languagesSpoken.length) facts.push(`<li>Speaks: ${escText(d.languagesSpoken.join(', '))}</li>`);
+  return (
+    `<article><h1>${escText(name)} — ${escText(spec)}</h1>` +
+    (d.bio ? `<p>${escText(d.bio)}</p>` : '') +
+    (facts.length ? `<ul>${facts.join('')}</ul>` : '') +
+    (d.clinicAddress ? `<p>Clinic: ${escText(d.clinicAddress)}</p>` : '') +
+    `<p>Book an appointment with ${escText(name)} on ProMedicoz — video, phone, or in person. Pay the doctor directly, no commission.</p>` +
+    `<p><a href="/doctors">Find more doctors</a></p></article>`
+  );
+}
+
+// Physician structured data for the doctor page. aggregateRating is included
+// only when the doctor has real in-app reviews (never invented).
+function doctorJsonLd(d) {
+  const name = formatDoctorName(d.name);
+  const obj = {
+    '@context': 'https://schema.org',
+    '@type': 'Physician',
+    '@id': `${SITE}/dr/${d.slug}#physician`,
+    name,
+    url: `${SITE}/dr/${d.slug}`,
+    medicalSpecialty: (d.specialization || '').replace(/\s+/g, ' ').trim() || undefined,
+    description: d.bio || undefined,
+    image: d.profilePhoto && String(d.profilePhoto).startsWith('http') ? d.profilePhoto : undefined,
+    address: d.city ? { '@type': 'PostalAddress', addressLocality: String(d.city).trim(), addressCountry: 'IN' } : undefined,
+    priceRange: Number(d.consultationFee) > 0 ? `Rs. ${d.consultationFee}` : undefined,
+    knowsLanguage: Array.isArray(d.languagesSpoken) && d.languagesSpoken.length ? d.languagesSpoken : undefined,
+  };
+  const rating = d.rating || {};
+  if (Number(rating.count) > 0 && Number(rating.average) > 0) {
+    obj.aggregateRating = { '@type': 'AggregateRating', ratingValue: rating.average, reviewCount: rating.count, bestRating: 5 };
+  }
+  // Drop undefined keys for a clean payload.
+  return JSON.parse(JSON.stringify(obj));
+}
+
+// City landing pages (/specialization/:slug/:city) — only for city +
+// specialty combinations that actually have doctors (data-driven, so we never
+// generate empty "doorway" pages). Titles mirror SpecializationPage's own SEO
+// tag exactly, and the city slug/name use the same conversion the page uses.
+const cityToSlug = (city) => String(city).trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+const slugToCityName = (slug) => slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+async function fetchCityRoutes(specSlugs, specializationData) {
+  const routes = [];
+  for (const slug of specSlugs) {
+    const d = specializationData[slug];
+    if (!d) continue;
+    const data = await getJson(`${API_BASE}/doctors/cities?specialization=${encodeURIComponent(d.title)}`);
+    const cities = (data && data.cities) || [];
+    for (const c of cities) {
+      const citySlug = cityToSlug(c.city || '');
+      if (!citySlug) continue;
+      const cityName = slugToCityName(citySlug);
+      const list = await getJson(`${API_BASE}/doctors?specialization=${encodeURIComponent(d.title)}&city=${encodeURIComponent(c.city)}&limit=50`);
+      const docs = ((list && list.doctors) || []).filter((x) => x && x.slug && x.name);
+      if (docs.length === 0) continue; // never prerender an empty city page
+      const path = `/specialization/${slug}/${citySlug}`;
+      routes.push({
+        path,
+        title: `Best ${d.title} Doctors in ${cityName} - Book Appointment`,
+        description: `Consult the best ${d.title.toLowerCase()} doctors in ${cityName} on ${SITE_NAME}. Book video, phone or in-person appointments. ${d.description}`,
+        type: 'website',
+        ogImage: `${SITE}/og/blog/${slug}.png`,
+        bodyHtml:
+          `<article><h1>Best ${escText(d.title)} Doctors in ${escText(cityName)}</h1><p>${escText(d.description)}</p>` +
+          `<ul>${docs.map((x) => `<li><a href="/dr/${escText(x.slug)}">${escText(formatDoctorName(x.name))}</a> — ${escText((x.specialization || '').trim())}</li>`).join('')}</ul>` +
+          `<p><a href="/specialization/${slug}">All ${escText(d.title)} doctors</a></p></article>`,
+        jsonLd: [{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: d.title, item: `${SITE}/specialization/${slug}` },
+            { '@type': 'ListItem', position: 3, name: `${d.title} in ${cityName}`, item: `${SITE}${path}` },
+          ],
+        }],
+      });
+    }
+  }
+  console.log(`[prerender] Built ${routes.length} city landing pages.`);
+  return routes;
+}
+
+const API_BASE = 'https://docconnect-fcg6.onrender.com/api';
+
 // Fetch the live doctor list so we can prerender a per-doctor /dr/:slug page
 // with its own OG card. Best-effort: if the API is unreachable at build time,
 // we simply skip doctor pages (they still work as normal SPA routes with the
@@ -210,9 +395,11 @@ async function fetchDoctorRoutes() {
           'वीडियो, फ़ोन या क्लिनिक पर परामर्श। पैसे सीधे डॉक्टर को, कोई कमीशन नहीं।',
         type: 'profile',
         ogImage: doctorCardUrl(d),
-        // Doctor pages are personal landing pages, not something we want in the
-        // sitemap/index alongside the canonical /doctors list — mark noSitemap.
-        noSitemap: true,
+        // Doctor pages ARE now in the sitemap: a search for a doctor's own name
+        // ("Dr Pooja Singh gynaecologist Bhilai") is high-intent, and /dr/:slug
+        // is the doctor's canonical page (the app's SEO tag uses this path too).
+        bodyHtml: doctorBodyHtml(d),
+        jsonLd: [doctorJsonLd(d)],
       });
     }
     console.log(`[prerender] Fetched ${routes.length} doctor pages for /dr/:slug.`);
@@ -286,12 +473,45 @@ async function buildRoutes() {
   // share card (og:image) at the matching per-category card in /og/blog/.
   for (const a of articles) {
     if (!a || !a.slug) continue;
+    const url = `${SITE}/blog/${a.slug}`;
+    const card = ogCardFor(a.specialization);
     routes.push({
       path: `/blog/${a.slug}`,
       title: a.title,
       description: a.description,
       type: 'article',
-      ogImage: ogCardFor(a.specialization),
+      ogImage: card,
+      // Crawler-readable copy of the article (same text the app renders).
+      bodyHtml:
+        `<article><h1>${inlineHtml(a.title)}</h1><p>${inlineHtml(a.description)}</p>\n` +
+        `${blocksToHtml(a.content)}\n` +
+        `<p><a href="/blog">ProMedicoz Health Blog</a> · <a href="/doctors">Find a doctor</a></p></article>`,
+      jsonLd: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          '@id': `${url}#article`,
+          headline: a.title,
+          description: a.description,
+          image: card,
+          datePublished: a.publishedDate,
+          dateModified: a.publishedDate,
+          inLanguage: 'en-IN',
+          articleSection: a.specialization,
+          author: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+          publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: `${SITE}/og-image.png` } },
+          mainEntityOfPage: url,
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: 'Health Blog', item: `${SITE}/blog` },
+            { '@type': 'ListItem', position: 3, name: a.title, item: url },
+          ],
+        },
+      ],
     });
   }
 
@@ -317,6 +537,10 @@ async function buildRoutes() {
   // Best-effort: skipped if the API is unreachable at build time.
   const doctorRoutes = await fetchDoctorRoutes();
   routes.push(...doctorRoutes);
+
+  // City landing pages (only real city + specialty combos that have doctors).
+  const cityRoutes = await fetchCityRoutes(specSlugs, specializationData);
+  routes.push(...cityRoutes);
 
   // Dedupe by path (defensive — e.g. any accidental duplicate article slug).
   const seen = new Set();
@@ -413,6 +637,21 @@ function applyMeta(template, route) {
     'twitter:description'
   );
 
+  // Crawler-readable body copy, inside #root but `hidden` (never shown to
+  // users; React replaces #root's contents on mount). See blocksToHtml notes.
+  if (route.bodyHtml) {
+    replaceOnce(
+      '<div id="root"></div>',
+      `<div id="root"><div data-prerender="seo" hidden>\n${route.bodyHtml}\n</div></div>`,
+      'root'
+    );
+  }
+
+  // Page-specific structured data (Article / Breadcrumb / Physician).
+  if (Array.isArray(route.jsonLd) && route.jsonLd.length) {
+    html = html.replace('</head>', `    ${route.jsonLd.map(jsonLdTag).join('\n    ')}\n  </head>`);
+  }
+
   // Inject a canonical link (index.html has none in the static head). We add it
   // right before the closing </head> so it's always present in raw HTML.
   const canonicalTag = `<link rel="canonical" href="${eUrl}" />`;
@@ -436,6 +675,7 @@ function priorityFor(route) {
   if (route.path === '/blog') return { priority: '0.8', changefreq: 'weekly' };
   if (route.path.startsWith('/specialization/')) return { priority: '0.8', changefreq: 'weekly' };
   if (route.path.startsWith('/blog/')) return { priority: '0.7', changefreq: 'monthly' };
+  if (route.path.startsWith('/dr/')) return { priority: '0.6', changefreq: 'weekly' };
   // Other static pages (about, how-it-works, legal, etc.)
   return { priority: '0.5', changefreq: 'monthly' };
 }
