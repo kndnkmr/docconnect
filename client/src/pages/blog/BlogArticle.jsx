@@ -3,7 +3,19 @@ import { useParams, Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { articles } from './blogData';
+// Light metadata for ALL articles (title, date, specialty…) — used to find this
+// article and build the related-articles list.
+import { articleMeta as articles } from './blogMeta';
+
+// The article BODY (content + Hinglish contentHi) is loaded on demand, one
+// small file per article, instead of bundling all 373 articles (~1 MB
+// gzipped) into this page. Files are generated into ./articles/ from
+// blogData.js by scripts/gen-blog-meta.mjs. Vite turns each into its own chunk.
+const ARTICLE_BODIES = import.meta.glob('./articles/*.js');
+const loadArticleBody = (slug) => {
+  const load = ARTICLE_BODIES[`./articles/${slug}.js`];
+  return load ? load().then((m) => m.default) : Promise.resolve(null);
+};
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
 import { trackEvent } from '../../components/Analytics';
@@ -200,7 +212,24 @@ function renderBlock(block, idx, ctx) {
 // directly so it can be indexed for Hindi searches.
 function BlogArticle({ defaultLang = 'en' }) {
   const { slug } = useParams();
-  const article = articles.find(a => a.slug === slug);
+  const meta = articles.find(a => a.slug === slug);
+
+  // Load this article's body. `loaded` remembers which slug it belongs to, so
+  // switching articles never shows the previous article's text.
+  const [loaded, setLoaded] = useState({ slug: null, body: null, failed: false });
+  useEffect(() => {
+    if (!meta) return undefined;
+    let cancelled = false;
+    loadArticleBody(slug)
+      .then((body) => { if (!cancelled) setLoaded({ slug, body, failed: !body }); })
+      .catch(() => { if (!cancelled) setLoaded({ slug, body: null, failed: true }); });
+    return () => { cancelled = true; };
+  }, [slug, meta]);
+  const body = loaded.slug === slug ? loaded.body : null;
+  const bodyFailed = loaded.slug === slug && loaded.failed;
+  // Same shape as before (meta + content + contentHi), so everything below
+  // is unchanged. Null until the body has loaded.
+  const article = meta && body ? { ...meta, ...body } : null;
 
   // ---- Language (English | Hinglish) ----
   // Some articles have a Hinglish version (contentHi) for readers who find
@@ -350,6 +379,26 @@ function BlogArticle({ defaultLang = 'en' }) {
       ? 'Link copy ho gaya — Instagram kholein aur apni Story ya bio me paste karein 📸'
       : 'Link copied — open Instagram and paste it in your Story or bio 📸', { icon: '📸' });
   };
+
+  // Known article whose body is still downloading: show the same loading
+  // placeholder the app uses for lazy pages (never a misleading "not found").
+  if (meta && !article && !bodyFailed) {
+    return (
+      <div className="flex-grow flex items-center justify-center py-20 text-gray-500">Loading…</div>
+    );
+  }
+
+  // Known article, but its body couldn't be fetched (e.g. the connection
+  // dropped) — offer a retry rather than claiming it doesn't exist.
+  if (meta && bodyFailed) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold text-gray-800">Couldn't load this article</h1>
+        <p className="text-gray-600 mt-2">Please check your connection and try again.</p>
+        <button onClick={() => window.location.reload()} className="text-primary-600 hover:underline mt-4 inline-block">Try again</button>
+      </div>
+    );
+  }
 
   if (!article) {
     return (

@@ -39,3 +39,8 @@ client/dist/
 # every build (prebuild step). It is a build artifact, not source — the build
 # (locally and on Vercel) always regenerates it, so it should not be tracked.
 client/src/pages/blog/blogMeta.js
+
+# Per-article body files (one small module per article, for fast article
+# pages). Also generated from blogData.js by scripts/gen-blog-meta.mjs on every
+# build and dev start (prebuild / predev).
+client/src/pages/blog/articles/

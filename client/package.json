@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/gen-blog-meta.mjs",
     "dev": "vite",
     "gen:blog-meta": "node scripts/gen-blog-meta.mjs",
     "prebuild": "node scripts/gen-blog-meta.mjs",

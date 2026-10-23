@@ -42,29 +42,34 @@ import Register from './pages/Register';
 import DoctorList from './pages/DoctorList';
 import DoctorProfile from './pages/DoctorProfile';
 import SpecializationPage from './pages/SpecializationPage';
-import VerifyEmail from './pages/VerifyEmail';
 // Blog pages are lazy-loaded so they only download when a visitor opens /blog.
-// Data is also split for weight: the LIST page (BlogList) loads only the light
-// article metadata (blogMeta.js), while the heavy full article content
-// (blogData.js) is bundled with the ARTICLE page (BlogArticle) and only
-// downloads when someone actually opens an article — so browsing the blog list
-// stays lightweight no matter how many articles we add.
+// The LIST page loads only the light article metadata (blogMeta.js); the
+// ARTICLE page loads just the one article being read (one small file per
+// article, see BlogArticle.jsx) — so blog pages stay light however many
+// articles we add.
 const BlogList = lazy(() => import('./pages/blog/BlogList'));
 const BlogArticle = lazy(() => import('./pages/blog/BlogArticle'));
-import TermsAndConditions from './pages/TermsAndConditions';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import MedicalDisclaimer from './pages/MedicalDisclaimer';
-import CancellationRefund from './pages/CancellationRefund';
-import AboutUs from './pages/AboutUs';
-import ForDoctors from './pages/ForDoctors';
-import HowItWorks from './pages/HowItWorks';
-import InstallApp from './pages/InstallApp';
-import Dashboard from './pages/Dashboard';
-import BookAppointment from './pages/BookAppointment';
-import BookingConfirmation from './pages/BookingConfirmation';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import AdminDashboard from './pages/AdminDashboard';
+
+// Pages most visitors never open on their first visit are also loaded on
+// demand, so the first download (Home / doctor list / doctor profile /
+// specialty pages / login) stays small and fast on mobile. Each shows the same
+// "Loading…" fallback below for a moment the first time it's opened.
+// Behaviour and design are unchanged.
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const MedicalDisclaimer = lazy(() => import('./pages/MedicalDisclaimer'));
+const CancellationRefund = lazy(() => import('./pages/CancellationRefund'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
+const ForDoctors = lazy(() => import('./pages/ForDoctors'));
+const HowItWorks = lazy(() => import('./pages/HowItWorks'));
+const InstallApp = lazy(() => import('./pages/InstallApp'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const BookAppointment = lazy(() => import('./pages/BookAppointment'));
+const BookingConfirmation = lazy(() => import('./pages/BookingConfirmation'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // ---- Protected Route Component ----
 // A wrapper that checks: "Is the user logged in? If not, redirect to login."

@@ -17,7 +17,7 @@
 // importing blogData (it needs the full content). Result: the blog list page
 // loads only the small metadata file, not the megabyte of article bodies.
 
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile, mkdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -25,6 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const BLOG_DIR = join(__dirname, '..', 'src', 'pages', 'blog');
 const SOURCE = join(BLOG_DIR, 'blogData.js');
 const OUT = join(BLOG_DIR, 'blogMeta.js');
+const ARTICLES_DIR = join(BLOG_DIR, 'articles');
 
 // The lightweight fields the list/cards/daily-tip actually use. Deliberately
 // EXCLUDES `content` (the heavy part).
@@ -69,6 +70,25 @@ async function main() {
 
   await writeFile(OUT, header + body, 'utf8');
   console.log(`[gen-blog-meta] Wrote ${meta.length} article metadata entries to blogMeta.js`);
+
+  // ---- One small body file per article (for fast article pages) ----
+  // The ARTICLE page used to import all of blogData.js (~3.5 MB, ~1 MB
+  // gzipped) just to show one article. Now each article's body (content +
+  // contentHi) gets its own tiny module in articles/<slug>.js, and the article
+  // page loads only the one being read (via import.meta.glob). Regenerated from
+  // scratch every run so renamed/removed articles never leave stale files.
+  // The folder is gitignored — it's build output derived from blogData.js.
+  await rm(ARTICLES_DIR, { recursive: true, force: true });
+  await mkdir(ARTICLES_DIR, { recursive: true });
+  for (const a of articles) {
+    const bodyOnly = { content: a.content || [], contentHi: a.contentHi || [] };
+    await writeFile(
+      join(ARTICLES_DIR, `${a.slug}.js`),
+      `// AUTO-GENERATED from blogData.js by scripts/gen-blog-meta.mjs — do not edit.\nexport default ${JSON.stringify(bodyOnly)};\n`,
+      'utf8'
+    );
+  }
+  console.log(`[gen-blog-meta] Wrote ${articles.length} per-article body files to articles/`);
 }
 
 main().catch((err) => {
