@@ -324,7 +324,11 @@ function DoctorProfile({ clinicMode = false }) {
               : `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}`)
           : 'Doctor Profile'}
         description={doctor ? `Book an appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: Rs. ${doctor.consultationFee || 'N/A'}.` : ''}
-        path={clinicMode && doctor?.slug ? `/dr/${doctor.slug}` : `/doctors/${id}`}
+        // Canonical is /dr/:slug on BOTH routes, so Google treats /doctors/:id
+        // and /dr/:slug as one page (the /dr one, which is in the sitemap)
+        // instead of two competing copies. Falls back to /doctors/:id only for
+        // a doctor who somehow has no slug yet.
+        path={doctor?.slug ? `/dr/${doctor.slug}` : `/doctors/${id}`}
         type="profile"
       />
       {doctor && <DoctorSchema doctor={doctor} />}
