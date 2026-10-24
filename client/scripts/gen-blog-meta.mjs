@@ -80,8 +80,15 @@ async function main() {
   // The folder is gitignored — it's build output derived from blogData.js.
   await rm(ARTICLES_DIR, { recursive: true, force: true });
   await mkdir(ARTICLES_DIR, { recursive: true });
+  // Hinglish titles (used for the Hindi page's tab/search title). Travels in
+  // each article's own body file, so it adds nothing to the shared bundles.
+  const { titlesHi } = await import(`file://${join(BLOG_DIR, 'titlesHi.js')}`);
+  const noHiTitle = articles.filter((a) => !titlesHi[a.slug]).map((a) => a.slug);
+  if (noHiTitle.length) {
+    console.warn(`[gen-blog-meta] ${noHiTitle.length} article(s) have no Hinglish title in titlesHi.js (Hindi page falls back to the English title): ${noHiTitle.join(', ')}`);
+  }
   for (const a of articles) {
-    const bodyOnly = { content: a.content || [], contentHi: a.contentHi || [] };
+    const bodyOnly = { content: a.content || [], contentHi: a.contentHi || [], titleHi: titlesHi[a.slug] || '' };
     await writeFile(
       join(ARTICLES_DIR, `${a.slug}.js`),
       `// AUTO-GENERATED from blogData.js by scripts/gen-blog-meta.mjs — do not edit.\nexport default ${JSON.stringify(bodyOnly)};\n`,

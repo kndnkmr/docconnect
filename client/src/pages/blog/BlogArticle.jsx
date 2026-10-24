@@ -439,7 +439,7 @@ function BlogArticle({ defaultLang = 'en' }) {
   return (
     <div className="container mx-auto px-4 py-8">
       <SEO
-        title={isHindiPage ? `${article.title} (Hindi mein)` : article.title}
+        title={isHindiPage ? (article.titleHi || `${article.title} (Hindi mein)`) : article.title}
         description={article.description}
         path={isHindiPage ? `/blog/${slug}/hi` : `/blog/${slug}`}
         type="article"

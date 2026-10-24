@@ -376,6 +376,9 @@ const API_BASE = 'https://docconnect-fcg6.onrender.com/api';
 // /doctors and home listing bodies.
 let DOCTORS_RAW = [];
 
+// Hinglish titles keyed by slug (loaded in buildRoutes from titlesHi.js).
+let TITLES_HI = {};
+
 // Home page copy, MIRRORED from TXT.en in src/pages/Home.jsx (that file is JSX,
 // which this Node script can't import). If the home page wording changes,
 // update it here too so the crawler copy keeps matching what users see.
@@ -441,7 +444,7 @@ async function attachListingBodies(routes, articles, specializationData) {
       `<main><h1>Health Blog</h1><p>Expert articles to help you make informed health decisions.</p><ul>` +
       latest.map((a) => {
         const hi = Array.isArray(a.contentHi) && a.contentHi.length
-          ? ` (<a href="/blog/${escText(a.slug)}/hi">Hindi mein</a>)` : '';
+          ? ` (<a href="/blog/${escText(a.slug)}/hi">${escText(TITLES_HI[a.slug] || 'Hindi mein')}</a>)` : '';
         return `<li><a href="/blog/${escText(a.slug)}">${escText(a.title)}</a>${hi} — ${escText(a.specialization || '')}</li>`;
       }).join('') +
       `</ul></main>`;
@@ -560,12 +563,21 @@ const SPECIALIZATIONS = {
   'dentist': { title: 'Dentist', description: 'Dentists provide comprehensive oral healthcare including cleanings, fillings, root canals, braces, and gum disease treatment.' },
   'general-physician': { title: 'General Physician', description: 'General physicians are your first point of contact for most health concerns. They diagnose, treat, and refer to specialists when needed.' },
   'ent-specialist': { title: 'ENT Specialist', description: 'ENT specialists treat conditions of the ear, nose, throat, head, and neck including hearing loss, sinusitis, and tonsillitis.' },
+  'gastroenterologist': { title: 'Gastroenterologist', description: 'Gastroenterologists diagnose and treat problems of the stomach, intestines, liver, and digestive system — from acidity and constipation to liver disease.' },
+  'pulmonologist': { title: 'Pulmonologist', description: 'Pulmonologists diagnose and treat conditions of the lungs and airways, including asthma, chronic cough, breathlessness, COPD, and tuberculosis.' },
+  'endocrinologist': { title: 'Endocrinologist', description: 'Endocrinologists treat hormone-related conditions such as diabetes, thyroid disorders, PCOS hormone problems, and obesity.' },
+  'ophthalmologist': { title: 'Ophthalmologist', description: 'Ophthalmologists diagnose and treat eye conditions — from blurry vision and eye infections to cataract and glaucoma.' },
+  'urologist': { title: 'Urologist', description: 'Urologists treat conditions of the urinary tract, kidneys, bladder, and prostate, including kidney stones and urinary infections.' },
+  'nephrologist': { title: 'Nephrologist', description: 'Nephrologists treat kidney diseases, including chronic kidney disease, kidney problems from diabetes and high blood pressure, and dialysis care.' },
+  'physiotherapist': { title: 'Physiotherapist', description: 'Physiotherapists help you recover movement and reduce pain through exercise, posture correction, and therapy — for back pain, injuries, and after surgery.' },
 };
 
 // ---- Build the list of routes to prerender ----
 async function buildRoutes() {
   // Blog articles — single source of truth from blogData.js (plain data module).
   const { articles } = await import('../src/pages/blog/blogData.js');
+  // Hinglish titles for the Hindi article pages (plain data module).
+  ({ titlesHi: TITLES_HI } = await import('../src/pages/blog/titlesHi.js'));
   const specializationData = SPECIALIZATIONS;
 
   const routes = [];
@@ -605,9 +617,12 @@ async function buildRoutes() {
     if (hasHindi) {
       const introHi = (a.contentHi.find((b) => b && b.type === 'intro') || {}).text || '';
       const descHi = String(introHi).replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+      // Hinglish title (src/pages/blog/titlesHi.js), falling back to the
+      // English title + "(Hindi mein)" for any article not translated yet.
+      const titleHi = TITLES_HI[a.slug] || `${a.title} (Hindi mein)`;
       routes.push({
         path: `/blog/${a.slug}/hi`,
-        title: `${a.title} (Hindi mein)`,
+        title: titleHi,
         description: (descHi.length > 160 ? `${descHi.slice(0, 157).trim()}…` : descHi) || a.description,
         type: 'article',
         ogImage: card,
@@ -622,7 +637,7 @@ async function buildRoutes() {
             '@context': 'https://schema.org',
             '@type': 'Article',
             '@id': `${urlHi}#article`,
-            headline: `${a.title} (Hindi mein)`,
+            headline: titleHi,
             description: descHi || a.description,
             image: card,
             datePublished: a.publishedDate,
@@ -639,7 +654,7 @@ async function buildRoutes() {
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
               { '@type': 'ListItem', position: 2, name: 'Health Blog', item: `${SITE}/blog` },
-              { '@type': 'ListItem', position: 3, name: `${a.title} (Hindi mein)`, item: urlHi },
+              { '@type': 'ListItem', position: 3, name: titleHi, item: urlHi },
             ],
           },
         ],
@@ -691,6 +706,9 @@ async function buildRoutes() {
   const specSlugs = [
     'cardiologist', 'dentist', 'dermatologist', 'ent-specialist', 'general-physician',
     'gynaecologist', 'neurologist', 'orthopedic', 'pediatrician', 'psychiatrist',
+    // Added: topics with many articles but no landing page until now.
+    'gastroenterologist', 'pulmonologist', 'endocrinologist', 'ophthalmologist',
+    'urologist', 'nephrologist', 'physiotherapist',
   ];
   for (const slug of specSlugs) {
     const d = specializationData[slug];

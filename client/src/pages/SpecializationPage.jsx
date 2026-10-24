@@ -152,6 +152,90 @@ const specializationData = {
       { q: 'When is a microbiologist involved in my care?', a: 'Typically when a doctor orders cultures or specialised infection tests, or for complex or antibiotic-resistant infections.' },
     ]
   },
+  'gastroenterologist': {
+    title: 'Gastroenterologist',
+    subtitle: 'Stomach, Liver & Digestion Specialist',
+    description: 'Gastroenterologists diagnose and treat problems of the stomach, intestines, liver, and digestive system — from acidity and constipation to liver disease.',
+    conditions: ['Acidity & heartburn', 'Constipation', 'Diarrhoea', 'Bloating & gas', 'Stomach pain', 'Fatty liver', 'IBS', 'Piles'],
+    icon: '🍎',
+    faqs: [
+      { q: 'When should I see a gastroenterologist?', a: 'See a gastroenterologist for acidity or stomach pain that keeps coming back, constipation or loose motions lasting more than 2 weeks, blood in stool, or unexplained weight loss.' },
+      { q: 'Can stomach problems be treated online?', a: 'Many digestive problems such as acidity, bloating, and constipation can be assessed online first. The doctor may recommend tests or an in-person visit if needed.' },
+      { q: 'When is stomach pain an emergency?', a: 'Severe sudden stomach pain, vomiting blood, black stools, or pain with high fever needs urgent care — go to the nearest hospital.' },
+    ]
+  },
+  'pulmonologist': {
+    title: 'Pulmonologist',
+    subtitle: 'Lung & Breathing Specialist',
+    description: 'Pulmonologists diagnose and treat conditions of the lungs and airways, including asthma, chronic cough, breathlessness, COPD, and tuberculosis.',
+    conditions: ['Asthma', 'Chronic cough', 'Breathlessness', 'COPD', 'Tuberculosis', 'Pneumonia', 'Allergic bronchitis', 'Sleep apnoea'],
+    icon: '🫁',
+    faqs: [
+      { q: 'When should I see a pulmonologist?', a: 'See a pulmonologist for a cough lasting more than 3 weeks, wheezing, breathlessness during daily activities, or frequent chest infections.' },
+      { q: 'Can asthma be managed online?', a: 'Yes, follow-ups, inhaler technique, and medication reviews work well online. Lung function tests may need a clinic visit.' },
+      { q: 'When is breathlessness an emergency?', a: 'Sudden severe breathlessness, bluish lips, or chest pain with breathlessness needs urgent care — go to the nearest hospital.' },
+    ]
+  },
+  'endocrinologist': {
+    title: 'Endocrinologist',
+    subtitle: 'Diabetes, Thyroid & Hormone Specialist',
+    description: 'Endocrinologists treat hormone-related conditions such as diabetes, thyroid disorders, PCOS hormone problems, and obesity.',
+    conditions: ['Diabetes', 'Thyroid problems', 'PCOS hormones', 'Obesity', 'Vitamin D deficiency', 'Growth problems', 'Osteoporosis', 'Adrenal disorders'],
+    icon: '🩸',
+    faqs: [
+      { q: 'When should I see an endocrinologist?', a: 'See an endocrinologist if your diabetes is hard to control, you have a thyroid problem, or you have symptoms of a hormone imbalance such as unexplained weight change or tiredness.' },
+      { q: 'Can diabetes be managed through online consultations?', a: 'Yes, reviewing sugar readings, adjusting medicines, and diet advice work well online. Regular blood tests are still needed.' },
+      { q: 'Should a thyroid problem be treated by an endocrinologist?', a: 'Simple thyroid problems are often managed by a General Physician. An endocrinologist helps when it is hard to control or unusual.' },
+    ]
+  },
+  'ophthalmologist': {
+    title: 'Ophthalmologist',
+    subtitle: 'Eye & Vision Specialist',
+    description: 'Ophthalmologists diagnose and treat eye conditions — from blurry vision and eye infections to cataract and glaucoma.',
+    conditions: ['Blurry vision', 'Eye infection', 'Red or itchy eyes', 'Cataract', 'Glaucoma', 'Dry eyes', 'Diabetic eye checks', 'Eye strain'],
+    icon: '👁️',
+    faqs: [
+      { q: 'When should I see an ophthalmologist?', a: 'See an eye specialist for blurry or reduced vision, eye pain, redness that does not settle, flashes or floaters, or a yearly check if you have diabetes.' },
+      { q: 'Can eye problems be checked online?', a: 'Infections, allergies, and dry eyes can often be assessed online. Vision tests and eye pressure checks need a clinic visit.' },
+      { q: 'When is an eye problem an emergency?', a: 'Sudden loss of vision, a chemical splash, or an eye injury needs urgent care — go to the nearest hospital.' },
+    ]
+  },
+  'urologist': {
+    title: 'Urologist',
+    subtitle: 'Kidney, Urinary & Prostate Specialist',
+    description: 'Urologists treat conditions of the urinary tract, kidneys, bladder, and prostate, including kidney stones and urinary infections.',
+    conditions: ['Kidney stones', 'Urinary infection (UTI)', 'Burning urination', 'Frequent urination', 'Prostate problems', 'Blood in urine', 'Urine leakage', 'Male sexual health'],
+    icon: '💧',
+    faqs: [
+      { q: 'When should I see a urologist?', a: 'See a urologist for kidney stone pain, repeated urinary infections, blood in urine, difficulty passing urine, or prostate problems.' },
+      { q: 'Can urinary problems be discussed online?', a: 'Yes, many urinary problems can be assessed online first, privately. The doctor may recommend urine tests or an ultrasound.' },
+      { q: 'When is a urinary problem an emergency?', a: 'Being unable to pass urine, severe kidney pain with fever, or heavy blood in urine needs urgent care.' },
+    ]
+  },
+  'nephrologist': {
+    title: 'Nephrologist',
+    subtitle: 'Kidney Specialist',
+    description: 'Nephrologists treat kidney diseases, including chronic kidney disease, kidney problems from diabetes and high blood pressure, and dialysis care.',
+    conditions: ['Chronic kidney disease', 'High creatinine', 'Kidney problems from diabetes', 'Kidney problems from high BP', 'Swelling in legs', 'Protein in urine', 'Dialysis care', 'Kidney transplant care'],
+    icon: '🫘',
+    faqs: [
+      { q: 'What is the difference between a nephrologist and a urologist?', a: 'A nephrologist treats how the kidneys work (kidney disease, high creatinine). A urologist treats structural problems such as kidney stones and prostate issues, including surgery.' },
+      { q: 'When should I see a nephrologist?', a: 'See a nephrologist if blood tests show high creatinine or reduced kidney function, if you have protein in urine, or if diabetes or high BP is affecting your kidneys.' },
+      { q: 'Can kidney disease be managed online?', a: 'Report reviews, medicine adjustment, and follow-ups work well online. Regular blood tests are still needed.' },
+    ]
+  },
+  'physiotherapist': {
+    title: 'Physiotherapist',
+    subtitle: 'Movement, Pain & Recovery Specialist',
+    description: 'Physiotherapists help you recover movement and reduce pain through exercise, posture correction, and therapy — for back pain, injuries, and after surgery.',
+    conditions: ['Back pain', 'Neck pain', 'Knee pain', 'Sports injuries', 'Recovery after surgery', 'Frozen shoulder', 'Stroke rehabilitation', 'Posture problems'],
+    icon: '🏃',
+    faqs: [
+      { q: 'When should I see a physiotherapist?', a: 'See a physiotherapist for ongoing back, neck, or joint pain, stiffness, recovery after an injury or surgery, or posture problems.' },
+      { q: 'Does online physiotherapy work?', a: 'Yes, many exercise programmes and posture corrections can be taught and checked by video. Some treatments need in-person sessions.' },
+      { q: 'Do I need a doctor before physiotherapy?', a: 'For a new injury or severe pain, it is best to see a doctor first to rule out fractures or other causes.' },
+    ]
+  },
 };
 
 // ---- Hindi content for each specialization (patient-readable). Kept SEPARATE
@@ -268,6 +352,76 @@ const specializationHi = {
       { q: 'माइक्रोबायोलॉजिस्ट क्या करते हैं?', a: 'वे प्रयोगशाला में संक्रमण पैदा करने वाले जीव की पहचान करते हैं और बताते हैं कि कौन-सी एंटीबायोटिक काम करेगी — आपके इलाज करने वाले डॉक्टर की मदद करते हैं, उनकी जगह नहीं लेते।' },
       { q: 'क्या बुखार या जुकाम के लिए माइक्रोबायोलॉजिस्ट को दिखाएं?', a: 'आमतौर पर नहीं। बुखार, खांसी या शरीर दर्द जैसी सामान्य समस्याओं के लिए पहले जनरल फिज़ीशियन को दिखाएं।' },
       { q: 'मेरे इलाज में माइक्रोबायोलॉजिस्ट कब शामिल होते हैं?', a: 'आमतौर पर जब डॉक्टर कल्चर या विशेष संक्रमण जांच कराते हैं, या जटिल/प्रतिरोधी संक्रमण में।' },
+    ]
+  },
+  'gastroenterologist': {
+    subtitle: 'पेट, लिवर एवं पाचन विशेषज्ञ',
+    description: 'गैस्ट्रोएंटेरोलॉजिस्ट पेट, आंतों, लिवर और पाचन तंत्र की समस्याओं की जांच और इलाज करते हैं — एसिडिटी और कब्ज से लेकर लिवर की बीमारी तक।',
+    conditions: ['एसिडिटी और सीने में जलन', 'कब्ज', 'दस्त', 'पेट फूलना और गैस', 'पेट दर्द', 'फैटी लिवर', 'IBS', 'बवासीर'],
+    faqs: [
+      { q: 'मुझे गैस्ट्रोएंटेरोलॉजिस्ट को कब दिखाना चाहिए?', a: 'बार-बार होने वाली एसिडिटी या पेट दर्द, 2 हफ्ते से ज़्यादा कब्ज या दस्त, मल में खून, या बिना कारण वज़न घटने पर।' },
+      { q: 'क्या पेट की समस्याओं का ऑनलाइन इलाज हो सकता है?', a: 'एसिडिटी, गैस और कब्ज जैसी कई समस्याओं का पहले ऑनलाइन आकलन हो सकता है। ज़रूरत पड़ने पर डॉक्टर जांच या क्लिनिक आने की सलाह देंगे।' },
+      { q: 'पेट दर्द कब आपातकाल होता है?', a: 'अचानक तेज़ पेट दर्द, खून की उल्टी, काला मल, या तेज़ बुखार के साथ दर्द पर तुरंत नज़दीकी अस्पताल जाएं।' },
+    ]
+  },
+  'pulmonologist': {
+    subtitle: 'फेफड़े एवं सांस विशेषज्ञ',
+    description: 'पल्मोनोलॉजिस्ट फेफड़ों और सांस की नलियों की समस्याओं का इलाज करते हैं, जैसे दमा, पुरानी खांसी, सांस फूलना, COPD और टीबी।',
+    conditions: ['दमा (अस्थमा)', 'पुरानी खांसी', 'सांस फूलना', 'COPD', 'टीबी', 'निमोनिया', 'एलर्जिक ब्रोंकाइटिस', 'नींद में सांस रुकना'],
+    faqs: [
+      { q: 'मुझे पल्मोनोलॉजिस्ट को कब दिखाना चाहिए?', a: '3 हफ्ते से ज़्यादा खांसी, घरघराहट, रोज़ के कामों में सांस फूलना, या बार-बार छाती के संक्रमण पर।' },
+      { q: 'क्या दमा का इलाज ऑनलाइन हो सकता है?', a: 'हां, फॉलो-अप, इनहेलर लेने का सही तरीका और दवा की समीक्षा ऑनलाइन अच्छे से हो जाती है। फेफड़ों की जांच के लिए क्लिनिक जाना पड़ सकता है।' },
+      { q: 'सांस फूलना कब आपातकाल है?', a: 'अचानक तेज़ सांस फूलना, होंठ नीले पड़ना, या सांस के साथ छाती में दर्द होने पर तुरंत नज़दीकी अस्पताल जाएं।' },
+    ]
+  },
+  'endocrinologist': {
+    subtitle: 'मधुमेह, थायराइड एवं हार्मोन विशेषज्ञ',
+    description: 'एंडोक्रिनोलॉजिस्ट हार्मोन से जुड़ी समस्याओं का इलाज करते हैं, जैसे मधुमेह, थायराइड, PCOS से जुड़ी हार्मोन समस्याएं और मोटापा।',
+    conditions: ['मधुमेह (शुगर)', 'थायराइड', 'PCOS हार्मोन', 'मोटापा', 'विटामिन D की कमी', 'विकास संबंधी समस्याएं', 'हड्डियों की कमज़ोरी', 'एड्रिनल विकार'],
+    faqs: [
+      { q: 'मुझे एंडोक्रिनोलॉजिस्ट को कब दिखाना चाहिए?', a: 'जब शुगर कंट्रोल न हो रही हो, थायराइड की समस्या हो, या हार्मोन असंतुलन के लक्षण हों जैसे बिना कारण वज़न बदलना या थकान।' },
+      { q: 'क्या मधुमेह का इलाज ऑनलाइन परामर्श से हो सकता है?', a: 'हां, शुगर रीडिंग देखना, दवा बदलना और खान-पान की सलाह ऑनलाइन अच्छे से हो जाती है। नियमित ब्लड टेस्ट फिर भी ज़रूरी हैं।' },
+      { q: 'क्या थायराइड के लिए एंडोक्रिनोलॉजिस्ट ज़रूरी है?', a: 'सामान्य थायराइड अक्सर जनरल फिज़ीशियन संभाल लेते हैं। कंट्रोल मुश्किल हो या असामान्य हो, तब एंडोक्रिनोलॉजिस्ट मदद करते हैं।' },
+    ]
+  },
+  'ophthalmologist': {
+    subtitle: 'आंख एवं दृष्टि विशेषज्ञ',
+    description: 'नेत्र रोग विशेषज्ञ आंखों की समस्याओं की जांच और इलाज करते हैं — धुंधला दिखने और संक्रमण से लेकर मोतियाबिंद और ग्लूकोमा तक।',
+    conditions: ['धुंधला दिखना', 'आंख का संक्रमण', 'आंखें लाल या खुजली', 'मोतियाबिंद', 'ग्लूकोमा', 'सूखी आंखें', 'शुगर में आंखों की जांच', 'आंखों में थकान'],
+    faqs: [
+      { q: 'मुझे नेत्र रोग विशेषज्ञ को कब दिखाना चाहिए?', a: 'धुंधला या कम दिखना, आंख में दर्द, ठीक न होने वाली लालिमा, चमक या धब्बे दिखना, या शुगर हो तो सालाना जांच के लिए।' },
+      { q: 'क्या आंखों की समस्या ऑनलाइन देखी जा सकती है?', a: 'संक्रमण, एलर्जी और सूखी आंखों का अक्सर ऑनलाइन आकलन हो सकता है। नज़र और आंख के दबाव की जांच के लिए क्लिनिक जाना ज़रूरी है।' },
+      { q: 'आंख की समस्या कब आपातकाल है?', a: 'अचानक दिखना बंद होना, आंख में केमिकल जाना, या आंख में चोट लगने पर तुरंत नज़दीकी अस्पताल जाएं।' },
+    ]
+  },
+  'urologist': {
+    subtitle: 'किडनी, मूत्र एवं प्रोस्टेट विशेषज्ञ',
+    description: 'यूरोलॉजिस्ट मूत्र मार्ग, किडनी, मूत्राशय और प्रोस्टेट की समस्याओं का इलाज करते हैं, जैसे पथरी और पेशाब का संक्रमण।',
+    conditions: ['किडनी की पथरी', 'पेशाब का संक्रमण (UTI)', 'पेशाब में जलन', 'बार-बार पेशाब', 'प्रोस्टेट की समस्या', 'पेशाब में खून', 'पेशाब रिसना', 'पुरुष यौन स्वास्थ्य'],
+    faqs: [
+      { q: 'मुझे यूरोलॉजिस्ट को कब दिखाना चाहिए?', a: 'पथरी का दर्द, बार-बार पेशाब का संक्रमण, पेशाब में खून, पेशाब करने में दिक्कत, या प्रोस्टेट की समस्या पर।' },
+      { q: 'क्या पेशाब की समस्या ऑनलाइन बताई जा सकती है?', a: 'हां, कई समस्याओं का पहले ऑनलाइन और निजी तौर पर आकलन हो सकता है। डॉक्टर यूरिन टेस्ट या अल्ट्रासाउंड की सलाह दे सकते हैं।' },
+      { q: 'पेशाब की समस्या कब आपातकाल है?', a: 'पेशाब बिल्कुल न आना, बुखार के साथ किडनी में तेज़ दर्द, या पेशाब में बहुत खून आने पर तुरंत इलाज ज़रूरी है।' },
+    ]
+  },
+  'nephrologist': {
+    subtitle: 'किडनी रोग विशेषज्ञ',
+    description: 'नेफ्रोलॉजिस्ट किडनी की बीमारियों का इलाज करते हैं, जैसे क्रॉनिक किडनी रोग, शुगर और हाई BP से किडनी पर असर, और डायलिसिस देखभाल।',
+    conditions: ['क्रॉनिक किडनी रोग', 'क्रिएटिनिन बढ़ना', 'शुगर से किडनी पर असर', 'हाई BP से किडनी पर असर', 'पैरों में सूजन', 'पेशाब में प्रोटीन', 'डायलिसिस देखभाल', 'किडनी ट्रांसप्लांट देखभाल'],
+    faqs: [
+      { q: 'नेफ्रोलॉजिस्ट और यूरोलॉजिस्ट में क्या फ़र्क है?', a: 'नेफ्रोलॉजिस्ट किडनी के काम करने की समस्या (किडनी रोग, क्रिएटिनिन) का इलाज करते हैं। यूरोलॉजिस्ट पथरी और प्रोस्टेट जैसी समस्याओं का इलाज करते हैं, जिसमें सर्जरी भी शामिल है।' },
+      { q: 'मुझे नेफ्रोलॉजिस्ट को कब दिखाना चाहिए?', a: 'जब ब्लड टेस्ट में क्रिएटिनिन ज़्यादा हो या किडनी कमज़ोर दिखे, पेशाब में प्रोटीन हो, या शुगर/BP का किडनी पर असर हो।' },
+      { q: 'क्या किडनी रोग का इलाज ऑनलाइन हो सकता है?', a: 'रिपोर्ट देखना, दवा बदलना और फॉलो-अप ऑनलाइन अच्छे से हो जाते हैं। नियमित ब्लड टेस्ट फिर भी ज़रूरी हैं।' },
+    ]
+  },
+  'physiotherapist': {
+    subtitle: 'मूवमेंट, दर्द एवं रिकवरी विशेषज्ञ',
+    description: 'फिज़ियोथेरेपिस्ट व्यायाम, पोस्चर सुधार और थेरेपी से दर्द कम करने और चलने-फिरने में मदद करते हैं — कमर दर्द, चोट और सर्जरी के बाद।',
+    conditions: ['कमर दर्द', 'गर्दन दर्द', 'घुटने का दर्द', 'खेल की चोटें', 'सर्जरी के बाद रिकवरी', 'फ्रोज़न शोल्डर', 'स्ट्रोक के बाद रिकवरी', 'पोस्चर की समस्या'],
+    faqs: [
+      { q: 'मुझे फिज़ियोथेरेपिस्ट को कब दिखाना चाहिए?', a: 'लगातार कमर, गर्दन या जोड़ों का दर्द, अकड़न, चोट या सर्जरी के बाद रिकवरी, या पोस्चर की समस्या पर।' },
+      { q: 'क्या ऑनलाइन फिज़ियोथेरेपी काम करती है?', a: 'हां, कई व्यायाम और पोस्चर सुधार वीडियो पर सिखाए और जांचे जा सकते हैं। कुछ इलाज के लिए क्लिनिक जाना पड़ता है।' },
+      { q: 'क्या फिज़ियोथेरेपी से पहले डॉक्टर को दिखाना ज़रूरी है?', a: 'नई चोट या तेज़ दर्द में पहले डॉक्टर को दिखाना बेहतर है ताकि फ्रैक्चर या अन्य कारणों की जांच हो सके।' },
     ]
   },
 };
