@@ -70,6 +70,8 @@ const BookingConfirmation = lazy(() => import('./pages/BookingConfirmation'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+// Free patient tools (loaded on demand).
+const DueDateCalculator = lazy(() => import('./pages/tools/DueDateCalculator'));
 
 // ---- Protected Route Component ----
 // A wrapper that checks: "Is the user logged in? If not, redirect to login."
@@ -171,6 +173,12 @@ function App() {
               searches). Same component, opened in Hindi; the in-page toggle
               still works. /blog/:slug above is unchanged. */}
           <Route path="/blog/:slug/hi" element={<BlogArticle defaultLang="hi" />} />
+          {/* Pregnancy due-date calculator: English, Hindi, and the share-link
+              landing (/tools/due-date-calculator/2027-03). React Router ranks the
+              static "/hi" above the ":month" param, so they never clash. */}
+          <Route path="/tools/due-date-calculator" element={<DueDateCalculator />} />
+          <Route path="/tools/due-date-calculator/hi" element={<DueDateCalculator defaultLang="hi" />} />
+          <Route path="/tools/due-date-calculator/:month" element={<DueDateCalculator />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
@@ -337,6 +345,7 @@ function App() {
                 <li><a href="/doctors" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🔍</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Find Doctors</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/how-it-works" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📝</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">How It Works</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/blog" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📰</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Health Blog</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/tools/due-date-calculator" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🤰</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Due Date Calculator</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/register" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">👤</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Create Account</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
               </ul>
             </div>
