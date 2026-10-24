@@ -5,7 +5,7 @@ import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import LangToggle from '../components/LangToggle';
-import { dueDatePath, ovulationPath } from './tools/toolLinks';
+import { dueDatePath, ovulationPath, vaccinePath } from './tools/toolLinks';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -635,6 +635,24 @@ function SpecializationPage() {
             </Link>
           </div>
         </div>
+      )}
+
+      {/* Paediatrician pages (base + city): strip pointing to the free
+          vaccination schedule, right under the header. */}
+      {slug === 'pediatrician' && (
+        <Link
+          to={vaccinePath(lang)}
+          onClick={() => trackEvent('tool_vaccine_entry', { source: 'pediatrician_strip', city: cityName || 'none' })}
+          className="block bg-teal-100 hover:bg-teal-200 transition-colors border-b border-teal-200"
+        >
+          <div className="container mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-sm text-teal-800">
+            <span aria-hidden="true">💉</span>
+            <span>
+              {lang === 'hi' ? 'बच्चे को टीका कब लगेगा? ' : "Baby's vaccines due? "}
+              <span className="font-semibold underline">{lang === 'hi' ? 'हर टीके की तारीख देखें →' : 'See every vaccine date →'}</span>
+            </span>
+          </div>
+        </Link>
       )}
 
       {/* Gynaecology-only reassurance band. Women's-health consults carry extra

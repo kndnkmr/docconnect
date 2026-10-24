@@ -530,6 +530,83 @@ async function buildOvulationRoutes(articles) {
   ];
 }
 
+// ---- Baby vaccination schedule pages + /tools hub ----
+// EN + HI schedule pages (indexable, hreflang pair) with the full government
+// schedule as a crawler-readable table, plus the /tools hub. Copy comes from
+// src/pages/tools/vaccines.js and toolsList.js — the same text the pages show.
+async function buildVaccineAndHubRoutes(articles) {
+  const { COPY, RELATED_ARTICLES, TOOL_PATH, SCHEDULE, PRIVATE_EXTRAS } = await import('../src/pages/tools/vaccines.js');
+  const { TOOLS, HUB_COPY } = await import('../src/pages/tools/toolsList.js');
+  const card = `${SITE}/og/tools/vaccination.png`;
+  const en = `${SITE}${TOOL_PATH}`;
+  const hi = `${SITE}${TOOL_PATH}/hi`;
+  const hreflang = [{ lang: 'en', href: en }, { lang: 'hi', href: hi }, { lang: 'x-default', href: en }];
+  const bySlug = new Map(articles.map((a) => [a.slug, a]));
+
+  const page = (lang) => {
+    const c = COPY[lang];
+    const relLinks = RELATED_ARTICLES.map((s) => bySlug.get(s)).filter(Boolean).map((a) => lang === 'hi'
+      ? linkItem(`/blog/${a.slug}/hi`, TITLES_HI[a.slug] || a.title)
+      : linkItem(`/blog/${a.slug}`, a.title)).join('');
+    const rows = SCHEDULE.map((s) => `<tr><th scope="row">${escText(s.label[lang])}</th><td>${s.vaccines
+      .map((v) => `${escText(v.name)} (${escText(v.note[lang])})`).join(', ')}</td></tr>`).join('');
+    return {
+      body:
+        `<main${lang === 'hi' ? ' lang="hi"' : ''}><h1>${escText(c.title)}</h1><p>${escText(c.subtitle)}</p>` +
+        `<p>${escText(c.dobLabel)}</p>` +
+        `<h2>${escText(c.howTitle)}</h2><p>${escText(c.how)}</p>` +
+        `<table><thead><tr><th>${lang === 'hi' ? 'Umar' : 'Age'}</th><th>Vaccines</th></tr></thead><tbody>${rows}</tbody></table>` +
+        `<h3>${escText(c.extrasTitle)}</h3><p>${escText(c.extrasText)} ${escText(PRIVATE_EXTRAS.join(', '))}</p>` +
+        `<p>${escText(c.safety)}</p><p>${escText(c.privacy)}</p>` +
+        `<h2>${escText(c.faqTitle)}</h2>${c.faq.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
+        `<h2>${escText(c.readMore)}</h2><ul>${relLinks}${linkItem('/specialization/pediatrician', lang === 'hi' ? 'Bachchon ke doctor dhoondhein' : 'Find a paediatrician')}${linkItem('/tools', 'Free health tools')}</ul></main>`,
+      faqLd: {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+    };
+  };
+  const appLd = (name, desc, lang, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name,
+    url,
+    description: desc,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: lang === 'hi' ? 'hi' : 'en-IN',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+  });
+  const crumbs = (name, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name, item: url },
+    ],
+  });
+
+  const pEn = page('en');
+  const pHi = page('hi');
+  const hub = HUB_COPY.en;
+  const hubBody = `<main><h1>${escText(hub.title)}</h1><p>${escText(hub.subtitle)}</p><ul>${TOOLS.map((tl) =>
+    `${linkItem(tl.path, `${tl.name.en}: ${tl.desc.en}`)}${linkItem(`${tl.path}/hi`, `${tl.name.hi} (Hindi)`)}`).join('')}</ul><p>${escText(hub.privacy)}</p></main>`;
+  console.log('[prerender] Built vaccination schedule pages (EN + HI) and the /tools hub.');
+  return [
+    { path: TOOL_PATH, title: COPY.en.seoTitle, description: COPY.en.seoDesc, type: 'website', ogImage: card,
+      hreflang, bodyHtml: pEn.body,
+      jsonLd: [appLd(COPY.en.seoTitle, COPY.en.seoDesc, 'en', en), pEn.faqLd, crumbs('Baby Vaccination Schedule', en)] },
+    { path: `${TOOL_PATH}/hi`, title: COPY.hi.seoTitle, description: COPY.hi.seoDesc, type: 'website', ogImage: card,
+      hreflang, htmlLang: 'hi', bodyHtml: pHi.body,
+      jsonLd: [appLd(COPY.hi.seoTitle, COPY.hi.seoDesc, 'hi', hi), pHi.faqLd, crumbs('Vaccination Schedule (Hindi)', hi)] },
+    { path: '/tools', title: hub.seoTitle, description: hub.seoDesc, type: 'website', ogImage: `${SITE}/og/tools/tools.png`,
+      bodyHtml: hubBody, jsonLd: [crumbs('Free health tools', `${SITE}/tools`)] },
+  ];
+}
+
 // Raw public doctor list (filled by fetchDoctorRoutes) — reused for the
 // /doctors and home listing bodies.
 let DOCTORS_RAW = [];
@@ -589,7 +666,7 @@ async function attachListingBodies(routes, articles, specializationData) {
       `<ul>${HOME_COPY.trust.map((t) => `<li>${escText(t)}</li>`).join('')}</ul>` +
       `<h2>Consult by Specialization</h2><ul>${specSlugs.map((s) => linkItem(`/specialization/${s}`, `${specializationData[s].title} doctors`)).join('')}</ul>` +
       (DOCTORS_RAW.length ? `<h2>Doctors on ProMedicoz</h2><ul>${DOCTORS_RAW.map(doctorLine).join('')}</ul>` : '') +
-      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}${linkItem('/tools/ovulation-calculator', 'Ovulation & period calculator')}${linkItem('/tools/ovulation-calculator/hi', 'Ovulation kab hai? (Hindi)')}</ul>` +
+      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}${linkItem('/tools/ovulation-calculator', 'Ovulation & period calculator')}${linkItem('/tools/ovulation-calculator/hi', 'Ovulation kab hai? (Hindi)')}${linkItem('/tools/vaccination-schedule', 'Baby vaccination schedule')}${linkItem('/tools/vaccination-schedule/hi', 'Baby ko teeka kab lagega? (Hindi)')}${linkItem('/tools', 'All free health tools')}</ul>` +
       `<h2>${escText(HOME_COPY.howHeading)}</h2><ol>${HOME_COPY.steps.map((s) => `<li><strong>${escText(s.title)}</strong> — ${escText(s.desc)}</li>`).join('')}</ol>` +
       `<h2>Latest health articles</h2><ul>${latest.slice(0, 12).map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` +
       `<h2>${escText(HOME_COPY.faqHeading)}</h2>${HOME_COPY.faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
@@ -894,6 +971,7 @@ async function buildRoutes() {
   // Free tools (pregnancy due-date calculator: EN, HI, and share pages).
   routes.push(...(await buildDueDateRoutes(articles)));
   routes.push(...(await buildOvulationRoutes(articles)));
+  routes.push(...(await buildVaccineAndHubRoutes(articles)));
 
   // Crawler text for the listing / info / specialization pages.
   await attachListingBodies(routes, articles, specializationData);
@@ -1115,6 +1193,8 @@ async function writeLlmsTxt(routes) {
     `- [For doctors](${SITE}/for-doctors): Join free, keep 100% of your fee`,
     `- [Pregnancy due date calculator](${SITE}/tools/due-date-calculator): Free, private due date + pregnancy week calculator (Hindi version at /tools/due-date-calculator/hi)`,
     `- [Ovulation & period calculator](${SITE}/tools/ovulation-calculator): Free, private fertile-days, ovulation and next-period calculator (Hindi version at /tools/ovulation-calculator/hi)`,
+    `- [Baby vaccination schedule](${SITE}/tools/vaccination-schedule): Free vaccine dates by date of birth, India's government schedule (UIP) (Hindi version at /tools/vaccination-schedule/hi)`,
+    `- [Free health tools](${SITE}/tools): All free ProMedicoz health tools`,
     '',
     '## Specialities',
     ...specPages.map(line),

@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
-import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath } from './tools/toolLinks';
+import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath } from './tools/toolLinks';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -636,6 +636,22 @@ function Home() {
                 </Link>
               )}
 
+              {/* Baby-vaccine search ("teeka", "vaccine", "BCG"…): offer the
+                  vaccination schedule. Pregnancy and cycle suggestions win. */}
+              {!isPregnancyQuery(symptomSearch) && !isCycleQuery(symptomSearch) && isVaccineQuery(symptomSearch) && (
+                <Link
+                  to={vaccinePath(lang)}
+                  onClick={() => trackEvent('tool_vaccine_entry', { source: 'home_search' })}
+                  className="mt-2 flex items-center gap-2 rounded-xl bg-teal-50 border border-teal-200 px-3 py-2 hover:bg-teal-100 transition-colors"
+                >
+                  <span className="text-lg" aria-hidden="true">💉</span>
+                  <span className="text-xs sm:text-sm">
+                    <span className="block text-teal-700">{lang === 'hi' ? 'Baby ke teeke' : "Baby's vaccines"}</span>
+                    <span className="block font-semibold text-teal-800">{lang === 'hi' ? 'Har teeke ki date dekhein →' : 'See every vaccine date →'}</span>
+                  </span>
+                </Link>
+              )}
+
               <Link
                 to={symptomSearch
                   ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
@@ -685,6 +701,14 @@ function Home() {
                   >
                     <span aria-hidden="true">🌷</span>
                     Ovulation
+                  </Link>
+                  <Link
+                    to={vaccinePath(lang)}
+                    onClick={() => trackEvent('tool_vaccine_entry', { source: 'home_chip' })}
+                    className="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-teal-100 active:scale-[0.97]"
+                  >
+                    <span aria-hidden="true">💉</span>
+                    Vaccines
                   </Link>
                 </div>
               </div>

@@ -25,6 +25,7 @@ import LangToggle from '../../components/LangToggle';
 import { trackEvent } from '../../components/Analytics';
 import { articleMeta } from '../blog/blogMeta';
 import { titlesHi } from '../blog/titlesHi';
+import { vaccinePath } from './toolLinks';
 import {
   TOOL_PATH, MIN_CYCLE, MAX_CYCLE, COPY, RELATED_ARTICLES,
   calculate, sizeForWeek, formatDate, monthLabel, todayUTC, toISO,
@@ -181,6 +182,13 @@ function DueDateCalculator({ defaultLang }) {
                   {t.doctor}
                 </Link>
               </div>
+              <Link
+                to={vaccinePath(lang)}
+                onClick={() => trackEvent('tool_vaccine_entry', { source: 'due_date_result' })}
+                className="mt-3 block text-center text-sm font-semibold text-teal-700 hover:underline"
+              >
+                💉 {t.afterBaby}
+              </Link>
             </div>
           )}
         </div>

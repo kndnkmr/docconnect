@@ -11,6 +11,24 @@ export const dueDatePath = (lang) => (lang === 'hi' ? `${DUE_DATE_PATH}/hi` : DU
 export const OVULATION_PATH = '/tools/ovulation-calculator';
 export const ovulationPath = (lang) => (lang === 'hi' ? `${OVULATION_PATH}/hi` : OVULATION_PATH);
 
+export const VACCINE_PATH = '/tools/vaccination-schedule';
+export const vaccinePath = (lang) => (lang === 'hi' ? `${VACCINE_PATH}/hi` : VACCINE_PATH);
+
+// Baby / child-health articles that show the "Baby's vaccine dates" card.
+export const BABY_ARTICLE_SLUGS = new Set([
+  'childhood-vaccines-schedule-why-they-matter-guide',
+  'new-parent-baby-first-year-health-guide',
+  'newborn-baby-common-concerns-guide',
+  'newborn-jaundice-yellow-baby-when-to-worry-guide',
+  'teething-in-babies-signs-soothing-what-to-avoid-guide',
+  'fever-in-children-when-to-worry-guide',
+  'child-sick-when-to-see-pediatrician',
+  'diarrhoea-vomiting-in-children-ors-care-guide',
+  'measles-khasra-children-symptoms-vaccine-guide',
+  'mumps-swollen-cheeks-jaw-children-vaccine-guide',
+  'whooping-cough-pertussis-severe-cough-babies-vaccine-guide',
+]);
+
 // Pregnancy articles that show the "Pregnant? Find your due date" card.
 export const PREGNANCY_ARTICLE_SLUGS = new Set([
   'early-pregnancy-signs-first-trimester-care-guide',
@@ -54,4 +72,11 @@ export const isCycleQuery = matches([
   'period kab', 'periods kab', 'next period', 'period date', 'period cycle', 'menstrual cycle',
   'irregular period', 'mahwari kab',
   'ओव्यूलेशन', 'पीरियड कब', 'अगला पीरियड', 'माहवारी कब',
+]);
+
+// Does it look like a baby-vaccine search? Used for the vaccine suggestion.
+export const isVaccineQuery = matches([
+  'vaccin', 'vacin', 'vaccen', 'immuniz', 'immunis', 'teeka', 'teeke', 'tikakaran', 'teekakaran',
+  'tika kab', 'tika lag', 'tike lag', 'bcg', 'polio', 'pentavalent', 'rotavirus',
+  'टीका', 'टीके', 'टीकाकरण', 'वैक्सीन', 'पोलियो',
 ]);
