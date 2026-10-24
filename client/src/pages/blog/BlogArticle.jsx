@@ -19,6 +19,7 @@ const loadArticleBody = (slug) => {
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
 import { trackEvent } from '../../components/Analytics';
+import { PREGNANCY_ARTICLE_SLUGS, dueDatePath } from '../tools/toolLinks';
 
 // ---- Internal auto-linking ----
 // Turn key topic phrases in the body into links to their article (big SEO win
@@ -470,6 +471,27 @@ function BlogArticle({ defaultLang = 'en' }) {
           <h1 className="text-3xl font-bold text-gray-800 mb-4">{article.title}</h1>
           <p className="text-lg text-gray-600">{article.description}</p>
         </div>
+
+        {/* Pregnancy articles only: point readers to the free due-date tool
+            near the top, where they will actually see it. */}
+        {PREGNANCY_ARTICLE_SLUGS.has(slug) && (
+          <Link
+            to={dueDatePath(lang === 'hi' && hasHindi ? 'hi' : 'en')}
+            onClick={() => trackEvent('tool_due_date_entry', { source: 'article_card', article_slug: slug })}
+            className="mb-6 flex items-center gap-3 rounded-lg border border-pink-200 bg-pink-50 px-4 py-3 hover:bg-pink-100 transition-colors"
+          >
+            <span className="text-2xl" aria-hidden="true">🤰</span>
+            <span className="flex-1">
+              <span className="block text-sm font-semibold text-pink-800">
+                {lang === 'hi' && hasHindi ? 'Pregnant hain? Due date jaanein' : 'Pregnant? Find your due date'}
+              </span>
+              <span className="block text-xs text-pink-700">
+                {lang === 'hi' && hasHindi ? 'Kitne hafte · kaun si timaahi · free' : 'How many weeks · which trimester · free'}
+              </span>
+            </span>
+            <span className="text-pink-700 font-semibold" aria-hidden="true">→</span>
+          </Link>
+        )}
 
         {/* Language toggle — only shown for articles that have a Hinglish
             version. Lets readers who find English hard switch to Hinglish

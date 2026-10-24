@@ -5,6 +5,7 @@ import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import LangToggle from '../components/LangToggle';
+import { dueDatePath } from './tools/toolLinks';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -604,6 +605,26 @@ function SpecializationPage() {
           </Link>
         </div>
       </section>
+
+      {/* Gynae pages (base + city): slim strip pointing to the free due-date
+          tool, right under the header so it's seen without scrolling. */}
+      {slug === 'gynaecologist' && (
+        <Link
+          to={dueDatePath(lang)}
+          onClick={() => trackEvent('tool_due_date_entry', { source: 'gynae_strip', city: cityName || 'none' })}
+          className="block bg-pink-100 hover:bg-pink-200 transition-colors border-b border-pink-200"
+        >
+          <div className="container mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-sm text-pink-800">
+            <span aria-hidden="true">🤰</span>
+            <span>
+              {lang === 'hi' ? 'प्रेग्नेंट हैं? ' : 'Pregnant? '}
+              <span className="font-semibold underline">
+                {lang === 'hi' ? 'अपनी ड्यू डेट मुफ़्त में जानें →' : 'Find your due date — free →'}
+              </span>
+            </span>
+          </div>
+        </Link>
+      )}
 
       {/* Gynaecology-only reassurance band. Women's-health consults carry extra
           privacy/comfort concerns, so we address them head-on — but HONESTLY:

@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
+import { isPregnancyQuery, dueDatePath } from './tools/toolLinks';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -602,6 +603,23 @@ function Home() {
                 );
               })()}
 
+              {/* Pregnancy-related search ("pregnant", "period late", "garbh"…):
+                  also offer the free due-date calculator, right above the
+                  button where it can't be missed. */}
+              {isPregnancyQuery(symptomSearch) && (
+                <Link
+                  to={dueDatePath(lang)}
+                  onClick={() => trackEvent('tool_due_date_entry', { source: 'home_search' })}
+                  className="mt-2 flex items-center gap-2 rounded-xl bg-pink-50 border border-pink-200 px-3 py-2 hover:bg-pink-100 transition-colors"
+                >
+                  <span className="text-lg" aria-hidden="true">🤰</span>
+                  <span className="text-xs sm:text-sm">
+                    <span className="block text-pink-700">{lang === 'hi' ? 'Pregnant ho sakti hain?' : 'Could you be pregnant?'}</span>
+                    <span className="block font-semibold text-pink-800">{lang === 'hi' ? 'Apni due date nikaalein →' : 'Find your due date →'}</span>
+                  </span>
+                </Link>
+              )}
+
               <Link
                 to={symptomSearch
                   ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
@@ -635,6 +653,15 @@ function Home() {
                       {lang === 'hi' ? q.hi : q.en}
                     </Link>
                   ))}
+                  {/* Free tool, not a specialty — pink so it reads as different. */}
+                  <Link
+                    to={dueDatePath(lang)}
+                    onClick={() => trackEvent('tool_due_date_entry', { source: 'home_chip' })}
+                    className="inline-flex items-center gap-1.5 bg-pink-50 text-pink-700 border border-pink-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-pink-100 active:scale-[0.97]"
+                  >
+                    <span aria-hidden="true">🤰</span>
+                    Due date
+                  </Link>
                 </div>
               </div>
             </div>
