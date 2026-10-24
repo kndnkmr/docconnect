@@ -88,8 +88,13 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     // When a new service worker takes control (new deploy), show a brief message
     // and reload ONCE so the user immediately gets the latest app — no manual
     // cache clearing needed.
+    // Only for UPDATES: on a first visit there is no previous worker, and the
+    // first one taking control must not reload the page (that wiped whatever
+    // the visitor had just started — a search, a form, a chosen photo).
+    const hadController = Boolean(navigator.serviceWorker.controller);
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) return;
       if (refreshing) return;
       refreshing = true;
       try {
