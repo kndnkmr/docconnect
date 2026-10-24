@@ -5,7 +5,7 @@ import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import LangToggle from '../components/LangToggle';
-import { dueDatePath, ovulationPath, vaccinePath } from './tools/toolLinks';
+import { dueDatePath, ovulationPath, vaccinePath, reportPath } from './tools/toolLinks';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -635,6 +635,24 @@ function SpecializationPage() {
             </Link>
           </div>
         </div>
+      )}
+
+      {/* General physician + endocrinologist pages (base + city): strip
+          pointing to Report Samjhao, right under the header. */}
+      {(slug === 'general-physician' || slug === 'endocrinologist') && (
+        <Link
+          to={reportPath(lang)}
+          onClick={() => trackEvent('tool_report_entry', { source: `${slug}_strip`, city: cityName || 'none' })}
+          className="block bg-indigo-100 hover:bg-indigo-200 transition-colors border-b border-indigo-200"
+        >
+          <div className="container mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-sm text-indigo-800">
+            <span aria-hidden="true">🧪</span>
+            <span>
+              {lang === 'hi' ? 'ब्लड रिपोर्ट समझ नहीं आ रही? ' : 'Got a blood report? '}
+              <span className="font-semibold underline">{lang === 'hi' ? 'आसान शब्दों में समझें →' : 'Understand it in simple words →'}</span>
+            </span>
+          </div>
+        </Link>
       )}
 
       {/* Paediatrician pages (base + city): strip pointing to the free

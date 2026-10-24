@@ -44,3 +44,7 @@ client/src/pages/blog/blogMeta.js
 # pages). Also generated from blogData.js by scripts/gen-blog-meta.mjs on every
 # build and dev start (prebuild / predev).
 client/src/pages/blog/articles/
+
+# On-phone report reader files (Tesseract.js worker, cores, English data).
+# Copied from node_modules by scripts/copy-tesseract.mjs on every build/dev.
+client/public/tesseract/

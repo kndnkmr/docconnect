@@ -607,6 +607,86 @@ async function buildVaccineAndHubRoutes(articles) {
   ];
 }
 
+// ---- Report Samjhao (blood report explained) pages ----
+// EN + HI pages (indexable, hreflang pair). The crawler body lists every test
+// with what it is and its typical adult range/bands — the same copy and
+// numbers the page uses (src/pages/tools/reports.js).
+async function buildReportRoutes(articles) {
+  const { COPY, RELATED_ARTICLES, TOOL_PATH, TESTS, PARAMS, EXPLAIN, formatValue } = await import('../src/pages/tools/reports.js');
+  const card = `${SITE}/og/tools/report.png`;
+  const en = `${SITE}${TOOL_PATH}`;
+  const hi = `${SITE}${TOOL_PATH}/hi`;
+  const hreflang = [{ lang: 'en', href: en }, { lang: 'hi', href: hi }, { lang: 'x-default', href: en }];
+  const bySlug = new Map(articles.map((a) => [a.slug, a]));
+
+  const normalText = (id) => {
+    const p = PARAMS[id];
+    const unit = p.units[0].id;
+    if (p.kind === 'range') {
+      if (id === 'hb') return `Women 12 – 15, men 13 – 17 ${unit}`;
+      const [lo, hi2] = p.range('f');
+      return `${formatValue(id, lo)} – ${formatValue(id, hi2)}${p.format ? '' : ` ${unit}`}`;
+    }
+    if (id === 'hba1c') return `Normal below 5.7%; 5.7 – 6.4% prediabetes range; 6.5% and above diabetes range`;
+    if (id === 'vitd') return `Below 20 low; 20 – 29 borderline; 30 – 100 ${unit} normal`;
+    const b = p.bands;
+    return `Normal ${b[0].max + 1} – ${b[1].max}; ${b[1].max + 1} – ${b[2].max} prediabetes range; ${b[2].max + 1}+ ${unit} diabetes range`;
+  };
+
+  const page = (lang) => {
+    const c = COPY[lang];
+    const relLinks = RELATED_ARTICLES.map((s) => bySlug.get(s)).filter(Boolean).map((a) => lang === 'hi'
+      ? linkItem(`/blog/${a.slug}/hi`, TITLES_HI[a.slug] || a.title)
+      : linkItem(`/blog/${a.slug}`, a.title)).join('');
+    const tests = TESTS.map((tst) => `<h3>${escText(tst.label[lang])}</h3><table><tbody>${tst.params.map((id) =>
+      `<tr><th scope="row">${escText(PARAMS[id].name[lang])}</th><td>${escText(EXPLAIN[id][lang].what)}</td><td>${escText(normalText(id))}</td></tr>`).join('')}</tbody></table>`).join('');
+    return {
+      body:
+        `<main${lang === 'hi' ? ' lang="hi"' : ''}><h1>${escText(c.title)}</h1><p>${escText(c.subtitle)}</p><p>${escText(c.scope)}</p>` +
+        `<h2>${escText(c.howTitle)}</h2><p>${escText(c.how)}</p>` +
+        `<h2>${escText(c.resultsTitle)}</h2>${tests}` +
+        `<p>${escText(c.safety)}</p><p>${escText(c.privacy)}</p>` +
+        `<h2>${escText(c.faqTitle)}</h2>${c.faq.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
+        `<h2>${escText(c.readMore)}</h2><ul>${relLinks}${linkItem('/specialization/general-physician', lang === 'hi' ? 'General physician dhoondhein' : 'Find a general physician')}${linkItem('/specialization/endocrinologist', lang === 'hi' ? 'Endocrinologist dhoondhein' : 'Find an endocrinologist')}${linkItem('/tools', 'Free health tools')}</ul></main>`,
+      faqLd: {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+    };
+  };
+  const appLd = (lang, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: COPY[lang].seoTitle,
+    url,
+    description: COPY[lang].seoDesc,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: lang === 'hi' ? 'hi' : 'en-IN',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+  });
+  const crumbs = (name, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name, item: url },
+    ],
+  });
+  const pEn = page('en');
+  const pHi = page('hi');
+  console.log('[prerender] Built Report Samjhao pages (EN + HI).');
+  return [
+    { path: TOOL_PATH, title: COPY.en.seoTitle, description: COPY.en.seoDesc, type: 'website', ogImage: card,
+      hreflang, bodyHtml: pEn.body, jsonLd: [appLd('en', en), pEn.faqLd, crumbs('Report Samjhao', en)] },
+    { path: `${TOOL_PATH}/hi`, title: COPY.hi.seoTitle, description: COPY.hi.seoDesc, type: 'website', ogImage: card,
+      hreflang, htmlLang: 'hi', bodyHtml: pHi.body, jsonLd: [appLd('hi', hi), pHi.faqLd, crumbs('Report Samjhao (Hindi)', hi)] },
+  ];
+}
+
 // Raw public doctor list (filled by fetchDoctorRoutes) — reused for the
 // /doctors and home listing bodies.
 let DOCTORS_RAW = [];
@@ -666,7 +746,7 @@ async function attachListingBodies(routes, articles, specializationData) {
       `<ul>${HOME_COPY.trust.map((t) => `<li>${escText(t)}</li>`).join('')}</ul>` +
       `<h2>Consult by Specialization</h2><ul>${specSlugs.map((s) => linkItem(`/specialization/${s}`, `${specializationData[s].title} doctors`)).join('')}</ul>` +
       (DOCTORS_RAW.length ? `<h2>Doctors on ProMedicoz</h2><ul>${DOCTORS_RAW.map(doctorLine).join('')}</ul>` : '') +
-      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}${linkItem('/tools/ovulation-calculator', 'Ovulation & period calculator')}${linkItem('/tools/ovulation-calculator/hi', 'Ovulation kab hai? (Hindi)')}${linkItem('/tools/vaccination-schedule', 'Baby vaccination schedule')}${linkItem('/tools/vaccination-schedule/hi', 'Baby ko teeka kab lagega? (Hindi)')}${linkItem('/tools', 'All free health tools')}</ul>` +
+      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}${linkItem('/tools/ovulation-calculator', 'Ovulation & period calculator')}${linkItem('/tools/ovulation-calculator/hi', 'Ovulation kab hai? (Hindi)')}${linkItem('/tools/vaccination-schedule', 'Baby vaccination schedule')}${linkItem('/tools/vaccination-schedule/hi', 'Baby ko teeka kab lagega? (Hindi)')}${linkItem('/tools/blood-report', 'Report Samjhao: understand your blood report')}${linkItem('/tools/blood-report/hi', 'Report Samjhao (Hindi)')}${linkItem('/tools', 'All free health tools')}</ul>` +
       `<h2>${escText(HOME_COPY.howHeading)}</h2><ol>${HOME_COPY.steps.map((s) => `<li><strong>${escText(s.title)}</strong> — ${escText(s.desc)}</li>`).join('')}</ol>` +
       `<h2>Latest health articles</h2><ul>${latest.slice(0, 12).map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` +
       `<h2>${escText(HOME_COPY.faqHeading)}</h2>${HOME_COPY.faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
@@ -972,6 +1052,7 @@ async function buildRoutes() {
   routes.push(...(await buildDueDateRoutes(articles)));
   routes.push(...(await buildOvulationRoutes(articles)));
   routes.push(...(await buildVaccineAndHubRoutes(articles)));
+  routes.push(...(await buildReportRoutes(articles)));
 
   // Crawler text for the listing / info / specialization pages.
   await attachListingBodies(routes, articles, specializationData);
@@ -1194,6 +1275,7 @@ async function writeLlmsTxt(routes) {
     `- [Pregnancy due date calculator](${SITE}/tools/due-date-calculator): Free, private due date + pregnancy week calculator (Hindi version at /tools/due-date-calculator/hi)`,
     `- [Ovulation & period calculator](${SITE}/tools/ovulation-calculator): Free, private fertile-days, ovulation and next-period calculator (Hindi version at /tools/ovulation-calculator/hi)`,
     `- [Baby vaccination schedule](${SITE}/tools/vaccination-schedule): Free vaccine dates by date of birth, India's government schedule (UIP) (Hindi version at /tools/vaccination-schedule/hi)`,
+    `- [Report Samjhao](${SITE}/tools/blood-report): Understand a blood report (CBC, thyroid, sugar, vitamin D, B12) in simple English or Hindi; photo read on the phone, nothing uploaded (Hindi version at /tools/blood-report/hi)`,
     `- [Free health tools](${SITE}/tools): All free ProMedicoz health tools`,
     '',
     '## Specialities',

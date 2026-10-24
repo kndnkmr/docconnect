@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
-import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath } from './tools/toolLinks';
+import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath, isReportQuery, reportPath } from './tools/toolLinks';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -652,6 +652,22 @@ function Home() {
                 </Link>
               )}
 
+              {/* Lab-report search ("CBC", "TSH", "sugar report"…): offer
+                  Report Samjhao. The other tool suggestions win if they match. */}
+              {!isPregnancyQuery(symptomSearch) && !isCycleQuery(symptomSearch) && !isVaccineQuery(symptomSearch) && isReportQuery(symptomSearch) && (
+                <Link
+                  to={reportPath(lang)}
+                  onClick={() => trackEvent('tool_report_entry', { source: 'home_search' })}
+                  className="mt-2 flex items-center gap-2 rounded-xl bg-indigo-50 border border-indigo-200 px-3 py-2 hover:bg-indigo-100 transition-colors"
+                >
+                  <span className="text-lg" aria-hidden="true">🧪</span>
+                  <span className="text-xs sm:text-sm">
+                    <span className="block text-indigo-700">{lang === 'hi' ? 'Blood report samajh nahi aa rahi?' : 'Got a blood report?'}</span>
+                    <span className="block font-semibold text-indigo-800">{lang === 'hi' ? 'Aasaan shabdon mein samjhein →' : 'Understand it in simple words →'}</span>
+                  </span>
+                </Link>
+              )}
+
               <Link
                 to={symptomSearch
                   ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
@@ -709,6 +725,14 @@ function Home() {
                   >
                     <span aria-hidden="true">💉</span>
                     Vaccines
+                  </Link>
+                  <Link
+                    to={reportPath(lang)}
+                    onClick={() => trackEvent('tool_report_entry', { source: 'home_chip' })}
+                    className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-indigo-100 active:scale-[0.97]"
+                  >
+                    <span aria-hidden="true">🧪</span>
+                    Report
                   </Link>
                 </div>
               </div>

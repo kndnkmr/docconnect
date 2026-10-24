@@ -19,7 +19,7 @@ const loadArticleBody = (slug) => {
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
 import { trackEvent } from '../../components/Analytics';
-import { PREGNANCY_ARTICLE_SLUGS, dueDatePath, CYCLE_ARTICLE_SLUGS, ovulationPath, BABY_ARTICLE_SLUGS, vaccinePath } from '../tools/toolLinks';
+import { PREGNANCY_ARTICLE_SLUGS, dueDatePath, CYCLE_ARTICLE_SLUGS, ovulationPath, BABY_ARTICLE_SLUGS, vaccinePath, REPORT_ARTICLE_SLUGS, reportPath } from '../tools/toolLinks';
 
 // ---- Internal auto-linking ----
 // Turn key topic phrases in the body into links to their article (big SEO win
@@ -510,6 +510,26 @@ function BlogArticle({ defaultLang = 'en' }) {
               </span>
             </span>
             <span className="text-violet-700 font-semibold" aria-hidden="true">→</span>
+          </Link>
+        )}
+
+        {/* Lab-test articles: point to Report Samjhao. */}
+        {REPORT_ARTICLE_SLUGS.has(slug) && (
+          <Link
+            to={reportPath(lang === 'hi' && hasHindi ? 'hi' : 'en')}
+            onClick={() => trackEvent('tool_report_entry', { source: 'article_card', article_slug: slug })}
+            className="mb-6 flex items-center gap-3 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 hover:bg-indigo-100 transition-colors"
+          >
+            <span className="text-2xl" aria-hidden="true">🧪</span>
+            <span className="flex-1">
+              <span className="block text-sm font-semibold text-indigo-800">
+                {lang === 'hi' && hasHindi ? 'Apni blood report samjhein' : 'Understand your blood report'}
+              </span>
+              <span className="block text-xs text-indigo-700">
+                {lang === 'hi' && hasHindi ? 'Photo lein ya values daalein · kuch upload nahi hota' : 'Take a photo or type values · nothing is uploaded'}
+              </span>
+            </span>
+            <span className="text-indigo-700 font-semibold" aria-hidden="true">→</span>
           </Link>
         )}
 

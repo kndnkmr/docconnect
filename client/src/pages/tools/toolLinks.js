@@ -11,6 +11,25 @@ export const dueDatePath = (lang) => (lang === 'hi' ? `${DUE_DATE_PATH}/hi` : DU
 export const OVULATION_PATH = '/tools/ovulation-calculator';
 export const ovulationPath = (lang) => (lang === 'hi' ? `${OVULATION_PATH}/hi` : OVULATION_PATH);
 
+export const REPORT_PATH = '/tools/blood-report';
+export const reportPath = (lang) => (lang === 'hi' ? `${REPORT_PATH}/hi` : REPORT_PATH);
+
+// Lab-test articles that show the "Understand your report" card.
+export const REPORT_ARTICLE_SLUGS = new Set([
+  'understanding-blood-test-report-cbc-guide',
+  'blood-tests-explained-which-test-for-what-guide',
+  'iron-deficiency-anaemia-women-guide',
+  'anaemia-tiredness-weakness-causes-guide',
+  'thyroid-explained-hypo-hyper-guide',
+  'diabetes-tests-hba1c-fasting-sugar-explained-guide',
+  'prediabetes-warning-stage-reverse-guide',
+  'silent-signs-high-blood-sugar',
+  'diabetes-thyroid-endocrinologist',
+  'vitamin-d-deficiency-india-guide',
+  'vitamin-b12-deficiency-symptoms-causes-guide',
+  'dengue-mosquito-fever-warning-signs-guide',
+]);
+
 export const VACCINE_PATH = '/tools/vaccination-schedule';
 export const vaccinePath = (lang) => (lang === 'hi' ? `${VACCINE_PATH}/hi` : VACCINE_PATH);
 
@@ -79,4 +98,12 @@ export const isVaccineQuery = matches([
   'vaccin', 'vacin', 'vaccen', 'immuniz', 'immunis', 'teeka', 'teeke', 'tikakaran', 'teekakaran',
   'tika kab', 'tika lag', 'tike lag', 'bcg', 'polio', 'pentavalent', 'rotavirus',
   'टीका', 'टीके', 'टीकाकरण', 'वैक्सीन', 'पोलियो',
+]);
+
+// Does it look like a lab-report search? Used for the Report Samjhao suggestion.
+export const isReportQuery = matches([
+  'report', 'cbc', 'blood test', 'haemoglobin', 'hemoglobin', 'hb level', 'platelet', 'wbc',
+  'tsh', 'thyroid test', 'thyroid report', 'hba1c', 'a1c', 'sugar test', 'sugar report', 'fasting sugar',
+  'vitamin d', 'vit d', 'b12', 'lab test', 'samjhao',
+  'रिपोर्ट', 'खून की जांच', 'हीमोग्लोबिन', 'प्लेटलेट', 'शुगर टेस्ट', 'थायराइड',
 ]);

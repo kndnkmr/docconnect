@@ -75,6 +75,7 @@ const DueDateCalculator = lazy(() => import('./pages/tools/DueDateCalculator'));
 const OvulationCalculator = lazy(() => import('./pages/tools/OvulationCalculator'));
 const VaccinationSchedule = lazy(() => import('./pages/tools/VaccinationSchedule'));
 const ToolsHub = lazy(() => import('./pages/tools/ToolsHub'));
+const ReportSamjhao = lazy(() => import('./pages/tools/ReportSamjhao'));
 
 // ---- Protected Route Component ----
 // A wrapper that checks: "Is the user logged in? If not, redirect to login."
@@ -188,6 +189,9 @@ function App() {
           {/* Baby vaccination schedule: English + Hindi. */}
           <Route path="/tools/vaccination-schedule" element={<VaccinationSchedule />} />
           <Route path="/tools/vaccination-schedule/hi" element={<VaccinationSchedule defaultLang="hi" />} />
+          {/* Report Samjhao (blood report explained): English + Hindi. */}
+          <Route path="/tools/blood-report" element={<ReportSamjhao />} />
+          <Route path="/tools/blood-report/hi" element={<ReportSamjhao defaultLang="hi" />} />
           {/* Hub page listing all free tools. */}
           <Route path="/tools" element={<ToolsHub />} />
           <Route path="/terms" element={<TermsAndConditions />} />

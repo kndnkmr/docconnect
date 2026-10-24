@@ -50,14 +50,14 @@ const vaccination = frame('#0d9488', '#155e75', '#ccfbf1', 'promedicoz.in/tools/
   <text x="90" y="500" font-family="${FONT}" font-size="30" fill="#ffffff" opacity="0.92">Free · Hindi + English · Kuch bhi save nahi hota</text>`, timeline());
 
 // Three tool tiles for the hub.
-const tiles = () => [['#f9a8d4', 170], ['#c4b5fd', 290], ['#5eead4', 410]]
-  .map(([c, y]) => `<rect x="860" y="${y - 45}" width="250" height="90" rx="22" fill="${c}" opacity="0.9"/><rect x="890" y="${y - 12}" width="140" height="24" rx="12" fill="#ffffff" opacity="0.8"/>`).join('');
+const tiles = () => [['#a5b4fc', 150], ['#f9a8d4', 250], ['#c4b5fd', 350], ['#5eead4', 450]]
+  .map(([c, y]) => `<rect x="860" y="${y - 38}" width="250" height="76" rx="20" fill="${c}" opacity="0.9"/><rect x="890" y="${y - 11}" width="140" height="22" rx="11" fill="#ffffff" opacity="0.8"/>`).join('');
 
 const tools = frame('#2563eb', '#1e3a8a', '#dbeafe', 'promedicoz.in/tools', `
   <text x="90" y="260" font-family="${FONT}" font-size="76" font-weight="bold" fill="#ffffff">Free health</text>
   <text x="90" y="350" font-family="${FONT}" font-size="76" font-weight="bold" fill="#ffffff">tools</text>
   <rect x="92" y="378" width="150" height="9" rx="4.5" fill="#ffffff" opacity="0.9"/>
-  <text x="90" y="455" font-family="${FONT}" font-size="32" fill="#dbeafe">Due date · Ovulation · Baby vaccines</text>
+  <text x="90" y="455" font-family="${FONT}" font-size="30" fill="#dbeafe">Report Samjhao · Due date · Ovulation · Vaccines</text>
   <text x="90" y="505" font-family="${FONT}" font-size="30" fill="#ffffff" opacity="0.92">Free · Hindi + English · Kuch bhi save nahi hota</text>`, tiles());
 
 async function render(name, svg) {
