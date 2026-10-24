@@ -5,7 +5,7 @@ import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import LangToggle from '../components/LangToggle';
-import { dueDatePath } from './tools/toolLinks';
+import { dueDatePath, ovulationPath } from './tools/toolLinks';
 
 // City <-> URL slug helpers. Cities are free-text in doctor profiles, so we
 // derive a URL-safe slug ("New Delhi" -> "new-delhi") and a display name back
@@ -609,21 +609,32 @@ function SpecializationPage() {
       {/* Gynae pages (base + city): slim strip pointing to the free due-date
           tool, right under the header so it's seen without scrolling. */}
       {slug === 'gynaecologist' && (
-        <Link
-          to={dueDatePath(lang)}
-          onClick={() => trackEvent('tool_due_date_entry', { source: 'gynae_strip', city: cityName || 'none' })}
-          className="block bg-pink-100 hover:bg-pink-200 transition-colors border-b border-pink-200"
-        >
-          <div className="container mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-sm text-pink-800">
-            <span aria-hidden="true">🤰</span>
-            <span>
-              {lang === 'hi' ? 'प्रेग्नेंट हैं? ' : 'Pregnant? '}
-              <span className="font-semibold underline">
-                {lang === 'hi' ? 'अपनी ड्यू डेट मुफ़्त में जानें →' : 'Find your due date — free →'}
+        <div className="bg-pink-100 border-b border-pink-200">
+          <div className="container mx-auto px-4 py-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-sm">
+            <Link
+              to={dueDatePath(lang)}
+              onClick={() => trackEvent('tool_due_date_entry', { source: 'gynae_strip', city: cityName || 'none' })}
+              className="inline-flex items-center gap-1.5 py-0.5 text-pink-800 hover:text-pink-950"
+            >
+              <span aria-hidden="true">🤰</span>
+              <span>
+                {lang === 'hi' ? 'प्रेग्नेंट हैं? ' : 'Pregnant? '}
+                <span className="font-semibold underline">{lang === 'hi' ? 'ड्यू डेट जानें →' : 'Find your due date →'}</span>
               </span>
-            </span>
+            </Link>
+            <Link
+              to={ovulationPath(lang)}
+              onClick={() => trackEvent('tool_ovulation_entry', { source: 'gynae_strip', city: cityName || 'none' })}
+              className="inline-flex items-center gap-1.5 py-0.5 text-violet-800 hover:text-violet-950"
+            >
+              <span aria-hidden="true">🌷</span>
+              <span>
+                {lang === 'hi' ? 'बेबी प्लान कर रही हैं? ' : 'Planning a baby? '}
+                <span className="font-semibold underline">{lang === 'hi' ? 'फ़र्टाइल दिन जानें →' : 'Find your fertile days →'}</span>
+              </span>
+            </Link>
           </div>
-        </Link>
+        </div>
       )}
 
       {/* Gynaecology-only reassurance band. Women's-health consults carry extra

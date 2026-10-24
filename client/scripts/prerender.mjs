@@ -462,6 +462,74 @@ async function buildDueDateRoutes(articles) {
   return routes;
 }
 
+// ---- Ovulation & period calculator pages ----
+// EN + HI tool pages (indexable, hreflang pair). Copy comes from
+// src/pages/tools/ovulation.js — the same text the page shows. No share pages:
+// the tool's share button sends only the tool link, never her dates.
+async function buildOvulationRoutes(articles) {
+  const { COPY, RELATED_ARTICLES, TOOL_PATH } = await import('../src/pages/tools/ovulation.js');
+  const card = `${SITE}/og/tools/ovulation.png`;
+  const en = `${SITE}${TOOL_PATH}`;
+  const hi = `${SITE}${TOOL_PATH}/hi`;
+  const hreflang = [{ lang: 'en', href: en }, { lang: 'hi', href: hi }, { lang: 'x-default', href: en }];
+  const bySlug = new Map(articles.map((a) => [a.slug, a]));
+
+  const page = (lang) => {
+    const c = COPY[lang];
+    const relLinks = RELATED_ARTICLES.map((s) => bySlug.get(s)).filter(Boolean).map((a) => lang === 'hi'
+      ? linkItem(`/blog/${a.slug}/hi`, TITLES_HI[a.slug] || a.title)
+      : linkItem(`/blog/${a.slug}`, a.title)).join('');
+    const tools = lang === 'hi'
+      ? linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai?') + linkItem('/specialization/gynaecologist', 'Gynaecologist dhoondhein')
+      : linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator') + linkItem('/specialization/gynaecologist', 'Find a gynaecologist');
+    return {
+      body:
+        `<main${lang === 'hi' ? ' lang="hi"' : ''}><h1>${escText(c.title)}</h1><p>${escText(c.subtitle)}</p>` +
+        `<p>${escText(c.lmpLabel)} · ${escText(c.cycleLabel)} · ${escText(c.periodLabel)}</p>` +
+        `<h2>${escText(c.howTitle)}</h2><p>${escText(c.how)}</p>` +
+        `<p>${escText(c.safety)}</p><p>${escText(c.privacy)}</p>` +
+        `<h2>${escText(c.faqTitle)}</h2>${c.faq.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
+        `<h2>${escText(c.readMore)}</h2><ul>${relLinks}${tools}</ul></main>`,
+      faqLd: {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+    };
+  };
+  const appLd = (lang, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: COPY[lang].seoTitle,
+    url,
+    description: COPY[lang].seoDesc,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: lang === 'hi' ? 'hi' : 'en-IN',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+  });
+  const crumbs = (name, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name, item: url },
+    ],
+  });
+
+  const pEn = page('en');
+  const pHi = page('hi');
+  console.log('[prerender] Built ovulation tool pages (EN + HI).');
+  return [
+    { path: TOOL_PATH, title: COPY.en.seoTitle, description: COPY.en.seoDesc, type: 'website', ogImage: card,
+      hreflang, bodyHtml: pEn.body, jsonLd: [appLd('en', en), pEn.faqLd, crumbs('Ovulation & Period Calculator', en)] },
+    { path: `${TOOL_PATH}/hi`, title: COPY.hi.seoTitle, description: COPY.hi.seoDesc, type: 'website', ogImage: card,
+      hreflang, htmlLang: 'hi', bodyHtml: pHi.body, jsonLd: [appLd('hi', hi), pHi.faqLd, crumbs('Ovulation Calculator (Hindi)', hi)] },
+  ];
+}
+
 // Raw public doctor list (filled by fetchDoctorRoutes) — reused for the
 // /doctors and home listing bodies.
 let DOCTORS_RAW = [];
@@ -521,7 +589,7 @@ async function attachListingBodies(routes, articles, specializationData) {
       `<ul>${HOME_COPY.trust.map((t) => `<li>${escText(t)}</li>`).join('')}</ul>` +
       `<h2>Consult by Specialization</h2><ul>${specSlugs.map((s) => linkItem(`/specialization/${s}`, `${specializationData[s].title} doctors`)).join('')}</ul>` +
       (DOCTORS_RAW.length ? `<h2>Doctors on ProMedicoz</h2><ul>${DOCTORS_RAW.map(doctorLine).join('')}</ul>` : '') +
-      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}</ul>` +
+      `<h2>Free health tools</h2><ul>${linkItem('/tools/due-date-calculator', 'Pregnancy due date calculator')}${linkItem('/tools/due-date-calculator/hi', 'Meri due date kab hai? (Hindi)')}${linkItem('/tools/ovulation-calculator', 'Ovulation & period calculator')}${linkItem('/tools/ovulation-calculator/hi', 'Ovulation kab hai? (Hindi)')}</ul>` +
       `<h2>${escText(HOME_COPY.howHeading)}</h2><ol>${HOME_COPY.steps.map((s) => `<li><strong>${escText(s.title)}</strong> — ${escText(s.desc)}</li>`).join('')}</ol>` +
       `<h2>Latest health articles</h2><ul>${latest.slice(0, 12).map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` +
       `<h2>${escText(HOME_COPY.faqHeading)}</h2>${HOME_COPY.faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
@@ -825,6 +893,7 @@ async function buildRoutes() {
 
   // Free tools (pregnancy due-date calculator: EN, HI, and share pages).
   routes.push(...(await buildDueDateRoutes(articles)));
+  routes.push(...(await buildOvulationRoutes(articles)));
 
   // Crawler text for the listing / info / specialization pages.
   await attachListingBodies(routes, articles, specializationData);
@@ -1045,6 +1114,7 @@ async function writeLlmsTxt(routes) {
     `- [How it works](${SITE}/how-it-works): How booking, payment and consultation work`,
     `- [For doctors](${SITE}/for-doctors): Join free, keep 100% of your fee`,
     `- [Pregnancy due date calculator](${SITE}/tools/due-date-calculator): Free, private due date + pregnancy week calculator (Hindi version at /tools/due-date-calculator/hi)`,
+    `- [Ovulation & period calculator](${SITE}/tools/ovulation-calculator): Free, private fertile-days, ovulation and next-period calculator (Hindi version at /tools/ovulation-calculator/hi)`,
     '',
     '## Specialities',
     ...specPages.map(line),

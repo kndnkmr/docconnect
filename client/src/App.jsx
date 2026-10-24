@@ -72,6 +72,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 // Free patient tools (loaded on demand).
 const DueDateCalculator = lazy(() => import('./pages/tools/DueDateCalculator'));
+const OvulationCalculator = lazy(() => import('./pages/tools/OvulationCalculator'));
 
 // ---- Protected Route Component ----
 // A wrapper that checks: "Is the user logged in? If not, redirect to login."
@@ -179,6 +180,9 @@ function App() {
           <Route path="/tools/due-date-calculator" element={<DueDateCalculator />} />
           <Route path="/tools/due-date-calculator/hi" element={<DueDateCalculator defaultLang="hi" />} />
           <Route path="/tools/due-date-calculator/:month" element={<DueDateCalculator />} />
+          {/* Ovulation & period calculator: English + Hindi. */}
+          <Route path="/tools/ovulation-calculator" element={<OvulationCalculator />} />
+          <Route path="/tools/ovulation-calculator/hi" element={<OvulationCalculator defaultLang="hi" />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
@@ -346,6 +350,7 @@ function App() {
                 <li><a href="/how-it-works" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📝</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">How It Works</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/blog" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">📰</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Health Blog</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/tools/due-date-calculator" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🤰</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Due Date Calculator</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
+                <li><a href="/tools/ovulation-calculator" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">🌷</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Ovulation Calculator</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
                 <li><a href="/register" className="group flex items-center gap-2 py-1 text-gray-400 hover:text-white transition-colors"><span className="w-4 text-center" aria-hidden="true">👤</span><span className="transition-transform duration-200 group-hover:translate-x-0.5">Create Account</span><span className="ml-auto opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-green-400" aria-hidden="true">→</span></a></li>
               </ul>
             </div>
