@@ -12,7 +12,18 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 ## Recent Updates
 
-Notable improvements layered on since the core build:
+Notable improvements layered on since the core build (newest first):
+
+- **Caregiver view ("Parivaar ki dawai")** — for an account that books for family, every prescription now says who it's for ("👵 For: Mummy"), with a person filter, and a "Family's medicines today" screen groups today's medicines from all running prescriptions by morning/afternoon/night and person, plus "coming up" (last course days, free follow-ups, advised tests), one reminder file for everyone, WhatsApp text and a print-for-the-fridge view. Same data the account already had; no new access rules.
+- **Hindi / English voice search** — a 🎤 in the Home symptom box ("पेट में दर्द है" → gastroenterologist). Uses the browser's built-in speech recognition (free); shown only where supported; the UI states honestly that the phone's speech service converts voice to text and ProMedicoz never records it.
+- **Doctor prescription box rebuilt** — one card per medicine with quick chips (When: 1-0-0 / 1-0-1 / BD / TDS / OD / HS / SOS…, Food, Days), Enter adds the next medicine, name suggestions from the doctor's own history, "Repeat last", a live "patient's chart will show…" preview, and an optional "type as text" mode (one medicine per line). Fixes the old comma-splitting and field-shifting bugs; saved in the same fields, so PDF/share/chart are unchanged.
+- **Daily medicine chart for patients** — on every prescription: medicines by time of day with food tags, course end dates ("till 10 Aug · day 2 of 5"), the free follow-up date, daily reminders (.ics), WhatsApp text for family, large text and print. Reads the doctor's text by common Indian conventions, never guesses, and keeps the doctor's own words one tap away.
+- **Free health tools (`/tools`)** — Report Samjhao (blood report explained, with on-phone photo reading), Pregnancy due-date calculator, Ovulation & period calculator, Baby vaccination schedule (govt. UIP). All bilingual, private (no data sent), each with its own SEO page + Hindi page, share card, and entry points (Home smart-search suggestions, article cards, specialty-page strips, one "🧰 Free tools" chip).
+- **Permanent safety tests** — `client/tests/` (Node's built-in test runner) pins every medical range, urgent limit, vaccine date, chart-reading and reminder rule. They run before every build (`prebuild`), so a Vercel deploy stops if any check fails.
+- **SEO push** — crawler-readable prerendered bodies (not just meta tags) for home, listings, doctors, specialties and cities; Hindi article pages (`/blog/:slug/hi`) with hreflang; city landing pages; 7 more specialty pages; honest `lastmod`; `llms.txt`; IndexNow pings and Bing verification; doctor canonical `/dr/:slug`.
+- **Speed** — per-article code chunks and lazy-loaded rarely used pages: main bundle ~334 → ~150 KB gzip; opening an article went from ~1.35 MB to ~160 KB.
+- **Fix: first-visit reload** — the service worker no longer reloads the page the first time it takes control (it used to wipe whatever a first-time visitor had just started, ~2 s after opening the site). It still reloads once after a real update.
+- **Modals above the mobile menu bar** — shared modals now sit above the bottom tab bar and WhatsApp button, so long forms are never covered.
 
 - **"My Clinic" — a doctor-owned branded booking page** — every doctor gets a vanity URL (`/dr/:slug`, e.g. `promedicoz.in/dr/pooja-singh`, auto-generated from their name and backfilled for existing doctors) that shows ONLY them — their photo, credentials, fee, live availability, and reviews — with ProMedicoz as a quiet "Verified clinic page" trust mark and only a small "explore more doctors" link in the footer. It reuses the full doctor-profile logic in a single-doctor "clinic mode", so a patient who opens the doctor's shared link stays focused on booking with them. The old `/doctors/:id` URL still works.
 - **"Promote Me" doctor dashboard tab** — turns that page into a shareable asset: the doctor's personal link with copy + native share sheet, a downloadable QR code (PNG), a printable A5 "clinic card" poster (PDF, with the QR, for the reception desk), one-tap share to WhatsApp / Instagram / Google Business / SMS, and a live "this month" stats strip (page views, bookings from their link, earnings collected, rating, consultations, repeat patients) — all computed from the doctor's own real data, as the reason to open the app daily.
@@ -50,6 +61,27 @@ Notable improvements layered on since the core build:
 ---
 
 ## Features
+
+### Free health tools (`/tools`) — all bilingual, private, no login
+
+| Tool | URL | What it does |
+|------|-----|--------------|
+| Report Samjhao | `/tools/blood-report` (+ `/hi`) | Explains a blood report in simple words: CBC (Hb, WBC, platelets), thyroid (TSH, Free T4), sugar (fasting, PP, HbA1c), vitamin D, B12. Photo of a **printed** report is read **on the phone** (Tesseract.js, self-hosted — nothing uploaded) or values are typed; the user confirms the numbers; results say Low / Normal range / High (sugar & vit D as standard bands), what the test is, common reasons, which doctor to see, and a red "see a doctor today" box for dangerous values. Never names a disease. Adults only, not for pregnancy. |
+| Pregnancy due date | `/tools/due-date-calculator` (+ `/hi`, `/:month` share pages) | Due date (LMP + 280 days, adjusted for cycle length), weeks, trimester, baby-size note; WhatsApp share shows only the month ("Khushkhabri… March 2027") with a per-month preview card. |
+| Ovulation & period | `/tools/ovulation-calculator` (+ `/hi`) | Fertile days, likely ovulation, next period, colour calendar, next 3 cycles, calendar reminders, "period late?" link to the due-date tool. States clearly it's not birth control. |
+| Baby vaccination schedule | `/tools/vaccination-schedule` (+ `/hi`) | Every vaccine in India's government schedule (UIP, incl. fIPV-3 at 9 months, PCV, JE in some districts) with exact dates from the birth date; tick-offs saved on the phone only; calendar reminders; private vaccines listed by name only. |
+| All tools | `/tools` | One page linking every tool. |
+
+Medical numbers (ranges, limits, schedule) live in one plain-JS file per tool (`client/src/pages/tools/*.js`) shared with the build-time prerender, and are pinned by the safety tests. ⚠ They should be confirmed by a ProMedicoz doctor; change one by editing that file **and** its test in the same commit.
+
+### Medicines & family
+
+- **Doctor prescription box:** one card per medicine (name + quick chips for When / Food / Days + optional note), Enter adds the next, suggestions from the doctor's history, "Repeat last", live patient-chart preview, optional one-medicine-per-line text mode. Stored in the existing fields (`name`, `frequency`, `duration`, `instructions`).
+- **Patient daily medicine chart:** "🗓️ Daily medicine chart" on each prescription — time-of-day groups, food tags, course end dates and day counts, free follow-up date, reminders (one event per slot *and* end date, so an alarm never lists a finished medicine), WhatsApp text, large text, print. Shorthand understood: 1-0-1 / ½-0-½ / 1-0-0-1, BD, TDS, QID, HS, OD (time not guessed), SOS, weekly, "morning and night", durations in days/weeks/months/"Continue". Unreadable entries go to "Check with your doctor" with the doctor's words.
+- **Caregiver view:** "For: Mummy" tags + person filter on prescriptions; "Family's medicines today" across all running prescriptions (old "Continue" medicines only from prescriptions ≤ 90 days old; the same medicine from two doctors is shown twice with each doctor, never merged).
+- **Voice search:** Hindi/English 🎤 on the Home symptom box (Web Speech API, shown only where supported).
+
+### Platform
 
 - Doctor and patient registration with role-based access
 - Patient ID: every patient gets a short, human-readable id (e.g. `PT000123`) at registration — shown in their Account Settings, on the doctor's appointment card, Patient Reports, Prescriptions, and the downloadable prescription PDF; searchable everywhere a doctor or admin looks up a patient
@@ -210,6 +242,10 @@ Notable improvements layered on since the core build:
 | React Hot Toast | Notification popups |
 | socket.io-client | Real-time chat + call ringing (with polling fallback) |
 | qrcode.react | Client-side QR code on the "Get the App" page (renders as SVG in-browser — no third-party call) |
+| jsPDF | Prescription PDF + doctor clinic-card poster (lazy-loaded) |
+| tesseract.js (+ @tesseract.js-data/eng) | On-phone text reading for Report Samjhao photos. Files are copied to `public/tesseract/<version>/` at build time (`scripts/copy-tesseract.mjs`, gitignored) and loaded from promedicoz.in only when a photo is picked |
+| Web Speech API (browser built-in) | Voice search on Home — no package, no cost |
+| Node test runner (built-in) | Client safety tests (`npm test`, run before every build) |
 
 ---
 
@@ -286,12 +322,30 @@ docconnect/
 │       └── .gitkeep
 │
 └── client/                      ← FRONTEND
-    ├── package.json             ← Frontend dependencies
+    ├── package.json             ← Frontend dependencies + scripts (test → prebuild → build → prerender)
     ├── index.html               ← Single HTML page (React mounts here)
     ├── vercel.json              ← Vercel routing config
-    ├── vite.config.js           ← Dev server + API proxy config
+    ├── vite.config.js           ← Dev server + API proxy config (+ reader version define)
     ├── tailwind.config.js       ← CSS theme configuration
     ├── postcss.config.js        ← CSS processing
+    │
+    ├── tests/                   ← Safety tests (npm test) — see tests/README.md
+    │   ├── reports.test.mjs     ← Report Samjhao ranges, bands, urgent limits, wording rules
+    │   ├── reportParse.test.mjs ← Photo-reader text → values (incl. real OCR slips)
+    │   ├── rxChart.test.mjs     ← Medicine chart reading + reminder safety
+    │   ├── rxRows.test.mjs      ← Doctor prescription box save/load
+    │   ├── familyChart.test.mjs ← Caregiver view rules
+    │   ├── vaccines.test.mjs    ← Govt. vaccine schedule + dates
+    │   ├── dueDate.test.mjs / ovulation.test.mjs
+    │   └── helpers.mjs
+    │
+    ├── scripts/                 ← Build-time + one-off scripts
+    │   ├── gen-blog-meta.mjs    ← prebuild: light blog metadata + per-article bodies
+    │   ├── copy-tesseract.mjs   ← prebuild: self-host the photo reader files
+    │   ├── prerender.mjs        ← postbuild: per-route static HTML, crawler bodies, JSON-LD, sitemap, llms.txt, IndexNow
+    │   ├── gen-og-cards.mjs     ← blog category share cards (run locally)
+    │   ├── gen-due-date-cards.mjs ← due-date month share cards (re-run about once a year)
+    │   └── gen-ovulation-card.mjs / gen-vaccine-card.mjs / gen-report-card.mjs ← tool share cards
     │
     └── src/
         ├── main.jsx             ← React entry point
@@ -305,9 +359,17 @@ docconnect/
         │   ├── api.js           ← All API call functions
         │   └── socket.js        ← Shared Socket.io client connection (chat + call ringing)
         │
+        ├── utils/
+        │   ├── rxChart.js       ← Prescription → daily chart, reminders (.ics), share text
+        │   ├── rxRows.js        ← Doctor medicine cards ⇄ saved prescription fields
+        │   ├── familyChart.js   ← Caregiver "family's medicines today"
+        │   └── prescriptionPdf.js ← Prescription PDF
+        │
         ├── components/
         │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)
-        │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal
+        │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal (supports a "custom" field)
+        │   ├── MedicineEditor.jsx ← Doctor's one-card-per-medicine prescription editor
+        │   ├── VoiceSearch.jsx  ← Hindi/English voice search mic + listening sheet
         │   ├── ChatBox.jsx      ← In-app messaging per appointment
         │   ├── VideoCall.jsx    ← Daily.co video/audio calling integration
         │   ├── SEO.jsx          ← Per-page title, description, Open Graph tags
@@ -332,11 +394,21 @@ docconnect/
             ├── AboutUs.jsx      ← About page
             ├── TermsAndConditions.jsx / PrivacyPolicy.jsx / MedicalDisclaimer.jsx / CancellationRefund.jsx ← Legal pages
             ├── Dashboard.jsx    ← Main dashboard layout + appointments tab
+            ├── tools/           ← Free health tools (logic + copy in plain .js, shared with prerender)
+            │   ├── ToolsHub.jsx + toolsList.js        ← /tools
+            │   ├── ReportSamjhao.jsx + reports.js     ← ranges, bands, explanations
+            │   ├── reportParse.js + reportOcr.js      ← photo text → values; on-phone reader loader
+            │   ├── DueDateCalculator.jsx + dueDate.js
+            │   ├── OvulationCalculator.jsx + ovulation.js
+            │   ├── VaccinationSchedule.jsx + vaccines.js
+            │   └── toolLinks.js                       ← tool URLs, search matchers, article lists (entry points)
             ├── dashboard/       ← Dashboard sub-components
             │   ├── DoctorAvailability.jsx
             │   ├── DoctorPatientReports.jsx
             │   ├── PatientFamilyMembers.jsx
-            │   ├── PatientPrescriptions.jsx
+            │   ├── PatientPrescriptions.jsx  ← + "For:" tags, person filter, family view button
+            │   ├── RxChart.jsx               ← Daily medicine chart (one prescription)
+            │   ├── FamilyMeds.jsx            ← Family's medicines today
             │   ├── PatientReports.jsx
             │   ├── PatientComplaints.jsx
             │   ├── RescheduleModal.jsx   ← Patient reschedule modal (date + free-slot picker)
@@ -661,6 +733,17 @@ Add the same three values to your hosting provider's environment variables (e.g.
 8. **Doctor: upload thesis** — Dashboard → Publications → New Publication → fill and publish
 9. **Anyone: view publication** — click Publications in navbar → click a paper → see full content
 10. **Test password reset** — Logout → Login → "Forgot password?" → enter email → check SERVER TERMINAL for the link → copy link to browser → set new password
+
+### Automated safety tests (frontend):
+
+```bash
+cd client
+npm test
+```
+
+~85 test groups (~300 checks) covering every medical range and urgent limit in Report Samjhao, the photo reader, the daily medicine chart and its reminders, the doctor's prescription box, the caregiver view, the vaccine schedule, and the due-date/ovulation maths. They run automatically before every build (`prebuild`), so a broken medical rule **stops the Vercel deploy** instead of going live. See `client/tests/README.md` — if a doctor changes a range, update the matching test in the same commit.
+
+Backend smoke tests: `cd server && npm test`.
 
 ### Testing with Postman (optional, for API testing):
 

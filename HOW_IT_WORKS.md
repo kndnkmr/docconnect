@@ -51,7 +51,7 @@ These are settings stored on each platform — they tell the services how to fin
 |-------|----------|-------|---------|
 | Vercel | `VITE_API_URL` | `https://docconnect-fcg6.onrender.com/api` | Frontend knows where to send API requests |
 | Render | `MONGODB_URI` | `mongodb+srv://...@docconnect.mongodb.net/docconnect` | Backend knows where the database is |
-| Render | `JWT_SECRET` | `docconnect_secret_key_2024` | Secret key for signing login tokens |
+| Render | `JWT_SECRET` | *(a long random string — set only in the Render dashboard, never written in docs)* | Secret key for signing login tokens |
 | Render | `NODE_ENV` | `production` | Tells app to hide error details from users |
 
 ---
@@ -500,7 +500,12 @@ Nobody can:      access other users' data, change roles, bypass authentication
 1. You edit code in Kiro
 2. Run: git add . → git commit -m "message" → git push
 3. GitHub receives the new code
-4. Vercel detects the push → auto-rebuilds frontend (1-2 min)
+4. Vercel detects the push → auto-rebuilds frontend (1-2 min):
+   a. `npm test` — the client safety tests run FIRST. If any fails, the build
+      stops and the old site stays live (nothing broken is deployed)
+   b. prebuild: generate blog metadata + copy the photo-reader files
+   c. vite build
+   d. postbuild: prerender ~840 static pages, sitemap, llms.txt, IndexNow ping
 5. Render detects the push → auto-rebuilds backend (2-3 min)
 6. Your live site is updated — no manual deployment needed!
 ```
@@ -1368,6 +1373,111 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 ---
 
+## Free Health Tools, Medicine Chart, Caregiver View & SEO (how they work)
+
+### The pattern every tool follows
+
+```
+src/pages/tools/<tool>.js     ← ALL logic + copy (EN + Hinglish), plain JS, no JSX
+        │                        (imported by the page, the prerender and the tests)
+        ├──▶ <Tool>.jsx           ← the page (lazy-loaded route, Hindi at /hi)
+        ├──▶ scripts/prerender.mjs ← crawler HTML for /tools/<tool> and /hi:
+        │                           title, description, hreflang, JSON-LD
+        │                           (WebApplication + FAQPage + Breadcrumb)
+        └──▶ tests/<tool>.test.mjs ← pins the numbers; runs before every build
+```
+
+- **Private by design:** everything is calculated in the browser. Nothing is sent to the server (tick-offs, reminder times, etc. stay in `localStorage`).
+- **Reminders** are `.ics` calendar files built on the phone and downloaded. A website can't add calendar events by itself; the phone always asks first.
+- **Share buttons** send the tool **link** only, never the user's dates or values. The exception is the due-date tool, whose share page shows only the month, by the user's choice.
+- **Entry points** (`toolLinks.js`): Home smart-search suggestions (keyword matchers per tool, including Hinglish and Devanagari), one "🧰 Free tools" chip, cards on related blog articles (slug lists), strips on related specialty pages, the `/tools` hub and the footer.
+- **Share cards** are 1200×630 PNGs drawn as SVG and rasterised locally with `rsvg-convert` (scripts in `client/scripts/gen-*-card*.mjs`; the PNGs are committed). `gen-due-date-cards.mjs` writes one card per month, so **re-run it about once a year**.
+
+### Report Samjhao (blood report explained)
+
+```
+Photo of PRINTED report
+  → reportOcr.js: enlarge to ~2400 px + greyscale (the reader drops small
+    decimal points on low-res images) → Tesseract.js in a Web Worker,
+    files self-hosted at /tesseract/<version>/ (copied at build time)
+  → reportParse.js: find each test by name (HbA1c before Hb; skips MCH/MPV
+    look-alikes), read value + printed range + unit, convert units,
+    undo a ×10/×100 dropped-decimal slip ONLY when the value is physically
+    implausible (a real TSH of 60 is never "corrected"), mark doubtful
+    readings amber
+  → user checks/edits numbers, ticks "I checked these numbers"
+  → reports.js: interpret() → Low / Normal range / High, or bands
+    (sugar: normal / prediabetes / diabetes range; vit D: low/borderline/ok)
+    using the report's own printed range when present (range-type tests)
+  → urgent box ("see a doctor today") for: Hb < 7, platelets < 0.5 lakh,
+    WBC < 2,000 or > 30,000, fasting/PP sugar < 54 or ≥ 300
+```
+
+- **Typed values:** in the default unit, the scale is detected from the size of the number (`normalizeTyped`), so platelets typed as "40000" are read as 0.4 lakh (urgent low), never as 40,000 lakh ("High").
+- **Wording rules** (enforced by a test): never name a disease, always "common reasons — your doctor will tell", always end with "show your doctor". Adults only, not for pregnancy.
+- **Why no cloud AI:** the free Gemini tier lets Google use and human-review submissions, and its terms say not to send personal or sensitive data; the paid tier still bars "medical advice". Printed reports are read for free on the phone instead. Handwritten prescriptions would need paid AI with guardrails, so that's deferred.
+
+### Daily medicine chart (patient) — `utils/rxChart.js`
+
+- **Input:** the doctor's free text per medicine (`frequency`, `duration`, `instructions`), read together:
+  - `1-0-1` / `½-0-½` / `1-0-0-1` → slots as written
+  - `BD` → morning + night
+  - `TDS` → morning + afternoon + night
+  - `HS` → night
+  - `OD` → "once a day" (the time is **not** guessed unless stated, e.g. "OD at night")
+  - `SOS` → when needed
+  - weekly → the prescription's weekday
+  - `QID` → "4 times a day" (not spread by us)
+- **Durations:** days, weeks, months or "Continue". Each course's end date is counted from the prescription date in **IST**.
+- **Unreadable entries** go to "Check with your doctor" with the doctor's exact words. The original text is always one tap away.
+- **Reminders:** one repeating event per slot **and per end date**. A 5-day tablet and a 7-day syrup at 8 AM become two alarms, so an alarm never lists a medicine after its course ends. Reminders start "today", never in the past.
+- **Follow-up date:** comes from `appointment.followUpDeadline`, which `getMyPrescriptions` populates.
+
+### Doctor prescription box — `components/MedicineEditor.jsx` + `utils/rxRows.js`
+
+- It's a `type: 'custom'` field inside the existing `PromptModal`, and it's lazy-loaded (doctors only).
+- **What the doctor fills in:** one card per medicine `{ name, freq, food, days, note }`.
+- **How it's saved:** in the SAME model fields as before: `frequency = freq`, `duration = "5 days" | "Continue" | text`, and `instructions = "After food; <note>"`. So the PDF, patient card, WhatsApp share and chart need no change.
+- Old prescriptions load back into cards field by field, so the old blank-field shift is fixed. Anything unusual is kept as typed.
+- Commas are safe, because cards aren't comma-split.
+- **Enter key:** inside the editor, Enter never submits the form; in the name box, it adds the next card.
+
+### Caregiver view — `utils/familyChart.js` + `pages/dashboard/FamilyMeds.jsx`
+
+- **Who it's for:** `appointment.bookedFor` / `familyMemberName`, which already exist on every family booking and are now also populated in `getMyPrescriptions`. They drive the "For: Mummy" tag, the person filter and the family view.
+- **Access is unchanged:** only the account holder sees their own prescriptions, behind the same owner filter. Linking two separate accounts (a parent's own login shared with a child) is a deliberate future step, because it changes who can see health data.
+- **Safety rules:**
+  - "Continue"/no-duration medicines only count from prescriptions written in the last **90 days**.
+  - The same medicine from two doctors stays two entries, each labelled with its doctor. It's never merged.
+
+### Voice search — `components/VoiceSearch.jsx`
+
+- **How it works:** it uses `SpeechRecognition` / `webkitSpeechRecognition` with `hi-IN` or `en-IN` and puts the text into the Home symptom box. The existing matcher already understands Devanagari.
+- **Where it shows:** only where the API exists (Chrome on Android, Safari on iPhone).
+- **Privacy note in the UI:** the phone's own speech service (Google/Apple) converts the voice to text, the same as the keyboard mic. ProMedicoz never records or stores audio.
+
+### SEO pipeline — `scripts/prerender.mjs` (runs after every build)
+
+- **Static HTML per public route** (~840): title, description, canonical, OG and hreflang, plus a hidden crawler-readable body (`data-prerender="seo"`) and JSON-LD.
+  - Routes covered: home, listings, `/dr/:slug` doctors, specialties and city pages, every article, Hindi article pages `/blog/:slug/hi`, and the tools.
+  - The canonical for doctors is `/dr/:slug`.
+- **`sitemap.xml`** with honest `lastmod`, plus **`llms.txt`**.
+- **IndexNow ping** on production builds only (Bing and others). The key file is in `public/`, and the Bing verification tag is in `index.html`.
+
+### Safety tests — `client/tests/` (see its README)
+
+- **What they are:** Node's built-in test runner (`npm test`), importing the same plain-JS files the pages use.
+- **When they run:** first in `prebuild`, so a failing check **stops the deploy**.
+- **What they cover:** every medical range, urgent limit, band edge, vaccine schedule entry, chart-reading rule and reminder rule.
+
+### Service worker reload (fixed)
+
+- **How it works now:** `main.jsx` reloads the page once when a NEW service worker takes control, so users get the latest deploy.
+- **What was wrong:** on a first visit there's no previous worker, and the first one taking control used to trigger the same reload ~2 s after opening the site. That wiped whatever a first-time visitor had started.
+- **The fix:** it now reloads only if a controller existed before (`hadController`).
+
+---
+
 ## Complete File Reference
 
 ### Backend (server/)
@@ -1408,6 +1518,16 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 | `pages/BookAppointment.jsx` | Date picker → dynamic free slots → consultation type → reason → book |
 | `pages/Dashboard.jsx` | Tabs: Appointments (both), Edit Profile (doctor), Availability (doctor) |
 | `pages/dashboard/PatientHealthTimeline.jsx` | Patient "Health History" tab — client-side merge of appointments + prescriptions + reports into one chronological, month-grouped timeline (read-only) |
+| `pages/dashboard/PatientPrescriptions.jsx` | Patient prescriptions — "For:" tags, person filter, chart + family view buttons, PDF/WhatsApp share |
+| `pages/dashboard/RxChart.jsx` | Daily medicine chart for one prescription (reminders, share, large text, print) |
+| `pages/dashboard/FamilyMeds.jsx` | "Family's medicines today" (caregiver view) |
+| `components/MedicineEditor.jsx` | Doctor's one-card-per-medicine prescription editor (lazy-loaded) |
+| `components/VoiceSearch.jsx` | Hindi/English voice search for the Home symptom box |
+| `utils/rxChart.js` · `utils/rxRows.js` · `utils/familyChart.js` | Pure logic for the chart, the doctor box and the caregiver view (unit-tested) |
+| `pages/tools/*.jsx` + `*.js` | Free health tools: page + shared logic/copy (`reports.js`, `reportParse.js`, `reportOcr.js`, `dueDate.js`, `ovulation.js`, `vaccines.js`, `toolLinks.js`, `toolsList.js`) |
+| `tests/*.test.mjs` | Client safety tests (run before every build) |
+| `scripts/prerender.mjs` | Post-build static HTML, crawler bodies, JSON-LD, sitemap, llms.txt, IndexNow |
+| `scripts/copy-tesseract.mjs` | Pre-build: self-hosts the photo-reader files in `public/tesseract/<version>/` |
 
 ---
 
@@ -1415,7 +1535,9 @@ Clean up any throwaway test accounts afterward via the admin Users tab.
 
 | What | URL |
 |------|-----|
-| Frontend (website) | https://docconnect-mocha.vercel.app |
+| Website (custom domain) | https://www.promedicoz.in |
+| Free health tools | https://www.promedicoz.in/tools |
+| Frontend (Vercel backup) | https://docconnect-mocha.vercel.app |
 | Backend (API) | https://docconnect-fcg6.onrender.com |
 | API Health Check | https://docconnect-fcg6.onrender.com/api/health |
 | GitHub Repo | https://github.com/kndnkmr/docconnect |
