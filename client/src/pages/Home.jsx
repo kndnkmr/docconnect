@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
 import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
+import VoiceSearch, { isVoiceSupported } from '../components/VoiceSearch';
 import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath, isReportQuery, reportPath } from './tools/toolLinks';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
@@ -341,6 +342,8 @@ function Home() {
   const { canInstall, promptInstall } = usePwa();
   const navigate = useNavigate();
   const [symptomSearch, setSymptomSearch] = useState('');
+  // Voice search mic shows only on browsers with speech recognition.
+  const [voiceOk] = useState(() => isVoiceSupported());
   // FAQ category filter ('all' | 'booking' | 'payments' | 'consult').
   const [faqCat, setFaqCat] = useState('all');
 
@@ -586,8 +589,12 @@ function Home() {
                   onChange={(e) => setSymptomSearch(e.target.value)}
                   placeholder={t.searchPlaceholder}
                   aria-label={t.searchLabel}
-                  className="w-full pl-11 pr-3 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 text-sm sm:text-base outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white transition-colors"
+                  className={`w-full pl-11 ${voiceOk ? 'pr-14' : 'pr-3'} py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 text-sm sm:text-base outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white transition-colors`}
                 />
+                {/* Hindi/English voice search — only where the browser supports it. */}
+                {voiceOk && (
+                  <VoiceSearch lang={lang} onResult={setSymptomSearch} hideHint={Boolean(symptomSearch)} />
+                )}
               </div>
 
               {symptomSearch && (() => {
