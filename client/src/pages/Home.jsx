@@ -701,38 +701,16 @@ function Home() {
                       {lang === 'hi' ? q.hi : q.en}
                     </Link>
                   ))}
-                  {/* Free tool, not a specialty — pink so it reads as different. */}
+                  {/* One chip for all free tools (keeps this row to ~2 lines on
+                      a phone). Individual tools still appear as smart
+                      suggestions when the search matches them. */}
                   <Link
-                    to={dueDatePath(lang)}
-                    onClick={() => trackEvent('tool_due_date_entry', { source: 'home_chip' })}
-                    className="inline-flex items-center gap-1.5 bg-pink-50 text-pink-700 border border-pink-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-pink-100 active:scale-[0.97]"
+                    to="/tools"
+                    onClick={() => trackEvent('tool_hub_entry', { source: 'home_chip' })}
+                    className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-amber-100 active:scale-[0.97]"
                   >
-                    <span aria-hidden="true">🤰</span>
-                    Due date
-                  </Link>
-                  <Link
-                    to={ovulationPath(lang)}
-                    onClick={() => trackEvent('tool_ovulation_entry', { source: 'home_chip' })}
-                    className="inline-flex items-center gap-1.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-violet-100 active:scale-[0.97]"
-                  >
-                    <span aria-hidden="true">🌷</span>
-                    Ovulation
-                  </Link>
-                  <Link
-                    to={vaccinePath(lang)}
-                    onClick={() => trackEvent('tool_vaccine_entry', { source: 'home_chip' })}
-                    className="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-teal-100 active:scale-[0.97]"
-                  >
-                    <span aria-hidden="true">💉</span>
-                    Vaccines
-                  </Link>
-                  <Link
-                    to={reportPath(lang)}
-                    onClick={() => trackEvent('tool_report_entry', { source: 'home_chip' })}
-                    className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors hover:bg-indigo-100 active:scale-[0.97]"
-                  >
-                    <span aria-hidden="true">🧪</span>
-                    Report
+                    <span aria-hidden="true">🧰</span>
+                    {lang === 'hi' ? 'फ़्री टूल्स' : 'Free tools'}
                   </Link>
                 </div>
               </div>
