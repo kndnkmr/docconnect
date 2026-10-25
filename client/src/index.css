@@ -257,3 +257,17 @@ html {
     transform: none;
   }
 }
+
+/* Daily medicine chart (dashboard/RxChart.jsx): when the patient taps Print,
+   only the chart is printed, full width, with the buttons hidden. */
+@media print {
+  body.rx-printing * { visibility: hidden; }
+  body.rx-printing #rx-chart-print,
+  body.rx-printing #rx-chart-print * { visibility: visible; }
+  body.rx-printing #rx-chart-print {
+    position: absolute; left: 0; top: 0; width: 100%;
+    max-height: none; overflow: visible; box-shadow: none;
+  }
+  body.rx-printing .rx-noprint { display: none !important; }
+  body.rx-printing .rx-printonly { display: block !important; }
+}

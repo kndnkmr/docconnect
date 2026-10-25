@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { prescriptionAPI } from '../../services/api';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
 import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 import LoadingBlock from '../../components/LoadingBlock';
+import { trackEvent } from '../../components/Analytics';
+
+// The daily medicine chart loads only when a patient opens it.
+const RxChart = lazy(() => import('./RxChart'));
 
 function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [chartRx, setChartRx] = useState(null);
+  // Button label follows the patient's saved language (the card itself stays as today).
+  const hiLang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi'; } catch { return false; } })();
 
   const fetchPrescriptions = async () => {
     try {
@@ -173,6 +180,18 @@ function PatientPrescriptions({ onNavigateTab }) {
                 </p>
               )}
 
+              {/* Daily medicine chart — when to take what, in Hindi or English. */}
+              {rx.medicines && rx.medicines.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => { setChartRx(rx); trackEvent('rx_chart_open', {}); }}
+                  className="mt-4 w-full py-3 rounded-xl bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+                >
+                  <span className="block text-sm font-bold">🗓️ {hiLang ? 'रोज़ की दवाई का चार्ट' : 'Daily medicine chart'}</span>
+                  <span className="block text-xs text-primary-100">{hiLang ? 'कौन सी दवा कब लेनी है · हिंदी या English' : 'When to take what · in Hindi or English'}</span>
+                </button>
+              )}
+
               {/* Download / Share */}
               <div className="flex gap-2 mt-4 pt-3 border-t">
                 <button
@@ -191,6 +210,12 @@ function PatientPrescriptions({ onNavigateTab }) {
             </div>
           ))}
         </div>
+      )}
+
+      {chartRx && (
+        <Suspense fallback={null}>
+          <RxChart rx={chartRx} onClose={() => setChartRx(null)} />
+        </Suspense>
       )}
     </div>
   );

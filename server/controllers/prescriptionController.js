@@ -192,7 +192,9 @@ const getMyPrescriptions = async (req, res) => {
     const prescriptions = await Prescription.find(filter)
       .populate('doctor', 'name specialization qualification medicalRegistrationNo')
       .populate('patient', 'name email phone patientId')
-      .populate('appointment', 'date timeSlot')
+      // followUpDeadline: the free follow-up window the doctor set — shown to
+      // the patient in the daily medicine chart.
+      .populate('appointment', 'date timeSlot followUpDeadline')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
