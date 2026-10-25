@@ -1,18 +1,29 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { prescriptionAPI } from '../../services/api';
+import { prescriptionAPI, familyMemberAPI } from '../../services/api';
+import { personOf, personKey, peopleOf, personEmoji, hasFamilyPrescriptions } from '../../utils/familyChart';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
 import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 import LoadingBlock from '../../components/LoadingBlock';
 import { trackEvent } from '../../components/Analytics';
 
-// The daily medicine chart loads only when a patient opens it.
+// The daily medicine chart and the family view load only when opened.
 const RxChart = lazy(() => import('./RxChart'));
+const FamilyMeds = lazy(() => import('./FamilyMeds'));
 
 function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chartRx, setChartRx] = useState(null);
+  // Caregiver view: who each prescription is for, a person filter, and the
+  // "Family's medicines today" view. Family members are only used for the
+  // relationship emoji — if that call fails, everything still works.
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [personFilter, setPersonFilter] = useState('all');
+  const [familyOpen, setFamilyOpen] = useState(false);
+  useEffect(() => {
+    familyMemberAPI.getAll().then((r) => setFamilyMembers(r.data.familyMembers || [])).catch(() => {});
+  }, []);
   // Button label follows the patient's saved language (the card itself stays as today).
   const hiLang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi'; } catch { return false; } })();
 
@@ -91,9 +102,41 @@ function PatientPrescriptions({ onNavigateTab }) {
 
   if (loading) return <LoadingBlock />;
 
+  const hasFamily = hasFamilyPrescriptions(prescriptions);
+  const people = hasFamily ? peopleOf(prescriptions) : [];
+  const visible = personFilter === 'all' ? prescriptions : prescriptions.filter((rx) => personKey(rx) === personFilter);
+  const label = (name) => (name === 'self' ? (hiLang ? 'मैं' : 'Me') : name);
+
   return (
     <div className="max-w-3xl">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">My Prescriptions</h2>
+
+      {/* Family: one tap to today's medicines for everyone, plus a person filter. */}
+      {hasFamily && (
+        <div className="mb-5">
+          <button
+            type="button"
+            onClick={() => { setFamilyOpen(true); trackEvent('family_meds_open', { people: people.length }); }}
+            className="w-full py-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600 transition-colors"
+          >
+            <span className="block text-sm font-bold">👨‍👩‍👧 {hiLang ? 'आज की दवाई — पूरा परिवार' : "Family's medicines today"}</span>
+            <span className="block text-xs text-amber-50">{hiLang ? 'सबकी दवाई एक जगह · सुबह, दोपहर, रात' : 'Everyone in one place · morning, afternoon, night'}</span>
+          </button>
+          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={hiLang ? 'किसके पर्चे' : 'Show prescriptions for'}>
+            {[{ key: 'all', name: hiLang ? 'सभी' : 'All' }, ...people].map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                aria-pressed={personFilter === p.key}
+                onClick={() => setPersonFilter(p.key)}
+                className={`px-3 py-1.5 rounded-full text-sm font-semibold border ${personFilter === p.key ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+              >
+                {p.key === 'all' ? p.name : `${personEmoji(p.key === 'self' ? 'self' : p.name, familyMembers)} ${label(p.key === 'self' ? 'self' : p.name)}`}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {prescriptions.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-md">
@@ -103,8 +146,13 @@ function PatientPrescriptions({ onNavigateTab }) {
         </div>
       ) : (
         <div className="space-y-4">
-          {prescriptions.map((rx) => (
+          {visible.map((rx) => (
             <div key={rx._id} className="bg-white rounded-xl shadow-md p-6">
+              {personOf(rx) !== 'self' && (
+                <span className="inline-block mb-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-50 text-pink-800 border border-pink-200">
+                  {personEmoji(personOf(rx), familyMembers)} {hiLang ? `किसके लिए: ${personOf(rx)}` : `For: ${personOf(rx)}`}
+                </span>
+              )}
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="font-semibold text-gray-800">Dr. {rx.doctor?.name}</h3>
@@ -215,6 +263,11 @@ function PatientPrescriptions({ onNavigateTab }) {
       {chartRx && (
         <Suspense fallback={null}>
           <RxChart rx={chartRx} onClose={() => setChartRx(null)} />
+        </Suspense>
+      )}
+      {familyOpen && (
+        <Suspense fallback={null}>
+          <FamilyMeds prescriptions={prescriptions} familyMembers={familyMembers} onClose={() => setFamilyOpen(false)} />
         </Suspense>
       )}
     </div>

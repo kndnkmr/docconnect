@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import LangToggle from '../../components/LangToggle';
 import { trackEvent } from '../../components/Analytics';
 import { buildChart, buildIcs, chartText, istDay } from '../../utils/rxChart';
+import { personOf } from '../../utils/familyChart';
 
 const TIMES_KEY = 'promedicoz_rx_times';
 const DEFAULT_TIMES = { morning: '08:00', afternoon: '14:00', evening: '18:00', night: '21:00' };
@@ -238,6 +239,9 @@ function RxChart({ rx, onClose }) {
         <div className="p-4 grid gap-3">
           <div>
             <h2 className="hidden rx-printonly text-2xl font-extrabold">{t.title}</h2>
+            {personOf(rx) !== 'self' && (
+              <p className={`font-bold text-pink-800 ${large ? 'text-xl' : 'text-base'}`}>{lang === 'hi' ? `किसके लिए: ${personOf(rx)}` : `For: ${personOf(rx)}`}</p>
+            )}
             <p className={`text-gray-600 ${txt}`}>{t.by(doctor, fmtDay(chart.start))}{dayNo >= 1 ? ` · ${t.todayDay(dayNo)}` : ''}</p>
           </div>
 

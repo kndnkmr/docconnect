@@ -193,8 +193,11 @@ const getMyPrescriptions = async (req, res) => {
       .populate('doctor', 'name specialization qualification medicalRegistrationNo')
       .populate('patient', 'name email phone patientId')
       // followUpDeadline: the free follow-up window the doctor set — shown to
-      // the patient in the daily medicine chart.
-      .populate('appointment', 'date timeSlot followUpDeadline')
+      // the patient in the daily medicine chart. bookedFor/familyMemberName:
+      // who the visit was for (the account holder or a family member) — used
+      // for the "For: Mummy" tag and the family medicine view. Same owner
+      // filter as before, so no one sees anything new.
+      .populate('appointment', 'date timeSlot followUpDeadline bookedFor familyMemberName')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

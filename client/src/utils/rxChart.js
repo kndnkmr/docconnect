@@ -195,7 +195,7 @@ export function buildIcs(chart, times, labels, today = istDay(new Date()), now =
       byEnd.get(end).push(it);
     }
     for (const [end, list] of byEnd) {
-      event(`rx-${slot}-${chart.start}-${icsDay(end)}`, today, times[slot], `RRULE:FREQ=DAILY;UNTIL=${icsDay(end)}T235959`,
+      event(`${labels.uidPrefix || 'rx'}-${slot}-${chart.start}-${icsDay(end)}`, today, times[slot], `RRULE:FREQ=DAILY;UNTIL=${icsDay(end)}T235959`,
         labels.reminder(labels.slot[slot]), list.map((it) => `${it.name}${it.food ? ` (${labels.food[it.food]})` : ''}`).join('\n'));
     }
   }
@@ -210,7 +210,7 @@ export function buildIcs(chart, times, labels, today = istDay(new Date()), now =
     weeklyByEnd.get(end).push(it);
   }
   for (const [end, list] of weeklyByEnd) {
-    event(`rx-weekly-${chart.start}-${icsDay(end)}`, first, times.morning, `RRULE:FREQ=WEEKLY;UNTIL=${icsDay(end)}T235959`,
+    event(`${labels.uidPrefix || 'rx'}-weekly-${chart.start}-${icsDay(end)}`, first, times.morning, `RRULE:FREQ=WEEKLY;UNTIL=${icsDay(end)}T235959`,
       labels.reminder(labels.weeklyName), list.map((it) => it.name).join('\n'));
   }
   lines.push('END:VCALENDAR');
