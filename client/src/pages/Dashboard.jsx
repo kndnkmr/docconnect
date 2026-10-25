@@ -4,7 +4,7 @@
 // Shows different content based on the user's role.
 // Sub-components are split into separate files for maintainability.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { appointmentAPI, doctorAPI, authAPI, prescriptionAPI, reportAPI, reviewAPI, messageAPI, availabilityAPI } from '../services/api';
@@ -13,6 +13,9 @@ import { getSocket } from '../services/socket';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
 import { ConfirmModal, PromptModal } from '../components/Modal';
+import { rowsToMedicines, medicinesToRows } from '../utils/rxRows';
+// Doctor-only prescription medicine cards — loaded when the box first opens.
+const MedicineEditor = lazy(() => import('../components/MedicineEditor'));
 import ChatBox from '../components/ChatBox';
 import VideoCall from '../components/VideoCall';
 import AnnouncementBanner from '../components/AnnouncementBanner';
@@ -711,10 +714,10 @@ function Dashboard() {
 
   // ---- Doctor: Write Prescription ----
   const handleWritePrescription = async (values) => {
-    const medicines = values.medicines ? values.medicines.split(',').map(m => {
-      const parts = m.trim().split(' - ');
-      return { name: parts[0] || m.trim(), dosage: '', frequency: parts[1] || '', duration: parts[2] || '', instructions: parts[3] || '' };
-    }) : [];
+    // Medicines come from MedicineEditor as one row per medicine (no more
+    // comma-splitting, so commas inside a note are safe). rowsToMedicines
+    // saves them into the same fields as before.
+    const medicines = Array.isArray(values.medicines) ? rowsToMedicines(values.medicines) : [];
     const testsRecommended = values.tests ? values.tests.split(',').map(t => t.trim()).filter(t => t) : [];
     try {
       await prescriptionAPI.create({
@@ -1896,9 +1899,9 @@ function Dashboard() {
         const existingRx = prescriptionModal.knownRx || (prescriptionModal.id
           ? doctorPrescriptions.find((p) => (p.appointment?._id || p.appointment) === prescriptionModal.id)
           : null);
-        const medicinesDefault = existingRx?.medicines?.length
-          ? existingRx.medicines.map((m) => [m.name, m.frequency, m.duration, m.instructions].filter(Boolean).join(' - ')).join(', ')
-          : '';
+        // Existing medicines open as cards, each field in its own place (the
+        // old " - "-joined string shifted fields when one was blank).
+        const medicinesDefault = existingRx?.medicines?.length ? medicinesToRows(existingRx.medicines) : [];
         const testsDefault = existingRx?.testsRecommended?.length ? existingRx.testsRecommended.join(', ') : '';
 
         // A returning patient's earlier prescriptions (from OTHER appointments)
@@ -1942,7 +1945,19 @@ function Dashboard() {
             )}
             fields={[
               { name: 'diagnosis', label: 'Diagnosis', type: 'text', required: true, placeholder: 'e.g., Upper respiratory infection', defaultValue: existingRx?.diagnosis || '' },
-              { name: 'medicines', label: 'Medicines (comma separated)', type: 'textarea', placeholder: 'Paracetamol 500mg - Twice daily - 5 days, Vitamin D - Once daily - 30 days', defaultValue: medicinesDefault },
+              { name: 'medicines', label: 'Medicines', type: 'custom', defaultValue: medicinesDefault,
+                render: (value, setValue) => (
+                  <Suspense fallback={<div className="h-24 rounded-xl bg-gray-50 animate-pulse" aria-hidden="true" />}>
+                    <MedicineEditor
+                      value={value}
+                      onChange={setValue}
+                      suggestions={doctorPrescriptions.flatMap((p) => (p.medicines || []).map((m) => m.name))}
+                      lastRx={previousRx[0]?.medicines?.length
+                        ? { label: formatDate(previousRx[0].appointment?.date || previousRx[0].createdAt).replace(/^\w+, /, ''), rows: medicinesToRows(previousRx[0].medicines) }
+                        : null}
+                    />
+                  </Suspense>
+                ) },
               { name: 'tests', label: 'Recommended Tests (comma separated)', type: 'text', placeholder: 'Complete Blood Count, Thyroid Profile', defaultValue: testsDefault },
               { name: 'notes', label: 'Additional Notes', type: 'textarea', placeholder: 'Rest, drink fluids...', defaultValue: existingRx?.notes || '' },
               { name: 'followUpDays', label: 'Free Follow-up Period (days)', type: 'select', placeholder: 'Select...', options: [
@@ -1953,6 +1968,7 @@ function Dashboard() {
               ]}
             ]}
             submitText={existingRx ? 'Update Prescription' : 'Create Prescription'}
+            wide
             onSubmit={handleWritePrescription}
             onCancel={() => setPrescriptionModal({ open: false, id: null })}
           />

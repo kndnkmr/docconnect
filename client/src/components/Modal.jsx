@@ -10,11 +10,12 @@
 import { useState, useEffect } from 'react';
 
 // ---- Backdrop + wrapper shared by all modals ----
-function ModalWrapper({ open, children, onClose }) {
+function ModalWrapper({ open, children, onClose, wide = false }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    // z-[60]: above the sticky navbar, bottom tab bar and WhatsApp button (z-50).
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -22,7 +23,7 @@ function ModalWrapper({ open, children, onClose }) {
         aria-hidden="true"
       />
       {/* Modal content */}
-      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in">
+      <div className={`relative bg-white rounded-xl shadow-2xl w-full ${wide ? 'max-w-xl' : 'max-w-md'} max-h-[90vh] overflow-y-auto animate-fade-in`}>
         {children}
       </div>
     </div>
@@ -79,8 +80,9 @@ export function ConfirmModal({
 // ============================================
 // Props:
 //   open, title, description
-//   fields: [{ name, label, type ('text'|'number'|'textarea'|'select'), placeholder, required, options (for select), min, max }]
-//   submitText, cancelText
+//   fields: [{ name, label, type ('text'|'number'|'textarea'|'select'|'custom'), placeholder, required, options (for select), min, max }]
+//     type 'custom': render(value, setValue) draws the field; defaultValue can be any value (e.g. an array)
+//   submitText, cancelText, wide (wider modal)
 //   onSubmit(values), onCancel()
 
 export function PromptModal({
@@ -91,6 +93,7 @@ export function PromptModal({
   fields = [],
   submitText = 'Submit',
   cancelText = 'Cancel',
+  wide = false,
   onSubmit,
   onCancel
 }) {
@@ -115,7 +118,7 @@ export function PromptModal({
   };
 
   return (
-    <ModalWrapper open={open} onClose={onCancel}>
+    <ModalWrapper open={open} onClose={onCancel} wide={wide}>
       <form onSubmit={handleSubmit} className="p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
         {description && <p className="text-gray-500 text-sm mb-4">{description}</p>}
@@ -131,7 +134,9 @@ export function PromptModal({
                 {field.label}{field.required && ' *'}
               </label>
 
-              {field.type === 'textarea' ? (
+              {field.type === 'custom' ? (
+                field.render(values[field.name], (v) => handleChange(field.name, v))
+              ) : field.type === 'textarea' ? (
                 <textarea
                   value={values[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
