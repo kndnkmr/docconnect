@@ -20,7 +20,12 @@ const { bookAppointment } = require('../controllers/appointmentController');
 const q = (val) => { const p = Promise.resolve(val); p.select = async () => val; return p; };
 
 const ADMIN = { _id: 'admin1', role: 'admin' };
-const DOCTOR = { _id: 'doc1', name: 'Anjali Mehta', role: 'doctor', blockedDates: [{ date: '2099-01-02' }] };
+// 2099-01-01 is a Thursday; 2099-01-02 (Friday) is blocked.
+const DOCTOR = {
+  _id: 'doc1', name: 'Anjali Mehta', role: 'doctor', blockedDates: [{ date: '2099-01-02' }],
+  availability: [{ day: 'Thursday', startTime: '09:00', endTime: '13:00' }, { day: 'Friday', startTime: '09:00', endTime: '13:00' }],
+  slotDuration: 30, blockedPatients: [],
+};
 
 const makePatient = (extra = {}) => {
   const members = [];
@@ -43,6 +48,8 @@ beforeEach(() => {
     return q(clash);
   };
   User.create = async (data) => { newUser = { ...data, async save() {} }; return newUser; };
+  User.find = () => q([]);            // no deleted account holds the new phone/email
+  User.updateOne = async () => ({});
   Appointment.findOne = () => q(slotTaken);
   Appointment.create = async (data) => { created = data; return { ...data, _id: 'apt1', async populate() {} }; };
 });

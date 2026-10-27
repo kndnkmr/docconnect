@@ -6,9 +6,12 @@
 //   - POST /api/admin/patients/:id/appointments (ProMedicoz support books on
 //     the patient's behalf, after the patient agreed on a call/WhatsApp)
 // Keeping a single function means both paths always apply the same rules:
-// required fields, consent, doctor exists, doctor's blocked dates, slot still
-// free, no past dates, follow-up window, symptom sanitising, and the unique
-// slot index (two people can't take one slot).
+// required fields, consent, doctor exists and is bookable (not suspended/
+// deleted/unverified, patient not blocked), the slot is one the doctor's
+// schedule offers (not blocked, not past, not already started today), slot
+// still free, family member exists, follow-up belongs to this patient+doctor
+// and is inside its window, symptom sanitising, and the unique slot index
+// (two people can't take one slot).
 //
 // Throws BookingError(status, message) for anything the caller should show
 // to the user; any other error is unexpected (caller returns 500).
@@ -16,6 +19,12 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { sendAppointmentNotification, sendAdminBookingNotification } = require('./sendEmail');
+const { slotProblem } = require('./slots');
+
+const MAX_REASON = 1000;
+const CONSULT_TYPES = ['in-person', 'video', 'phone'];
+// Same visibility rule as the public doctor list (GET /api/doctors).
+const BOOKABLE_DOCTOR = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true }, isSuspended: { $ne: true } };
 
 class BookingError extends Error {
   constructor(status, message) {
@@ -49,6 +58,18 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
   if (!doctorId || !date || !timeSlot || !reason) {
     throw new BookingError(400, 'Please provide doctorId, date, timeSlot, and reason');
   }
+  if (typeof reason !== 'string' || !reason.trim()) {
+    throw new BookingError(400, 'Please describe the reason for the visit');
+  }
+  if (reason.length > MAX_REASON) {
+    throw new BookingError(400, `Reason is too long (max ${MAX_REASON} characters)`);
+  }
+  if (consultationType !== undefined && consultationType !== '' && !CONSULT_TYPES.includes(consultationType)) {
+    throw new BookingError(400, `Consultation type must be one of: ${CONSULT_TYPES.join(', ')}`);
+  }
+  if (bookedFor !== undefined && bookedFor !== '' && !['self', 'family'].includes(bookedFor)) {
+    throw new BookingError(400, 'bookedFor must be "self" or "family"');
+  }
 
   // Step 1b: If booking for family member, validate family member name
   if (bookedFor === 'family' && !familyMemberName) {
@@ -60,17 +81,42 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     throw new BookingError(400, 'Consent to the teleconsultation terms is required to book an appointment');
   }
 
-  // Step 2: Verify the doctor exists and is actually a doctor
-  const doctor = await User.findOne({ _id: doctorId, role: 'doctor' });
+  // Step 1d: The account the appointment is for. A family booking must name
+  // someone actually saved on that account (stored with their saved spelling).
+  const patient = await User.findById(patientId).select('name phone email patientId familyMembers');
+  if (!patient) {
+    throw new BookingError(404, 'Patient not found');
+  }
+  let memberName = '';
+  if (bookedFor === 'family') {
+    const wanted = String(familyMemberName).trim().toLowerCase();
+    const member = (patient.familyMembers || []).find((m) => String(m.name || '').trim().toLowerCase() === wanted);
+    if (!member) {
+      throw new BookingError(400, 'Please choose a family member saved on this account (add them in the Family tab first).');
+    }
+    memberName = member.name;
+  }
+
+  // Step 2: The doctor must exist and be bookable — same visibility rule as
+  // the public doctor list (not unverified, deleted or suspended).
+  const doctor = await User.findOne({ _id: doctorId, ...BOOKABLE_DOCTOR });
   if (!doctor) {
     throw new BookingError(404, 'Doctor not found');
   }
 
-  // Step 2b: Reject dates the doctor has blocked (vacation / day off).
-  // Slot generation already hides these, but this guard stops a direct API
-  // call from booking a blocked date the UI would never have offered.
-  if ((doctor.blockedDates || []).some((b) => b.date === date)) {
-    throw new BookingError(400, 'The doctor is not available on this date. Please choose another day.');
+  // Step 2a: A doctor can block a patient (abuse). Blocked means no bookings.
+  if ((doctor.blockedPatients || []).some((p) => String(p) === String(patientId))) {
+    throw new BookingError(403, 'Booking with this doctor is not available for this account. Please contact ProMedicoz support.');
+  }
+
+  // Step 2b: Date + slot must be ones the doctor's schedule actually offers:
+  // a real YYYY-MM-DD date, not past, not a blocked day, a slot label from
+  // the doctor's weekly hours, and (today) a slot that hasn't started yet.
+  // The UI only offers such slots; this stops a direct API call from booking
+  // an impossible time.
+  const problem = slotProblem(doctor, date, timeSlot);
+  if (problem) {
+    throw new BookingError(400, problem);
   }
 
   // Step 3: Check if the time slot is already taken
@@ -84,15 +130,31 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     throw new BookingError(400, 'This time slot is already booked. Please choose another time.');
   }
 
-  // Step 4: Check the appointment date is not in the past (IST timezone)
-  if (date < todayIST()) {
-    throw new BookingError(400, 'Cannot book appointments in the past');
-  }
+  // (Step 4, "not in the past", is part of slotProblem above.)
 
-  // Step 5: Validate follow-up eligibility
-  if (isFollowUp && originalAppointmentId) {
-    const originalApt = await Appointment.findById(originalAppointmentId);
-    if (!originalApt || !originalApt.followUpDeadline || new Date() > new Date(originalApt.followUpDeadline)) {
+  // Step 5: Repeat / follow-up bookings link to an earlier appointment. It must
+  // be this patient's own appointment with this same doctor. A FREE follow-up
+  // (no payment) additionally needs that appointment to have an open
+  // follow-up window (set when the doctor wrote the prescription).
+  if (isFollowUp && !originalAppointmentId) {
+    throw new BookingError(400, 'A free follow-up must be booked from the original appointment.');
+  }
+  if (originalAppointmentId) {
+    let originalApt = null;
+    try {
+      originalApt = await Appointment.findById(originalAppointmentId);
+    } catch (e) {
+      originalApt = null; // malformed id → treated as not found
+    }
+    if (!originalApt
+      || String(originalApt.patient) !== String(patientId)
+      || String(originalApt.doctor) !== String(doctorId)) {
+      throw new BookingError(400, 'The earlier appointment could not be found for this patient and doctor.');
+    }
+    if (isFollowUp && (
+      originalApt.status === 'cancelled'
+      || !originalApt.followUpDeadline
+      || new Date() > new Date(originalApt.followUpDeadline))) {
       throw new BookingError(400, 'Free follow-up period has expired. Please book a regular appointment.');
     }
   }
@@ -109,14 +171,14 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     doctor: doctorId,
     date: new Date(date),
     timeSlot,
-    reason,
+    reason: reason.trim(),
     symptoms: cleanSymptoms,
     consultationType: consultationType || 'in-person',
     status: 'pending',
-    bookedFor: bookedFor || 'self',
-    familyMemberName: bookedFor === 'family' ? familyMemberName : '',
-    isFollowUp: isFollowUp || false,
-    paymentStatus: isFollowUp ? 'paid' : 'pending', // Follow-ups skip payment
+    bookedFor: bookedFor === 'family' ? 'family' : 'self',
+    familyMemberName: bookedFor === 'family' ? memberName : '',
+    isFollowUp: !!isFollowUp,
+    paymentStatus: isFollowUp ? 'paid' : 'pending', // Follow-ups skip payment (validated above)
     consentGiven: true,
     consentAt: new Date(),
     consentIP,
@@ -142,11 +204,10 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
   await appointment.populate('doctor', 'name specialization profilePhoto');
 
   // Notify the doctor and the admin inbox (non-blocking — never affects booking).
-  const patient = await User.findById(patientId).select('name phone email patientId');
   sendAppointmentNotification(doctor, patient, appointment);
   sendAdminBookingNotification(doctor, patient, appointment);
 
   return { appointment, doctor, patient };
 }
 
-module.exports = { createBooking, BookingError, todayIST };
+module.exports = { createBooking, BookingError, todayIST, BOOKABLE_DOCTOR };

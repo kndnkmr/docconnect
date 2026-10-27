@@ -59,6 +59,20 @@ const protect = async (req, res, next) => {
       });
     }
 
+    // Step 4b: A deleted or suspended account can't keep using an old token.
+    // Login already refuses them; without this, a token issued before the
+    // deletion/suspension would keep working until it expires (30 days).
+    if (req.user.isDeleted) {
+      return res.status(401).json({
+        message: 'This account has been deleted. Contact support@promedicoz.in if you need assistance.'
+      });
+    }
+    if (req.user.isSuspended) {
+      return res.status(401).json({
+        message: 'This account has been suspended. Contact support@promedicoz.in if you believe this is a mistake.'
+      });
+    }
+
     // All good — continue to the route handler.
     return next();
 

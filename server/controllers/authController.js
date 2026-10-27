@@ -15,6 +15,9 @@ const User = require('../models/User');
 const { getNextSequence } = require('../models/Counter');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
 const { sendEmail } = require('../utils/sendEmail');
+const {
+  ContactError, checkPhone, checkOptionalPhone, checkEmail, releaseFromDeletedAccounts,
+} = require('../utils/contactChecks');
 
 // ---- Helper: Generate JWT Token ----
 // We'll call this after successful register or login.
@@ -607,17 +610,32 @@ const updateMedicalInfo = async (req, res) => {
 
     const { bloodGroup, allergies, currentMedications, medicalHistory, emergencyContactName, emergencyContactPhone, insuranceProvider, insurancePolicyNumber } = req.body;
 
+    // Same caps/rules as the admin "Help patient" editor.
+    const BLOOD_GROUPS = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    const MAX_TEXT = 1000;
     const updates = {};
-    if (bloodGroup !== undefined) updates.bloodGroup = bloodGroup;
-    if (allergies !== undefined) updates.allergies = allergies;
-    if (currentMedications !== undefined) updates.currentMedications = currentMedications;
-    if (medicalHistory !== undefined) updates.medicalHistory = medicalHistory;
-    if (emergencyContactName !== undefined) updates.emergencyContactName = emergencyContactName;
-    if (emergencyContactPhone !== undefined) {
-      updates.emergencyContactPhone = emergencyContactPhone ? formatIndianPhone(emergencyContactPhone.trim()) : '';
+    if (bloodGroup !== undefined) {
+      if (!BLOOD_GROUPS.includes(bloodGroup)) {
+        return res.status(400).json({ message: 'Please choose a valid blood group' });
+      }
+      updates.bloodGroup = bloodGroup;
     }
-    if (insuranceProvider !== undefined) updates.insuranceProvider = insuranceProvider;
-    if (insurancePolicyNumber !== undefined) updates.insurancePolicyNumber = insurancePolicyNumber;
+    const textFields = { allergies, currentMedications, medicalHistory, emergencyContactName, insuranceProvider, insurancePolicyNumber };
+    for (const [field, value] of Object.entries(textFields)) {
+      if (value === undefined) continue;
+      if (value !== null && typeof value !== 'string') {
+        return res.status(400).json({ message: `${field} must be text` });
+      }
+      const v = (value || '').trim();
+      if (v.length > MAX_TEXT) {
+        return res.status(400).json({ message: `${field} is too long (max ${MAX_TEXT} characters)` });
+      }
+      updates[field] = v;
+    }
+    if (emergencyContactPhone !== undefined) {
+      // A relative's number — may be shared, so format check only. '' clears it.
+      updates.emergencyContactPhone = checkOptionalPhone(emergencyContactPhone, 'Emergency contact phone');
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -631,6 +649,12 @@ const updateMedicalInfo = async (req, res) => {
     });
 
   } catch (error) {
+    if (error instanceof ContactError) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    if (error && error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Some medical details are not valid' });
+    }
     console.error('Update medical info error:', error.message);
     res.status(500).json({ message: 'Error updating medical information' });
   }
@@ -653,25 +677,26 @@ const updateAccount = async (req, res) => {
       });
     }
 
-    // If changing email, check it's not already taken by another user.
-    // Normalize both sides before comparing (stored emails are always
-    // lowercase/trimmed) — same fix as register()/login() above, for the
-    // same reason: a case mismatch would otherwise let this check silently
-    // miss an existing account and let two accounts collide on one email.
-    const normalizedNewEmail = email ? email.toLowerCase().trim() : '';
-    if (normalizedNewEmail && normalizedNewEmail !== req.user.email) {
-      const existingUser = await User.findOne({ email: normalizedNewEmail });
-      if (existingUser) {
-        return res.status(400).json({
-          message: 'This email is already in use by another account'
-        });
-      }
+    if ((email && typeof email !== 'string') || (phone && typeof phone !== 'string')) {
+      return res.status(400).json({ message: 'Email and phone must be text' });
     }
 
-    // Build updates
+    // Same rules as registration (shared utils/contactChecks): email must look
+    // like an email; phone must be a valid Indian mobile; neither may already
+    // belong to another active account (phone login looks users up by phone,
+    // so two accounts on one number would make login ambiguous). Messages
+    // don't reveal whose account holds the value.
     const updates = {};
-    if (email) updates.email = email.toLowerCase().trim();
-    if (phone) updates.phone = formatIndianPhone(phone.trim());
+    if (email) {
+      updates.email = await checkEmail(email, { selfId: req.user._id });
+    }
+    if (phone) {
+      updates.phone = await checkPhone(phone, { selfId: req.user._id });
+    }
+
+    // A deleted account may still hold the value; move it aside (as
+    // registration does) so the unique email index and phone login stay clean.
+    await releaseFromDeletedAccounts({ phone: updates.phone, email: updates.email, selfId: req.user._id });
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -691,6 +716,12 @@ const updateAccount = async (req, res) => {
     });
 
   } catch (error) {
+    if (error instanceof ContactError) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    if (error && error.code === 11000) {
+      return res.status(400).json({ message: 'This email is already in use by another account' });
+    }
     console.error('Update account error:', error.message);
     res.status(500).json({ message: 'Error updating account' });
   }

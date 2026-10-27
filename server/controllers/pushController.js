@@ -5,6 +5,21 @@
 
 const User = require('../models/User');
 
+const MAX_SUBSCRIPTIONS = 10; // devices/browsers per account
+
+// A browser push subscription: https endpoint + two short base64url keys.
+function isValidSubscription(sub) {
+  if (typeof sub.endpoint !== 'string' || sub.endpoint.length > 1000) return false;
+  try {
+    if (new URL(sub.endpoint).protocol !== 'https:') return false;
+  } catch (e) {
+    return false;
+  }
+  const { p256dh, auth } = sub.keys || {};
+  const keyOk = (k) => typeof k === 'string' && k.length > 0 && k.length <= 200 && /^[A-Za-z0-9_\-=+/]+$/.test(k);
+  return keyOk(p256dh) && keyOk(auth);
+}
+
 // GET /api/push/public-key (public — needed before the browser can subscribe)
 const getPublicKey = (req, res) => {
   res.json({ publicKey: process.env.VAPID_PUBLIC_KEY || '' });
@@ -21,6 +36,12 @@ const subscribe = async (req, res) => {
     if (!subscription || !subscription.endpoint || !subscription.keys) {
       return res.status(400).json({ message: 'Invalid subscription' });
     }
+    // The server later POSTs to this endpoint, so it must be a real https
+    // URL (browser push services always are). This stops the server being
+    // pointed at internal/plain-http addresses.
+    if (!isValidSubscription(subscription)) {
+      return res.status(400).json({ message: 'Invalid subscription' });
+    }
 
     await User.findByIdAndUpdate(req.user._id, {
       $pull: { pushSubscriptions: { endpoint: subscription.endpoint } }
@@ -28,8 +49,12 @@ const subscribe = async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
       $push: {
         pushSubscriptions: {
-          endpoint: subscription.endpoint,
-          keys: subscription.keys
+          // Keep only the newest few devices per account.
+          $each: [{
+            endpoint: subscription.endpoint,
+            keys: { p256dh: subscription.keys.p256dh, auth: subscription.keys.auth }
+          }],
+          $slice: -MAX_SUBSCRIPTIONS
         }
       }
     });

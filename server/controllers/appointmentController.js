@@ -18,7 +18,13 @@ const User = require('../models/User');
 const { sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
-const { createBooking, BookingError } = require('../utils/booking');
+const { createBooking, BookingError, BOOKABLE_DOCTOR } = require('../utils/booking');
+const { slotProblem } = require('../utils/slots');
+
+// Free-text caps (stop unbounded payloads being stored).
+const MAX_NOTES = 2000;
+const MAX_CANCEL_REASON = 500;
+const MAX_AMOUNT = 100000; // Rs. — far above any consultation fee
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -265,6 +271,24 @@ const updateAppointmentStatus = async (req, res) => {
       });
     }
 
+    // Check notes + meeting link before changing anything.
+    if (notes && (typeof notes !== 'string' || notes.length > MAX_NOTES)) {
+      return res.status(400).json({ message: `Notes must be text up to ${MAX_NOTES} characters` });
+    }
+    if (meetingLink) {
+      // The patient taps this link, so only allow a real https:// URL
+      // (blocks javascript:, data:, plain http, and other odd schemes).
+      let ok = false;
+      try {
+        ok = new URL(String(meetingLink).trim()).protocol === 'https:' && String(meetingLink).length <= 500;
+      } catch (e) {
+        ok = false;
+      }
+      if (!ok) {
+        return res.status(400).json({ message: 'Meeting link must be a valid https:// link' });
+      }
+    }
+
     // Update ONLY the fields that should change — protect timeSlot and date
     appointment.status = status;
     // Stamp when it became completed, so the review-request job can wait a few
@@ -277,7 +301,7 @@ const updateAppointmentStatus = async (req, res) => {
       appointment.notes = notes;
     }
     if (meetingLink) {
-      appointment.meetingLink = meetingLink;
+      appointment.meetingLink = String(meetingLink).trim();
     }
 
     // Mark only modified paths to prevent Mongoose from touching other fields
@@ -359,7 +383,9 @@ const cancelAppointment = async (req, res) => {
     }
 
     appointment.status = 'cancelled';
-    appointment.cancellationReason = cancellationReason || 'Cancelled by patient';
+    appointment.cancellationReason = (typeof cancellationReason === 'string' && cancellationReason.trim())
+      ? cancellationReason.trim().slice(0, MAX_CANCEL_REASON)
+      : 'Cancelled by patient';
 
     await appointment.save();
 
@@ -423,27 +449,23 @@ const rescheduleAppointment = async (req, res) => {
       });
     }
 
-    // Same doctor as the original (reschedule ≠ switching doctors).
-    const doctor = await User.findOne({ _id: appointment.doctor, role: 'doctor' });
+    // Same doctor as the original (reschedule ≠ switching doctors), and they
+    // must still be bookable (same rule as booking).
+    const doctor = await User.findOne({ _id: appointment.doctor, ...BOOKABLE_DOCTOR });
     if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' });
+      return res.status(404).json({ message: 'This doctor is not taking bookings right now. Please contact ProMedicoz support.' });
+    }
+    if ((doctor.blockedPatients || []).some((p) => String(p) === String(req.user._id))) {
+      return res.status(403).json({ message: 'Rescheduling with this doctor is not available for this account. Please contact ProMedicoz support.' });
     }
 
-    // Guard: doctor blocked this date (vacation / day off).
-    const isBlockedDate = (doctor.blockedDates || []).some((b) => b.date === date);
-    if (isBlockedDate) {
+    // Guard: same slot rules as booking — real date, not past, not a blocked
+    // day, a slot the doctor's hours offer, not already started today.
+    const problem = slotProblem(doctor, date, timeSlot);
+    if (problem) {
       return res.status(400).json({
-        message: 'The doctor is not available on this date. Please choose another day.'
+        message: problem === 'Cannot book appointments in the past' ? 'Cannot reschedule to a date in the past' : problem
       });
-    }
-
-    // Guard: not in the past (IST) — same check as booking.
-    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-    const todayIST = nowInIST.getFullYear() + '-' +
-      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
-      String(nowInIST.getDate()).padStart(2, '0');
-    if (date < todayIST) {
-      return res.status(400).json({ message: 'Cannot reschedule to a date in the past' });
     }
 
     // Guard: the new slot isn't already taken — EXCLUDING this appointment
@@ -474,7 +496,16 @@ const rescheduleAppointment = async (req, res) => {
     appointment.callReminderSentAt = null;  // let the at-start reminder fire again
     appointment.reminderSentAt = null;      // let the 1-hour reminder fire again
 
-    await appointment.save({ validateBeforeSave: false });
+    try {
+      // Validate only what changed, so an old appointment with some legacy
+      // field still saves, while the new date/slot are checked.
+      await appointment.save({ validateModifiedOnly: true });
+    } catch (saveErr) {
+      if (saveErr && saveErr.code === 11000) {
+        return res.status(400).json({ message: 'This time slot was just booked by someone else. Please choose another time.' });
+      }
+      throw saveErr;
+    }
 
     await appointment.populate('doctor', 'name specialization profilePhoto');
 
@@ -529,6 +560,14 @@ const markPayment = async (req, res) => {
       if (Number.isNaN(amount) || amount < 0) {
         return res.status(400).json({ message: 'Amount must be a positive number' });
       }
+      if (amount > MAX_AMOUNT) {
+        return res.status(400).json({ message: `Amount looks too large (max Rs. ${MAX_AMOUNT})` });
+      }
+    }
+
+    // A cancelled appointment never happened, so it can't be "paid".
+    if (appointment.status === 'cancelled') {
+      return res.status(400).json({ message: 'This appointment was cancelled, so it can\'t be marked as paid' });
     }
 
     appointment.paymentStatus = 'paid';
@@ -586,6 +625,16 @@ const notifyPayment = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    // Only an unpaid, live appointment can be flagged "I've paid". This stops
+    // a "paid" (doctor-confirmed) status being downgraded, and claims on
+    // cancelled appointments. Tapping twice is harmless.
+    if (appointment.paymentStatus === 'paid') {
+      return res.status(400).json({ message: 'This appointment is already marked as paid' });
+    }
+    if (appointment.status === 'cancelled') {
+      return res.status(400).json({ message: 'This appointment was cancelled' });
+    }
+
     appointment.paymentStatus = 'patient_claimed';
     await appointment.save();
 
@@ -622,6 +671,20 @@ const setCallStatus = async (req, res) => {
 
     if (!isParticipant) {
       return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+
+    // Starting a call (ringing the other person) follows the same rule as
+    // joining the video room: a live appointment, during its booked slot.
+    // Ending a call is always allowed so a banner can never get stuck.
+    if (active) {
+      if (appointment.status === 'cancelled') {
+        return res.status(400).json({ message: 'This appointment was cancelled' });
+      }
+      if (!isWithinSlotWindow(appointment.date, appointment.timeSlot)) {
+        return res.status(403).json({
+          message: `Calls are only available during the booked time slot (${appointment.timeSlot}).`
+        });
+      }
     }
 
     appointment.callActive = !!active;

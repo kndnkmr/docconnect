@@ -26,6 +26,9 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { getNextSequence } = require('../models/Counter');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
+const {
+  ContactError, checkPhone: sharedCheckPhone, checkEmail: sharedCheckEmail, releaseFromDeletedAccounts,
+} = require('../utils/contactChecks');
 const { createBooking, BookingError } = require('../utils/booking');
 const { addMember, updateMember, removeMember, FamilyError } = require('../utils/familyMembers');
 const { sendPushToUser } = require('../utils/push');
@@ -35,7 +38,6 @@ const BLOOD_GROUPS = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const TEXT_FIELDS = ['allergies', 'currentMedications', 'medicalHistory', 'emergencyContactName', 'insuranceProvider', 'insurancePolicyNumber'];
 const MAX_TEXT = 1000;
 const SET_PASSWORD_HOURS = 48;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class HelpError extends Error {
   constructor(status, message, extra = {}) {
@@ -46,7 +48,7 @@ class HelpError extends Error {
 }
 
 const sendError = (res, error, label) => {
-  if (error instanceof HelpError || error instanceof BookingError || error instanceof FamilyError) {
+  if (error instanceof HelpError || error instanceof BookingError || error instanceof FamilyError || error instanceof ContactError) {
     return res.status(error.status).json({ message: error.message, ...(error.extra || {}) });
   }
   if (error && error.code === 11000) {
@@ -71,31 +73,10 @@ async function loadPatient(id) {
 }
 
 // Phone: required, valid Indian mobile, not used by another active account.
-async function checkPhone(raw, selfId = null) {
-  const value = String(raw || '').trim();
-  if (!value) throw new HelpError(400, 'Mobile number is required.');
-  if (!isValidIndianPhone(value)) throw new HelpError(400, 'Please enter a valid 10-digit Indian mobile number (starting 6-9).');
-  const formatted = formatIndianPhone(value);
-  const query = { phone: formatted, isDeleted: { $ne: true } };
-  if (selfId) query._id = { $ne: selfId };
-  const clash = await User.findOne(query).select('_id name role');
-  if (clash) {
-    throw new HelpError(400, `That number is already in use by another account (${clash.name}).`, { existingUserId: String(clash._id) });
-  }
-  return formatted;
-}
-
-// Email: optional. '' clears it. Must look like an email and be unused.
-async function checkEmail(raw, selfId = null) {
-  const value = String(raw || '').trim().toLowerCase();
-  if (!value) return '';
-  if (!EMAIL_RE.test(value)) throw new HelpError(400, 'Please enter a valid email address, or leave it empty.');
-  const query = { email: value };
-  if (selfId) query._id = { $ne: selfId };
-  const clash = await User.findOne(query).select('_id name');
-  if (clash) throw new HelpError(400, `That email is already in use by another account (${clash.name}).`);
-  return value;
-}
+// Email: optional, '' clears it, must look like an email and be unused.
+// Shared rules (utils/contactChecks); the admin is told whose account clashes.
+const checkPhone = (raw, selfId = null) => sharedCheckPhone(raw, { selfId, revealOwner: true });
+const checkEmail = (raw, selfId = null) => sharedCheckEmail(raw, { selfId, revealOwner: true });
 
 function logEdit(user, adminId, fields) {
   if (!fields.length) return;
@@ -161,6 +142,12 @@ const updatePatientDetails = async (req, res) => {
       return res.json({ message: 'No changes to save.', changed, user: publicPatient(user) });
     }
     logEdit(user, req.user._id, changed);
+    // A deleted account may still hold the new phone/email; move it aside.
+    await releaseFromDeletedAccounts({
+      phone: changed.includes('phone') ? user.phone : null,
+      email: changed.includes('email') ? user.email : null,
+      selfId: user._id,
+    });
     await user.save({ validateModifiedOnly: true });
     res.json({ message: `Saved ${changed.length} change${changed.length === 1 ? '' : 's'} for "${user.name}".`, changed, user: publicPatient(user) });
   } catch (error) {
@@ -220,7 +207,8 @@ const bookForPatient = async (req, res) => {
     if (b.consentConfirmed !== true) {
       throw new HelpError(400, 'Please confirm the patient agreed (on a call or WhatsApp) to the Terms and teleconsultation consent.');
     }
-    // Admin bookings must name a family member that actually exists.
+    // Admin bookings must name a family member that actually exists
+    // (createBooking checks this too; this gives the admin a clearer message).
     if (b.bookedFor === 'family') {
       const name = String(b.familyMemberName || '').trim().toLowerCase();
       const member = (user.familyMembers || []).find((m) => m.name.trim().toLowerCase() === name);

@@ -17,6 +17,20 @@ const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 const { getSpecializationSynonyms } = require('../utils/specializationSynonyms');
 const { formatIndianPhone } = require('../utils/formatPhone');
 const { uploadFile } = require('../utils/uploadFile');
+const { checkPhone, checkOptionalPhone, ContactError, releaseFromDeletedAccounts } = require('../utils/contactChecks');
+
+// Fields a PUBLIC doctor endpoint must never return. Doctor profiles are
+// public, but the account record also holds login secrets (reset/verify
+// tokens), push endpoints, login IP, the doctor's block list, admin audit
+// notes, and the login email. Patient-only health fields are excluded too.
+const DOCTOR_PRIVATE_FIELDS = [
+  'password', 'email', 'resetPasswordToken', 'resetPasswordExpire',
+  'verificationToken', 'verificationTokenExpire', 'pushSubscriptions',
+  'lastLoginIP', 'lastLoginAt', 'blockedPatients', 'adminEdits', 'createdByAdmin',
+  'suspendedReason', 'suspendedAt', 'deletedAt', 'consentAcceptedAt',
+  'familyMembers', 'bloodGroup', 'allergies', 'currentMedications', 'medicalHistory',
+  'emergencyContactName', 'emergencyContactPhone', 'insuranceProvider', 'insurancePolicyNumber',
+].map((f) => `-${f}`).join(' ');
 
 // ============================================
 // Next-available-slot helpers (all in IST)
@@ -306,7 +320,7 @@ const getAllDoctors = async (req, res) => {
 
     // Fetch every candidate matching the filter (no DB-level pagination — we
     // need the whole set to rank it correctly before slicing a page).
-    const candidates = await User.find(filter).select('-password -upiQrCode');
+    const candidates = await User.find(filter).select(`${DOCTOR_PRIVATE_FIELDS} -upiQrCode`);
 
     if (wantAvailableToday) {
       // Honest "available today": compute each candidate's next free slot and
@@ -416,7 +430,7 @@ const getDoctorById = async (req, res) => {
       _id: req.params.id,
       role: 'doctor'
       // Make sure we're fetching a doctor, not a patient
-    }).select('-password');
+    }).select(DOCTOR_PRIVATE_FIELDS);
 
     if (!doctor) {
       return res.status(404).json({
@@ -465,6 +479,50 @@ const getDoctorById = async (req, res) => {
 // Body: { specialization, experience, qualification, clinicAddress, consultationFee, bio }
 //
 // A doctor can only update THEIR OWN profile (we use req.user from auth middleware)
+
+// Length caps for the doctor's free-text fields (bio is the longest).
+const DOCTOR_TEXT_CAPS = {
+  name: 100, specialization: 100, qualification: 200, medicalRegistrationNo: 50,
+  clinicAddress: 500, city: 100, googleMapsLink: 500, bio: 3000, upiId: 100,
+};
+// Links/images patients will open or load: block script-type schemes.
+// (Profile photos can be https URLs, legacy relative paths, or base64
+// data:image/... fallbacks from uploadFile, so those stay allowed.)
+const UNSAFE_URL = /^\s*(javascript|vbscript|file):|^\s*data:(?!image\/)/i;
+
+// Returns a message for the first invalid field in `updates`, or null.
+function validateDoctorUpdates(updates) {
+  for (const [field, max] of Object.entries(DOCTOR_TEXT_CAPS)) {
+    if (updates[field] === undefined) continue;
+    if (typeof updates[field] !== 'string') return `${field} must be text`;
+    if (updates[field].length > max) return `${field} is too long (max ${max} characters)`;
+  }
+  if (updates.name !== undefined && !updates.name.trim()) return 'Name cannot be empty';
+  if (updates.googleMapsLink) {
+    const link = updates.googleMapsLink.trim();
+    // Must be a web link if it has a scheme at all.
+    if (/^[a-z][a-z0-9+.-]*:/i.test(link) && !/^https?:\/\//i.test(link)) {
+      return 'Google Maps link must start with https://';
+    }
+  }
+  for (const f of ['profilePhoto', 'upiQrCode']) {
+    if (updates[f] === undefined) continue;
+    if (typeof updates[f] !== 'string' || UNSAFE_URL.test(updates[f])) return `${f} is not a valid image`;
+  }
+  if (updates.consultationModes !== undefined) {
+    if (!Array.isArray(updates.consultationModes)
+      || updates.consultationModes.some((m) => !['in-person', 'video', 'phone'].includes(m))) {
+      return 'Consultation modes must be any of: in-person, video, phone';
+    }
+  }
+  if (updates.languagesSpoken !== undefined) {
+    const l = updates.languagesSpoken;
+    if (!Array.isArray(l) || l.length > 20 || l.some((x) => typeof x !== 'string' || x.length > 40)) {
+      return 'Languages must be a list of up to 20 language names';
+    }
+  }
+  return null;
+}
 
 const updateDoctorProfile = async (req, res) => {
   try {
@@ -539,6 +597,20 @@ const updateDoctorProfile = async (req, res) => {
       return res.status(400).json({ message: 'No updates provided' });
     }
 
+    // Validate what's being saved (the save below now runs schema validation
+    // too). Phone: valid Indian mobile, not used by another active account.
+    // WhatsApp: valid format (a clinic line may be shared). Text is capped.
+    const problem = validateDoctorUpdates(updates);
+    if (problem) {
+      return res.status(400).json({ message: problem });
+    }
+    if (req.body.phone !== undefined) {
+      updates.phone = await checkPhone(req.body.phone, { selfId: req.user._id });
+    }
+    if (req.body.whatsappNumber !== undefined) {
+      updates.whatsappNumber = checkOptionalPhone(req.body.whatsappNumber, 'WhatsApp number');
+    }
+
     // Find the doctor and update their profile
     const doctor = await User.findById(req.user._id).select('-password');
 
@@ -550,7 +622,12 @@ const updateDoctorProfile = async (req, res) => {
     Object.keys(updates).forEach(key => {
       doctor[key] = updates[key];
     });
-    await doctor.save({ validateBeforeSave: false });
+    if (doctor.isModified('phone')) {
+      await releaseFromDeletedAccounts({ phone: doctor.phone, selfId: doctor._id });
+    }
+    // Validate only the fields that changed: new values are checked, while an
+    // older profile with some legacy value elsewhere still saves.
+    await doctor.save({ validateModifiedOnly: true });
 
     res.json({
       message: 'Profile updated successfully!',
@@ -558,6 +635,13 @@ const updateDoctorProfile = async (req, res) => {
     });
 
   } catch (error) {
+    if (error instanceof ContactError) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    if (error && error.name === 'ValidationError') {
+      const first = Object.values(error.errors || {})[0];
+      return res.status(400).json({ message: (first && first.message) || 'Some profile details are not valid' });
+    }
     console.error('Update doctor profile error:', error.message);
     res.status(500).json({
       message: 'Error updating profile',
@@ -585,7 +669,7 @@ const getDoctorBySlug = async (req, res) => {
       return res.status(400).json({ message: 'Missing doctor handle' });
     }
 
-    const doctor = await User.findOne({ slug, role: 'doctor' }).select('-password');
+    const doctor = await User.findOne({ slug, role: 'doctor' }).select(DOCTOR_PRIVATE_FIELDS);
 
     if (!doctor || doctor.isDeleted || doctor.isSuspended) {
       return res.status(404).json({ message: 'Doctor not found' });

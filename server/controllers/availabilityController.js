@@ -15,6 +15,9 @@
 
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
+// Slot helpers are shared with booking/reschedule so the labels the patient
+// is offered here are exactly the labels the server accepts when booking.
+const { generateTimeSlots, timeStringToMinutes } = require('../utils/slots');
 
 // ============================================
 // SET AVAILABILITY - Doctor updates their schedule
@@ -283,66 +286,6 @@ const getFreeSlots = async (req, res) => {
     });
   }
 };
-
-// ============================================
-// HELPER: Generate time slots between start and end
-// ============================================
-// Input: startTime="09:00", endTime="12:00", duration=30
-// Output: ["09:00 AM - 09:30 AM", "09:30 AM - 10:00 AM", "10:00 AM - 10:30 AM", ...]
-//
-// This converts 24-hour times to 12-hour format for display
-
-function generateTimeSlots(startTime, endTime, durationMinutes) {
-  const slots = [];
-
-  // Convert "09:00" to minutes since midnight: 9*60 + 0 = 540
-  let [startHour, startMin] = startTime.split(':').map(Number);
-  let [endHour, endMin] = endTime.split(':').map(Number);
-
-  let currentMinutes = startHour * 60 + startMin;
-  let endMinutes = endHour * 60 + endMin;
-  // Treat "00:00" end time as end-of-day (midnight) so 23:30 -> 00:00 works
-  if (endMinutes === 0) endMinutes = 24 * 60;
-
-  while (currentMinutes + durationMinutes <= endMinutes) {
-    const slotStart = minutesToTimeString(currentMinutes);
-    const slotEnd = minutesToTimeString(currentMinutes + durationMinutes);
-    slots.push(`${slotStart} - ${slotEnd}`);
-    currentMinutes += durationMinutes;
-  }
-
-  return slots;
-}
-
-// Convert minutes since midnight to "HH:MM AM/PM" format
-// 540 → "09:00 AM", 810 → "01:30 PM"
-function minutesToTimeString(minutes) {
-  let hours24 = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  hours24 = hours24 % 24; // 24:00 (midnight end of day) → 0 → shows as 12 AM
-
-  // Convert 24-hour to 12-hour
-  const period = hours24 >= 12 ? 'PM' : 'AM';
-  const hours12 = hours24 === 0 ? 12 : hours24 > 12 ? hours24 - 12 : hours24;
-
-  // Pad with zeros: 9 → "09", 30 → "30"
-  const hoursStr = hours12.toString().padStart(2, '0');
-  const minsStr = mins.toString().padStart(2, '0');
-
-  return `${hoursStr}:${minsStr} ${period}`;
-}
-
-// Convert "09:30 AM" or "01:30 PM" to minutes since midnight
-// "09:30 AM" → 570, "01:30 PM" → 810
-function timeStringToMinutes(timeStr) {
-  const [time, period] = timeStr.split(' '); // ["09:30", "AM"]
-  let [hours, mins] = time.split(':').map(Number); // [9, 30]
-
-  if (period === 'PM' && hours !== 12) hours += 12;
-  if (period === 'AM' && hours === 12) hours = 0;
-
-  return hours * 60 + mins;
-}
 
 // ============================================
 // SET BLOCKED DATES - Doctor marks vacation / days off
