@@ -20,6 +20,7 @@ import ChatBox from '../components/ChatBox';
 import VideoCall from '../components/VideoCall';
 import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
+import PaymentBox from '../components/PaymentBox';
 
 // Extracted sub-components
 import DoctorAvailability from './dashboard/DoctorAvailability';
@@ -567,12 +568,16 @@ function Dashboard() {
     socket.on('call-ended', handleCallEnded);
     socket.on('message-notification', handleMessageNotification);
     socket.on('report-updated', handleReportUpdated);
+    // A patient paid / sent a receipt / undid it → refresh the doctor's list.
+    const handleAppointmentUpdated = () => { fetchAppointments(); };
+    socket.on('appointment-updated', handleAppointmentUpdated);
 
     return () => {
       socket.off('incoming-call', handleIncomingCall);
       socket.off('call-ended', handleCallEnded);
       socket.off('message-notification', handleMessageNotification);
       socket.off('report-updated', handleReportUpdated);
+      socket.off('appointment-updated', handleAppointmentUpdated);
     };
   }, [isDoctor]);
 
@@ -1417,75 +1422,18 @@ function Dashboard() {
                       )}
                       {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
-                      {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && (
-                        <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                          <p className="text-sm font-medium text-orange-800 mb-2">Pay Rs. {apt.doctor?.consultationFee || 'as discussed'}</p>
-                          {apt.doctor?.upiQrCode ? (
-                            <div className="text-center">
-                              <img src={getUploadUrl(apt.doctor.upiQrCode)} alt="UPI QR Code" className="mx-auto max-w-[180px] rounded-lg border border-orange-200 mb-2" />
-                              <a href={getUploadUrl(apt.doctor.upiQrCode)} download="payment-qr.png" className="inline-block text-xs text-primary-600 hover:underline mb-3">Download QR Code</a>
-                              <p className="text-xs text-orange-600 mb-2">Scan or download QR → Pay → Click below</p>
-                              {apt.doctor?.upiId && (
-                                <p className="text-xs text-gray-500 mb-2">Can't scan? Pay manually to UPI ID: <span className="font-mono font-medium text-gray-700">{apt.doctor.upiId}</span></p>
-                              )}
-                            </div>
-                          ) : apt.doctor?.upiId ? (
-                            <p className="text-sm text-orange-700">Pay to UPI ID: <span className="font-mono font-medium">{apt.doctor.upiId}</span></p>
-                          ) : (
-                            <p className="text-sm text-orange-700">Contact doctor for payment details.</p>
-                          )}
-                          <div className="flex gap-2 mt-2">
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await appointmentAPI.notifyPayment(apt._id);
-                                  toast.success('Doctor has been notified of your payment!');
-                                  fetchAppointments();
-                                } catch (err) { toast.error('Failed to notify'); }
-                              }}
-                              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600"
-                            >
-                              ✓ I Have Paid
-                            </button>
-                            <label className="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer border border-gray-200">
-                              📎 Upload Proof
-                              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                const file = e.target.files[0];
-                                if (!file) return;
-                                const data = new FormData();
-                                data.append('screenshot', file);
-                                try {
-                                  await appointmentAPI.uploadScreenshot(apt._id, data);
-                                  toast.success('Payment proof uploaded!');
-                                  fetchAppointments();
-                                } catch (err) { toast.error('Failed to upload'); }
-                              }} />
-                            </label>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-2">Doctor will verify and confirm your payment.</p>
-                        </div>
+                      {/* Patient payment steps — every state has a way forward
+                          (pay / waiting / proof sent / paid). See PaymentBox. */}
+                      {isPatient && (
+                        <PaymentBox apt={apt} user={user} onChanged={fetchAppointments} onViewReceipt={setReceiptImage} />
                       )}
-                      {apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
-                      {/* Patient-side "payment under verification" status. The doctor's
-                          equivalent lives ONLY in the blue guidance box below now — it used
-                          to also duplicate here (see HOW_IT_WORKS.md "Known duplicate-message
-                          pattern" note for why this keeps happening and how to avoid it again). */}
-                      {apt.paymentStatus === 'patient_claimed' && isPatient && (
-                        <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          {!apt.paymentScreenshot && (
-                            <p className="text-xs font-medium text-yellow-800">No receipt uploaded. Waiting for doctor's confirmation on payment.</p>
-                          )}
-                          {apt.paymentScreenshot && (
-                            <p className="text-xs font-medium text-yellow-800">⏳ Receipt uploaded. Waiting for doctor's confirmation on payment.</p>
-                          )}
-                        </div>
-                      )}
+                      {!isPatient && apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
 
                       {/* Next step guidance */}
                       <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg">
                         <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
-                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '💳 Next: Scan QR code and pay, then click "I Have Paid".'}
+                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '💳 Next: pay using the box above, then upload the payment screenshot.'}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
                         </p>
@@ -1509,9 +1457,10 @@ function Dashboard() {
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
                           {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && (
-                            apt.paymentScreenshot
+                            (apt.paymentScreenshot
                               ? '💳 Patient says paid — receipt uploaded. Click "View Receipt" to verify, then "Mark Paid".'
-                              : '💳 Patient says paid — no receipt uploaded. Check your UPI app, then click "Mark Paid".'
+                              : '💳 Patient says paid — no receipt uploaded. Check your UPI app, then click "Mark Paid".')
+                            + (apt.paymentUTR ? ` UPI ref (UTR): ${apt.paymentUTR}` : '')
                           )}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}

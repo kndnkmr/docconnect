@@ -23,6 +23,7 @@ const rx = require('../controllers/prescriptionController');
 const auth = require('../controllers/authController');
 const doctors = require('../controllers/doctorController');
 const push = require('../controllers/pushController');
+const pay = require('../controllers/paymentController');
 
 // A query result usable as `await X`, `await X.select()`, `await X.populate()`.
 const q = (val) => {
@@ -203,12 +204,12 @@ const aptDoc = (extra = {}) => ({
 test('notify payment: cannot downgrade a paid appointment or claim a cancelled one', async () => {
   let a = aptDoc({ paymentStatus: 'paid' });
   Appointment.findById = () => q(a);
-  assert.strictEqual((await run(appt.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } })).statusCode, 400);
+  assert.strictEqual((await run(pay.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } })).statusCode, 400);
   assert.strictEqual(a.paymentStatus, 'paid');
   a = aptDoc({ status: 'cancelled' });
-  assert.strictEqual((await run(appt.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } })).statusCode, 400);
+  assert.strictEqual((await run(pay.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } })).statusCode, 400);
   a = aptDoc();
-  const ok = await run(appt.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } });
+  const ok = await run(pay.notifyPayment, { params: { id: 'a1' }, user: { _id: 'pat1' } });
   assert.strictEqual(ok.statusCode, 200);
   assert.strictEqual(a.paymentStatus, 'patient_claimed');
 });

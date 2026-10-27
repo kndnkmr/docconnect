@@ -25,14 +25,18 @@ const {
   cancelAppointment,
   rescheduleAppointment,
   markPayment,
-  uploadPaymentScreenshot,
-  notifyPayment,
   setCallStatus,
   getIncomingCalls,
   getVideoToken,
   startCallLog,
   endCallLog
 } = require('../controllers/appointmentController');
+const {
+  uploadPaymentScreenshot,
+  notifyPayment,
+  undoPaymentClaim,
+  remindDoctorAboutPayment,
+} = require('../controllers/paymentController');
 
 // Import middleware
 const { protect, authorize } = require('../middleware/auth');
@@ -98,12 +102,14 @@ router.put('/:id/cancel', authorize('patient'), cancelAppointment);
 // ---- DOCTOR: Mark payment received ----
 router.put('/:id/payment', authorize('doctor'), markPayment);
 
-// ---- PATIENT: Upload payment screenshot ----
+// ---- PATIENT: payment flow (see controllers/paymentController.js) ----
+// Upload/replace screenshot (counts as "I've paid"), say "I've paid" (with
+// optional UTR), undo ("I haven't paid yet"), and remind the doctor.
 const { upload } = require('../middleware/upload');
 router.put('/:id/payment-screenshot', authorize('patient'), upload.single('screenshot'), uploadPaymentScreenshot);
-
-// ---- PATIENT: Notify doctor of payment ----
 router.put('/:id/notify-payment', authorize('patient'), notifyPayment);
+router.put('/:id/undo-payment-claim', authorize('patient'), undoPaymentClaim);
+router.post('/:id/payment-reminder', authorize('patient'), remindDoctorAboutPayment);
 
 module.exports = router;
 

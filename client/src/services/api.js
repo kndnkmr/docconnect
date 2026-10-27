@@ -211,8 +211,14 @@ export const appointmentAPI = {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
 
-  // Notify doctor that patient has paid (patient only)
-  notifyPayment: (id) => API.put(`/appointments/${id}/notify-payment`),
+  // Notify doctor that patient has paid (patient only). Optional 12-digit UTR.
+  notifyPayment: (id, utr) => API.put(`/appointments/${id}/notify-payment`, utr ? { utr } : {}),
+
+  // "I haven't paid yet" — brings the QR / upload options back (patient only)
+  undoPaymentClaim: (id) => API.put(`/appointments/${id}/undo-payment-claim`),
+
+  // Remind the doctor to confirm a payment (patient; server rate-limits)
+  remindPayment: (id) => API.post(`/appointments/${id}/payment-reminder`),
 
   // Call signaling (ringing): mark a call active/inactive
   setCall: (id, active) => API.put(`/appointments/${id}/call`, { active }),
@@ -326,6 +332,9 @@ export const adminAPI = {
   // Confirm a pending appointment on the doctor's behalf (sends the patient
   // the same confirmation email + push a doctor-confirm would). Body: { meetingLink? }
   confirmAppointment: (id, data = {}) => API.put(`/admin/appointments/${id}/confirm`, data),
+
+  // Payment help: { action: 'mark_paid', amount?, note? } or { action: 'reset', note? }
+  paymentAction: (id, data) => API.put(`/admin/appointments/${id}/payment`, data),
 
   // Delete a user (permanent)
   deleteUser: (id) => API.delete(`/admin/users/${id}`),

@@ -160,6 +160,22 @@ const appointmentSchema = new mongoose.Schema({
     default: ''
   },
 
+  // ---- Payment recovery trail (see controllers/paymentController.js) ----
+  // When the patient said "I've paid" (button, screenshot or UTR).
+  paymentClaimedAt: { type: Date, default: null },
+  // 12-digit UPI reference (UTR) the patient typed, so the doctor can find
+  // the payment in their UPI app without a screenshot.
+  paymentUTR: { type: String, default: '' },
+  // Last time the PATIENT pressed "Remind doctor" (rate-limited).
+  paymentReminderSentAt: { type: Date, default: null },
+  // Automatic nudges for an unverified claim: doctor first, then admin.
+  paymentDoctorNudgedAt: { type: Date, default: null },
+  paymentAdminAlertedAt: { type: Date, default: null },
+  // Who marked it paid / reset it, so admin actions are visible later.
+  paymentMarkedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  paymentMarkedByRole: { type: String, enum: ['', 'doctor', 'admin'], default: '' },
+  paymentAdminNote: { type: String, default: '' },
+
   // ---- Free follow-up deadline ----
   // Set by doctor when writing prescription
   // Patient can book a free follow-up before this date

@@ -117,7 +117,7 @@ const getAllAppointments = async (req, res) => {
     const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
 
     const appointments = await Appointment.find(filter)
-      .populate('doctor', 'name specialization phone')
+      .populate('doctor', 'name specialization phone consultationFee')
       .populate('patient', 'name email phone patientId')
       .sort({ createdAt: -1 })
       .skip(skip)

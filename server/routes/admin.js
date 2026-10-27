@@ -32,6 +32,13 @@ router.get('/appointments', getAllAppointments);
 // confirmation email + push the doctor-confirm flow sends.
 router.put('/appointments/:id/confirm', confirmAppointmentAsAdmin);
 
+// PUT /api/admin/appointments/:id/payment - Payment help. Body:
+// { action: 'mark_paid', amount?, note? } on the doctor's behalf (after
+// checking with them), or { action: 'reset', note? } so the patient sees the
+// QR + upload options again. Records which admin did it.
+const { adminPaymentAction } = require('../controllers/paymentController');
+router.put('/appointments/:id/payment', adminPaymentAction);
+
 // DELETE /api/admin/users/:id - Remove a user (permanent)
 router.delete('/users/:id', deleteUser);
 

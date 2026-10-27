@@ -7,6 +7,8 @@ import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from 
 // "Help patient" (edit details/family, book on their behalf) + "+ New patient".
 // Loaded only when an admin opens one.
 const HelpPatient = lazy(() => import('./admin/HelpPatient'));
+// Payment help (view receipt/UTR, mark paid, reset) — loaded when opened.
+const PaymentHelp = lazy(() => import('./admin/PaymentHelp'));
 const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
@@ -377,6 +379,9 @@ function AdminDashboard() {
   // Confirm a pending appointment on the doctor's behalf (doctors sometimes
   // forget). The patient gets the same confirmation email + push a doctor
   // confirm sends. Asks first since it notifies the patient.
+  // Payment help modal: the appointment being looked at (null = closed).
+  const [paymentHelpApt, setPaymentHelpApt] = useState(null);
+
   const handleConfirmAppointment = async (apt) => {
     const who = apt.patient?.name || 'the patient';
     const dr = apt.doctor?.name || 'the doctor';
@@ -1393,6 +1398,16 @@ function AdminDashboard() {
                           }
                           return <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Unpaid</span>;
                         })()}
+                        {apt.status !== 'cancelled' && !apt.isFollowUp && (
+                          <button
+                            type="button"
+                            onClick={() => setPaymentHelpApt(apt)}
+                            className="block mt-1 text-xs text-primary-600 hover:underline whitespace-nowrap"
+                            title="See receipt / UPI reference, mark paid on the doctor's behalf, or reset"
+                          >
+                            💳 Payment help
+                          </button>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{apt.reason}</td>
                       <td className="px-4 py-3">
@@ -2178,6 +2193,13 @@ function AdminDashboard() {
             initialTab={helpPatient.tab}
             onClose={() => setHelpPatient(null)}
             onChanged={() => fetchUsers()}
+          />
+        )}
+        {paymentHelpApt && (
+          <PaymentHelp
+            apt={paymentHelpApt}
+            onClose={() => setPaymentHelpApt(null)}
+            onDone={() => fetchAppointments()}
           />
         )}
         {newPatientOpen && (

@@ -574,7 +574,18 @@ const markPayment = async (req, res) => {
     appointment.paidAt = new Date();
     // Use custom amount if provided, otherwise use doctor's consultation fee
     appointment.amountCollected = req.body.amount ? Number(req.body.amount) : (appointment.doctor.consultationFee || 0);
+    appointment.paymentMarkedBy = req.user._id;
+    appointment.paymentMarkedByRole = req.user.role === 'admin' ? 'admin' : 'doctor';
     await appointment.save();
+
+    // Tell the patient straight away (previously they only found out by
+    // reopening the dashboard).
+    sendPushToUser(String(appointment.patient), {
+      title: 'Payment confirmed',
+      body: `Your payment for the appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' })} is confirmed.`,
+      url: '/dashboard',
+      tag: `payment-${appointment._id}`
+    });
 
     res.json({
       message: 'Payment marked as received',
@@ -587,63 +598,8 @@ const markPayment = async (req, res) => {
   }
 };
 
-// ============================================
-// UPLOAD PAYMENT SCREENSHOT - Patient uploads proof
-// ============================================
-const uploadPaymentScreenshot = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id);
-    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    if (appointment.patient.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-    if (!req.file) return res.status(400).json({ message: 'Please upload a screenshot' });
-
-    // Store screenshot (Cloudinary URL, or base64 fallback if Cloudinary not set)
-    appointment.paymentScreenshot = await uploadFile(
-      req.file.buffer,
-      req.file.mimetype,
-      'promedicoz/payments'
-    );
-    await appointment.save();
-
-    res.json({ message: 'Payment screenshot uploaded', paymentScreenshot: appointment.paymentScreenshot });
-  } catch (error) {
-    console.error('Upload payment screenshot error:', error.message);
-    res.status(500).json({ message: 'Error uploading screenshot' });
-  }
-};
-
-// ============================================
-// NOTIFY PAYMENT - Patient says they paid
-// ============================================
-const notifyPayment = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id);
-    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    if (appointment.patient.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
-    // Only an unpaid, live appointment can be flagged "I've paid". This stops
-    // a "paid" (doctor-confirmed) status being downgraded, and claims on
-    // cancelled appointments. Tapping twice is harmless.
-    if (appointment.paymentStatus === 'paid') {
-      return res.status(400).json({ message: 'This appointment is already marked as paid' });
-    }
-    if (appointment.status === 'cancelled') {
-      return res.status(400).json({ message: 'This appointment was cancelled' });
-    }
-
-    appointment.paymentStatus = 'patient_claimed';
-    await appointment.save();
-
-    res.json({ message: 'Doctor notified', paymentStatus: 'patient_claimed' });
-  } catch (error) {
-    console.error('Notify payment error:', error.message);
-    res.status(500).json({ message: 'Error notifying payment' });
-  }
-};
+// (Patient payment actions — screenshot, "I've paid", undo, remind — live in
+// controllers/paymentController.js.)
 
 // ============================================
 // SET CALL STATUS - Signal that a call is active (ringing)
@@ -783,7 +739,6 @@ const getIncomingCalls = async (req, res) => {
 // meeting token so the user joins directly (doctor = moderator/owner).
 
 const { ensureRoom, createMeetingToken } = require('../utils/daily');
-const { uploadFile } = require('../utils/uploadFile');
 const CallLog = require('../models/CallLog');
 
 // ---- Time-slot window helpers (IST) ----
@@ -971,8 +926,6 @@ module.exports = {
   cancelAppointment,
   rescheduleAppointment,
   markPayment,
-  uploadPaymentScreenshot,
-  notifyPayment,
   setCallStatus,
   getIncomingCalls,
   getVideoToken,

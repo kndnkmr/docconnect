@@ -120,6 +120,7 @@ const { purgeExpiredDeletedAccounts } = require('./utils/accountCleanup');
 const { sendCallStartReminders } = require('./utils/callReminder');
 const { sendAppointmentReminders } = require('./utils/appointmentReminder');
 const { sendReviewRequests } = require('./utils/reviewRequest');
+const { runPaymentFollowUp } = require('./utils/paymentFollowUp');
 const { fixEmailIndex } = require('./utils/fixIndexes');
 const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
@@ -181,6 +182,10 @@ mongoose.connect(process.env.MONGODB_URI)
     // brings patients back. Same once-a-minute cadence; dedupes via
     // reviewRequestSentAt so nobody gets asked twice.
     setInterval(sendReviewRequests, 60 * 1000);
+
+    // Unconfirmed payments: nudge the doctor at 3h, alert admin at 24h, once
+    // each per claim (see utils/paymentFollowUp.js). Every 10 minutes.
+    setInterval(runPaymentFollowUp, 10 * 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
