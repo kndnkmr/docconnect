@@ -85,6 +85,12 @@ function Register() {
       return;
     }
 
+    // Patients must always give a mobile number (email is optional).
+    if (formData.role === 'patient' && formData.phone.length !== 10) {
+      toast.error('Please enter your 10-digit mobile number');
+      return;
+    }
+
     if (!formData.email && !formData.phone) {
       toast.error('Please provide either email or phone number');
       return;
@@ -237,10 +243,10 @@ function Register() {
               </div>
             </div>
 
-            {/* Phone Number Field (required for patients if no email) */}
+            {/* Phone Number Field (always required for patients) */}
             <div className="mb-4">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number {formData.role === 'patient' && !formData.email && <span className="text-red-500">*</span>}
+                Phone Number {formData.role === 'patient' && <span className="text-red-500">*</span>}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">📱</span>
@@ -255,11 +261,13 @@ function Register() {
                   onChange={handleChange}
                   placeholder="9876543210 (10 digits, +91 added automatically)"
                   className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
-                  required={formData.role === 'patient' && !formData.email}
+                  required={formData.role === 'patient'}
+                  pattern={formData.role === 'patient' ? '\\d{10}' : undefined}
+                  title={formData.role === 'patient' ? 'Enter your 10-digit mobile number' : undefined}
                 />
               </div>
               {formData.role === 'patient' && (
-                <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed). We'll add +91 automatically.</p>
+                <p className="text-xs text-gray-500 mt-1">Required — you'll log in with this number. Email is optional. We'll add +91 automatically.</p>
               )}
               {phoneTaken && (
                 <div role="alert" className="mt-3 rounded-2xl border-2 border-primary-300 bg-primary-50 p-4">

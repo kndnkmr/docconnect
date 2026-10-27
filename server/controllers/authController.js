@@ -48,11 +48,20 @@ const register = async (req, res) => {
     const { name, email, password, role, phone } = req.body;
 
     // Step 2: Validate required fields
-    // For patients: either email OR phone is required
+    // For patients: PHONE is always required (email is optional). The phone
+    // is how patients log in and how doctors/admin reach them. (Previously
+    // "email OR phone" was accepted, which let patients register with only
+    // an email and no phone.)
     // For doctors: email is required (more professional)
     if (!name || !password || !role) {
       return res.status(400).json({
         message: 'Please provide name, password, and role'
+      });
+    }
+
+    if (role === 'patient' && !String(phone || '').trim()) {
+      return res.status(400).json({
+        message: 'Please enter your 10-digit mobile number. It is needed to log in and for your doctor to reach you.'
       });
     }
 
