@@ -271,6 +271,19 @@ const login = async (req, res) => {
     }
 
     if (!user) {
+      // PHONE logins get a clear "not registered" answer (with a code the
+      // login page uses to offer "Create account with this number"). New
+      // patients kept typing a password they never made and only saw a
+      // vague error. This reveals nothing new: the register endpoint already
+      // answers "An account with this phone number already exists", and both
+      // endpoints share authLimiter (10 tries / 15 min per IP).
+      // EMAIL logins keep the generic message.
+      if (phone) {
+        return res.status(401).json({
+          code: 'NOT_REGISTERED',
+          message: 'This phone number is not registered. Please create an account first.'
+        });
+      }
       return res.status(401).json({
         message: 'Invalid email or password'
       });
@@ -295,6 +308,15 @@ const login = async (req, res) => {
     // This calls the method we defined in User.js
 
     if (!isPasswordMatch) {
+      // Patient phone logins say "wrong password" plainly (code
+      // WRONG_PASSWORD → the login page offers reset + WhatsApp help).
+      // Doctor/admin accounts and email logins keep the generic message.
+      if (phone && user.role === 'patient') {
+        return res.status(401).json({
+          code: 'WRONG_PASSWORD',
+          message: 'Wrong password for this phone number.'
+        });
+      }
       return res.status(401).json({
         message: 'Invalid email or password'
       });

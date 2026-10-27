@@ -18,11 +18,17 @@ import AuthLayout from '../components/AuthLayout';
 import PasswordToggleIcon from '../components/PasswordToggleIcon';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
+import { trackEvent } from '../components/Analytics';
 
 function Register() {
   const [searchParams] = useSearchParams();
   // Read ?role=doctor from the URL (if present)
   const defaultRole = searchParams.get('role') === 'doctor' ? 'doctor' : 'patient';
+  const location = useLocation();
+  // Carried from the login page / doctor page: where to return after signing
+  // up, which doctor they're booking, and the phone they already typed.
+  const doctorName = location.state?.doctorName || '';
+  const prefillPhone = String(location.state?.phone || '').replace(/\D/g, '').slice(-10);
 
   // ---- Form state ----
   const [formData, setFormData] = useState({
@@ -30,9 +36,12 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
+    phone: prefillPhone,
     role: defaultRole
   });
+  // "This phone is already registered" → offer to log in instead (box, not toast).
+  const [phoneTaken, setPhoneTaken] = useState(false);
+  const lang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi' ? 'hi' : 'en'; } catch { return 'en'; } })();
   // Using ONE state object for all fields (alternative to separate useState for each)
   // This is common for forms with many fields
 
@@ -40,11 +49,12 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   // Where the user was headed before auth (carried through from a "Log in to
   // Book" link that also offers "create an account"), so a brand-new patient
   // who signs up mid-booking is returned to that booking page.
   const returnTo = location.state?.from || null;
+  const bookingIntent = Boolean(returnTo && returnTo.startsWith('/book-appointment'));
+  const toLogin = () => navigate('/login', { state: { from: returnTo, doctorName, phone: formData.phone, skipAsk: true } });
 
   // ---- Handle input changes ----
   // ONE handler for ALL fields (instead of one per field)
@@ -55,6 +65,7 @@ function Register() {
 
     // Phone: only digits, capped at 10 (matches Indian mobile number length)
     const cleanedValue = name === 'phone' ? value.replace(/\D/g, '').slice(0, 10) : value;
+    if (name === 'phone') setPhoneTaken(false);
 
     setFormData(prev => ({
       ...prev,        // Keep all existing fields
@@ -108,6 +119,7 @@ function Register() {
       login(token, user);
 
       toast.success('Account created successfully! Welcome to ProMedicoz.');
+      trackEvent('register_success', { role: user.role, booking: bookingIntent ? 'yes' : 'no' });
       // A new doctor always lands on their dashboard to finish onboarding; a
       // new patient is returned to wherever they were headed (e.g. the booking
       // page), falling back to the dashboard.
@@ -115,7 +127,12 @@ function Register() {
 
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed. Please try again.';
-      toast.error(message);
+      if (/phone number already exists/i.test(message)) {
+        setPhoneTaken(true);
+        trackEvent('register_phone_taken', { booking: bookingIntent ? 'yes' : 'no' });
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -127,6 +144,19 @@ function Register() {
 
       {/* Form Card */}
         <div className="bg-white rounded-xl shadow-md p-8">
+          {/* Booking context — the patient sees why they're registering and
+              that they'll come straight back to book. */}
+          {bookingIntent && (
+            <div className="mb-5 rounded-xl bg-green-50 border border-green-200 px-4 py-3">
+              <p className="text-xs text-green-800">{lang === 'hi' ? 'इनसे अपॉइंटमेंट' : 'Booking with'}</p>
+              <p className="font-bold text-green-900">{doctorName || (lang === 'hi' ? 'आपकी अपॉइंटमेंट' : 'Your appointment')}</p>
+              <p className="mt-1 text-xs text-green-800">
+                {lang === 'hi'
+                  ? 'मुफ़्त खाता बनाएं — बनते ही आप सीधे बुकिंग पर लौटेंगे।'
+                  : "Create your free account — you'll go straight back to booking."}
+              </p>
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
 
             {/* Role Selection */}
@@ -231,6 +261,24 @@ function Register() {
               {formData.role === 'patient' && (
                 <p className="text-xs text-gray-500 mt-1">Patients can register with just phone number (no email needed). We'll add +91 automatically.</p>
               )}
+              {phoneTaken && (
+                <div role="alert" className="mt-3 rounded-2xl border-2 border-primary-300 bg-primary-50 p-4">
+                  <p className="font-bold text-primary-900">
+                    ✓ {lang === 'hi' ? 'यह नंबर पहले से रजिस्टर है' : 'This number is already registered'}
+                  </p>
+                  <p className="mt-1 text-sm text-primary-900">
+                    {lang === 'hi'
+                      ? 'आपका खाता पहले से है — नया बनाने की ज़रूरत नहीं। इसी नंबर से लॉग इन करें।'
+                      : 'You already have an account — no need to create a new one. Log in with this number.'}
+                  </p>
+                  <button type="button" onClick={toLogin} className="mt-3 w-full py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold">
+                    {lang === 'hi' ? 'इसी नंबर से लॉग इन करें →' : 'Log in with this number →'}
+                  </button>
+                  <Link to="/forgot-password" className="mt-2 block text-center text-sm font-medium text-primary-700 hover:underline">
+                    {lang === 'hi' ? 'पासवर्ड याद नहीं? नया बनाएं →' : "Don't remember the password? Reset it →"}
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Password Field */}
@@ -298,7 +346,7 @@ function Register() {
           {/* Link to login page */}
           <p className="text-center text-gray-600 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 font-medium hover:underline">
+            <Link to="/login" state={{ from: returnTo, doctorName, phone: formData.phone, skipAsk: true }} className="text-primary-600 font-medium hover:underline">
               Sign in here
             </Link>
           </p>

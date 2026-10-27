@@ -605,7 +605,7 @@ function DoctorProfile({ clinicMode = false }) {
               <div className="mt-4 lg:hidden">
                 <Link
                   to="/login"
-                  state={{ from: bookingPath }}
+                  state={{ from: bookingPath, doctorName: formatDoctorName(doctor.name) }}
                   onClick={() => trackEvent('book_appointment_click', {
                     doctor_id: doctor._id,
                     doctor_specialization: doctor.specialization || 'unknown',
@@ -617,7 +617,7 @@ function DoctorProfile({ clinicMode = false }) {
                 </Link>
                 <p className="mt-2 text-sm text-gray-500">
                   {t.noAccount}{' '}
-                  <Link to="/register" state={{ from: bookingPath }} className="text-primary-600 hover:underline font-medium whitespace-nowrap">{t.signUpFree}</Link>
+                  <Link to="/register" state={{ from: bookingPath, doctorName: formatDoctorName(doctor.name) }} className="text-primary-600 hover:underline font-medium whitespace-nowrap">{t.signUpFree}</Link>
                 </p>
               </div>
             )}
@@ -850,7 +850,7 @@ function DoctorProfile({ clinicMode = false }) {
             <>
               <Link
                 to="/login"
-                state={{ from: bookingPath }}
+                state={{ from: bookingPath, doctorName: formatDoctorName(doctor.name) }}
                 onClick={() => trackEvent('book_appointment_click', { doctor_id: doctor._id, doctor_specialization: doctor.specialization || 'unknown', auth_state: 'logged_out' })}
                 className="btn btn-primary w-full justify-center"
               >
@@ -858,7 +858,7 @@ function DoctorProfile({ clinicMode = false }) {
               </Link>
               <p className="mt-2 text-xs text-gray-500 text-center">
                 {t.noAccount}{' '}
-                <Link to="/register" state={{ from: bookingPath }} className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
+                <Link to="/register" state={{ from: bookingPath, doctorName: formatDoctorName(doctor.name) }} className="text-primary-600 hover:underline font-medium">{t.signUpFree}</Link>
               </p>
             </>
           ) : null}
@@ -913,7 +913,7 @@ function DoctorProfile({ clinicMode = false }) {
             ) : !isAuthenticated ? (
               <Link
                 to="/login"
-                state={{ from: bookingPath }}
+                state={{ from: bookingPath, doctorName: formatDoctorName(doctor.name) }}
                 onClick={() => trackBook('logged_out')}
                 className="btn btn-primary flex-shrink-0"
               >
