@@ -104,9 +104,21 @@ Stores all bookings between patients and doctors.
   "consultationType": "in-person",
   "notes": "",
   "cancellationReason": "",
+  "paymentStatus": "pending",          // pending | patient_claimed | paid
+  "paymentScreenshot": "",             // receipt the patient uploaded
+  "paymentUTR": "",                    // 12-digit UPI reference the patient typed
+  "paymentClaimedAt": null,            // when the patient said "I've paid"
+  "paymentMarkedBy": null,             // who marked paid / reset (doctor or admin)
+  "isFollowUp": false,                 // free follow-up (one per original visit)
+  "originalAppointment": null,         // repeat / follow-up link
+  "consentBy": "patient",              // or "admin" (booked via Help patient)
+  "confirmReminderSentAt": null,       // automatic reminders, once each
+  "payReminderSentAt": null,
   "createdAt": "2024-08-03T11:00:00.000Z"
 }
 ```
+
+**Double-booking guard:** a unique partial index `unique_active_slot` on `{ doctor, date, timeSlot }` lets the database itself refuse a second ACTIVE booking for the same slot, even if two patients tap Book at the same instant. Its filter is `status > 'cancelled'`, which works because the statuses sort alphabetically as cancelled < completed < confirmed < pending. **If a new status is ever added, re-check that ordering.** (The first version used `$ne`, which MongoDB doesn't allow in a partial index, so it was silently never created.) The server checks and builds it on every start (`utils/fixIndexes.js`), and Admin → Overview shows "🛡 Double-booking guard: ✓ On".
 
 ---
 
@@ -467,7 +479,12 @@ Step 8: Response: { token: "eyJ...", user: { ... } }
 4. Server verifies token on every protected request:
    - Is the signature valid? (not tampered)
    - Is it expired? (30-day expiry)
-   - Does the user still exist? (not deleted)
+   - Does the user still exist, and is it not deleted or suspended?
+     (a deleted/suspended account is refused at once, even with a token
+     issued before — it doesn't have to wait out the 30 days)
+5. If a request gets 401 while logged in, the app shows ONE banner:
+   "Please log in again — your work on this page is saved" and returns
+   the person to the same page after login (components/SessionExpired.jsx).
 ```
 
 ### JWT Token anatomy:
@@ -484,11 +501,25 @@ Signature: HMAC-SHA256(header + payload, JWT_SECRET)
 
 Anyone can decode the header and payload (it's just base64, not encrypted). But ONLY the server can create a valid signature because only it knows `JWT_SECRET`. If anyone changes the payload, the signature won't match → rejected.
 
+### `JWT_SECRET` — keep it secret, rotate if it leaks
+
+- **Why it matters:** whoever knows `JWT_SECRET` can create a valid token for ANY account (admin included) without a password. Account ids aren't secret (doctor ids appear in public URLs), so this secret is the only thing standing in the way.
+- **History:** an early version of this file contained the real value, so it is in the public git history. It was **rotated on Render in Oct 2026** and verified: a token signed with the old value is now rejected ("invalid token"). Never put the real value in any file, commit, chat or screenshot; use a placeholder in docs.
+- **How to rotate** (if it ever leaks again):
+  1. Make a new one: `openssl rand -hex 32` (Mac/Linux Terminal).
+  2. Render → backend service → **Environment** → edit `JWT_SECRET` → paste → **Save and deploy**.
+  3. Wait for **Live**, then log in again.
+- **Effect:** every existing login stops working, so everyone logs in once more (passwords don't change). Appointments, payments, prescriptions and push notifications are unaffected; open forms come back after login (drafts are kept on the device).
+
 ### Role-based access:
 
 ```
-Patient can:     register, login, browse doctors, book, cancel own appointments
-Doctor can:      register, login, update profile, set availability, confirm/complete appointments
+Patient can:     register, login, browse doctors, book, cancel/reschedule own appointments, pay
+Doctor can:      register, login, update profile, set availability, confirm/complete appointments,
+                 mark payment, write prescriptions, block a patient
+Admin can:       everything in the Admin panel: users, appointments, Help patient, Payment help,
+                 Needs help, confirm on a doctor's behalf (admin accounts are never created via
+                 public registration — only via the ADMIN_EMAIL bootstrap)
 Nobody can:      access other users' data, change roles, bypass authentication
 ```
 
@@ -1476,6 +1507,91 @@ Photo of PRINTED report
 - **What was wrong:** on a first visit there's no previous worker, and the first one taking control used to trigger the same reload ~2 s after opening the site. That wiped whatever a first-time visitor had started.
 - **The fix:** it now reloads only if a controller existed before (`hadController`).
 
+
+## Keeping Patients Unstuck (2026): payments, Needs help, drafts, validation
+
+Real patients got stuck in places the code didn't expect (a patient registered without a phone; a patient tapped "I Have Paid", lost the QR and had no way forward). The rule since then: **every state has a next step, a way back, and someone who gets nudged automatically if it stalls.**
+
+### 1. Payments with no dead ends — `controllers/paymentController.js` + `components/PaymentBox.jsx`
+
+ProMedicoz doesn't take the money: the patient pays the doctor by UPI, tells us, and the doctor (or admin) presses "Mark Paid".
+
+| Payment state | What the patient sees | Ways out |
+|---|---|---|
+| `pending` (confirmed, not paid) | "Pay Rs. X to Dr. Y" | 📱 Pay with UPI app (phones; `upi://pay` link with amount + Patient ID in the note), QR (tap to enlarge in-page, Back closes it), copy UPI ID → 📎 upload screenshot (counts as "I've paid"), type the 12-digit UTR, or "I've paid, just tell the doctor" |
+| `patient_claimed`, no proof | "⏳ Waiting for the doctor to confirm" | Add screenshot / UTR, 💳 Show QR / pay again, ↩ I haven't paid yet, 🔔 Remind doctor, 💬 WhatsApp support |
+| `patient_claimed`, proof sent | "✓ Screenshot sent" + thumbnail | View / Replace, same buttons as above |
+| `paid` | "✓ Payment Confirmed" | — (only doctor/admin change it) |
+
+- **Notifications:** "I've paid" and uploads push the doctor (generic text, no patient name on the lock screen) and refresh their open dashboard (socket `appointment-updated`). Mark Paid pushes the patient.
+- **Timing rules:** "Remind doctor" 2 h after claiming, then at most every 6 h (server returns 429 + `nextReminderAt` otherwise).
+- **Automatic follow-up** (`utils/paymentFollowUp.js`, every 10 min): doctor nudged once at 3 h, admin emailed + pushed once at 24 h. Claims made before this existed have no `paymentClaimedAt`, so `updatedAt` is used for them.
+- **Admin → Appointments → 💳 Payment help** (`pages/admin/PaymentHelp.jsx`): shows status, UTR, screenshot, both phones; **Mark paid** (after checking with the doctor; amount defaults to the fee) or **Reset** (patient sees QR/upload again; a note is required to reset a *paid* one). Both record `paymentMarkedBy` + `paymentMarkedByRole: 'admin'` + the note.
+- **Caveat:** some UPI apps limit pay links to personal UPI IDs, so the QR always stays as the fallback. The UPI button only shows on phones and only if the doctor saved a UPI ID.
+
+### 2. Admin "🚨 Needs help" — `utils/needsHelp.js` + `pages/admin/NeedsHelp.jsx`
+
+Built live on each open (`GET /api/admin/needs-help`), first item in the admin sidebar with a red count, plus a banner on Overview.
+
+| Group | Rule | Row actions |
+|---|---|---|
+| Slot soon, not confirmed | `pending`, slot not started, booked 3 h+ ago **or** slot within 4 h | ✓ Confirm, WhatsApp doctor |
+| Patient says paid, not confirmed | `patient_claimed` for 3 h+ | 💳 Payment help, WhatsApp doctor |
+| Confirmed, unpaid, within 2 h | `confirmed`, `paymentStatus: pending`, not a free follow-up | Payment help, WhatsApp patient |
+| Slot passed, still open | slot ended 2 h+ ago (last 30 days), still pending/confirmed | WhatsApp doctor / patient |
+| Paid, then cancelled | cancelled while paid or claimed (last 60 days), refund not checked | ✓ Refund checked (with note), WhatsApp |
+| No mobile number | patient accounts without a phone | 🤝 Help patient |
+
+WhatsApp buttons open `wa.me` with a pre-filled message (patient, doctor, slot, UTR) for the admin to review and send; no paid API. Slot times are computed exactly in IST by `slotWindowMs` in `utils/slots.js`.
+
+**Automatic reminders first** (`utils/journeyReminders.js`, every 10 min, once each; reschedule resets them):
+- Doctor "Please confirm a booking": pending 3 h after booking or 4 h before the slot, whichever first (not in the first 30 min).
+- Patient "Payment pending for your appointment": confirmed, unpaid, slot within 2 h.
+
+**Admin Appointments search:** `?search=` matches Patient ID / patient or doctor name / phone across ALL appointments (people first, then their appointments), plus `?paymentStatus=` and "Load more".
+
+### 3. Pick up where you left off — `utils/drafts.js`, `utils/useAutoDraft.js`, `utils/profileAutosave.js`
+
+Nobody presses save to keep progress.
+
+- **Device drafts** (localStorage key `pmz_draft:<userId|guest>:<name>`, value `{ v, savedAt, data }`), saved ~0.8 s after typing stops and immediately when the page is hidden (switching to WhatsApp / UPI app):
+
+  | Draft | Name | Expires | Restored where |
+  |---|---|---|---|
+  | Booking form | `booking:<doctorId>` | 24 h | BookAppointment ("↩ Picked up where you left off · Start fresh"); Dashboard "Continue where you left off" card |
+  | Prescription | `rx:<appointmentId>` | 7 days | PromptModal ("✓ Draft restored"; outside tap asks "Keep this draft for later?") |
+  | Doctor profile (unsaved bits only) | `profile` | 7 days | Merged back on load, then autosaved |
+  | Register form | `register` (guest) | 2 h | Register (name/email/phone/role) |
+
+- **Privacy rules:** device-only (never sent to the server), per account, deleted on explicit logout (`clearAllDrafts`) and after a successful booking/prescription/registration. **Never stored:** passwords, consent ticks, payment details. An *expired* login keeps drafts (`logout({ keepDrafts: true })`) so the work is there after logging in.
+- **Booking restore:** skipped for repeat/follow-up bookings (they carry their own context) and quick-pick deep links. A restored slot is re-selected only if it's still in the fresh free list; otherwise "10:30 AM was booked by someone else meanwhile. Everything else is kept." Past dates are dropped.
+- **"← Back to your booking":** the booking form's "Add family member" / "Account Settings" links add `&back=/book-appointment/<doctorId>`; Dashboard shows the button.
+- **Doctor profile autosave:** ~1 s after typing stops, only changed fields are sent (`diffProfile`). A field with an obvious problem (short phone, fee out of range, `javascript:` link) is shown inline and held back while the rest saves (`profileProblems`). The server allows partial saves (no more "fill all 7 fields at once"); what's still needed is shown as "5 of 8 done · Left: …" in the onboarding checklist. Photo / QR keep their own upload buttons. If a save fails (offline), the unsaved changes stay on the device and save on the next visit.
+
+### 4. Booking rules — `utils/booking.js` (one place for patient AND admin bookings)
+
+- Doctor must be bookable (same filter as the public list: not unverified/deleted/suspended); a patient the doctor blocked is refused.
+- Slot must come from the doctor's weekly hours for that date, be a real `YYYY-MM-DD`, not past, not on a blocked day, and (today) not already started (`slotProblem` in `utils/slots.js`, shared with the free-slots endpoint and reschedule).
+- Only a consultation type the doctor offers (default: the doctor's first). The booking page and Help patient show only those types.
+- Family bookings must name a member saved on the account (saved spelling is used).
+- Free follow-up: needs the patient's own original appointment with the same doctor, inside `followUpDeadline`, and **only one** non-cancelled follow-up per original visit (a cancelled one frees it again). The patient card shows "✓ Free follow-up booked: date". Paid "Book again" isn't limited.
+
+### 5. Validation & authorization audit (what the server now refuses)
+
+- Public doctor endpoints exclude login tokens, email, push endpoints, login IP/time, block list, admin notes and patient-only health fields (`DOCTOR_PRIVATE_FIELDS` in `doctorController.js`).
+- Deleted/suspended accounts are refused even with an old token (`middleware/auth.js`).
+- Phone/email changes (account settings, doctor profile, Help patient) are format-checked and refused if another active account uses them (`utils/contactChecks.js`; admins are told whose account it is, patients aren't). Deleted accounts holding the value are moved aside, like registration does.
+- Payment: no downgrade of `paid`, no claims/marks on cancelled appointments, amount capped at Rs. 1,00,000.
+- Calls ring only during the booked slot (ending a call is always allowed); meeting links must be `https://`.
+- Prescriptions: only for confirmed/completed appointments; `followUpDays` parsed as a number 0–90 (the old code could string-join "6"+"7" into a date months away); medicines/tests/text capped.
+- Push subscriptions: `https` endpoint + valid keys, max 10 devices per account.
+- Medical info: valid blood group, emergency phone format, 1000-character caps.
+
+### Tests for all of the above
+
+- Server: `cd server && npm test` (~90 checks, no DB): `gaps.test.js`, `payment.test.js`, `needsHelp.test.js`, `slotIndex.test.js`, `adminPatient.test.js`, `login.test.js`, `register.test.js`.
+- Client: `cd client && npm test` (runs before every build): `paymentFlow`, `needsHelp`, `consultModes`, `drafts`, `profileAutosave` and the medical tests.
+
 ---
 
 ## Complete File Reference
@@ -1497,6 +1613,14 @@ Photo of PRINTED report
 | `routes/doctor.js` | GET / (public browse), GET /:id (public profile), PUT /profile (doctor only) |
 | `routes/appointment.js` | POST / (patient books), GET /my, GET /:id, PUT /:id/status, PUT /:id/cancel |
 | `routes/availability.js` | GET /:doctorId/slots (public), GET / (doctor own), PUT / (doctor sets) |
+| `controllers/paymentController.js` | Patient payment steps (screenshot, "I've paid" + UTR, undo, remind) + admin Payment help + refund checked |
+| `controllers/adminPatientController.js` | Admin Help patient (details, family, book on behalf) + New patient |
+| `utils/booking.js` | `createBooking` — every booking rule, used by patient and admin paths |
+| `utils/slots.js` | Slot labels, `slotProblem` (real/offered/not past/not started), `slotWindowMs` (exact IST start/end) |
+| `utils/contactChecks.js` | Phone/email format + "used by another account" checks; moves deleted holders aside |
+| `utils/paymentFollowUp.js` · `utils/journeyReminders.js` | Every-10-min jobs: payment nudges (3 h doctor / 24 h admin); confirm + pay reminders |
+| `utils/needsHelp.js` | Admin Needs help groups (`classify` is unit-tested) |
+| `utils/fixIndexes.js` | Startup: email index (sparse unique) + double-booking guard (`unique_active_slot`) |
 
 ### Frontend (client/src/)
 
@@ -1525,6 +1649,12 @@ Photo of PRINTED report
 | `components/VoiceSearch.jsx` | Hindi/English voice search for the Home symptom box |
 | `utils/rxChart.js` · `utils/rxRows.js` · `utils/familyChart.js` | Pure logic for the chart, the doctor box and the caregiver view (unit-tested) |
 | `pages/tools/*.jsx` + `*.js` | Free health tools: page + shared logic/copy (`reports.js`, `reportParse.js`, `reportOcr.js`, `dueDate.js`, `ovulation.js`, `vaccines.js`, `toolLinks.js`, `toolsList.js`) |
+| `components/PaymentBox.jsx` · `utils/paymentFlow.js` | Patient payment box (all states) + UPI link / UTR / reminder timing |
+| `components/SessionExpired.jsx` | "Please log in again — your work is saved" banner (listens for `pmz:session-expired` from `services/api.js`) |
+| `utils/drafts.js` · `utils/useAutoDraft.js` | Device-only drafts (per account, expiry) + autosave hook |
+| `utils/profileAutosave.js` | Doctor profile autosave: changed fields, inline checks, progress |
+| `utils/consultModes.js` | Only the consultation types a doctor offers |
+| `pages/admin/NeedsHelp.jsx` · `PaymentHelp.jsx` · `HelpPatient.jsx` · `utils/needsHelp.js` | Admin Needs help, Payment help, Help patient / New patient |
 | `tests/*.test.mjs` | Client safety tests (run before every build) |
 | `scripts/prerender.mjs` | Post-build static HTML, crawler bodies, JSON-LD, sitemap, llms.txt, IndexNow |
 | `scripts/copy-tesseract.mjs` | Pre-build: self-hosts the photo-reader files in `public/tesseract/<version>/` |

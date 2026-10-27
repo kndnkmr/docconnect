@@ -14,6 +14,14 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 Notable improvements layered on since the core build (newest first):
 
+- **Pick up where you left off** — nobody fills a form twice. The booking form, register form (name/phone/role, never the password) and prescription box save a draft on the device as you type; coming back restores it ("↩ Picked up where you left off · Start fresh"), and the booking slot is re-checked against the live free list. The patient Dashboard shows "Continue where you left off"; the booking form's "Add family member" / "Account Settings" links come back with "← Back to your booking". The **doctor profile autosaves to the server** (~1 s after typing stops, "✓ All changes saved"), partial profiles are allowed (the checklist shows "5 of 8 done · Left: …"), and a mistyped field is shown inline and held back while the rest saves. An expired login now shows one "Please log in again — your work is saved" banner and returns to the same page. Drafts are device-only, per account, deleted on logout and after a successful submit, and expire (booking 24 h, register 2 h, prescription/profile 7 days).
+- **Double-booking guard actually on** — the database rule that stops two active bookings for the same doctor + date + time had a filter MongoDB rejects (`$ne`), so it was never created. Now built with `status > 'cancelled'` (= pending/confirmed/completed), verified on startup, and shown on Admin → Overview ("🛡 Double-booking guard: ✓ On", with a "Turn on" button if ever off).
+- **Booking shows only the doctor's own consultation types** (first one pre-selected; a single type is shown as a note; the server refuses others) and **one free follow-up per visit** (the card shows "✓ Free follow-up booked: date"; a cancelled follow-up frees it again; paid "Book again" unchanged).
+- **Admin "🚨 Needs help"** — the server finds patients who may be stuck and groups them: slot soon but not confirmed, patient says paid but doctor hasn't confirmed, confirmed but unpaid within 2 h, slot passed still open, paid then cancelled (refund check), patients with no mobile number. Each row has one-tap Confirm / Payment help / Help patient / pre-filled WhatsApp. New automatic reminders: doctor "please confirm" (pending 3 h after booking or 4 h before the slot) and patient "please pay" (confirmed, unpaid, within 2 h), once each. Admin Appointments gained search by Patient ID/name/phone across all appointments, a payment filter and "Load more".
+- **Payments with no dead ends** — the patient's payment box has a next step in every state: one-tap "Pay with UPI app" on phones (amount + Patient ID in the note), QR that enlarges in-page (Back closes it), upload screenshot (counts as "I've paid"), or type the 12-digit UPI reference (UTR); while waiting: add/replace proof, show QR again, "I haven't paid yet", "Remind doctor" (after 2 h, every 6 h) and WhatsApp support. The doctor is actually notified (push + live refresh); doctor nudged at 3 h and admin emailed at 24 h automatically. Admin → Appointments → **💳 Payment help** shows the receipt/UTR and can mark paid (on the doctor's behalf, with a note) or reset.
+- **Server validation & authorization audit** — public doctor endpoints no longer return login tokens/email/push endpoints/login IP/block list; deleted/suspended accounts are refused even with an old login; booking and reschedule only accept a slot the doctor's hours actually offer (not past, not started, real date) with a bookable doctor, and refuse patients the doctor blocked; free follow-ups need the patient's own original appointment; payment, call-ringing, meeting-link, prescription, push-subscription and account/medical/profile updates all validate their input (phone/email clash checks shared in `utils/contactChecks.js`).
+- **Admin "🤝 Help patient" + "+ New patient"** — support can edit a patient's details, medical info and family, and book on their behalf (after the patient agrees on a call/WhatsApp; stored as `consentBy: 'admin'`), or create an account for someone who can't register (they get a 48-hour set-password link).
+- **Phone mandatory for patients; clearer login** — patients must give a mobile number (email optional). Coming from "Book", login first asks "Have you used ProMedicoz before?", and a patient phone login says plainly whether the number isn't registered or the password is wrong (with one-tap "create account with this number" and WhatsApp help after two tries).
 - **Caregiver view ("Parivaar ki dawai")** — for an account that books for family, every prescription now says who it's for ("👵 For: Mummy"), with a person filter, and a "Family's medicines today" screen groups today's medicines from all running prescriptions by morning/afternoon/night and person, plus "coming up" (last course days, free follow-ups, advised tests), one reminder file for everyone, WhatsApp text and a print-for-the-fridge view. Same data the account already had; no new access rules.
 - **Hindi / English voice search** — a 🎤 in the Home symptom box ("पेट में दर्द है" → gastroenterologist). Uses the browser's built-in speech recognition (free); shown only where supported; the UI states honestly that the phone's speech service converts voice to text and ProMedicoz never records it.
 - **Doctor prescription box rebuilt** — one card per medicine with quick chips (When: 1-0-0 / 1-0-1 / BD / TDS / OD / HS / SOS…, Food, Days), Enter adds the next medicine, name suggestions from the doctor's own history, "Repeat last", a live "patient's chart will show…" preview, and an optional "type as text" mode (one medicine per line). Fixes the old comma-splitting and field-shifting bugs; saved in the same fields, so PDF/share/chart are unchanged.
@@ -38,7 +46,7 @@ Notable improvements layered on since the core build (newest first):
 - **Blog view/like counter** — per-article read counts + ❤️ likes stored in our own DB (`BlogView` model, `/api/blog-views`), surfaced as "Most Read"/"Most Loved" and per-article badges.
 - **SEO: build-time prerendering** — `scripts/prerender.mjs` bakes correct per-route title/description/canonical/OG into static HTML for every public page (crawlers no longer see generic homepage tags on every route). Auth/utility pages get an `X-Robots-Tag: noindex` header.
 - **Security hardening** — `helmet`, global rate limiting, `express-mongo-sanitize` (NoSQL-injection protection), public registration can't self-assign `admin`, `protect` middleware tightened, upload filenames sanitized.
-- **Reliability** — process-level unhandledRejection/uncaughtException handlers; a partial UNIQUE index on Appointment(doctor, date, timeSlot) prevents double-booking races at the DB level.
+- **Reliability** — process-level unhandledRejection/uncaughtException handlers; a partial UNIQUE index on Appointment(doctor, date, timeSlot) prevents double-booking races at the DB level (see the "Double-booking guard actually on" update above — the first version of this index was never created).
 - **Performance** — a `User { role, specialization }` index speeds up the doctor listing; doctor-list loading skeletons for better perceived speed.
 
 ---
@@ -287,7 +295,9 @@ docconnect/
 │   │   ├── prescriptionController.js ← Doctor writes prescriptions
 │   │   ├── reportController.js  ← Patient uploads test reports
 │   │   ├── complaintController.js ← Patient complaints
-│   │   ├── adminController.js   ← Admin: stats, user management, analytics, manual reset-link relay
+│   │   ├── adminController.js   ← Admin: stats, user management, analytics, manual reset-link relay, appointment search, Needs help, db-check
+│   │   ├── adminPatientController.js ← Admin "Help patient" + "+ New patient"
+│   │   ├── paymentController.js ← Patient payment steps (screenshot / "I've paid" + UTR / undo / remind) + admin Payment help + refund checked
 │   │   ├── announcementController.js ← Admin broadcast announcements
 │   │   └── pushController.js    ← Web Push subscription management (public key, subscribe, unsubscribe)
 │   │
@@ -313,10 +323,19 @@ docconnect/
 │   │   ├── callReminder.js      ← Every-minute job: pushes "call starting" to both parties, clock-based
 │   │   ├── appointmentReminder.js ← Every-minute job: pushes "appointment in ~1 hour" to both parties (cuts no-shows)
 │   │   ├── queryHelpers.js      ← Shared pagination cap + regex-escaping helpers for list/search endpoints
-│   │   └── fixIndexes.js        ← Startup migration: rebuilds the email index as sparse unique (idempotent)
+│   │   ├── booking.js           ← createBooking: the ONE place appointments are created (patient + admin paths)
+│   │   ├── slots.js             ← Slot labels, "is this slot real / not past / not started", slot start/end times
+│   │   ├── contactChecks.js     ← Phone/email validation + "already used by another account" checks
+│   │   ├── familyMembers.js     ← Family member add/edit/remove rules (patient + admin)
+│   │   ├── paymentFollowUp.js   ← Every-10-min job: doctor nudged 3 h / admin alerted 24 h after an unconfirmed payment
+│   │   ├── journeyReminders.js  ← Every-10-min job: doctor "please confirm", patient "please pay"
+│   │   ├── needsHelp.js         ← Builds the Admin "Needs help" groups
+│   │   └── fixIndexes.js        ← Startup migrations: email index (sparse unique) + double-booking guard (unique_active_slot)
 │   │
-│   ├── tests/                   ← Backend smoke tests (npm test)
-│   │   └── api.test.js
+│   ├── tests/                   ← Backend tests, no DB needed (npm test)
+│   │   ├── api.test.js / login.test.js / register.test.js / adminContact.test.js / adminPatient.test.js
+│   │   ├── gaps.test.js         ← Validation/authorization audit fixes
+│   │   ├── payment.test.js / needsHelp.test.js / slotIndex.test.js
 │   │
 │   └── uploads/                 ← Uploaded files stored here
 │       └── .gitkeep
@@ -360,6 +379,11 @@ docconnect/
         │   └── socket.js        ← Shared Socket.io client connection (chat + call ringing)
         │
         ├── utils/
+        │   ├── drafts.js + useAutoDraft.js ← "Pick up where you left off": device-only form drafts (per account, with expiry)
+        │   ├── profileAutosave.js ← Doctor profile autosave: changed fields, inline checks, "5 of 8 done"
+        │   ├── paymentFlow.js   ← Patient payment states, UPI app link, UTR, reminder timing
+        │   ├── consultModes.js  ← Only the consultation types a doctor offers
+        │   ├── needsHelp.js     ← Admin Needs help labels + pre-filled WhatsApp messages
         │   ├── rxChart.js       ← Prescription → daily chart, reminders (.ics), share text
         │   ├── rxRows.js        ← Doctor medicine cards ⇄ saved prescription fields
         │   ├── familyChart.js   ← Caregiver "family's medicines today"
@@ -367,7 +391,9 @@ docconnect/
         │
         ├── components/
         │   ├── Navbar.jsx       ← Navigation bar (with PWA install button)
-        │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal (supports a "custom" field)
+        │   ├── Modal.jsx        ← Reusable ConfirmModal & PromptModal (supports a "custom" field + optional draftKey)
+        │   ├── PaymentBox.jsx   ← Patient payment steps on an appointment card (no dead ends)
+        │   ├── SessionExpired.jsx ← "Please log in again — your work is saved" banner
         │   ├── MedicineEditor.jsx ← Doctor's one-card-per-medicine prescription editor
         │   ├── VoiceSearch.jsx  ← Hindi/English voice search mic + listening sheet
         │   ├── ChatBox.jsx      ← In-app messaging per appointment
@@ -413,6 +439,10 @@ docconnect/
             │   ├── PatientComplaints.jsx
             │   ├── RescheduleModal.jsx   ← Patient reschedule modal (date + free-slot picker)
             │   └── AccountSettings.jsx
+            ├── admin/           ← Admin panel pieces (lazy-loaded)
+            │   ├── HelpPatient.jsx   ← Help patient + New patient
+            │   ├── PaymentHelp.jsx   ← View receipt/UTR, mark paid, reset
+            │   └── NeedsHelp.jsx     ← 🚨 Needs help list
             └── AdminDashboard.jsx ← Admin panel
 ```
 
@@ -556,7 +586,7 @@ You should see the DocConnect landing page!
 |----------|----------|-------------|---------|
 | PORT | No (default 5000) | Backend server port | 5000 |
 | MONGODB_URI | Yes | Database connection string | mongodb+srv://user:pass@cluster.mongodb.net/docconnect |
-| JWT_SECRET | Yes | Secret key for token signing (any random string) | my_super_secret_key_12345 |
+| JWT_SECRET | Yes | Secret key for token signing. Local: any string. **Production: a long random value made with `openssl rand -hex 32`, set only in the Render dashboard — never in a file or commit.** If it ever leaks, rotate it (steps in HOW_IT_WORKS.md → Security Model) | my_super_secret_key_12345 (local only) |
 | NODE_ENV | No | Environment mode | development |
 | RESEND_API_KEY | No | Resend email API key (enables email notifications) | re_xxxx... |
 | ADMIN_EMAIL | No | Email promoted to admin on startup (auto-creates the account if it doesn't exist) | admin@example.com |
@@ -606,7 +636,7 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/doctors/by-slug/:slug | Public | Resolve a doctor by their vanity handle for the branded `/dr/:slug` page (increments a page-view counter) |
 | GET | /api/doctors/:id | Public | View doctor profile |
 | POST | /api/doctors/:id/link-booking | Public | Best-effort counter: the branded page pings this when a visitor taps "Book" from it (always 200) |
-| PUT | /api/doctors/profile | Doctor only | Update own profile |
+| PUT | /api/doctors/profile | Doctor only | Update own profile. Partial updates allowed (the Dashboard autosaves only changed fields); each sent field is validated (phone/WhatsApp format + clash check, lengths, links) |
 
 ### Appointments
 | Method | Endpoint | Access | Description |
@@ -622,7 +652,11 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | PUT | /api/appointments/:id/call | Protected | Set call active/inactive (ringing signal) |
 | PUT | /api/appointments/:id/reschedule | Patient only | Move a pending/confirmed appointment to a new free slot (same doctor); preserves payment, resets to pending, notifies doctor |
 | PUT | /api/appointments/:id/cancel | Patient only | Cancel booking |
-| PUT | /api/appointments/:id/payment | Doctor only | Mark payment received |
+| PUT | /api/appointments/:id/payment | Doctor only | Mark payment received (not on cancelled; amount capped); pushes the patient |
+| PUT | /api/appointments/:id/payment-screenshot | Patient only | Upload/replace payment screenshot (multipart `screenshot`); counts as "I've paid" and notifies the doctor |
+| PUT | /api/appointments/:id/notify-payment | Patient only | "I've paid", optional `{ utr }` (12-digit UPI reference); notifies the doctor |
+| PUT | /api/appointments/:id/undo-payment-claim | Patient only | "I haven't paid yet" — back to the pay screen (clears screenshot/UTR) |
+| POST | /api/appointments/:id/payment-reminder | Patient only | Remind the doctor to confirm payment (2 h after claiming, then at most every 6 h; 429 with `nextReminderAt` otherwise) |
 
 ### Family Members
 | Method | Endpoint | Access | Description |
@@ -670,7 +704,12 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | GET | /api/admin/stats | Admin only | Dashboard stats |
 | GET | /api/admin/users | Admin only | List all users (supports ?role=, ?search= by name/email/phone/Patient ID) |
 | GET | /api/admin/users/:id | Admin only | Full detail for one user (complete record + recent appointments) — powers the click-a-name detail drill-down from the Users and Appointments lists |
-| GET | /api/admin/appointments | Admin only | List all appointments |
+| GET | /api/admin/appointments | Admin only | List appointments (?status=, ?paymentStatus=pending\|patient_claimed\|paid, ?search= Patient ID / patient or doctor name / phone across ALL appointments, ?page=, ?limit=) |
+| GET | /api/admin/needs-help | Admin only | Patients who may be stuck, grouped (notConfirmed, paymentWaiting, unpaidSoon, slotPassedOpen, paidCancelled, noPhone) — see `utils/needsHelp.js` |
+| PUT | /api/admin/appointments/:id/payment | Admin only | **Payment help:** `{ action: 'mark_paid', amount?, note? }` (on the doctor's behalf) or `{ action: 'reset', note? }` (patient sees QR/upload again; note required if it was paid). Records which admin |
+| PUT | /api/admin/appointments/:id/refund-checked | Admin only | Paid-then-cancelled: record that the refund was checked (`{ note? }`); removes it from Needs help |
+| GET | /api/admin/db-check | Admin only | Read-only: is the double-booking guard (`unique_active_slot`) on? |
+| POST | /api/admin/fix-slot-index | Admin only | Build the double-booking guard if missing (refuses and lists real duplicate bookings if any). Also runs on every server start |
 | GET | /api/admin/analytics | Admin only | Revenue + call analytics (calls, minutes, per-doctor) |
 | POST | /api/admin/migrate-images | Admin only | One-time base64 → Cloudinary migration (safety net) |
 | DELETE | /api/admin/users/:id | Admin only | Delete a user permanently (also deletes all their appointments) — no recovery from this app; prefer Deactivate or "Reset for Re-registration" below |
@@ -745,9 +784,9 @@ cd client
 npm test
 ```
 
-~85 test groups (~300 checks) covering every medical range and urgent limit in Report Samjhao, the photo reader, the daily medicine chart and its reminders, the doctor's prescription box, the caregiver view, the vaccine schedule, and the due-date/ovulation maths. They run automatically before every build (`prebuild`), so a broken medical rule **stops the Vercel deploy** instead of going live. See `client/tests/README.md` — if a doctor changes a range, update the matching test in the same commit.
+~105 test groups (~340 checks) covering every medical range and urgent limit in Report Samjhao, the photo reader, the daily medicine chart and its reminders, the doctor's prescription box, the caregiver view, the vaccine schedule, and the due-date/ovulation maths. They run automatically before every build (`prebuild`), so a broken medical rule **stops the Vercel deploy** instead of going live. See `client/tests/README.md` — if a doctor changes a range, update the matching test in the same commit.
 
-Backend smoke tests: `cd server && npm test`.
+Backend tests: `cd server && npm test` — ~90 checks with no database needed (Mongoose calls are stubbed): API smoke, login/register rules, Help patient, the validation/authorization audit (`gaps.test.js`), payments (`payment.test.js`), Needs help + reminders + admin search (`needsHelp.test.js`) and the double-booking guard index (`slotIndex.test.js`). Run them before pushing server changes (Render doesn't run them for you).
 
 ### Testing with Postman (optional, for API testing):
 
