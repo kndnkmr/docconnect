@@ -21,6 +21,7 @@ import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI, getUploadU
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
+import { offeredModes, pickMode } from '../utils/consultModes';
 
 // Any one of the medical info fields being set is enough to consider it
 // "on file" — no need for every field to be filled in.
@@ -86,6 +87,8 @@ const BOOKING_TXT = {
     inPerson: 'In-Person Visit',
     video: 'Video Call',
     phone: 'Phone Call',
+    onlyMode: (name) => `Dr. ${name} consults this way only`,
+    modeSwitched: (name) => `Dr. ${name} doesn't offer your last consultation type, so we picked one they do offer.`,
     step1: 'Date & time',
     step2: 'Who & how',
     step3: 'Reason for visit',
@@ -130,6 +133,8 @@ const BOOKING_TXT = {
     inPerson: 'क्लिनिक पर मिलें',
     video: 'वीडियो कॉल',
     phone: 'फ़ोन कॉल',
+    onlyMode: (name) => `डॉ. ${name} केवल इसी तरीके से परामर्श देते हैं`,
+    modeSwitched: (name) => `डॉ. ${name} आपका पिछला परामर्श तरीका नहीं देते, इसलिए हमने उनका उपलब्ध तरीका चुना है।`,
     step1: 'तारीख और समय',
     step2: 'किसके लिए और कैसे',
     step3: 'आने का कारण',
@@ -194,6 +199,19 @@ function BookAppointment() {
   const toggleSymptom = (s) => {
     setSymptoms((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
   };
+
+  // Consultation types: only the ones this doctor offers (same rule as the
+  // server). Once the doctor loads, keep a repeat booking's type if it's
+  // still offered, otherwise pick the first offered one (and say so).
+  const [modeSwitched, setModeSwitched] = useState(false);
+  useEffect(() => {
+    if (!doctor) return;
+    const { mode, switched } = pickMode(repeatData.consultationType || '', doctor.consultationModes);
+    setFormData((prev) => ({ ...prev, consultationType: mode }));
+    setModeSwitched(switched);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctor]);
+  const modes = offeredModes(doctor?.consultationModes);
 
   // Consent state (controlled so we can reliably enforce it before booking)
   const [consentGiven, setConsentGiven] = useState(false);
@@ -586,12 +604,22 @@ function BookAppointment() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t.consultType}
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              {modes.length === 1 ? (
+                // Only one way to consult: nothing to choose, just say it.
+                <div className="flex items-center gap-3 px-3 py-3 rounded-xl border border-primary-500 bg-primary-50 ring-2 ring-primary-200">
+                  <span className="text-xl" aria-hidden="true">{{ video: '📹', phone: '📞', 'in-person': '🏥' }[modes[0]]}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-primary-700">{{ video: t.video, phone: t.phone, 'in-person': t.inPerson }[modes[0]]}</p>
+                    <p className="text-xs text-gray-500">{t.onlyMode(doctor?.name || '')}</p>
+                  </div>
+                </div>
+              ) : (
+              <div className={`grid gap-2 ${modes.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                 {[
                   { key: 'video', icon: '📹', label: t.video },
                   { key: 'phone', icon: '📞', label: t.phone },
                   { key: 'in-person', icon: '🏥', label: t.inPerson },
-                ].map((m) => {
+                ].filter((m) => modes.includes(m.key)).map((m) => {
                   const on = formData.consultationType === m.key;
                   return (
                     <button
@@ -606,6 +634,8 @@ function BookAppointment() {
                   );
                 })}
               </div>
+              )}
+              {modeSwitched && <p className="text-xs text-amber-700 mt-2">{t.modeSwitched(doctor?.name || '')}</p>}
             </div>
 
             {/* Step 3 — Reason for visit */}

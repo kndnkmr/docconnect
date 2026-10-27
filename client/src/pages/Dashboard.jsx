@@ -1541,7 +1541,14 @@ function Dashboard() {
                       {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
-                          {apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
+                          {/* One free follow-up per visit: once booked (and not
+                              cancelled), show it instead of the button. */}
+                          {apt.followUpBooked && (
+                            <span className="inline-flex items-center px-3 py-2 bg-green-50 text-green-800 border border-green-200 rounded-lg text-sm font-medium">
+                              ✓ Free follow-up booked: {new Date(apt.followUpBooked.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' })}
+                            </span>
+                          )}
+                          {!apt.followUpBooked && apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
                             <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, isFollowUp: true, originalAppointmentId: apt._id, reason: 'Follow-up: ' + apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Free Follow-up</button>
                           )}
                           <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, originalAppointmentId: apt._id, reason: apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600">Book Again</button>

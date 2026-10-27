@@ -104,6 +104,19 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     throw new BookingError(404, 'Doctor not found');
   }
 
+  // Step 2-modes: only a consultation type this doctor offers. If none was
+  // sent, use the doctor's first offered type. (Very old doctor records
+  // without a list accept any type, as before.)
+  const offered = Array.isArray(doctor.consultationModes) ? doctor.consultationModes.filter((m) => CONSULT_TYPES.includes(m)) : [];
+  let mode = consultationType || '';
+  if (offered.length) {
+    if (!mode) mode = offered[0];
+    if (!offered.includes(mode)) {
+      throw new BookingError(400, `Dr. ${doctor.name} offers ${offered.join(' / ')} consultations only. Please choose one of those.`);
+    }
+  }
+  if (!mode) mode = 'in-person';
+
   // Step 2a: A doctor can block a patient (abuse). Blocked means no bookings.
   if ((doctor.blockedPatients || []).some((p) => String(p) === String(patientId))) {
     throw new BookingError(403, 'Booking with this doctor is not available for this account. Please contact ProMedicoz support.');
@@ -157,6 +170,18 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
       || new Date() > new Date(originalApt.followUpDeadline))) {
       throw new BookingError(400, 'Free follow-up period has expired. Please book a regular appointment.');
     }
+    // One free follow-up per visit. A cancelled one doesn't count, so the
+    // patient can rebook it while the window is still open.
+    if (isFollowUp) {
+      const alreadyUsed = await Appointment.findOne({
+        originalAppointment: originalApt._id || originalAppointmentId,
+        isFollowUp: true,
+        status: { $ne: 'cancelled' },
+      });
+      if (alreadyUsed) {
+        throw new BookingError(400, 'Your free follow-up for this visit is already booked. You can still book a regular appointment.');
+      }
+    }
   }
 
   // Sanitize symptoms: only strings, trimmed, capped in count and length
@@ -173,7 +198,7 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     timeSlot,
     reason: reason.trim(),
     symptoms: cleanSymptoms,
-    consultationType: consultationType || 'in-person',
+    consultationType: mode,
     status: 'pending',
     bookedFor: bookedFor === 'family' ? 'family' : 'self',
     familyMemberName: bookedFor === 'family' ? memberName : '',

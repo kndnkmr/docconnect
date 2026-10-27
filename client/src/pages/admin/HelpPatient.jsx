@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { adminAPI, doctorAPI, availabilityAPI } from '../../services/api';
 import { formatDoctorName } from '../../utils/formatName';
+import { offeredModes, pickMode } from '../../utils/consultModes';
 
 const BLOOD_GROUPS = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const RELATIONSHIPS = ['parent', 'spouse', 'child', 'sibling', 'other'];
@@ -283,6 +284,12 @@ function BookTab({ patient, onBooked }) {
     return () => clearTimeout(t);
   }, [search, doctor]);
 
+  // Only the consultation types this doctor offers (server enforces it too).
+  useEffect(() => {
+    if (doctor) setMode((m) => pickMode(m, doctor.consultationModes).mode);
+  }, [doctor]);
+  const doctorModes = offeredModes(doctor?.consultationModes);
+
   // Live free slots for the chosen doctor + date (same API patients use).
   useEffect(() => {
     setSlot(''); setSlots([]); setSlotsMsg('');
@@ -399,9 +406,9 @@ function BookTab({ patient, onBooked }) {
             </div>
           )}
           <div>
-            <p className={label}>Mode</p>
+            <p className={label}>Mode{doctorModes.length === 1 ? ' (the only one this doctor offers)' : ''}</p>
             <div className="flex flex-wrap gap-2">
-              {MODES.map((m) => (
+              {MODES.filter((m) => doctorModes.includes(m.key)).map((m) => (
                 <button key={m.key} type="button" onClick={() => setMode(m.key)} aria-pressed={mode === m.key}
                   className={`px-3 py-1.5 rounded-lg border text-sm ${mode === m.key ? 'border-primary-600 bg-primary-600 text-white font-semibold' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
                   {m.label}

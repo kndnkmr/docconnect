@@ -352,3 +352,40 @@ test('public doctor profile hides login secrets, email, push endpoints, block li
     assert.ok(selected.split(' ').includes(`-${f}`), `expected ${f} to be excluded`);
   }
 });
+
+// ---------- Consultation types the doctor offers ----------
+test('booking: only a consultation type the doctor offers; default = first offered', async () => {
+  doctor = makeDoctor({ consultationModes: ['in-person'] });
+  const e = await bookErr({ consultationType: 'video' });
+  assert.strictEqual(e.status, 400);
+  assert.match(e.message, /in-person consultations only/);
+  await createBooking({ patientId: 'pat1', body: { ...BODY, consultationType: undefined } });
+  assert.strictEqual(created.consultationType, 'in-person');
+  doctor = makeDoctor({ consultationModes: ['video', 'phone'] });
+  await createBooking({ patientId: 'pat1', body: { ...BODY, consultationType: '' } });
+  assert.strictEqual(created.consultationType, 'video');
+  await createBooking({ patientId: 'pat1', body: { ...BODY, consultationType: 'phone' } });
+  assert.strictEqual(created.consultationType, 'phone');
+});
+
+// ---------- One free follow-up per visit ----------
+test('booking: only one free follow-up per visit; a cancelled one frees it again', async () => {
+  original = { _id: 'o1', patient: 'pat1', doctor: 'doc1', status: 'completed', followUpDeadline: new Date(Date.now() + 86400000) };
+  let usedQuery = null;
+  let existingFollowUp = { _id: 'f1' };
+  Appointment.findOne = (query) => {
+    if (query && query.isFollowUp) { usedQuery = query; return q(existingFollowUp); }
+    return q(null); // slot free
+  };
+  const e = await bookErr({ isFollowUp: true, originalAppointmentId: 'o1' });
+  assert.strictEqual(e.status, 400);
+  assert.match(e.message, /already booked/);
+  assert.deepStrictEqual(usedQuery.status, { $ne: 'cancelled' });
+  existingFollowUp = null; // the earlier follow-up was cancelled
+  await createBooking({ patientId: 'pat1', body: { ...BODY, isFollowUp: true, originalAppointmentId: 'o1' } });
+  assert.strictEqual(created.paymentStatus, 'paid');
+  // A paid "Book again" isn't limited.
+  existingFollowUp = { _id: 'f1' };
+  await createBooking({ patientId: 'pat1', body: { ...BODY, originalAppointmentId: 'o1' } });
+  assert.strictEqual(created.paymentStatus, 'pending');
+});

@@ -152,9 +152,32 @@ const getMyAppointments = async (req, res) => {
 
     const byId = {};
     docs.forEach((d) => { byId[d._id.toString()] = d; });
+
+    // One free follow-up per visit: for appointments with a follow-up window,
+    // find any free follow-up already booked from them (not cancelled), so
+    // the card can show "✓ Free follow-up booked: <date>" instead of the
+    // button. One query for the whole page.
+    const withWindow = docs.filter((d) => d.followUpDeadline).map((d) => d._id);
+    const usedFollowUp = {};
+    if (withWindow.length) {
+      const used = await Appointment.find({
+        originalAppointment: { $in: withWindow },
+        isFollowUp: true,
+        status: { $ne: 'cancelled' },
+      }).select('originalAppointment date timeSlot');
+      used.forEach((u) => { usedFollowUp[String(u.originalAppointment)] = { _id: u._id, date: u.date, timeSlot: u.timeSlot }; });
+    }
+
     const appointments = orderedIds
       .map((id) => byId[id.toString()])
-      .filter(Boolean);
+      .filter(Boolean)
+      .map((d) => {
+        const used = usedFollowUp[String(d._id)];
+        if (!used) return d;
+        const obj = d.toObject();
+        obj.followUpBooked = used;
+        return obj;
+      });
 
     const total = await Appointment.countDocuments(filter);
 
