@@ -570,16 +570,21 @@ function AdminDashboard() {
     );
     if (newPhone === null) return; // cancelled
 
-    const newWhatsApp = window.prompt(
-      `Edit WhatsApp number for "${user.name}" (optional).\n\nThis powers the public "Message on WhatsApp" button on their profile. Clear it to remove that button. Leave as-is to keep it unchanged.`,
-      user.whatsappNumber || ''
-    );
-    if (newWhatsApp === null) return; // cancelled
+    // WhatsApp is a doctor-profile field (the public "Message on WhatsApp"
+    // button) — patients get the phone prompt only.
+    let newWhatsApp = user.whatsappNumber || '';
+    if (user.role === 'doctor') {
+      newWhatsApp = window.prompt(
+        `Edit WhatsApp number for "${user.name}" (optional).\n\nThis powers the public "Message on WhatsApp" button on their profile. Clear it to remove that button. Leave as-is to keep it unchanged.`,
+        user.whatsappNumber || ''
+      );
+      if (newWhatsApp === null) return; // cancelled
+    }
 
     // Only send fields that actually changed from what's on record.
     const payload = {};
     if (newPhone.trim() !== (user.phone || '')) payload.phone = newPhone.trim();
-    if (newWhatsApp.trim() !== (user.whatsappNumber || '')) payload.whatsappNumber = newWhatsApp.trim();
+    if (user.role === 'doctor' && newWhatsApp.trim() !== (user.whatsappNumber || '')) payload.whatsappNumber = newWhatsApp.trim();
 
     if (Object.keys(payload).length === 0) {
       toast('No changes made.', { icon: 'ℹ️' });
@@ -1209,13 +1214,15 @@ function AdminDashboard() {
                                 Edit Profile
                               </button>
                             )}
-                            {!user.isDeleted && user.role === 'doctor' && (
+                            {!user.isDeleted && (user.role === 'doctor' || user.role === 'patient') && (
                               <button
                                 onClick={() => handleEditContact(user)}
                                 className="text-sm font-medium text-teal-600 hover:text-teal-800"
-                                title="Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
+                                title={user.role === 'doctor'
+                                  ? "Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
+                                  : "Add or change this patient's phone (login) number on their behalf"}
                               >
-                                Edit Contact
+                                {user.role === 'patient' && !user.phone ? 'Add Phone' : 'Edit Contact'}
                               </button>
                             )}
                             {!user.isDeleted && user.role === 'doctor' && (
