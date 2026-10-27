@@ -247,6 +247,23 @@ const appointmentSchema = new mongoose.Schema({
     type: String,
     default: ''
     // IP address at the time of consent (audit trail)
+  },
+
+  // Who gave the consent: the patient in the app ('patient'), or the patient
+  // verbally on a call/WhatsApp with ProMedicoz support, recorded by an admin
+  // who booked on their behalf ('admin'). consentIP is then the admin's IP.
+  consentBy: {
+    type: String,
+    enum: ['patient', 'admin'],
+    default: 'patient'
+  },
+
+  // Set when a ProMedicoz admin booked this appointment for the patient
+  // (Admin Panel → Help patient → Book). null = booked by the patient.
+  bookedByAdmin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
   }
 
 }, {

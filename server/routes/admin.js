@@ -103,4 +103,17 @@ router.put('/users/:id/availability', updateDoctorAvailability);
 // enum; only the fields sent are changed.
 router.put('/users/:id/profile', updateDoctorProfileAdmin);
 
+// ---- "Help patient": act on a patient's behalf (support) ----
+// See controllers/adminPatientController.js for the safeguards.
+const {
+  updatePatientDetails, addPatientFamilyMember, updatePatientFamilyMember,
+  deletePatientFamilyMember, bookForPatient, createPatient,
+} = require('../controllers/adminPatientController');
+router.post('/patients', createPatient);
+router.put('/patients/:id', updatePatientDetails);
+router.post('/patients/:id/family', addPatientFamilyMember);
+router.put('/patients/:id/family/:memberId', updatePatientFamilyMember);
+router.delete('/patients/:id/family/:memberId', deletePatientFamilyMember);
+router.post('/patients/:id/appointments', bookForPatient);
+
 module.exports = router;

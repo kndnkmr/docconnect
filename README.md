@@ -683,6 +683,10 @@ Add the same three values to your hosting provider's environment variables (e.g.
 | POST | /api/admin/users/:id/setup-reminder | Admin only | Email an incomplete doctor a reminder of the onboarding steps still pending (the admin panel also offers a manual click-to-WhatsApp reminder for the same steps — that's frontend-only, opening wa.me with a pre-filled message, so it needs no endpoint) |
 | PUT | /api/admin/users/:id/verify | Admin only | Set/clear the "Verified by ProMedicoz" trust badge (credential check) |
 | POST | /api/admin/users/:id/verify-email | Admin only | Bypass a stuck email verification (email landed in spam): marks the doctor's email verified so they go live for patients |
+| PUT | /api/admin/patients/:id | Admin only | **Help patient:** edit a patient's name, mobile (required, duplicate-checked), email and medical info. Only sent fields change; each save is logged on the account (admin, time, field names) |
+| POST/PUT/DELETE | /api/admin/patients/:id/family(/:memberId) | Admin only | **Help patient:** add / edit / remove a patient's family members (same rules as the patient's own Family tab) |
+| POST | /api/admin/patients/:id/appointments | Admin only | **Help patient:** book on the patient's behalf. Requires `consentConfirmed: true` (patient agreed on call/WhatsApp); same booking rules as the patient path (shared `utils/booking.js`); stored with `consentBy: 'admin'` + `bookedByAdmin`; pushes the patient |
+| POST | /api/admin/patients | Admin only | **+ New patient:** create an account for someone who can't register (name + mobile, consent confirmed). Random password; returns a 48-hour set-password link for the patient |
 
 ### Announcements
 | Method | Endpoint | Access | Description |

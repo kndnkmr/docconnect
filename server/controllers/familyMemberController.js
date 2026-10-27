@@ -9,8 +9,18 @@
 //   POST   /api/family-members       → add a family member
 //   PUT    /api/family-members/:id   → update a family member
 //   DELETE /api/family-members/:id   → remove a family member
+//
+// The rules (required fields, relationship list, max 10) live in
+// utils/familyMembers.js, shared with the admin "Help patient" tool.
 
 const User = require('../models/User');
+const { addMember, updateMember, removeMember, FamilyError } = require('../utils/familyMembers');
+
+const fail = (res, error, fallback, label) => {
+  if (error instanceof FamilyError) return res.status(error.status).json({ message: error.message });
+  console.error(`${label} error:`, error.message);
+  return res.status(500).json({ message: fallback });
+};
 
 // ============================================
 // GET FAMILY MEMBERS - List all for logged-in patient
@@ -33,50 +43,16 @@ const getFamilyMembers = async (req, res) => {
 // ============================================
 const addFamilyMember = async (req, res) => {
   try {
-    const { name, relationship, age, gender, phone } = req.body;
-
-    if (!name || !relationship) {
-      return res.status(400).json({
-        message: 'Please provide name and relationship'
-      });
-    }
-
-    const validRelationships = ['spouse', 'child', 'parent', 'sibling', 'other'];
-    if (!validRelationships.includes(relationship)) {
-      return res.status(400).json({
-        message: `Invalid relationship. Must be one of: ${validRelationships.join(', ')}`
-      });
-    }
-
     const user = await User.findById(req.user._id);
-
-    // Limit to 10 family members per user
-    if (user.familyMembers.length >= 10) {
-      return res.status(400).json({
-        message: 'Maximum 10 family members allowed'
-      });
-    }
-
-    user.familyMembers.push({
-      name: name.trim(),
-      relationship,
-      age: age || null,
-      gender: gender || 'other',
-      phone: phone || ''
-    });
-
+    const newMember = addMember(user, req.body);
     await user.save();
-
-    // Return the newly added member (last in array)
-    const newMember = user.familyMembers[user.familyMembers.length - 1];
 
     res.status(201).json({
       message: 'Family member added successfully',
       familyMember: newMember
     });
   } catch (error) {
-    console.error('Add family member error:', error.message);
-    res.status(500).json({ message: 'Error adding family member' });
+    fail(res, error, 'Error adding family member', 'Add family member');
   }
 };
 
@@ -85,31 +61,8 @@ const addFamilyMember = async (req, res) => {
 // ============================================
 const updateFamilyMember = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, relationship, age, gender, phone } = req.body;
-
     const user = await User.findById(req.user._id);
-
-    const member = user.familyMembers.id(id);
-    if (!member) {
-      return res.status(404).json({ message: 'Family member not found' });
-    }
-
-    // Update fields if provided
-    if (name) member.name = name.trim();
-    if (relationship) {
-      const validRelationships = ['spouse', 'child', 'parent', 'sibling', 'other'];
-      if (!validRelationships.includes(relationship)) {
-        return res.status(400).json({
-          message: `Invalid relationship. Must be one of: ${validRelationships.join(', ')}`
-        });
-      }
-      member.relationship = relationship;
-    }
-    if (age !== undefined) member.age = age;
-    if (gender) member.gender = gender;
-    if (phone !== undefined) member.phone = phone;
-
+    const member = updateMember(user, req.params.id, req.body);
     await user.save();
 
     res.json({
@@ -117,8 +70,7 @@ const updateFamilyMember = async (req, res) => {
       familyMember: member
     });
   } catch (error) {
-    console.error('Update family member error:', error.message);
-    res.status(500).json({ message: 'Error updating family member' });
+    fail(res, error, 'Error updating family member', 'Update family member');
   }
 };
 
@@ -127,22 +79,13 @@ const updateFamilyMember = async (req, res) => {
 // ============================================
 const deleteFamilyMember = async (req, res) => {
   try {
-    const { id } = req.params;
-
     const user = await User.findById(req.user._id);
-
-    const member = user.familyMembers.id(id);
-    if (!member) {
-      return res.status(404).json({ message: 'Family member not found' });
-    }
-
-    member.deleteOne();
+    removeMember(user, req.params.id);
     await user.save();
 
     res.json({ message: 'Family member removed successfully' });
   } catch (error) {
-    console.error('Delete family member error:', error.message);
-    res.status(500).json({ message: 'Error removing family member' });
+    fail(res, error, 'Error removing family member', 'Delete family member');
   }
 };
 

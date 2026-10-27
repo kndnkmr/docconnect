@@ -2,8 +2,12 @@
 // Admin Dashboard - Manage users and appointments
 // ============================================
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from '../services/api';
+// "Help patient" (edit details/family, book on their behalf) + "+ New patient".
+// Loaded only when an admin opens one.
+const HelpPatient = lazy(() => import('./admin/HelpPatient'));
+const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
 
@@ -94,6 +98,10 @@ function AdminDashboard() {
   };
 
   const closeUserDetail = () => { setDetailUser(null); setDetailAppointments([]); setDetailLoading(false); };
+
+  // "Help patient" window ({ id, tab } or null) and "+ New patient" window.
+  const [helpPatient, setHelpPatient] = useState(null);
+  const [newPatientOpen, setNewPatientOpen] = useState(false);
 
   // Edit-profile modal (admin edits a doctor's professional profile + how they
   // consult). `profileDoctor` is the doctor being edited (null = closed).
@@ -560,6 +568,7 @@ function AdminDashboard() {
   };
 
   // Edit a doctor's phone / WhatsApp on their behalf (support requests).
+  // (Patients are edited in "Help patient" instead.)
   // Uses simple prompts to stay consistent with the other admin actions here.
   // Pre-fills current values; an unchanged value is skipped, so you can edit
   // just one. Cancelling either prompt aborts the whole thing.
@@ -570,21 +579,16 @@ function AdminDashboard() {
     );
     if (newPhone === null) return; // cancelled
 
-    // WhatsApp is a doctor-profile field (the public "Message on WhatsApp"
-    // button) — patients get the phone prompt only.
-    let newWhatsApp = user.whatsappNumber || '';
-    if (user.role === 'doctor') {
-      newWhatsApp = window.prompt(
-        `Edit WhatsApp number for "${user.name}" (optional).\n\nThis powers the public "Message on WhatsApp" button on their profile. Clear it to remove that button. Leave as-is to keep it unchanged.`,
-        user.whatsappNumber || ''
-      );
-      if (newWhatsApp === null) return; // cancelled
-    }
+    const newWhatsApp = window.prompt(
+      `Edit WhatsApp number for "${user.name}" (optional).\n\nThis powers the public "Message on WhatsApp" button on their profile. Clear it to remove that button. Leave as-is to keep it unchanged.`,
+      user.whatsappNumber || ''
+    );
+    if (newWhatsApp === null) return; // cancelled
 
     // Only send fields that actually changed from what's on record.
     const payload = {};
     if (newPhone.trim() !== (user.phone || '')) payload.phone = newPhone.trim();
-    if (user.role === 'doctor' && newWhatsApp.trim() !== (user.whatsappNumber || '')) payload.whatsappNumber = newWhatsApp.trim();
+    if (newWhatsApp.trim() !== (user.whatsappNumber || '')) payload.whatsappNumber = newWhatsApp.trim();
 
     if (Object.keys(payload).length === 0) {
       toast('No changes made.', { icon: 'ℹ️' });
@@ -1025,6 +1029,14 @@ function AdminDashboard() {
                 Search
               </button>
             </form>
+            {/* Create an account for someone who can't register themselves. */}
+            <button
+              type="button"
+              onClick={() => setNewPatientOpen(true)}
+              className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 whitespace-nowrap"
+            >
+              + New patient
+            </button>
           </div>
 
           {/* Users table */}
@@ -1214,15 +1226,22 @@ function AdminDashboard() {
                                 Edit Profile
                               </button>
                             )}
-                            {!user.isDeleted && (user.role === 'doctor' || user.role === 'patient') && (
+                            {!user.isDeleted && user.role === 'patient' && (
+                              <button
+                                onClick={() => { setOpenMenuId(null); setHelpPatient({ id: user._id, tab: 'details' }); }}
+                                className="text-sm font-semibold text-green-700 hover:text-green-900"
+                                title="Edit this patient's details, medical info and family, or book an appointment on their behalf"
+                              >
+                                🤝 Help patient{!user.phone ? ' (no mobile!)' : ''}
+                              </button>
+                            )}
+                            {!user.isDeleted && user.role === 'doctor' && (
                               <button
                                 onClick={() => handleEditContact(user)}
                                 className="text-sm font-medium text-teal-600 hover:text-teal-800"
-                                title={user.role === 'doctor'
-                                  ? "Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
-                                  : "Add or change this patient's phone (login) number on their behalf"}
+                                title="Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
                               >
-                                {user.role === 'patient' && !user.phone ? 'Add Phone' : 'Edit Contact'}
+                                Edit Contact
                               </button>
                             )}
                             {!user.isDeleted && user.role === 'doctor' && (
@@ -2032,6 +2051,12 @@ function AdminDashboard() {
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-100 sticky bottom-0 bg-white">
+                {isPatient && !u.isDeleted && (
+                  <>
+                    <button onClick={() => { const id = u._id; closeUserDetail(); setHelpPatient({ id, tab: 'details' }); }} className="px-4 py-2 rounded-lg text-sm font-semibold text-green-700 border border-green-300 hover:bg-green-50">🤝 Help patient</button>
+                    <button onClick={() => { const id = u._id; closeUserDetail(); setHelpPatient({ id, tab: 'book' }); }} className="px-4 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700">📅 Book for them</button>
+                  </>
+                )}
                 <button onClick={closeUserDetail} className="px-5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Close</button>
               </div>
             </div>
@@ -2143,6 +2168,29 @@ function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* ===== Help patient / New patient (lazy-loaded) ===== */}
+      <Suspense fallback={null}>
+        {helpPatient && (
+          <HelpPatient
+            key={`${helpPatient.id}-${helpPatient.tab}`}
+            patientId={helpPatient.id}
+            initialTab={helpPatient.tab}
+            onClose={() => setHelpPatient(null)}
+            onChanged={() => fetchUsers()}
+          />
+        )}
+        {newPatientOpen && (
+          <NewPatientModal
+            onClose={() => setNewPatientOpen(false)}
+            onCreated={(user, next) => {
+              fetchUsers();
+              if (user && next === 'book') { setNewPatientOpen(false); setHelpPatient({ id: user._id, tab: 'book' }); }
+            }}
+            onOpenExisting={(id) => { setNewPatientOpen(false); setHelpPatient({ id, tab: 'details' }); }}
+          />
+        )}
+      </Suspense>
 
       {/* ===== Edit Profile modal (admin edits a doctor's profile + modes) ===== */}
       {profileDoctor && (

@@ -312,6 +312,14 @@ export const adminAPI = {
   // Get one user's full record + recent appointments (detail drill-down)
   getUser: (id) => API.get(`/admin/users/${id}`),
 
+  // "Help patient" — act on a patient's behalf (support). Admin only.
+  createPatient: (data) => API.post('/admin/patients', data),
+  updatePatient: (id, data) => API.put(`/admin/patients/${id}`, data),
+  addPatientFamily: (id, data) => API.post(`/admin/patients/${id}/family`, data),
+  updatePatientFamily: (id, memberId, data) => API.put(`/admin/patients/${id}/family/${memberId}`, data),
+  deletePatientFamily: (id, memberId) => API.delete(`/admin/patients/${id}/family/${memberId}`),
+  bookForPatient: (id, data) => API.post(`/admin/patients/${id}/appointments`, data),
+
   // Get all appointments (with optional filters)
   getAppointments: (params) => API.get('/admin/appointments', { params }),
 

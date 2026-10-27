@@ -1410,6 +1410,11 @@ function Dashboard() {
                         </details>
                       )}
                       {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">Booked for: {apt.familyMemberName} (family member)</p>}
+                      {apt.bookedByAdmin && (
+                        <p className="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-200">
+                          🤝 {isDoctor ? 'Booked by ProMedicoz support (patient agreed on call)' : 'Booked for you by ProMedicoz support'}
+                        </p>
+                      )}
                       {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
                       {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && (

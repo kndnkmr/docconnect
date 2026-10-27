@@ -375,6 +375,27 @@ const userSchema = new mongoose.Schema({
     default: undefined
   },
 
+  // --- Admin assistance (audit trail) ---
+  // Set when a ProMedicoz admin created this patient account on their behalf
+  // (Admin Panel → + New patient), e.g. for someone who couldn't register.
+  createdByAdmin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  // Last 20 changes an admin made to this account's details or family
+  // members (who, when, which fields). Values are NOT copied here, only the
+  // field names, so this never duplicates health data.
+  adminEdits: {
+    type: [{
+      by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      at: { type: Date, default: Date.now },
+      fields: [String],
+      _id: false
+    }],
+    default: []
+  },
+
   // --- Soft Delete ---
   isDeleted: {
     type: Boolean,

@@ -890,14 +890,10 @@ const updateDoctorContact = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    // Doctors: phone + WhatsApp. Patients: phone only (support case — e.g. a
-    // patient who registered before phone became mandatory and gives the
-    // admin their number). Never admins.
-    if (user.role !== 'doctor' && user.role !== 'patient') {
-      return res.status(400).json({ message: 'This action is only for doctor or patient accounts' });
-    }
-    if (user.role === 'patient' && whatsappNumber !== undefined) {
-      return res.status(400).json({ message: 'WhatsApp number is only for doctor profiles. For a patient, update the phone number only.' });
+    // Doctors only. Patients' details (incl. phone) are edited in the
+    // "Help patient" tool — see adminPatientController.updatePatientDetails.
+    if (user.role !== 'doctor') {
+      return res.status(400).json({ message: 'This action is only for doctor accounts. For a patient, use "Help patient".' });
     }
 
     // ---- Phone (main contact / login number) ----

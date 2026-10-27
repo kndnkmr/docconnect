@@ -18,6 +18,7 @@ const User = require('../models/User');
 const { sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
+const { createBooking, BookingError } = require('../utils/booking');
 
 // ============================================
 // BOOK APPOINTMENT - Patient only
@@ -29,126 +30,14 @@ const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 const bookAppointment = async (req, res) => {
   try {
-    const { doctorId, date, timeSlot, reason, consultationType, bookedFor, familyMemberName, originalAppointmentId, isFollowUp, consentGiven, symptoms } = req.body;
-
-    // Step 1: Validate required fields
-    if (!doctorId || !date || !timeSlot || !reason) {
-      return res.status(400).json({
-        message: 'Please provide doctorId, date, timeSlot, and reason'
-      });
-    }
-
-    // Step 1b: If booking for family member, validate family member name
-    if (bookedFor === 'family' && !familyMemberName) {
-      return res.status(400).json({
-        message: 'Please provide the family member name when booking for a family member'
-      });
-    }
-
-    // Step 1c: Require teleconsultation consent (legal requirement)
-    if (!consentGiven) {
-      return res.status(400).json({
-        message: 'Consent to the teleconsultation terms is required to book an appointment'
-      });
-    }
-
-    // Step 2: Verify the doctor exists and is actually a doctor
-    const doctor = await User.findOne({ _id: doctorId, role: 'doctor' });
-    if (!doctor) {
-      return res.status(404).json({
-        message: 'Doctor not found'
-      });
-    }
-
-    // Step 2b: Reject dates the doctor has blocked (vacation / day off).
-    // Slot generation already hides these, but this guard stops a direct API
-    // call from booking a blocked date the UI would never have offered.
-    const isBlockedDate = (doctor.blockedDates || []).some((b) => b.date === date);
-    if (isBlockedDate) {
-      return res.status(400).json({
-        message: 'The doctor is not available on this date. Please choose another day.'
-      });
-    }
-
-    // Step 3: Check if the time slot is already taken
-    const existingAppointment = await Appointment.findOne({
-      doctor: doctorId,
-      date: new Date(date),
-      timeSlot: timeSlot,
-      status: { $nin: ['cancelled'] }
+    // All booking rules live in utils/booking.js (shared with admin
+    // "book on the patient's behalf"), so both paths can never drift apart.
+    const { appointment } = await createBooking({
+      patientId: req.user._id,
+      body: req.body,
+      consentIP: req.headers['x-forwarded-for'] || req.ip || '',
+      consentBy: 'patient',
     });
-
-    if (existingAppointment) {
-      return res.status(400).json({
-        message: 'This time slot is already booked. Please choose another time.'
-      });
-    }
-
-    // Step 4: Check the appointment date is not in the past (IST timezone)
-    const nowInIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-    const todayIST = nowInIST.getFullYear() + '-' +
-      String(nowInIST.getMonth() + 1).padStart(2, '0') + '-' +
-      String(nowInIST.getDate()).padStart(2, '0');
-
-    if (date < todayIST) {
-      return res.status(400).json({
-        message: 'Cannot book appointments in the past'
-      });
-    }
-
-    // Step 5: Validate follow-up eligibility
-    if (isFollowUp && originalAppointmentId) {
-      const originalApt = await Appointment.findById(originalAppointmentId);
-      if (!originalApt || !originalApt.followUpDeadline || new Date() > new Date(originalApt.followUpDeadline)) {
-        return res.status(400).json({
-          message: 'Free follow-up period has expired. Please book a regular appointment.'
-        });
-      }
-    }
-
-    // Sanitize symptoms: only strings, trimmed, capped in count and length
-    // so a crafted payload can't stuff an unbounded amount of data in here.
-    const cleanSymptoms = Array.isArray(symptoms)
-      ? symptoms.filter((s) => typeof s === 'string' && s.trim()).map((s) => s.trim().slice(0, 50)).slice(0, 20)
-      : [];
-
-    // Step 6: Create the appointment
-    const appointmentData = {
-      patient: req.user._id,
-      doctor: doctorId,
-      date: new Date(date),
-      timeSlot,
-      reason,
-      symptoms: cleanSymptoms,
-      consultationType: consultationType || 'in-person',
-      status: 'pending',
-      bookedFor: bookedFor || 'self',
-      familyMemberName: bookedFor === 'family' ? familyMemberName : '',
-      isFollowUp: isFollowUp || false,
-      paymentStatus: isFollowUp ? 'paid' : 'pending',  // Follow-ups skip payment
-      consentGiven: true,
-      consentAt: new Date(),
-      consentIP: req.headers['x-forwarded-for'] || req.ip || ''
-    };
-
-    // If this is a repeat booking, link to original appointment
-    if (originalAppointmentId) {
-      appointmentData.originalAppointment = originalAppointmentId;
-    }
-
-    const appointment = await Appointment.create(appointmentData);
-
-    // Step 6: Populate doctor info before sending response
-    // So the frontend gets the doctor's name, not just their ID
-    await appointment.populate('doctor', 'name specialization profilePhoto');
-    // Second argument = which fields to include (space-separated)
-
-    // Send email notification to doctor (non-blocking — don't wait for it)
-    const patient = await User.findById(req.user._id).select('name phone email patientId');
-    sendAppointmentNotification(doctor, patient, appointment);
-    // Also notify the admin so a pending appointment isn't missed if the
-    // doctor forgets to confirm — non-blocking, never affects booking.
-    sendAdminBookingNotification(doctor, patient, appointment);
 
     res.status(201).json({
       message: 'Appointment booked successfully! Waiting for doctor confirmation.',
@@ -156,13 +45,8 @@ const bookAppointment = async (req, res) => {
     });
 
   } catch (error) {
-    // If two people booked the same slot at once, the unique index rejects the
-    // second create with a duplicate-key error (code 11000). Turn that into the
-    // same friendly "slot taken" message the pre-check uses, not a 500.
-    if (error && error.code === 11000) {
-      return res.status(400).json({
-        message: 'This time slot was just booked by someone else. Please choose another time.'
-      });
+    if (error instanceof BookingError) {
+      return res.status(error.status).json({ message: error.message });
     }
     console.error('Book appointment error:', error.message);
     res.status(500).json({
