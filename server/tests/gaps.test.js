@@ -341,6 +341,19 @@ test('push subscribe: endpoint must be https with real keys', async () => {
   assert.strictEqual((await run(push.subscribe, { body: { subscription: { endpoint: 'https://fcm.googleapis.com/x', keys } }, user })).statusCode, 200);
 });
 
+test('doctor profile: partial save (autosave sends one field) is accepted', async () => {
+  const doc = { _id: 'doc1', isModified: () => false, saved: null, async save(o) { this.saved = o; } };
+  User.findById = () => q(doc);
+  User.findOne = () => q(null);
+  const user = { _id: 'doc1', role: 'doctor' };
+  const r = await run(doctors.updateDoctorProfile, { body: { bio: 'Family physician, 10 years' }, user });
+  assert.strictEqual(r.statusCode, 200);
+  assert.strictEqual(doc.bio, 'Family physician, 10 years');
+  const cleared = await run(doctors.updateDoctorProfile, { body: { experience: null }, user });
+  assert.strictEqual(cleared.statusCode, 200);
+  assert.strictEqual((await run(doctors.updateDoctorProfile, { body: {}, user })).statusCode, 400); // nothing sent
+});
+
 // ---------- Public doctor endpoints ----------
 test('public doctor profile hides login secrets, email, push endpoints, block list', async () => {
   let selected = '';

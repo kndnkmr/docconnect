@@ -23,6 +23,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { disconnectSocket } from '../services/socket';
 import { disablePushNotifications } from '../services/push';
+import { clearAllDrafts } from '../utils/drafts';
 
 // Base API URL — uses environment variable in production, falls back to relative path in development
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
@@ -105,7 +106,13 @@ export function AuthProvider({ children }) {
   // ---- Logout function ----
   // Clears all auth data
 
-  const logout = () => {
+  // logout()                     — the person chose to log out: also forget
+  //                                their form drafts on this device.
+  // logout({ keepDrafts: true }) — the login expired: keep drafts so the
+  //                                work is still there after logging in.
+  const logout = (opts = {}) => {
+    if (!opts.keepDrafts && user) clearAllDrafts(user._id || user.id);
+
     // Unsubscribe this browser from push notifications — otherwise a shared
     // device could keep showing a previous user's private notifications
     // (message text, appointment details) after they've logged out and

@@ -15,13 +15,15 @@
 // 3. Backend calculates free slots and returns them
 // 4. Patient sees only available times and picks one
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { doctorAPI, appointmentAPI, availabilityAPI, familyMemberAPI, getUploadUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import toast from 'react-hot-toast';
 import { offeredModes, pickMode } from '../utils/consultModes';
+import { loadDraft, clearDraft, savedAgo, DRAFT_TTL } from '../utils/drafts';
+import useAutoDraft from '../utils/useAutoDraft';
 
 // Any one of the medical info fields being set is enough to consider it
 // "on file" — no need for every field to be filled in.
@@ -90,6 +92,9 @@ const BOOKING_TXT = {
     onlyMode: (name) => `Dr. ${name} consults this way only`,
     modeSwitched: (name) => `Dr. ${name} doesn't offer your last consultation type, so we picked one they do offer.`,
     step1: 'Date & time',
+    restored: (ago) => `↩ Picked up where you left off (${ago})`,
+    startFresh: 'Start fresh',
+    slotLost: (slot) => `${slot} was booked by someone else meanwhile. Everything else is kept, so just pick another time.`,
     step2: 'Who & how',
     step3: 'Reason for visit',
     symptomsLabel: 'Symptoms (optional)',
@@ -136,6 +141,9 @@ const BOOKING_TXT = {
     onlyMode: (name) => `डॉ. ${name} केवल इसी तरीके से परामर्श देते हैं`,
     modeSwitched: (name) => `डॉ. ${name} आपका पिछला परामर्श तरीका नहीं देते, इसलिए हमने उनका उपलब्ध तरीका चुना है।`,
     step1: 'तारीख और समय',
+    restored: (ago) => `↩ जहाँ छोड़ा था, वहीं से जारी (${ago})`,
+    startFresh: 'नए सिरे से शुरू करें',
+    slotLost: (slot) => `${slot} इस बीच किसी और ने बुक कर लिया। बाकी सब वैसा ही है, बस दूसरा समय चुनें।`,
     step2: 'किसके लिए और कैसे',
     step3: 'आने का कारण',
     symptomsLabel: 'लक्षण (वैकल्पिक)',
@@ -213,6 +221,64 @@ function BookAppointment() {
   }, [doctor]);
   const modes = offeredModes(doctor?.consultationModes);
 
+  // ---- Pick up where you left off (draft on this device) ----
+  // The form is saved on the device as the patient types (not consent).
+  // Coming back restores it; the slot is re-checked against the fresh free
+  // list. Not used for repeat/follow-up bookings (those carry their own
+  // context from the Dashboard) or quick-pick deep links (explicit choice).
+  const userId = user?._id || user?.id;
+  const draftName = `booking:${doctorId}`;
+  const [restored, setRestored] = useState(null);       // { savedAt } when a draft was restored
+  const [slotLostNote, setSlotLostNote] = useState(''); // restored slot no longer free
+  const [booked, setBooked] = useState(false);
+  const restoreSlotRef = useRef('');
+  const draftCheckedRef = useRef(false);
+  useEffect(() => {
+    if (!doctor || !userId || draftCheckedRef.current) return;
+    draftCheckedRef.current = true;
+    if (repeatData.repeatBooking || presetDate) return;
+    const d = loadDraft(draftName, userId, DRAFT_TTL.booking);
+    if (!d) return;
+    const x = d.data || {};
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const dateOk = typeof x.date === 'string' && x.date >= today;
+    restoreSlotRef.current = dateOk ? (x.timeSlot || '') : '';
+    setFormData((prev) => ({
+      ...prev,
+      date: dateOk ? x.date : '',
+      reason: typeof x.reason === 'string' ? x.reason : '',
+      consultationType: pickMode(x.consultationType, doctor.consultationModes).mode,
+    }));
+    setSymptoms(Array.isArray(x.symptoms) ? x.symptoms.filter((v) => typeof v === 'string') : []);
+    setBookedFor(x.bookedFor === 'family' ? 'family' : 'self');
+    setSelectedFamilyMember(x.bookedFor === 'family' ? (x.familyMemberName || '') : '');
+    setModeSwitched(false);
+    setRestored({ savedAt: d.savedAt });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctor, userId]);
+
+  useAutoDraft(draftName, {
+    doctorId, doctorName: doctor?.name || '',
+    date: formData.date, timeSlot: formData.timeSlot, reason: formData.reason,
+    consultationType: formData.consultationType, symptoms,
+    bookedFor, familyMemberName: bookedFor === 'family' ? selectedFamilyMember : '',
+  }, {
+    userId,
+    enabled: !!userId && !!doctor && !repeatData.repeatBooking && !booked && draftCheckedRef.current,
+    isEmpty: (d) => !d.date && !String(d.reason || '').trim() && !(d.symptoms || []).length,
+  });
+
+  const startFresh = () => {
+    clearDraft(draftName, userId);
+    restoreSlotRef.current = '';
+    setFormData((prev) => ({ ...prev, date: '', timeSlot: '', reason: '', consultationType: pickMode('', doctor?.consultationModes).mode }));
+    setSymptoms([]);
+    setBookedFor('self');
+    setSelectedFamilyMember('');
+    setRestored(null);
+    setSlotLostNote('');
+  };
+
   // Consent state (controlled so we can reliably enforce it before booking)
   const [consentGiven, setConsentGiven] = useState(false);
 
@@ -282,6 +348,13 @@ function BookAppointment() {
             setFormData(prev => ({ ...prev, timeSlot: presetSlot }));
           }
         }
+        // A restored draft's slot: select it again only if it's still free.
+        const want = restoreSlotRef.current;
+        if (want) {
+          restoreSlotRef.current = '';
+          if (data.slots.includes(want)) setFormData(prev => ({ ...prev, timeSlot: want }));
+          else setSlotLostNote(want);
+        }
       } catch (error) {
         setSlotsMessage('Could not load available slots. The doctor may not have set their schedule yet.');
         console.error('Fetch slots error:', error);
@@ -336,6 +409,8 @@ function BookAppointment() {
         consentGiven: consentGiven
       });
 
+      setBooked(true);
+      clearDraft(draftName, userId);
       toast.success('Appointment booked! Waiting for doctor confirmation.');
       navigate('/booking-confirmation', {
         state: {
@@ -350,8 +425,12 @@ function BookAppointment() {
       });
 
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to book appointment';
-      toast.error(message);
+      // 401 = login expired: the "Please log in again — your work is saved"
+      // banner explains it, and the form is kept as a draft.
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Failed to book appointment';
+        toast.error(message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -432,6 +511,13 @@ function BookAppointment() {
             </div>
           )}
 
+          {restored && (
+            <div className="mb-5 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between gap-3" role="status">
+              <p className="text-sm text-blue-800">{t.restored(savedAgo(restored.savedAt))}</p>
+              <button type="button" onClick={startFresh} className="text-sm font-semibold text-primary-600 hover:underline whitespace-nowrap">{t.startFresh}</button>
+            </div>
+          )}
+
           <form id="book-form" onSubmit={handleSubmit} className="space-y-5">
             {/* Step 1 — Date & time */}
             <div className="flex items-center gap-2.5">
@@ -503,6 +589,9 @@ function BookAppointment() {
                   </p>
                 </>
               )}
+              {slotLostNote && !formData.timeSlot && (
+                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t.slotLost(slotLostNote)}</p>
+              )}
             </div>
 
             {/* Step 2 — Who & how */}
@@ -541,7 +630,7 @@ function BookAppointment() {
                       {t.noFamily}
                     </p>
                     <Link
-                      to="/dashboard?tab=familyMembers"
+                      to={`/dashboard?tab=familyMembers&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`}
                       className="text-sm text-primary-600 hover:underline mt-1 inline-block"
                     >
                       {t.addFamily}
@@ -584,14 +673,14 @@ function BookAppointment() {
                     {user.emergencyContactName && <li>{t.lblEmergency}: {user.emergencyContactName}</li>}
                     {user.insuranceProvider && <li>{t.lblInsurance}: {user.insuranceProvider}</li>}
                   </ul>
-                  <Link to="/dashboard?tab=account" className="text-green-700 underline text-xs mt-1 inline-block">
+                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="text-green-700 underline text-xs mt-1 inline-block">
                     {t.updateIfChanged}
                   </Link>
                 </div>
               ) : (
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
                   {t.addMedPrompt}{' '}
-                  <Link to="/dashboard?tab=account" className="underline font-medium">
+                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="underline font-medium">
                     {t.addInSettings}
                   </Link>
                 </div>

@@ -526,16 +526,11 @@ function validateDoctorUpdates(updates) {
 
 const updateDoctorProfile = async (req, res) => {
   try {
-    // Validate required fields (skip if this is just a file upload like QR code)
-    if (!req.file) {
-      const requiredFields = ['specialization', 'qualification', 'medicalRegistrationNo', 'experience', 'consultationFee', 'clinicAddress', 'phone'];
-      const missing = requiredFields.filter(f => !req.body[f]);
-      if (missing.length > 0) {
-        return res.status(400).json({
-          message: `Please fill all required fields: ${missing.join(', ')}`
-        });
-      }
-    }
+    // Partial saves are allowed: the Dashboard autosaves only the fields that
+    // changed, so a doctor never has to fill everything in one sitting. What
+    // a profile still needs before patients can book is shown by the
+    // onboarding checklist, not enforced here. Each field that IS sent is
+    // still checked below (format, length, phone clash, schema validation).
 
     // These are the fields a doctor is ALLOWED to update
     const allowedUpdates = [

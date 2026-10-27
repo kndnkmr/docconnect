@@ -21,6 +21,8 @@ import VideoCall from '../components/VideoCall';
 import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
 import PaymentBox from '../components/PaymentBox';
+import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
+import { diffProfile, profileProblems, payloadFor, profileProgress } from '../utils/profileAutosave';
 
 // Extracted sub-components
 import DoctorAvailability from './dashboard/DoctorAvailability';
@@ -292,6 +294,13 @@ function Dashboard() {
   // flash as "incomplete" on every single visit, even for a fully set-up
   // doctor, until the real data loads back in.
   const [profileLoaded, setProfileLoaded] = useState(false);
+  // ---- Profile autosave ----
+  // What the server has (to send only changed fields), the save status shown
+  // above the form, and per-field problems held back until fixed.
+  const profileSavedRef = useRef(null);
+  const [profileSave, setProfileSave] = useState({ state: 'idle', msg: '' }); // idle | saving | saved | error
+  const [profileFieldErrors, setProfileFieldErrors] = useState({});
+  const userId = user?._id || user?.id;
 
   const fetchAvailabilityStatus = async () => {
     try {
@@ -309,6 +318,7 @@ function Dashboard() {
     try {
       const response = await doctorAPI.updateProfile(data);
       setProfileData(prev => ({ ...prev, profilePhoto: response.data.doctor.profilePhoto }));
+      if (profileSavedRef.current) profileSavedRef.current = { ...profileSavedRef.current, profilePhoto: response.data.doctor.profilePhoto };
       toast.success('Profile photo uploaded!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to upload photo');
@@ -371,7 +381,7 @@ function Dashboard() {
     try {
       const response = await authAPI.getMe();
       const d = response.data.user;
-      setProfileData({
+      const loaded = {
         specialization: d.specialization || '', experience: d.experience || '',
         qualification: d.qualification || '', medicalRegistrationNo: d.medicalRegistrationNo || '',
         clinicAddress: d.clinicAddress || '',
@@ -381,7 +391,13 @@ function Dashboard() {
         city: d.city || '', googleMapsLink: d.googleMapsLink || '',
         consultationModes: d.consultationModes || ['in-person'],
         languagesSpoken: d.languagesSpoken || []
-      });
+      };
+      profileSavedRef.current = loaded;
+      // Changes that couldn't reach the server last time (offline, app
+      // closed mid-save) are kept on the device; put them back so the
+      // autosave below sends them now.
+      const pending = loadDraft('profile', d._id || d.id, DRAFT_TTL.profile);
+      setProfileData(pending ? { ...loaded, ...pending.data } : loaded);
     } catch (error) { console.error('Fetch profile error:', error); }
     finally { setProfileLoaded(true); }
   };
@@ -730,6 +746,7 @@ function Dashboard() {
         medicines, testsRecommended, notes: values.notes || '',
         followUpDays: values.followUpDays ? parseInt(values.followUpDays) : 0
       });
+      clearDraft(`rx:${prescriptionModal.id}`, userId);
       toast.success('Prescription created!');
       setPrescriptionModal({ open: false, id: null });
       fetchAppointments();
@@ -740,43 +757,104 @@ function Dashboard() {
     }
   };
 
+  // Send the doctor's changed profile fields to the server. Fields with an
+  // obvious problem are held back (shown inline) and the rest still save.
+  // Returns true when everything typed is saved.
+  const saveProfileChanges = async () => {
+    if (!profileSavedRef.current) return false;
+    const changes = diffProfile(profileData, profileSavedRef.current);
+    const problems = profileProblems(changes);
+    setProfileFieldErrors(problems);
+    const toSend = Object.fromEntries(Object.entries(changes).filter(([k]) => !problems[k]));
+    if (!Object.keys(toSend).length) {
+      if (Object.keys(problems).length) setProfileSave({ state: 'error', msg: 'Fix the highlighted field to save it. Everything else is saved.' });
+      return !Object.keys(changes).length;
+    }
+    setProfileSave({ state: 'saving', msg: '' });
+    try {
+      const { data } = await doctorAPI.updateProfile(payloadFor(toSend));
+      const d = data.doctor || {};
+      // Keep what the server stored (e.g. phone formatted as +91...).
+      const stored = { ...toSend };
+      for (const k of ['phone', 'whatsappNumber']) if (k in toSend && d[k] !== undefined) stored[k] = d[k] || '';
+      profileSavedRef.current = { ...profileSavedRef.current, ...stored };
+      setProfileData((prev) => {
+        const next = { ...prev };
+        for (const k of ['phone', 'whatsappNumber']) if (k in stored && prev[k] === toSend[k]) next[k] = stored[k];
+        return next;
+      });
+      if (Object.keys(problems).length) {
+        saveDraft('profile', changes, userId);
+        setProfileSave({ state: 'error', msg: 'Fix the highlighted field to save it. Everything else is saved.' });
+        return false;
+      }
+      clearDraft('profile', userId);
+      setProfileSave({ state: 'saved', msg: '' });
+      return true;
+    } catch (error) {
+      // Keep the unsaved changes on this device so nothing is lost.
+      saveDraft('profile', changes, userId);
+      setProfileSave({ state: 'error', msg: error.response?.data?.message || "Couldn't save right now. Your changes are kept and will save when you're back online." });
+      return false;
+    }
+  };
+
+  // Autosave ~1s after the doctor stops typing.
+  useEffect(() => {
+    if (!isDoctor || !profileLoaded || !profileSavedRef.current) return undefined;
+    if (!Object.keys(diffProfile(profileData, profileSavedRef.current)).length) return undefined;
+    const t = setTimeout(saveProfileChanges, 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileData, profileLoaded, isDoctor]);
+
+  // Switching apps / locking the phone before the autosave fires: keep the
+  // unsaved changes on the device (restored on the next visit and saved).
+  const profileDataRef = useRef(profileData);
+  profileDataRef.current = profileData;
+  useEffect(() => {
+    if (!isDoctor) return undefined;
+    const flush = () => {
+      if (document.visibilityState !== 'hidden' || !profileSavedRef.current) return;
+      const changes = diffProfile(profileDataRef.current, profileSavedRef.current);
+      if (Object.keys(changes).length) saveDraft('profile', changes, userId);
+    };
+    document.addEventListener('visibilitychange', flush);
+    return () => document.removeEventListener('visibilitychange', flush);
+  }, [isDoctor, userId]);
+
+  // ---- Patient: pick up where you left off ----
+  // A booking started on this device (see BookAppointment) shows as a
+  // "Continue" card. Coming from the booking form's "Add family member" /
+  // "Account Settings" links shows "← Back to your booking" instead.
+  const backParam = searchParams.get('back') || '';
+  const backToBooking = /^\/book-appointment\/[A-Za-z0-9]+$/.test(backParam) ? backParam : '';
+  const [bookingDraft, setBookingDraft] = useState(null);
+  useEffect(() => {
+    if (!isPatient || !userId) { setBookingDraft(null); return; }
+    const latest = listDrafts(userId, 'booking:', DRAFT_TTL.booking)[0] || null;
+    setBookingDraft(latest && latest.data && latest.data.doctorId ? latest : null);
+  }, [isPatient, userId]);
+  const discardBookingDraft = () => {
+    if (bookingDraft) clearDraft(bookingDraft.name, userId);
+    setBookingDraft(null);
+  };
+
+  // The Save button still works (saves now) and says what's still needed.
   const handleProfileSave = async (e) => {
     e.preventDefault();
-
-    // Validate all fields are filled
-    const requiredFields = [
-      { key: 'specialization', label: 'Specialization' },
-      { key: 'qualification', label: 'Qualification' },
-      { key: 'medicalRegistrationNo', label: 'Medical Registration No.' },
-      { key: 'experience', label: 'Years of Experience' },
-      { key: 'consultationFee', label: 'Consultation Fee' },
-      { key: 'clinicAddress', label: 'Clinic Address' },
-      { key: 'phone', label: 'Phone Number' },
-    ];
-    const missing = requiredFields.filter(f => !profileData[f.key]);
-    if (missing.length > 0) {
-      toast.error(`Please fill: ${missing.map(f => f.label).join(', ')}`);
-      return;
-    }
-
-    try {
-      await doctorAPI.updateProfile(profileData);
-
-      // Guide the doctor straight to whatever's still pending instead of
-      // leaving them to rediscover it themselves. The onboarding checklist
-      // stays visible on every tab, so nothing is lost even if we jump away
-      // from here — availability is the one thing that needs a real tab
-      // switch (UPI QR code is already on this same page, right above Save).
-      if (hasAvailability === false) {
-        toast.success('Profile updated! Now let\'s set your availability →', { duration: 4000 });
-        goToTab('availability');
-      } else if (!profileData.upiQrCode) {
-        toast.success('Profile updated! Don\'t forget your UPI QR code above so patients can pay you.', { duration: 5000 });
-      } else {
-        toast.success('Profile updated!');
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update profile');
+    const ok = await saveProfileChanges();
+    if (!ok) return;
+    const progress = profileProgress(profileData);
+    if (progress.missing.length) {
+      toast.success(`Saved. Still needed before patients can book you: ${progress.missing.join(', ')}.`, { duration: 6000 });
+    } else if (hasAvailability === false) {
+      toast.success('Profile saved! Now let\'s set your availability →', { duration: 4000 });
+      goToTab('availability');
+    } else if (!profileData.upiQrCode) {
+      toast.success('Profile saved! Don\'t forget your UPI QR code above so patients can pay you.', { duration: 5000 });
+    } else {
+      toast.success('Profile saved!');
     }
   };
 
@@ -854,8 +932,10 @@ function Dashboard() {
   const onboardingSteps = isDoctor ? [
     {
       key: 'profile', done: profileFieldsComplete,
-      label: 'Fill in your professional details',
-      hint: 'Specialization, qualification, registration number, experience, fee, clinic address, and phone',
+      label: `Fill in your professional details (${profileProgress(profileData).done} of ${profileProgress(profileData).total} done)`,
+      hint: profileProgress(profileData).missing.length
+        ? `Left: ${profileProgress(profileData).missing.join(', ')}. Saves as you type, so you can finish it later.`
+        : 'Specialization, qualification, registration number, experience, fee, clinic address, and phone',
       actionLabel: 'Edit Profile', action: () => goToTab('profile')
     },
     {
@@ -891,6 +971,40 @@ function Dashboard() {
     <div className="container mx-auto px-4 py-8">
       {/* Admin announcements (fee notices, policy updates, etc.) */}
       <AnnouncementBanner />
+
+      {/* Patient came here from the booking form ("Add family member" /
+          "Account Settings"): one tap back, with the form still filled in. */}
+      {isPatient && backToBooking && (
+        <div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-sm text-primary-800">Your booking is saved. Come back to it when you're done here.</p>
+          <button type="button" onClick={() => navigate(backToBooking)} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 whitespace-nowrap">
+            ← Back to your booking
+          </button>
+        </div>
+      )}
+
+      {/* Continue where you left off: a booking started on this device. */}
+      {isPatient && !backToBooking && bookingDraft && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <p className="font-semibold text-green-900">You were booking {bookingDraft.data.doctorName ? `Dr. ${bookingDraft.data.doctorName}` : 'an appointment'}</p>
+            <p className="text-xs text-green-800 mt-0.5">
+              {[
+                bookingDraft.data.date && new Date(`${bookingDraft.data.date}T00:00:00Z`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }),
+                bookingDraft.data.timeSlot && bookingDraft.data.timeSlot.split(' - ')[0],
+                bookingDraft.data.bookedFor === 'family' && bookingDraft.data.familyMemberName && `for ${bookingDraft.data.familyMemberName}`,
+                `saved ${savedAgo(bookingDraft.savedAt)}`,
+              ].filter(Boolean).join(' · ')}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => navigate(`/book-appointment/${bookingDraft.data.doctorId}`)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 whitespace-nowrap">
+              Continue →
+            </button>
+            <button type="button" onClick={discardBookingDraft} className="text-sm text-gray-600 hover:underline">Discard</button>
+          </div>
+        </div>
+      )}
 
       {/* Push notification nudge — works for everyone, including patients
           who registered with phone only (no email on file) */}
@@ -1608,7 +1722,18 @@ function Dashboard() {
       {/* === EDIT PROFILE TAB (Doctor only) === */}
       {activeTab === 'profile' && isDoctor && (
         <div className="bg-white rounded-xl shadow-md p-8 max-w-2xl">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">Update Your Profile</h2>
+          <div className="flex items-start justify-between gap-3 mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">Update Your Profile</h2>
+              <p className="text-xs text-gray-500 mt-1">Saves automatically as you type. You can fill it in over several visits.</p>
+            </div>
+            <span className={`text-xs font-medium whitespace-nowrap mt-1 ${profileSave.state === 'error' ? 'text-amber-700' : profileSave.state === 'saving' ? 'text-gray-500' : 'text-green-700'}`} role="status" aria-live="polite">
+              {profileSave.state === 'saving' ? 'Saving…' : profileSave.state === 'saved' ? '✓ All changes saved' : profileSave.state === 'error' ? '⚠ Not saved yet' : ''}
+            </span>
+          </div>
+          {profileSave.state === 'error' && profileSave.msg && (
+            <p className="mb-4 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3">{profileSave.msg}</p>
+          )}
           <form onSubmit={handleProfileSave} className="space-y-4">
             {[
               { key: 'specialization', label: 'Specialization *', placeholder: 'e.g., Cardiologist, Dentist' },
@@ -1630,8 +1755,10 @@ function Dashboard() {
                   value={profileData[field.key]}
                   onChange={(e) => setProfileData(prev => ({ ...prev, [field.key]: e.target.value }))}
                   placeholder={field.placeholder}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  aria-invalid={profileFieldErrors[field.key] ? 'true' : undefined}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none ${profileFieldErrors[field.key] ? 'border-amber-400' : 'border-gray-300'}`}
                 />
+                {profileFieldErrors[field.key] && <p className="text-xs text-amber-700 mt-1">{profileFieldErrors[field.key]}</p>}
                 {field.hint && <p className="text-xs text-gray-500 mt-1">{field.hint}</p>}
               </div>
             ))}
@@ -1722,13 +1849,14 @@ function Dashboard() {
                   try {
                     const response = await doctorAPI.updateProfile(data);
                     setProfileData(prev => ({ ...prev, upiQrCode: response.data.doctor.upiQrCode }));
+                    if (profileSavedRef.current) profileSavedRef.current = { ...profileSavedRef.current, upiQrCode: response.data.doctor.upiQrCode };
                     toast.success('QR code uploaded!');
                   } catch (err) { toast.error(err.response?.data?.message || 'Failed to upload QR code'); }
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
               />
             </div>
-            <button type="submit" className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">Save Profile</button>
+            <button type="submit" className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">Save now</button>
           </form>
         </div>
       )}
@@ -1932,6 +2060,8 @@ function Dashboard() {
             wide
             onSubmit={handleWritePrescription}
             onCancel={() => setPrescriptionModal({ open: false, id: null })}
+            draftKey={prescriptionModal.id ? `rx:${prescriptionModal.id}` : ''}
+            draftUserId={userId}
           />
         );
       })()}

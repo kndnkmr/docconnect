@@ -7,7 +7,9 @@
 //   <ConfirmModal open={show} title="Cancel?" message="Are you sure?" onConfirm={fn} onCancel={fn} />
 //   <PromptModal open={show} title="Rate" fields={[{name:'rating',label:'Stars',type:'number'}]} onSubmit={fn} onCancel={fn} />
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { loadDraft, saveDraft, clearDraft, savedAgo, DRAFT_TTL } from '../utils/drafts';
+import useAutoDraft from '../utils/useAutoDraft';
 
 // ---- Backdrop + wrapper shared by all modals ----
 function ModalWrapper({ open, children, onClose, wide = false }) {
@@ -95,18 +97,44 @@ export function PromptModal({
   cancelText = 'Cancel',
   wide = false,
   onSubmit,
-  onCancel
+  onCancel,
+  // Optional: keep a draft on this device (e.g. "rx:<appointmentId>") so
+  // closing by mistake or a refresh doesn't lose what was typed.
+  draftKey = '',
+  draftUserId = '',
+  draftTtl = DRAFT_TTL.rx,
 }) {
   const [values, setValues] = useState({});
+  const initialRef = useRef({});
+  const [restoredAt, setRestoredAt] = useState(null);
+  const [askClose, setAskClose] = useState(false);
 
-  // Reset values when modal opens
+  // Reset values when modal opens (from a saved draft, if there is one)
   useEffect(() => {
     if (open) {
       const initial = {};
       fields.forEach(f => { initial[f.name] = f.defaultValue || ''; });
-      setValues(initial);
+      initialRef.current = initial;
+      const d = draftKey ? loadDraft(draftKey, draftUserId, draftTtl) : null;
+      setValues(d ? { ...initial, ...d.data } : initial);
+      setRestoredAt(d ? d.savedAt : null);
+      setAskClose(false);
     }
   }, [open]);
+
+  const dirty = JSON.stringify(values) !== JSON.stringify(initialRef.current);
+  useAutoDraft(draftKey, values, { userId: draftUserId, enabled: !!(open && draftKey && dirty) });
+
+  // Backdrop tap / Cancel with unsaved typing: ask instead of throwing it away.
+  const requestClose = () => {
+    if (draftKey && dirty) setAskClose(true);
+    else onCancel();
+  };
+  const discardDraft = () => {
+    if (draftKey) clearDraft(draftKey, draftUserId);
+    setRestoredAt(null);
+    setAskClose(false);
+  };
 
   const handleChange = (name, value) => {
     setValues(prev => ({ ...prev, [name]: value }));
@@ -118,10 +146,17 @@ export function PromptModal({
   };
 
   return (
-    <ModalWrapper open={open} onClose={onCancel} wide={wide}>
+    <ModalWrapper open={open} onClose={requestClose} wide={wide}>
       <form onSubmit={handleSubmit} className="p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
         {description && <p className="text-gray-500 text-sm mb-4">{description}</p>}
+
+        {draftKey && restoredAt && (
+          <div className="mb-4 p-2.5 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between gap-3 text-sm" role="status">
+            <span className="text-green-800">✓ Draft restored from {savedAgo(restoredAt)}</span>
+            <button type="button" onClick={() => { discardDraft(); setValues(initialRef.current); }} className="text-xs text-gray-600 hover:underline whitespace-nowrap">Discard draft</button>
+          </div>
+        )}
 
         {/* Optional reference/context block above the form fields — e.g.
             a patient's previous prescriptions when writing a new one. */}
@@ -173,10 +208,21 @@ export function PromptModal({
           ))}
         </div>
 
+        {askClose && (
+          <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg" role="alert">
+            <p className="text-sm font-medium text-orange-900 mb-2">Keep this draft for later?</p>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={() => { saveDraft(draftKey, values, draftUserId); setAskClose(false); onCancel(); }} className="px-3 py-1.5 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700">Keep draft</button>
+              <button type="button" onClick={() => { discardDraft(); onCancel(); }} className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">Discard</button>
+              <button type="button" onClick={() => setAskClose(false)} className="px-3 py-1.5 text-sm text-gray-600 hover:underline">Keep editing</button>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={requestClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
           >
             {cancelText}

@@ -57,9 +57,20 @@ API.interceptors.response.use(
   (error) => {
     // If the server returns 401 (unauthorized), the token might be expired
     if (error.response?.status === 401) {
-      // Optional: auto-logout if token is invalid
-      // localStorage.removeItem('token');
-      // window.location.href = '/login';
+      // A logged-in request was refused: the login has expired (or the
+      // account was suspended/deleted). Tell the app once; SessionExpired
+      // shows "Please log in again — your work is saved" and returns the
+      // person to this page afterwards. Login/register/password calls are
+      // excluded (a wrong password is also a 401 there).
+      const url = error.config?.url || '';
+      const isAuthCall = /\/auth\/(login|register|forgot|reset|verify|resend)/.test(url);
+      let hadToken = false;
+      try { hadToken = !!localStorage.getItem('token'); } catch { hadToken = false; }
+      if (!isAuthCall && hadToken && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('pmz:session-expired', {
+          detail: { message: error.response?.data?.message || '' },
+        }));
+      }
     }
     return Promise.reject(error);
     // Re-throw so the calling component can handle specific errors

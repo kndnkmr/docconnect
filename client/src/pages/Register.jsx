@@ -19,6 +19,8 @@ import PasswordToggleIcon from '../components/PasswordToggleIcon';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../components/Analytics';
+import { loadDraft, clearDraft, DRAFT_TTL } from '../utils/drafts';
+import useAutoDraft from '../utils/useAutoDraft';
 
 function Register() {
   const [searchParams] = useSearchParams();
@@ -31,13 +33,22 @@ function Register() {
   const prefillPhone = String(location.state?.phone || '').replace(/\D/g, '').slice(-10);
 
   // ---- Form state ----
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: prefillPhone,
-    role: defaultRole
+  // Name / email / phone / role are kept on this device while typing (never
+  // the password), so a refresh or switching apps doesn't empty the form.
+  const [formData, setFormData] = useState(() => {
+    const d = loadDraft('register', null, DRAFT_TTL.register);
+    const x = (d && d.data) || {};
+    return {
+      name: typeof x.name === 'string' ? x.name : '',
+      email: typeof x.email === 'string' ? x.email : '',
+      password: '',
+      confirmPassword: '',
+      phone: prefillPhone || (typeof x.phone === 'string' ? x.phone.replace(/\D/g, '').slice(0, 10) : ''),
+      role: searchParams.get('role') ? defaultRole : (x.role === 'doctor' ? 'doctor' : defaultRole),
+    };
+  });
+  useAutoDraft('register', { name: formData.name, email: formData.email, phone: formData.phone, role: formData.role }, {
+    isEmpty: (d) => !d.name.trim() && !d.email.trim() && !d.phone,
   });
   // "This phone is already registered" → offer to log in instead (box, not toast).
   const [phoneTaken, setPhoneTaken] = useState(false);
@@ -121,6 +132,7 @@ function Register() {
 
       const { token, user } = response.data;
 
+      clearDraft('register', null);
       // Auto-login after registration
       login(token, user);
 

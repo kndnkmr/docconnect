@@ -32,6 +32,7 @@ import { usePwa } from './context/PwaContext';
 
 // ---- Import Page Components ----
 import Navbar from './components/Navbar';
+import SessionExpired from './components/SessionExpired';
 import WhatsAppButton from './components/WhatsAppButton';
 import BottomNav from './components/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
@@ -138,6 +139,8 @@ function App() {
 
       {/* Navbar appears on ALL pages */}
       <Navbar />
+      {/* "Please log in again — your work is saved" (expired login) */}
+      <SessionExpired />
 
       {/* Main content area — grows to fill available space so the footer
           stays at the bottom on short pages (sticky footer). It's also a
