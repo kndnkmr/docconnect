@@ -336,6 +336,12 @@ export const adminAPI = {
   // Payment help: { action: 'mark_paid', amount?, note? } or { action: 'reset', note? }
   paymentAction: (id, data) => API.put(`/admin/appointments/${id}/payment`, data),
 
+  // Patients who may be stuck, grouped (Admin → Needs help)
+  getNeedsHelp: () => API.get('/admin/needs-help'),
+
+  // Paid-then-cancelled: record that the refund was checked. Body: { note? }
+  refundChecked: (id, data = {}) => API.put(`/admin/appointments/${id}/refund-checked`, data),
+
   // Delete a user (permanent)
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
 

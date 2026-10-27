@@ -263,7 +263,29 @@ const adminPaymentAction = async (req, res) => {
   }
 };
 
+// ---- Admin: refund checked (paid/claimed, then cancelled) ----
+// PUT /api/admin/appointments/:id/refund-checked  body { note? }
+// Records that support checked the refund with the doctor/patient, so it
+// leaves the "Paid, then cancelled" list. Payment status itself is unchanged.
+const adminRefundChecked = async (req, res) => {
+  try {
+    const note = req.body && req.body.note !== undefined ? String(req.body.note).trim() : '';
+    if (note.length > MAX_NOTE) throw new PaymentError(400, `Note is too long (max ${MAX_NOTE} characters)`);
+    const apt = await Appointment.findById(req.params.id);
+    if (!apt) throw new PaymentError(404, 'Appointment not found');
+    if (apt.status !== 'cancelled') throw new PaymentError(400, 'Only for cancelled appointments');
+    apt.refundCheckedAt = new Date();
+    apt.refundCheckedBy = req.user._id;
+    apt.refundNote = note;
+    await apt.save({ validateModifiedOnly: true });
+    res.json({ message: 'Marked as refund checked.' });
+  } catch (error) {
+    send(res, error, 'Marking refund checked');
+  }
+};
+
 module.exports = {
+  adminRefundChecked,
   uploadPaymentScreenshot, notifyPayment, undoPaymentClaim, remindDoctorAboutPayment, adminPaymentAction,
   REMIND_AFTER_MS, REMIND_EVERY_MS,
 };

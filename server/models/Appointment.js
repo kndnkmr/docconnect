@@ -176,6 +176,16 @@ const appointmentSchema = new mongoose.Schema({
   paymentMarkedByRole: { type: String, enum: ['', 'doctor', 'admin'], default: '' },
   paymentAdminNote: { type: String, default: '' },
 
+  // ---- "Needs help" follow-ups (utils/journeyReminders.js, utils/needsHelp.js) ----
+  // Doctor reminded to confirm a still-pending booking (once).
+  confirmReminderSentAt: { type: Date, default: null },
+  // Patient reminded to pay (confirmed, unpaid, slot within 2h; once).
+  payReminderSentAt: { type: Date, default: null },
+  // Admin checked the refund for a paid-then-cancelled appointment.
+  refundCheckedAt: { type: Date, default: null },
+  refundCheckedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  refundNote: { type: String, default: '' },
+
   // ---- Free follow-up deadline ----
   // Set by doctor when writing prescription
   // Patient can book a free follow-up before this date

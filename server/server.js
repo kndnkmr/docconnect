@@ -121,6 +121,7 @@ const { sendCallStartReminders } = require('./utils/callReminder');
 const { sendAppointmentReminders } = require('./utils/appointmentReminder');
 const { sendReviewRequests } = require('./utils/reviewRequest');
 const { runPaymentFollowUp } = require('./utils/paymentFollowUp');
+const { runJourneyReminders } = require('./utils/journeyReminders');
 const { fixEmailIndex } = require('./utils/fixIndexes');
 const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
@@ -186,6 +187,10 @@ mongoose.connect(process.env.MONGODB_URI)
     // Unconfirmed payments: nudge the doctor at 3h, alert admin at 24h, once
     // each per claim (see utils/paymentFollowUp.js). Every 10 minutes.
     setInterval(runPaymentFollowUp, 10 * 60 * 1000);
+
+    // Doctor "please confirm" (pending 3h / slot within 4h) and patient
+    // "please pay" (slot within 2h) nudges, once each (utils/journeyReminders.js).
+    setInterval(runJourneyReminders, 10 * 60 * 1000);
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);

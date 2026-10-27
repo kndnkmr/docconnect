@@ -13,6 +13,9 @@ const { protect, authorize } = require('../middleware/auth');
 router.use(protect);
 router.use(authorize('admin'));
 
+// GET /api/admin/needs-help - patients who may be stuck (see utils/needsHelp.js)
+router.get('/needs-help', require('../controllers/adminController').getNeedsHelp);
+
 // GET /api/admin/stats - Overview numbers
 router.get('/stats', getStats);
 
@@ -36,8 +39,10 @@ router.put('/appointments/:id/confirm', confirmAppointmentAsAdmin);
 // { action: 'mark_paid', amount?, note? } on the doctor's behalf (after
 // checking with them), or { action: 'reset', note? } so the patient sees the
 // QR + upload options again. Records which admin did it.
-const { adminPaymentAction } = require('../controllers/paymentController');
+const { adminPaymentAction, adminRefundChecked } = require('../controllers/paymentController');
 router.put('/appointments/:id/payment', adminPaymentAction);
+// PUT /api/admin/appointments/:id/refund-checked - clears it from "Paid, then cancelled"
+router.put('/appointments/:id/refund-checked', adminRefundChecked);
 
 // DELETE /api/admin/users/:id - Remove a user (permanent)
 router.delete('/users/:id', deleteUser);

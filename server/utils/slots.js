@@ -94,7 +94,27 @@ function slotProblem(doctor, date, timeSlot) {
   return null;
 }
 
+// Absolute start/end (ms since epoch) of an appointment's slot.
+// Appointment.date is stored as new Date('YYYY-MM-DD') = midnight UTC of the
+// IST calendar day, and timeSlot is IST wall-clock ("10:30 AM - 11:00 AM").
+// Returns null if the slot can't be parsed.
+const IST_OFFSET_MIN = 330;
+function slotWindowMs(date, timeSlot) {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return null;
+  const parts = String(timeSlot || '').split(' - ');
+  if (parts.length !== 2 || !/\d:\d\d [AP]M/.test(parts[0]) || !/\d:\d\d [AP]M/.test(parts[1])) return null;
+  const startMin = timeStringToMinutes(parts[0].trim());
+  let endMin = timeStringToMinutes(parts[1].trim());
+  if (endMin <= startMin) endMin += 24 * 60; // ends at/after midnight
+  const dayUtc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return {
+    start: dayUtc + (startMin - IST_OFFSET_MIN) * 60000,
+    end: dayUtc + (endMin - IST_OFFSET_MIN) * 60000,
+  };
+}
+
 module.exports = {
   DAY_NAMES, minutesToTimeString, timeStringToMinutes, generateTimeSlots,
-  nowIST, isValidDateString, dayNameOf, slotsForDate, slotProblem,
+  nowIST, isValidDateString, dayNameOf, slotsForDate, slotProblem, slotWindowMs,
 };

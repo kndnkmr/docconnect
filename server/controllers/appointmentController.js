@@ -495,6 +495,8 @@ const rescheduleAppointment = async (req, res) => {
     appointment.callStartedBy = null;
     appointment.callReminderSentAt = null;  // let the at-start reminder fire again
     appointment.reminderSentAt = null;      // let the 1-hour reminder fire again
+    appointment.confirmReminderSentAt = null; // doctor may need a "please confirm" nudge again
+    appointment.payReminderSentAt = null;     // and the patient a "please pay" one
 
     try {
       // Validate only what changed, so an old appointment with some legacy

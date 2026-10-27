@@ -110,8 +110,34 @@ const getAllAppointments = async (req, res) => {
   try {
     const filter = {};
 
+    const STATUSES = ['pending', 'confirmed', 'completed', 'cancelled'];
     if (req.query.status) {
+      if (!STATUSES.includes(req.query.status)) {
+        return res.status(400).json({ message: 'Invalid status filter' });
+      }
       filter.status = req.query.status;
+    }
+
+    // Payment filter: pending (not paid) / patient_claimed / paid.
+    if (req.query.paymentStatus) {
+      if (!['pending', 'patient_claimed', 'paid'].includes(req.query.paymentStatus)) {
+        return res.status(400).json({ message: 'Invalid payment filter' });
+      }
+      filter.paymentStatus = req.query.paymentStatus;
+    }
+
+    // Search: Patient ID, patient/doctor name, or phone. Matches the people
+    // first, then their appointments — so it covers ALL appointments, not
+    // just the latest page.
+    const search = typeof req.query.search === 'string' ? req.query.search.trim().slice(0, 60) : '';
+    if (search) {
+      const re = safeContainsRegex(search);
+      const digits = search.replace(/\D/g, '');
+      const or = [{ name: re }, { patientId: re }, { phone: re }];
+      if (digits.length >= 4) or.push({ phone: safeContainsRegex(digits) });
+      const people = await User.find({ role: { $in: ['patient', 'doctor'] }, $or: or }).select('_id').limit(200);
+      const ids = people.map((p) => p._id);
+      filter.$or = [{ patient: { $in: ids } }, { doctor: { $in: ids } }];
     }
 
     const { page, limit, skip } = getPagination(req, { defaultLimit: 20 });
@@ -1219,4 +1245,19 @@ const getUserById = async (req, res) => {
   }
 };
 
-module.exports = { getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
+// ============================================
+// NEEDS HELP - patients who may be stuck (Admin → 🚨 Needs help)
+// ============================================
+// Endpoint: GET /api/admin/needs-help
+// See utils/needsHelp.js for the groups and rules.
+const { buildNeedsHelp } = require('../utils/needsHelp');
+const getNeedsHelp = async (req, res) => {
+  try {
+    res.json(await buildNeedsHelp(Date.now()));
+  } catch (error) {
+    console.error('Needs help error:', error.message);
+    res.status(500).json({ message: 'Error building the needs-help list' });
+  }
+};
+
+module.exports = { getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };

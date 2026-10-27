@@ -9,6 +9,8 @@ import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from 
 const HelpPatient = lazy(() => import('./admin/HelpPatient'));
 // Payment help (view receipt/UTR, mark paid, reset) — loaded when opened.
 const PaymentHelp = lazy(() => import('./admin/PaymentHelp'));
+// "Needs help" — patients who may be stuck (grouped, with one-tap actions).
+const NeedsHelp = lazy(() => import('./admin/NeedsHelp'));
 const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
@@ -24,6 +26,14 @@ function AdminDashboard() {
   const [userRoleFilter, setUserRoleFilter] = useState('');
   const [userSearch, setUserSearch] = useState('');
   const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('');
+  // Appointment search (Patient ID / name / phone) + payment filter + paging.
+  const [appointmentSearch, setAppointmentSearch] = useState('');
+  const [appointmentPaymentFilter, setAppointmentPaymentFilter] = useState('');
+  const [appointmentPage, setAppointmentPage] = useState(1);
+  const [appointmentHasMore, setAppointmentHasMore] = useState(false);
+  // "Needs help" count (sidebar badge + Overview banner) and a refresh trigger.
+  const [needsCount, setNeedsCount] = useState(0);
+  const [needsRefresh, setNeedsRefresh] = useState(0);
   const [analytics, setAnalytics] = useState(null);
 
   // Announcements state
@@ -212,6 +222,7 @@ function AdminDashboard() {
   useEffect(() => {
     fetchStats();
     fetchDuplicatePhones();
+    adminAPI.getNeedsHelp().then((r) => setNeedsCount(r.data.total || 0)).catch(() => {});
   }, []);
 
   const fetchStats = async () => {
@@ -365,23 +376,30 @@ function AdminDashboard() {
     }
   };
 
-  const fetchAppointments = async () => {
+  // page 1 replaces the list; later pages ("Load more") append.
+  const fetchAppointments = async (page = 1) => {
     try {
-      const params = { limit: 50 };
+      const params = { limit: 50, page };
       if (appointmentStatusFilter) params.status = appointmentStatusFilter;
+      if (appointmentPaymentFilter) params.paymentStatus = appointmentPaymentFilter;
+      if (appointmentSearch.trim()) params.search = appointmentSearch.trim();
       const response = await adminAPI.getAppointments(params);
-      setAppointments(response.data.appointments);
+      const list = response.data.appointments || [];
+      setAppointments((prev) => (page === 1 ? list : [...prev, ...list]));
+      setAppointmentPage(page);
+      const pg = response.data.pagination || {};
+      setAppointmentHasMore(page < (pg.totalPages || 1));
     } catch (error) {
       toast.error('Failed to load appointments');
     }
   };
 
-  // Confirm a pending appointment on the doctor's behalf (doctors sometimes
-  // forget). The patient gets the same confirmation email + push a doctor
-  // confirm sends. Asks first since it notifies the patient.
   // Payment help modal: the appointment being looked at (null = closed).
   const [paymentHelpApt, setPaymentHelpApt] = useState(null);
 
+  // Confirm a pending appointment on the doctor's behalf (doctors sometimes
+  // forget). The patient gets the same confirmation email + push a doctor
+  // confirm sends. Asks first since it notifies the patient.
   const handleConfirmAppointment = async (apt) => {
     const who = apt.patient?.name || 'the patient';
     const dr = apt.doctor?.name || 'the doctor';
@@ -389,7 +407,7 @@ function AdminDashboard() {
     try {
       const response = await adminAPI.confirmAppointment(apt._id);
       toast.success(response.data.message, { duration: 6000 });
-      fetchAppointments();
+      if (activeTab === 'appointments') fetchAppointments();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to confirm appointment');
     }
@@ -499,7 +517,17 @@ function AdminDashboard() {
     if (activeTab === 'appointments') fetchAppointments();
     if (activeTab === 'complaints') fetchComplaints();
     if (activeTab === 'reviews') fetchReviews();
-  }, [activeTab, userRoleFilter, appointmentStatusFilter, complaintStatusFilter, reviewHiddenFilter]);
+  }, [activeTab, userRoleFilter, appointmentStatusFilter, appointmentPaymentFilter, complaintStatusFilter, reviewHiddenFilter]);
+
+  // Appointment search: wait for typing to pause before searching.
+  const searchMounted = useRef(false);
+  useEffect(() => {
+    if (!searchMounted.current) { searchMounted.current = true; return undefined; }
+    if (activeTab !== 'appointments') return undefined;
+    const t = setTimeout(() => fetchAppointments(1), 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appointmentSearch]);
 
   const handleDeleteUser = async (id, name) => {
     if (!window.confirm(`Permanently DELETE "${name}"?\n\nThis also deletes all their appointments and cannot be undone — there is no recovery from this app.\n\nTip: use "Deactivate" to just hide them, or "Free Up for New Signup" if you want them to sign up fresh with the same phone/email. Both keep all their records intact.`)) return;
@@ -784,6 +812,7 @@ function AdminDashboard() {
   // content blocks below are unchanged — this only replaces the old top tab
   // bar with a console-style sidebar.
   const NAV_ITEMS = [
+    { key: 'needs', label: 'Needs help', icon: '🚨' },
     { key: 'stats', label: 'Overview', icon: '📊' },
     { key: 'users', label: 'Users', icon: '👥' },
     { key: 'appointments', label: 'Appointments', icon: '📅' },
@@ -823,7 +852,9 @@ function AdminDashboard() {
           {NAV_ITEMS.map((item) => {
             const active = activeTab === item.key;
             // Small attention badges from data we already have.
-            const badge = item.key === 'complaints'
+            const badge = item.key === 'needs'
+              ? needsCount
+              : item.key === 'complaints'
               ? complaints.filter((c) => c.status === 'open').length
               : item.key === 'stats'
                 ? duplicatePhones.length
@@ -860,9 +891,32 @@ function AdminDashboard() {
         <p className="text-gray-500 text-sm mt-1">Manage users, appointments, and monitor platform activity</p>
       </div>
 
+      {/* === NEEDS HELP TAB === */}
+      {activeTab === 'needs' && (
+        <Suspense fallback={<p className="text-sm text-gray-500">Loading…</p>}>
+          <NeedsHelp
+            onConfirm={handleConfirmAppointment}
+            onPaymentHelp={setPaymentHelpApt}
+            onHelpPatient={(id) => setHelpPatient({ id, tab: 'details' })}
+            onCountChange={setNeedsCount}
+            refreshKey={needsRefresh}
+          />
+        </Suspense>
+      )}
+
       {/* === STATS TAB === */}
       {activeTab === 'stats' && stats && (
         <div>
+          {needsCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('needs')}
+              className="w-full mb-6 flex items-center justify-between gap-3 p-4 rounded-xl border border-red-200 bg-red-50 text-left hover:bg-red-100 transition-colors"
+            >
+              <span className="text-sm font-semibold text-red-800">🚨 {needsCount} {needsCount === 1 ? 'patient may be' : 'patients may be'} stuck (booking, payment or details)</span>
+              <span className="text-sm text-red-700 whitespace-nowrap">Open Needs help →</span>
+            </button>
+          )}
           {/* Maintenance — on-demand fix for the "email already exists" bug on
               phone-only patient registration (legacy non-sparse email index). */}
           <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
@@ -1300,11 +1354,20 @@ function AdminDashboard() {
       {/* === APPOINTMENTS TAB === */}
       {activeTab === 'appointments' && (
         <div>
-          {/* Filter */}
-          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+          {/* Search + filters. Search covers ALL appointments (server-side). */}
+          <div className="bg-white rounded-xl shadow-md p-4 mb-6 flex flex-wrap gap-2 items-center">
+            <input
+              type="search"
+              value={appointmentSearch}
+              onChange={(e) => setAppointmentSearch(e.target.value)}
+              placeholder="🔍 PT000010 · patient or doctor name · phone"
+              aria-label="Search appointments by Patient ID, name or phone"
+              className="flex-1 min-w-[240px] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            />
             <select
               value={appointmentStatusFilter}
               onChange={(e) => setAppointmentStatusFilter(e.target.value)}
+              aria-label="Filter by status"
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
             >
               <option value="">All Statuses</option>
@@ -1312,6 +1375,17 @@ function AdminDashboard() {
               <option value="confirmed">Confirmed</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
+            </select>
+            <select
+              value={appointmentPaymentFilter}
+              onChange={(e) => setAppointmentPaymentFilter(e.target.value)}
+              aria-label="Filter by payment"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            >
+              <option value="">Payment: any</option>
+              <option value="pending">Unpaid</option>
+              <option value="patient_claimed">Awaiting verify</option>
+              <option value="paid">Paid</option>
             </select>
           </div>
 
@@ -1430,6 +1504,13 @@ function AdminDashboard() {
             </div>
             {appointments.length === 0 && (
               <div className="text-center py-8 text-gray-500">No appointments found</div>
+            )}
+            {appointmentHasMore && (
+              <div className="text-center py-4 border-t">
+                <button type="button" onClick={() => fetchAppointments(appointmentPage + 1)} className="px-4 py-2 rounded-lg bg-gray-100 text-sm font-medium text-gray-700 hover:bg-gray-200">
+                  Load more
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -2192,14 +2273,14 @@ function AdminDashboard() {
             patientId={helpPatient.id}
             initialTab={helpPatient.tab}
             onClose={() => setHelpPatient(null)}
-            onChanged={() => fetchUsers()}
+            onChanged={() => { fetchUsers(); setNeedsRefresh((k) => k + 1); }}
           />
         )}
         {paymentHelpApt && (
           <PaymentHelp
             apt={paymentHelpApt}
             onClose={() => setPaymentHelpApt(null)}
-            onDone={() => fetchAppointments()}
+            onDone={() => { if (activeTab === 'appointments') fetchAppointments(); setNeedsRefresh((k) => k + 1); }}
           />
         )}
         {newPatientOpen && (
