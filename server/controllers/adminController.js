@@ -13,7 +13,7 @@ const { uploadFile } = require('../utils/uploadFile');
 const crypto = require('crypto');
 const { sendEmail, sendAppointmentConfirmation } = require('../utils/sendEmail');
 const { sendPushToUser } = require('../utils/push');
-const { fixEmailIndex } = require('../utils/fixIndexes');
+const { fixEmailIndex, fixSlotIndex, getSlotGuardStatus } = require('../utils/fixIndexes');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 
 // ============================================
@@ -1260,4 +1260,26 @@ const getNeedsHelp = async (req, res) => {
   }
 };
 
-module.exports = { getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
+// ============================================
+// DOUBLE-BOOKING GUARD (admin) — status + on-demand repair
+// ============================================
+// GET  /api/admin/db-check        → { slotGuard: { on, index, indexNames } } (read-only)
+// POST /api/admin/fix-slot-index  → builds the guard if it's missing (see utils/fixIndexes.js)
+const getDbCheck = async (req, res) => {
+  try {
+    res.json({ slotGuard: await getSlotGuardStatus() });
+  } catch (error) {
+    console.error('DB check error:', error.message);
+    res.status(500).json({ message: 'Error checking the database' });
+  }
+};
+
+const fixSlotIndexAdmin = async (req, res) => {
+  const report = await fixSlotIndex();
+  if (report.on) {
+    return res.json({ message: report.changed ? 'Double-booking guard is now ON.' : 'Double-booking guard was already ON.', report });
+  }
+  res.status(400).json({ message: report.error || 'Could not turn the double-booking guard on.', report });
+};
+
+module.exports = { getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };

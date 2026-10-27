@@ -122,7 +122,7 @@ const { sendAppointmentReminders } = require('./utils/appointmentReminder');
 const { sendReviewRequests } = require('./utils/reviewRequest');
 const { runPaymentFollowUp } = require('./utils/paymentFollowUp');
 const { runJourneyReminders } = require('./utils/journeyReminders');
-const { fixEmailIndex } = require('./utils/fixIndexes');
+const { fixEmailIndex, fixSlotIndex } = require('./utils/fixIndexes');
 const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
 if (require.main === module) {
@@ -148,6 +148,15 @@ mongoose.connect(process.env.MONGODB_URI)
     // slug for their branded /dr/:slug booking page. New doctors get one
     // automatically via the User pre-save hook; this catches doctors who
     // registered before the feature. Only touches doctors missing a slug.
+    // Double-booking guard: make sure the unique active-slot index exists
+    // (the old definition was rejected by MongoDB and never created).
+    try {
+      const g = await fixSlotIndex();
+      console.log('[startup] fixSlotIndex result:', JSON.stringify({ on: g.on, steps: g.steps, error: g.error }));
+    } catch (e) {
+      console.error('[startup] fixSlotIndex threw:', e.message);
+    }
+
     try {
       const s = await backfillDoctorSlugs();
       console.log('[startup] backfillDoctorSlugs result:', JSON.stringify(s));

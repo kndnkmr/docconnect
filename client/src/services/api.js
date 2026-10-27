@@ -374,6 +374,10 @@ export const adminAPI = {
   // for phone-only patient registrations caused by a legacy non-sparse index.
   fixEmailIndex: () => API.post('/admin/fix-email-index'),
 
+  // Double-booking guard (unique active-slot index): status + turn on
+  dbCheck: () => API.get('/admin/db-check'),
+  fixSlotIndex: () => API.post('/admin/fix-slot-index'),
+
   // Generate/relay a password reset link for a user (manual recovery assist
   // for phone-only patients with no email on file; also works as a "resend")
   generateResetLink: (id) => API.post(`/admin/users/${id}/reset-link`),

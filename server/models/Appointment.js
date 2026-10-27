@@ -307,8 +307,10 @@ appointmentSchema.index({ patient: 1, date: -1 });
 appointmentSchema.index({ doctor: 1, date: -1 });
 // ^ Makes it fast to find "all appointments for this doctor, newest first"
 
-appointmentSchema.index({ doctor: 1, date: 1, timeSlot: 1 });
-// ^ Makes it fast to check "is this time slot already taken?"
+// (The plain { doctor, date, timeSlot } index that used to be here was
+// removed: an index on the same keys with different options stops MongoDB
+// creating the unique double-booking guard below. Slot lookups use the
+// { doctor, date } index above. utils/fixIndexes.js drops the old one.)
 
 // ---- Prevent double-booking at the DATABASE level ----
 // The booking controller checks "is this slot free?" then creates the
@@ -318,22 +320,31 @@ appointmentSchema.index({ doctor: 1, date: 1, timeSlot: 1 });
 // doctor+date+timeSlot, closing the race for good: the second create fails and
 // the controller can report the slot as taken.
 //
-// It's a PARTIAL index (only enforced while status is not 'cancelled'), so a
-// cancelled slot can be re-booked normally.
+// It's a PARTIAL index: only active appointments (pending / confirmed /
+// completed) hold a slot, so a cancelled slot can be re-booked normally.
 //
-// NOTE: this index only builds if there are no existing duplicate active
-// bookings in the data. If the build ever fails, Mongoose logs it and the app
-// keeps running (the application-level check still guards bookings); any real
-// duplicates would need cleaning up first. Safe to add.
+// Why `$gt: 'cancelled'`: MongoDB does not allow $ne (or, before 7.0, $in)
+// in a partial index filter, so the earlier `$ne: 'cancelled'` version was
+// silently never created. The four statuses sort alphabetically as
+//   cancelled < completed < confirmed < pending
+// so "status > 'cancelled'" is exactly the three active statuses, using an
+// operator every MongoDB version accepts. If a new status is ever added,
+// re-check this ordering.
+//
+// Built/verified on startup by utils/fixIndexes.js (fixSlotIndex), which
+// refuses to build it if real duplicate active bookings exist and reports
+// them instead. Admin → Overview shows whether the guard is on.
+const ACTIVE_SLOT_FILTER = { status: { $gt: 'cancelled' } };
 appointmentSchema.index(
   { doctor: 1, date: 1, timeSlot: 1 },
   {
     unique: true,
-    partialFilterExpression: { status: { $ne: 'cancelled' } },
+    partialFilterExpression: ACTIVE_SLOT_FILTER,
     name: 'unique_active_slot'
   }
 );
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
+Appointment.ACTIVE_SLOT_FILTER = ACTIVE_SLOT_FILTER;
 
 module.exports = Appointment;

@@ -80,6 +80,11 @@ router.post('/backfill-patient-ids', backfillPatientIds);
 // patients caused by a legacy non-sparse unique index. Idempotent.
 router.post('/fix-email-index', fixEmailIndexAdmin);
 
+// GET /api/admin/db-check - is the double-booking guard (unique_active_slot) on?
+// POST /api/admin/fix-slot-index - build it if missing (idempotent)
+router.get('/db-check', require('../controllers/adminController').getDbCheck);
+router.post('/fix-slot-index', require('../controllers/adminController').fixSlotIndexAdmin);
+
 // POST /api/admin/backfill-doctor-languages - one-time: set a default
 // languagesSpoken (Hindi + English) on doctors who registered before the
 // field existed and haven't set any yet. Idempotent; never overwrites a

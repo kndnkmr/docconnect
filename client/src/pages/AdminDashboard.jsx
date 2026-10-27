@@ -223,6 +223,7 @@ function AdminDashboard() {
     fetchStats();
     fetchDuplicatePhones();
     adminAPI.getNeedsHelp().then((r) => setNeedsCount(r.data.total || 0)).catch(() => {});
+    loadSlotGuard();
   }, []);
 
   const fetchStats = async () => {
@@ -240,6 +241,22 @@ function AdminDashboard() {
   // patient (no email) tries to register, caused by a legacy non-sparse unique
   // index. Idempotent and safe to run anytime.
   const [fixingEmailIndex, setFixingEmailIndex] = useState(false);
+  // Double-booking guard: null = unknown, { on, ... } from GET /admin/db-check
+  const [slotGuard, setSlotGuard] = useState(null);
+  const [fixingSlotGuard, setFixingSlotGuard] = useState(false);
+  const loadSlotGuard = () => adminAPI.dbCheck().then((r) => setSlotGuard(r.data.slotGuard)).catch(() => setSlotGuard({ unknown: true }));
+  const handleFixSlotGuard = async () => {
+    setFixingSlotGuard(true);
+    try {
+      const r = await adminAPI.fixSlotIndex();
+      toast.success(r.data.message, { duration: 6000 });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not turn the guard on', { duration: 9000 });
+    } finally {
+      setFixingSlotGuard(false);
+      loadSlotGuard();
+    }
+  };
   const handleFixEmailIndex = async () => {
     if (!window.confirm('Repair the email index now?\n\nThis fixes patient registrations failing with "email already exists" when no email is entered. Safe to run anytime.')) return;
     setFixingEmailIndex(true);
@@ -917,6 +934,32 @@ function AdminDashboard() {
               <span className="text-sm text-red-700 whitespace-nowrap">Open Needs help →</span>
             </button>
           )}
+          {/* Double-booking guard status (database rule that stops two
+              patients taking the same slot at the same instant). */}
+          {slotGuard && !slotGuard.unknown && (
+            <div className={`mb-4 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap border ${slotGuard.on ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+              <div className="min-w-0">
+                <h3 className={`font-semibold text-sm ${slotGuard.on ? 'text-green-800' : 'text-amber-900'}`}>
+                  🛡 Double-booking guard: {slotGuard.on ? '✓ On' : 'Off'}
+                </h3>
+                <p className={`text-xs mt-0.5 ${slotGuard.on ? 'text-green-700' : 'text-amber-800'}`}>
+                  {slotGuard.on
+                    ? 'The database refuses a second booking for the same doctor, date and time, even if two patients tap Book at the same moment.'
+                    : 'Bookings are still checked by the app, but the database backup rule is missing. Turning it on is safe and takes a second.'}
+                </p>
+              </div>
+              {!slotGuard.on && (
+                <button
+                  onClick={handleFixSlotGuard}
+                  disabled={fixingSlotGuard}
+                  className="flex-shrink-0 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-60"
+                >
+                  {fixingSlotGuard ? 'Turning on…' : 'Turn on'}
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Maintenance — on-demand fix for the "email already exists" bug on
               phone-only patient registration (legacy non-sparse email index). */}
           <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
