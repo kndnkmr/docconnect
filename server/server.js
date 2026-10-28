@@ -125,8 +125,21 @@ const { runJourneyReminders } = require('./utils/journeyReminders');
 const { fixEmailIndex, fixSlotIndex } = require('./utils/fixIndexes');
 const { backfillDoctorSlugs } = require('./utils/backfillSlugs');
 
+// Connect to MongoDB, and KEEP TRYING every 30 s if it fails (e.g. the
+// database's IP access list doesn't include this server yet, or Atlas is
+// briefly unreachable). Before, one failure at startup left the server
+// "Disconnected" until someone restarted it by hand. Startup tasks and
+// background jobs run once, after the first successful connection.
+const connectWithRetry = (attempt = 1) =>
+  mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 20000 })
+    .catch((error) => {
+      console.error(`MongoDB connection error (attempt ${attempt}):`, error.message);
+      console.error('Retrying in 30 s. If this repeats: check the Atlas IP access list (Network Access) and MONGODB_URI.');
+      return new Promise((resolve) => setTimeout(resolve, 30000)).then(() => connectWithRetry(attempt + 1));
+    });
+
 if (require.main === module) {
-mongoose.connect(process.env.MONGODB_URI)
+connectWithRetry()
   .then(async () => {
     console.log('Connected to MongoDB successfully!');
 
@@ -205,10 +218,8 @@ mongoose.connect(process.env.MONGODB_URI)
     setInterval(runJourneyReminders, 10 * 60 * 1000);
   })
   .catch((error) => {
-    console.error('MongoDB connection error:', error.message);
-    console.error('Make sure MongoDB is running on your machine.');
-    // The server will still start, but database operations will fail
-    // This is intentional — you can still test non-database routes
+    // Only startup-task errors land here now (connection failures retry above).
+    console.error('Startup error after connecting to MongoDB:', error.message);
   });
 }
 
