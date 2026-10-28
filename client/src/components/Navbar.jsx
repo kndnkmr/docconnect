@@ -61,11 +61,12 @@ function Navbar() {
   return (
     <nav
       ref={navRef}
-      className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/70 shadow-sm supports-[backdrop-filter]:bg-white/70"
+      className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm"
     >
       {/*
-        bg-white/80 + backdrop-blur-md = frosted-glass bar that lets content
-          subtly show through as you scroll (modern app-nav look)
+        SOLID white (not see-through glass): glass let blue/green sections
+          tint the bar and fade the links, and phone dark modes could turn it
+          dark-on-dark. Guarded by tests/navContrast.test.mjs.
         border-b = crisp hairline instead of a heavy drop shadow
         sticky top-0 z-50 = stays pinned above content while scrolling
       */}
@@ -95,11 +96,11 @@ function Navbar() {
                 admin, who isn't booking anything) still see them. */}
             {!isDoctor && !isPatient && (
               <>
-                <Link to="/doctors" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                <Link to="/doctors" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                   Find Doctors
                 </Link>
 
-                <Link to="/blog" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                <Link to="/blog" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                   Blog
                 </Link>
 
@@ -109,12 +110,12 @@ function Navbar() {
                 {canInstall ? (
                   <button
                     onClick={handleInstall}
-                    className="flex items-center gap-1.5 border border-green-500 text-green-600 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
+                    className="flex items-center gap-1.5 border border-green-600 text-green-700 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
                   >
                     📲 Install App
                   </button>
                 ) : (
-                  <Link to="/install" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                  <Link to="/install" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                     📲 Get App
                   </Link>
                 )}
@@ -132,11 +133,11 @@ function Navbar() {
                     patient/doctor dashboard isn't meaningful for them, so we
                     show one clear link instead of both. */}
                 {user.role === 'admin' ? (
-                  <Link to="/admin" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                  <Link to="/admin" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                     Admin Panel
                   </Link>
                 ) : (
-                  <Link to="/dashboard" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                  <Link to="/dashboard" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                     Dashboard
                   </Link>
                 )}
@@ -158,7 +159,7 @@ function Navbar() {
                   {canInstall && (
                     <button
                       onClick={handleInstall}
-                      className="flex items-center gap-1.5 border border-green-500 text-green-600 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
+                      className="flex items-center gap-1.5 border border-green-600 text-green-700 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
                     >
                       📲 Install
                     </button>
@@ -176,7 +177,7 @@ function Navbar() {
                 {/* Guests already have the '📲 Get App' link above (works on
                     all platforms via /install), so no separate Chrome-only
                     install button here — it read as a duplicate. */}
-                <Link to="/login" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50/70 transition-colors">
+                <Link to="/login" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
                   Login
                 </Link>
                 <Link to="/register" className="bg-primary-600 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0">
@@ -215,7 +216,7 @@ function Navbar() {
                   /install page (iOS Add-to-Home steps + sharing). Same shared
                   prompt the Home strip and /install page use. */}
               {canInstall ? (
-                <button onClick={handleInstall} className="flex items-center gap-2 text-left text-green-600 font-medium hover:bg-green-50 rounded-lg px-3 py-2.5 transition-colors">
+                <button onClick={handleInstall} className="flex items-center gap-2 text-left text-green-700 font-medium hover:bg-green-50 rounded-lg px-3 py-2.5 transition-colors">
                   📲 Install App (1 tap)
                 </button>
               ) : (

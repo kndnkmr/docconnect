@@ -30,6 +30,11 @@ body {
 /* Smooth scrolling when navigating to anchors */
 html {
   scroll-behavior: smooth;
+  /* The site is designed light-only. "only light" asks phone browsers not
+     to auto-darken it (Chrome "auto dark", some in-app browsers), which
+     could half-repaint the nav bars into dark-on-dark. Matching meta tag in
+     index.html. */
+  color-scheme: only light;
 }
 
 /* Custom scrollbar (optional, makes it look nicer) */

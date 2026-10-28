@@ -55,9 +55,13 @@ function BottomNav() {
       ];
 
   return (
-    // Frosted-glass bar to match the top navbar. pb-[safe-area] keeps the
-    // tabs clear of the home indicator on gesture-nav phones.
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-t border-gray-200/70 shadow-[0_-1px_12px_rgba(0,0,0,0.05)] md:hidden pb-[env(safe-area-inset-bottom)]">
+    // SOLID white bar (not see-through glass): with glass, a blue/green
+    // section behind it tinted the bar and the grey labels faded out (and
+    // phone dark modes could turn it dark-on-dark). Solid + dark labels stay
+    // readable over any page. Guarded by tests/navContrast.test.mjs — keep
+    // the background fully opaque and labels ≥ 4.5:1.
+    // pb-[safe-area] keeps the tabs clear of the home indicator.
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden pb-[env(safe-area-inset-bottom)]">
       <div className="flex justify-around items-stretch h-16">
         {navItems.map((item) => {
           const active = isActive(item);
@@ -74,15 +78,17 @@ function BottomNav() {
               <span
                 className={`flex items-center justify-center w-12 h-7 rounded-full text-lg transition-all duration-200 ${
                   active
-                    ? 'bg-primary-100 text-primary-600 -translate-y-0.5 scale-105'
-                    : 'text-gray-500 group-hover:text-primary-600 group-active:scale-95'
+                    ? 'bg-primary-100 text-primary-700 -translate-y-0.5 scale-105'
+                    : 'text-gray-700 group-hover:text-primary-700 group-active:scale-95'
                 }`}
               >
                 {item.icon}
               </span>
               <span
-                className={`text-[11px] mt-0.5 whitespace-nowrap leading-tight transition-colors ${
-                  active ? 'text-primary-600 font-semibold' : 'text-gray-500 font-medium'
+                // 12px normally; on very narrow phones (<360px) 11px + tighter
+                // letters so "Appointments" / "Prescriptions" don't touch.
+                className={`text-xs max-[359px]:text-[11px] max-[359px]:tracking-tighter mt-0.5 whitespace-nowrap leading-tight transition-colors ${
+                  active ? 'text-primary-700 font-bold' : 'text-gray-700 font-medium'
                 }`}
               >
                 {item.label}

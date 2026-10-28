@@ -1895,6 +1895,13 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## Nav bars: always readable (don't make them see-through)
+
+The top bar (`Navbar.jsx`) and the phone bottom bar (`BottomNav.jsx`) are **solid white** with dark labels. They used to be frosted "glass" (`bg-white/85` + `backdrop-blur`): over blue/green sections the page colour tinted the bar and the grey labels (Home / Doctors / Blog / Login) dropped to ~3.8:1 contrast, and phone dark modes could make them dark-on-dark. Now:
+- Labels `text-gray-700`, active `text-primary-700` bold, 12px (11px on phones narrower than 360px so "Appointments"/"Prescriptions" don't touch).
+- `color-scheme: only light` (in `index.html` + `index.css`) asks phone browsers not to auto-darken the site.
+- `client/tests/navContrast.test.mjs` fails the build if either bar gets a see-through background, a blur, or any text colour below 4.5:1 over the site's blue/green/teal/red sections or black. (It already caught the green "Install App" text at 3.3:1 → now `text-green-700`.)
+
 ## Dashboard loading (what loads when)
 
 The dashboard downloads only the first screen (~28 KB compressed, was ~122 KB). Each tab (Availability, Promote, Reports, Family, Account…) downloads the first time it's opened, so patients never download doctor screens. The call screen (video library, ~72 KB) is fetched in the background only when there's an upcoming audio/video visit or a call rings, so Join/Accept still opens instantly. If a new version is deployed while someone has the app open and an old piece is gone, the page reloads once by itself (`vite:preloadError` in `client/src/main.jsx`); drafts are autosaved, so nothing is lost.
