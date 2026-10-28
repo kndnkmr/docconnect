@@ -1,0 +1,48 @@
+# ============================================
+# Uptime check — is promedicoz.in up?
+# ============================================
+# Every ~10 minutes GitHub checks the website and the server (incl. the
+# database). If a check still fails after 3 tries (~1 min apart), this run
+# FAILS and GitHub emails the repo owner ("Run failed: Uptime check").
+# No accounts or keys needed. Covers "whole site down", which the server
+# can't report about itself (server-side alerts: server/utils/healthWatch.js).
+#
+# Note: GitHub may start scheduled runs a few minutes late at busy times.
+# To pause: GitHub → Actions → Uptime check → ⋯ → Disable workflow.
+
+name: Uptime check
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Website (promedicoz.in)
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -m 20 https://promedicoz.in/ || echo 000)
+            echo "Try $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 60
+          done
+          echo "::error::Website promedicoz.in is not responding (last HTTP $code)"
+          exit 1
+
+      - name: Server + database (docconnect-sg)
+        run: |
+          for i in 1 2 3; do
+            body=$(curl -s -m 30 https://docconnect-sg.onrender.com/api/health || true)
+            echo "Try $i: $body"
+            echo "$body" | grep -q '"database":"Connected"' && exit 0
+            sleep 60
+          done
+          echo "::error::Server or database is down. Check Render (docconnect-sg) logs and MongoDB Atlas."
+          exit 1

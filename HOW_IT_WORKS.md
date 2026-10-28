@@ -1876,7 +1876,26 @@ Never change `BACKUP_KEY` casually: older backups need the key they were made wi
 5. Check the restored data in Atlas → Data Explorer. Only when sure: either copy what you need back, or point Render's `MONGODB_URI` at the restored database (`--db docconnect --overwrite` replaces the live one — last resort).
 6. Delete `/tmp/check.json` afterwards (it contains health data).
 
-Tested end to end (real MongoDB): backup → restore gave identical records, ids and dates; wrong key and overwrite were refused; the original database was untouched.
+Tested end to end (real MongoDB): backup → restore gave identical records, ids and dates; wrong key and overwrite were refused; the original database was untouched. Turned on in production Oct 2026 (first live backup made and downloaded OK).
+
+## Alerts: knowing when something breaks
+
+Two layers, no extra accounts:
+
+| Problem | Who notices | You get |
+|---|---|---|
+| Whole site or server down, or database disconnected | GitHub (`.github/workflows/uptime.yml`, every ~10 min, 3 tries ~1 min apart) | GitHub email "Run failed: Uptime check" |
+| Database disconnected 3+ min | The server itself (`server/utils/healthWatch.js`) | Email to `ADMIN_NOTIFY_EMAIL` / `ADMIN_EMAIL`, then "database is back" |
+| 10+ server errors (5xx) in 10 min | The server itself | Email listing the most affected features (no patient data) |
+
+- Each server alert is sent at most once an hour (Resend free = 100 emails/day).
+- GitHub emails the account that pushed the workflow. Check GitHub → Settings → Notifications → **Actions** → "Only notify for failed workflows" is on (the default).
+- GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
+- If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
+
+## Dashboard loading (what loads when)
+
+The dashboard downloads only the first screen (~28 KB compressed, was ~122 KB). Each tab (Availability, Promote, Reports, Family, Account…) downloads the first time it's opened, so patients never download doctor screens. The call screen (video library, ~72 KB) is fetched in the background only when there's an upcoming audio/video visit or a call rings, so Join/Accept still opens instantly. If a new version is deployed while someone has the app open and an old piece is gone, the page reloads once by itself (`vite:preloadError` in `client/src/main.jsx`); drafts are autosaved, so nothing is lost.
 
 ## Pending Cleanup (after the Oregon → Singapore move, Oct 2026)
 

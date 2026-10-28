@@ -16,8 +16,14 @@ import { ConfirmModal, PromptModal } from '../components/Modal';
 import { rowsToMedicines, medicinesToRows } from '../utils/rxRows';
 // Doctor-only prescription medicine cards — loaded when the box first opens.
 const MedicineEditor = lazy(() => import('../components/MedicineEditor'));
-import ChatBox from '../components/ChatBox';
-import VideoCall from '../components/VideoCall';
+// Chat and the call screen load only when needed. The call screen carries
+// the video library (~260 KB), so it's fetched in the background as soon as
+// there's an upcoming audio/video visit or a call rings (see the effect
+// below) — so Join/Accept still opens instantly.
+const loadChatBox = () => import('../components/ChatBox');
+const loadVideoCall = () => import('../components/VideoCall');
+const ChatBox = lazy(loadChatBox);
+const VideoCall = lazy(loadVideoCall);
 import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
 import PaymentBox from '../components/PaymentBox';
@@ -26,17 +32,19 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress } from '../utils/profileAutosave';
 
-// Extracted sub-components
-import DoctorAvailability from './dashboard/DoctorAvailability';
-import DoctorPatientReports from './dashboard/DoctorPatientReports';
-import PatientFamilyMembers from './dashboard/PatientFamilyMembers';
-import PatientHealthTimeline from './dashboard/PatientHealthTimeline';
-import PatientPrescriptions from './dashboard/PatientPrescriptions';
-import PatientReports from './dashboard/PatientReports';
-import PatientComplaints from './dashboard/PatientComplaints';
-import AccountSettings from './dashboard/AccountSettings';
-import RescheduleModal from './dashboard/RescheduleModal';
-import PromoteMe from './dashboard/PromoteMe';
+// Tabs: each loads the first time it's opened, so a patient never downloads
+// doctor screens (and vice versa) and the dashboard's first view is lighter.
+const DoctorAvailability = lazy(() => import('./dashboard/DoctorAvailability'));
+const DoctorPatientReports = lazy(() => import('./dashboard/DoctorPatientReports'));
+const PatientFamilyMembers = lazy(() => import('./dashboard/PatientFamilyMembers'));
+const PatientHealthTimeline = lazy(() => import('./dashboard/PatientHealthTimeline'));
+const PatientPrescriptions = lazy(() => import('./dashboard/PatientPrescriptions'));
+const PatientReports = lazy(() => import('./dashboard/PatientReports'));
+const PatientComplaints = lazy(() => import('./dashboard/PatientComplaints'));
+const AccountSettings = lazy(() => import('./dashboard/AccountSettings'));
+const RescheduleModal = lazy(() => import('./dashboard/RescheduleModal'));
+const PromoteMe = lazy(() => import('./dashboard/PromoteMe'));
+const TabLoading = () => <div className="h-40 rounded-xl bg-white shadow-md animate-pulse" aria-busy="true" aria-label="Loading" />;
 
 // Every tab key the dashboard supports. Used to validate a deep-link
 // (?tab=familyMembers) so other pages can send patients straight to the
@@ -231,6 +239,30 @@ function Dashboard() {
   const inCallRef = useRef(false); // guards against ringing while already in a call
   const incomingCallRef = useRef(null); // mirrors incomingCall for use inside setInterval closures (avoids stale-value bugs)
   const autoPromptedRef = useRef(new Set()); // appointment ids already auto-prompted this session (clock-based, not the other party's action)
+
+  // Fetch the call screen in the background (once, cached by the browser)
+  // when a call could happen soon: an upcoming audio/video visit is listed,
+  // or a call is ringing. Chat is small; fetch it alongside. Waits for an
+  // idle moment so it never competes with the dashboard's first paint.
+  const callCodeFetchedRef = useRef(false);
+  useEffect(() => {
+    if (callCodeFetchedRef.current) return undefined;
+    const callLikely = !!incomingCall || appointments.some((a) =>
+      (a.consultationType === 'video' || a.consultationType === 'audio')
+      && (a.status === 'confirmed' || a.status === 'pending'));
+    if (!callLikely) return undefined;
+    const go = () => {
+      if (callCodeFetchedRef.current) return;
+      callCodeFetchedRef.current = true;
+      loadVideoCall().catch(() => {});
+      loadChatBox().catch(() => {});
+    };
+    if (incomingCall) { go(); return undefined; }
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1500));
+    const cancel = window.cancelIdleCallback || clearTimeout;
+    const h = idle(go);
+    return () => cancel(h);
+  }, [appointments, incomingCall]);
 
   useEffect(() => {
     incomingCallRef.current = incomingCall;
@@ -1987,13 +2019,15 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Sub-component tabs */}
+      {/* Sub-component tabs (lazy — see imports) */}
+      <Suspense fallback={<TabLoading />}>
       {activeTab === 'promote' && isDoctor && <PromoteMe />}
       {activeTab === 'availability' && isDoctor && <DoctorAvailability onScheduleChange={setHasAvailability} />}
       {activeTab === 'patientReports' && isDoctor && <DoctorPatientReports />}
       {activeTab === 'timeline' && isPatient && <PatientHealthTimeline onNavigateTab={goToTab} />}
       {activeTab === 'familyMembers' && isPatient && <PatientFamilyMembers />}
       {activeTab === 'prescriptions' && isPatient && <PatientPrescriptions onNavigateTab={setActiveTab} />}
+      </Suspense>
       {activeTab === 'prescriptions' && isDoctor && (
         <div className="max-w-3xl">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Prescriptions</h2>
@@ -2062,9 +2096,11 @@ function Dashboard() {
           )}
         </div>
       )}
+      <Suspense fallback={<TabLoading />}>
       {activeTab === 'reports' && isPatient && <PatientReports />}
       {activeTab === 'complaints' && isPatient && <PatientComplaints />}
       {activeTab === 'account' && <AccountSettings />}
+      </Suspense>
 
       {/* === MODALS === */}
       <ConfirmModal
@@ -2078,11 +2114,13 @@ function Dashboard() {
       />
 
       {rescheduleModal.open && (
+        <Suspense fallback={null}>
         <RescheduleModal
           appointment={rescheduleModal.appointment}
           onClose={() => setRescheduleModal({ open: false, appointment: null })}
           onDone={() => { setRescheduleModal({ open: false, appointment: null }); fetchAppointments(); }}
         />
+        </Suspense>
       )}
 
       <PromptModal
@@ -2194,7 +2232,9 @@ function Dashboard() {
 
       {/* Chat Modal */}
       {chatAppointmentId && (
-        <ChatBox appointmentId={chatAppointmentId} onClose={() => setChatAppointmentId(null)} />
+        <Suspense fallback={null}>
+          <ChatBox appointmentId={chatAppointmentId} onClose={() => setChatAppointmentId(null)} />
+        </Suspense>
       )}
 
       {/* Receipt Image Modal */}
@@ -2243,11 +2283,17 @@ function Dashboard() {
 
       {/* Video Call */}
       {videoCallAppointmentId && (
-        <VideoCall
-          appointmentId={videoCallAppointmentId}
-          userName={user?.name}
-          onClose={handleCloseCall}
-        />
+        <Suspense fallback={
+          <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center text-white" role="status" aria-live="polite">
+            Connecting your call…
+          </div>
+        }>
+          <VideoCall
+            appointmentId={videoCallAppointmentId}
+            userName={user?.name}
+            onClose={handleCloseCall}
+          />
+        </Suspense>
       )}
     </div>
   );

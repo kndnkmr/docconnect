@@ -98,6 +98,10 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // data is populated. `replaceWith: '_'` keeps the key but neutralises it.
 app.use(mongoSanitize({ replaceWith: '_' }));
 
+// Count server errors (5xx); 10+ in 10 min emails the admin, max once an
+// hour. See utils/healthWatch.js. Only counts — never changes a response.
+app.use(require('./utils/healthWatch').errorWatchMiddleware);
+
 // Serve uploaded files as static assets
 // This means: if someone requests /uploads/photo.jpg,
 // Express will look in the "uploads" folder and send that file back
@@ -139,6 +143,10 @@ const connectWithRetry = (attempt = 1) =>
     });
 
 if (require.main === module) {
+// Email the admin if the database stays disconnected 3+ min (and when it's
+// back). Started before connecting so a failing startup is reported too.
+require('./utils/healthWatch').startDbWatch(() => mongoose.connection.readyState === 1);
+
 connectWithRetry()
   .then(async () => {
     console.log('Connected to MongoDB successfully!');

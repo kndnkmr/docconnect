@@ -55,6 +55,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );
 
+// ---- Missing page piece after a new deploy → reload once ----
+// Screens (dashboard tabs, chat, call…) load on demand. If a new version was
+// deployed while this tab was open, an old piece may no longer exist; instead
+// of a blank screen, reload once to pick up the new version (forms are
+// autosaved as drafts, so nothing is lost). The 30 s guard prevents loops.
+window.addEventListener('vite:preloadError', (event) => {
+  try {
+    const last = Number(sessionStorage.getItem('pmz-chunk-reload') || 0);
+    if (Date.now() - last < 30000) return; // already tried — let the error show
+    sessionStorage.setItem('pmz-chunk-reload', String(Date.now()));
+  } catch (e) { /* storage blocked: still reload once */ }
+  event.preventDefault();
+  window.location.reload();
+});
+
 // ---- Register Service Worker (PWA) ----
 // Only in production — dev mode doesn't need caching
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
