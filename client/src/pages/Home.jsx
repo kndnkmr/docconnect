@@ -464,7 +464,7 @@ function Home() {
     { en: 'General Physician', hi: 'सामान्य चिकित्सक', emoji: '🩺', spec: 'General Physician' },
     { en: 'Skin & hair', hi: 'त्वचा व बाल', emoji: '✨', spec: 'Dermatologist' },
     { en: 'Child care', hi: 'बाल रोग', emoji: '🧸', spec: 'Pediatrician' },
-    { en: 'Mental health', hi: 'मानसिक स्वास्थ्य', emoji: '🧠', spec: 'Psychiatrist' },
+    { en: 'Neurologist', hi: 'न्यूरोलॉजिस्ट', emoji: '🧠', spec: 'Neurologist' },
   ];
 
   return (
