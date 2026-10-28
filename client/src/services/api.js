@@ -422,6 +422,18 @@ export const adminAPI = {
   // Body: any of { specialization, qualification, experience, consultationFee,
   // bio, consultationModes } — send only the field(s) being changed.
   updateDoctorProfile: (id, data) => API.put(`/admin/users/${id}/profile`, data),
+  // ---- Manage doctor (full profile control on the doctor's behalf) ----
+  createDoctor: (data) => API.post('/admin/doctors', data),
+  getDoctorForManage: (id) => API.get(`/admin/doctors/${id}`),
+  updateDoctorAsAdmin: (id, data) => API.put(`/admin/doctors/${id}`, data),
+  // fieldName: 'profilePhoto' | 'upiQrCode'
+  uploadDoctorImage: (id, fieldName, file) => {
+    const fd = new FormData();
+    fd.append('fieldName', fieldName);
+    fd.append('file', file);
+    return API.post(`/admin/doctors/${id}/image`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
+  setDoctorBlockedDates: (id, blockedDates) => API.put(`/admin/doctors/${id}/blocked-dates`, { blockedDates }),
 };
 
 // ============================================

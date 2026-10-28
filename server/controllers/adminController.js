@@ -1088,8 +1088,16 @@ const updateDoctorAvailability = async (req, res) => {
 
     // Normalise entries to exactly { day, startTime, endTime } (drop any extra
     // client-sent fields), then full-replace — mirrors the doctor-side write.
+    const beforeHours = JSON.stringify((user.availability || []).map((s) => [s.day, s.startTime, s.endTime]));
+    const beforeSlot = user.slotDuration;
     user.availability = availability.map((s) => ({ day: s.day, startTime: s.startTime, endTime: s.endTime }));
     user.slotDuration = duration;
+    // Log it on the doctor (Admin → Manage doctor "Changes log"; the doctor
+    // hears about it in the daily summary — utils/adminEditNotes.js).
+    const changedHours = [];
+    if (JSON.stringify(user.availability.map((s) => [s.day, s.startTime, s.endTime])) !== beforeHours) changedHours.push('availability');
+    if (beforeSlot !== duration) changedHours.push('slotDuration');
+    if (changedHours.length) require('./adminDoctorController').logEdit(user, req.user._id, changedHours);
     await user.save({ validateModifiedOnly: true });
 
     res.json({

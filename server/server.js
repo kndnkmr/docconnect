@@ -225,6 +225,11 @@ connectWithRetry()
     // "please pay" (slot within 2h) nudges, once each (utils/journeyReminders.js).
     setInterval(runJourneyReminders, 10 * 60 * 1000);
 
+    // Daily (~7 PM IST) summary to doctors of profile changes the admin made
+    // for them (fee/UPI/QR changes are told at once). utils/adminEditNotes.js.
+    const { runAdminEditDigest } = require('./utils/adminEditNotes');
+    setInterval(() => runAdminEditDigest().catch((e) => console.error('[admin-edit-digest]', e.message)), 10 * 60 * 1000);
+
     // Nightly encrypted database backup (~02:30 IST, catches up after a
     // restart; needs BACKUP_KEY + Cloudinary). See utils/backup.js.
     const { maybeRunNightly } = require('./utils/backup');

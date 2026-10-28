@@ -401,10 +401,21 @@ const userSchema = new mongoose.Schema({
       by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       at: { type: Date, default: Date.now },
       fields: [String],
+      // Doctors: has the doctor been told about this change yet? Fee/UPI/QR
+      // changes are told at once; the rest go in one daily summary
+      // (utils/adminEditNotes.js).
+      notified: { type: Boolean, default: false },
       _id: false
     }],
     default: []
   },
+
+  // Doctor asked ProMedicoz to set up and manage their profile (Admin →
+  // Manage doctor). Shows a "Managed by admin" badge; the doctor can still
+  // log in and edit everything themselves.
+  managedByAdmin: { type: Boolean, default: false },
+  managedConsentAt: { type: Date, default: null },
+  managedConsentBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
   // --- Soft Delete ---
   isDeleted: {

@@ -12,6 +12,9 @@ const PaymentHelp = lazy(() => import('./admin/PaymentHelp'));
 // "Needs help" — patients who may be stuck (grouped, with one-tap actions).
 const NeedsHelp = lazy(() => import('./admin/NeedsHelp'));
 const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
+// 🩺 Manage doctor (full profile control on their behalf) + "+ New doctor".
+const ManageDoctor = lazy(() => import('./admin/ManageDoctor'));
+const NewDoctorModal = lazy(() => import('./admin/ManageDoctor').then((m) => ({ default: m.NewDoctorModal })));
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
 import BackupsCard from './admin/BackupsCard';
@@ -115,6 +118,9 @@ function AdminDashboard() {
   // "Help patient" window ({ id, tab } or null) and "+ New patient" window.
   const [helpPatient, setHelpPatient] = useState(null);
   const [newPatientOpen, setNewPatientOpen] = useState(false);
+  // "Manage doctor" window (doctor id or null) and "+ New doctor" window.
+  const [manageDoctorId, setManageDoctorId] = useState(null);
+  const [newDoctorOpen, setNewDoctorOpen] = useState(false);
 
   // Edit-profile modal (admin edits a doctor's professional profile + how they
   // consult). `profileDoctor` is the doctor being edited (null = closed).
@@ -1143,6 +1149,13 @@ function AdminDashboard() {
             >
               + New patient
             </button>
+            <button
+              type="button"
+              onClick={() => setNewDoctorOpen(true)}
+              className="px-4 py-2 rounded-lg bg-teal-700 text-white font-semibold hover:bg-teal-800 whitespace-nowrap"
+            >
+              + New doctor
+            </button>
           </div>
 
           {/* Users table */}
@@ -1172,6 +1185,7 @@ function AdminDashboard() {
                           title="View full details"
                         >
                           {user.name}
+                          {user.role === 'doctor' && user.managedByAdmin && <span className="ml-1 px-1.5 py-0.5 rounded bg-teal-50 text-teal-800 text-[10px] font-semibold" title="Doctor asked ProMedicoz to manage their profile">🛠 Managed</span>}
                           <span className="text-gray-300 text-xs" aria-hidden="true">›</span>
                         </button>
                       </td>
@@ -1325,11 +1339,11 @@ function AdminDashboard() {
                             )}
                             {!user.isDeleted && user.role === 'doctor' && (
                               <button
-                                onClick={() => openProfileModal(user)}
-                                className="text-sm font-medium text-fuchsia-600 hover:text-fuchsia-800"
-                                title="Edit this doctor's professional profile (specialization, qualification, experience, fee, bio) and consultation modes on their behalf"
+                                onClick={() => { setOpenMenuId(null); setManageDoctorId(user._id); }}
+                                className="text-sm font-semibold text-teal-700 hover:text-teal-900"
+                                title="Edit everything for this doctor: profile, photo, UPI QR, fee, hours, days off, contact, account. Every change is logged and the doctor is told."
                               >
-                                Edit Profile
+                                🩺 Manage doctor
                               </button>
                             )}
                             {!user.isDeleted && user.role === 'patient' && (
@@ -1339,33 +1353,6 @@ function AdminDashboard() {
                                 title="Edit this patient's details, medical info and family, or book an appointment on their behalf"
                               >
                                 🤝 Help patient{!user.phone ? ' (no mobile!)' : ''}
-                              </button>
-                            )}
-                            {!user.isDeleted && user.role === 'doctor' && (
-                              <button
-                                onClick={() => handleEditContact(user)}
-                                className="text-sm font-medium text-teal-600 hover:text-teal-800"
-                                title="Edit this doctor's phone / WhatsApp number on their behalf (for support requests)"
-                              >
-                                Edit Contact
-                              </button>
-                            )}
-                            {!user.isDeleted && user.role === 'doctor' && (
-                              <button
-                                onClick={() => handleEditLocation(user)}
-                                className="text-sm font-medium text-sky-600 hover:text-sky-800"
-                                title="Edit this doctor's city / clinic address on their behalf (e.g. fix a state entered in the City field)"
-                              >
-                                Edit Location
-                              </button>
-                            )}
-                            {!user.isDeleted && user.role === 'doctor' && (
-                              <button
-                                onClick={() => openAvailabilityModal(user)}
-                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                                title="Set this doctor's weekly schedule on their behalf (for doctors who ask the admin to set it up)"
-                              >
-                                Edit Availability
                               </button>
                             )}
                             <button
@@ -2329,6 +2316,12 @@ function AdminDashboard() {
             onClose={() => setPaymentHelpApt(null)}
             onDone={() => { if (activeTab === 'appointments') fetchAppointments(); setNeedsRefresh((k) => k + 1); }}
           />
+        )}
+        {manageDoctorId && (
+          <ManageDoctor doctorId={manageDoctorId} onClose={() => setManageDoctorId(null)} onChanged={() => fetchUsers()} />
+        )}
+        {newDoctorOpen && (
+          <NewDoctorModal onClose={() => setNewDoctorOpen(false)} onCreated={(id) => { setNewDoctorOpen(false); fetchUsers(); setManageDoctorId(id); }} />
         )}
         {newPatientOpen && (
           <NewPatientModal

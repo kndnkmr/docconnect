@@ -1895,6 +1895,14 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## Admin → 🩺 Manage doctor (doctors who want ProMedicoz to run their profile)
+
+Some doctors send their details and want the admin to manage everything so they "just see patients".
+- **Users → + New doctor:** name + mobile (their login) + optional email/specialization/city, and the tick "the doctor asked ProMedicoz to set up and manage this profile" (required; recorded as `managedByAdmin`, `managedConsentAt`, `managedConsentBy`). No password is typed: when the doctor wants to log in, use **Send Password Reset** on their row. Then fill in the rest and press **Verify** so patients can find them.
+- **Users → Manage ▾ → 🩺 Manage doctor** (replaces the old Edit Profile / Contact / Location / Availability buttons): tabs **Profile** (every field of the doctor's own form, incl. registration no., languages, Maps + Google review links, bio), **Photo & QR** (upload/replace profile photo and UPI QR), **Hours & leave** (weekly sessions, slot length, days off with reason), **Account** (mobile, WhatsApp, email, UPI ID, "managed" tick), **Changes log**.
+- **Safeguards:** the same validation as the doctor's form (`validateDoctorUpdates` + shared phone/email clash checks); role/password can't be changed; only doctor accounts; every change logged on the doctor (`adminEdits`: who, when, which fields, never values); the doctor is told: **fee / UPI ID / UPI QR at once** (push + email), everything else in **one daily summary ~7 PM IST** (`server/utils/adminEditNotes.js`). Admin bookkeeping fields never appear on public doctor pages. The doctor can still log in and edit anything.
+- Code: `server/controllers/adminDoctorController.js` (`/api/admin/doctors…`), `client/src/pages/admin/ManageDoctor.jsx`. Tests: `server/tests/adminDoctor.test.js`; also checked end to end against a real MongoDB (create → edit → QR upload → hours → leave → log → notes → public page).
+
 ## After booking: "where do I pay?" (live booking page)
 
 Before (Oct 2026): the page after booking was a static thank-you built from the booking form. When the doctor confirmed, it still said "once confirmed, you'll see payment details" with only a Dashboard button, so patients didn't know where to pay. It also said "Your booking is confirmed. Waiting for doctor to accept" (contradictory) and showed "No booking details found" after a refresh.

@@ -125,6 +125,22 @@ router.put('/users/:id/availability', updateDoctorAvailability);
 // enum; only the fields sent are changed.
 router.put('/users/:id/profile', updateDoctorProfileAdmin);
 
+// ---- Manage doctor: full profile control on a doctor's behalf ----
+// See controllers/adminDoctorController.js for the safeguards (same checks
+// as the doctor's own form, change log, doctor told about changes).
+const manage = require('../controllers/adminDoctorController');
+const { upload } = require('../middleware/upload');
+const adminImageUpload = (req, res, next) => upload.single('file')(req, res, (err) => {
+  if (!err) return next();
+  if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ message: 'Image is too large. Please upload an image under 10MB.' });
+  return res.status(400).json({ message: err.message || 'File upload failed. Please try a different image.' });
+});
+router.post('/doctors', manage.createDoctor);
+router.get('/doctors/:id', manage.getDoctorForManage);
+router.put('/doctors/:id', manage.updateDoctorAsAdmin);
+router.post('/doctors/:id/image', adminImageUpload, manage.uploadDoctorImage);
+router.put('/doctors/:id/blocked-dates', manage.setDoctorBlockedDatesAdmin);
+
 // ---- "Help patient": act on a patient's behalf (support) ----
 // See controllers/adminPatientController.js for the safeguards.
 const {

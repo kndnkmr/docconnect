@@ -27,6 +27,7 @@ const DOCTOR_PRIVATE_FIELDS = [
   'password', 'email', 'resetPasswordToken', 'resetPasswordExpire',
   'verificationToken', 'verificationTokenExpire', 'pushSubscriptions',
   'lastLoginIP', 'lastLoginAt', 'blockedPatients', 'adminEdits', 'createdByAdmin',
+  'managedConsentAt', 'managedConsentBy', // Admin → Manage doctor bookkeeping
   'suspendedReason', 'suspendedAt', 'deletedAt', 'consentAcceptedAt',
   'familyMembers', 'bloodGroup', 'allergies', 'currentMedications', 'medicalHistory',
   'emergencyContactName', 'emergencyContactPhone', 'insuranceProvider', 'insurancePolicyNumber',
@@ -808,5 +809,6 @@ module.exports = {
   trackLinkBooking,
   getMyStats,
   updateDoctorProfile,
-  googleReviewLinkProblem // exported for tests
+  googleReviewLinkProblem, // exported for tests
+  validateDoctorUpdates // reused by Admin → Manage doctor (same rules)
 };
