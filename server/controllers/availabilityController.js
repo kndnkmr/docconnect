@@ -180,9 +180,21 @@ const getFreeSlots = async (req, res) => {
     const dayOfWeek = dayNames[selectedDate.getDay()];
     // getDay() returns 0 (Sunday) to 6 (Saturday)
 
-    // Find the doctor
-    const doctor = await User.findOne({ _id: doctorId, role: 'doctor' })
-      .select('availability slotDuration name blockedDates');
+    // Find the doctor AND that day's booked appointments at the same time
+    // (two parallel database round trips instead of one after the other).
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    const [doctor, bookedAppointments] = await Promise.all([
+      User.findOne({ _id: doctorId, role: 'doctor' }).select('availability slotDuration name blockedDates'),
+      Appointment.find({
+        doctor: doctorId,
+        date: { $gte: startOfDay, $lte: endOfDay },
+        // Ignore cancelled appointments — those slots are free again
+        status: { $nin: ['cancelled'] }
+      }).select('timeSlot'),
+    ]);
 
     if (!doctor) {
       return res.status(404).json({
@@ -227,22 +239,7 @@ const getFreeSlots = async (req, res) => {
       // ...slots = "spread" the array items into allSlots
     }
 
-    // Find already-booked appointments for this doctor on this date
-    // We need to match the DATE (ignoring time), so we create a range
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const bookedAppointments = await Appointment.find({
-      doctor: doctorId,
-      date: { $gte: startOfDay, $lte: endOfDay },
-      // $gte = greater than or equal, $lte = less than or equal
-      // This finds all appointments on this specific day
-      status: { $nin: ['cancelled'] }
-      // Ignore cancelled appointments — those slots are free again
-    }).select('timeSlot');
-
+    // (Booked appointments for this date were fetched above, in parallel.)
     // Extract booked time slots as strings
     const bookedSlots = bookedAppointments.map(apt => apt.timeSlot);
     // Example: ["09:00 AM - 09:30 AM", "10:00 AM - 10:30 AM"]

@@ -11,6 +11,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { cachePublic } = require('../utils/publicCache');
 
 const {
   setAvailability,
@@ -35,7 +36,8 @@ router.put('/blocked-dates', protect, authorize('doctor'), setBlockedDates);
 // GET /api/availability/:doctorId/slots?date=2024-03-15
 // Anyone can check available time slots for a doctor on a specific date
 // This is called from the BookAppointment page
-router.get('/:doctorId/slots', getFreeSlots);
+// 30 s memory, cleared the moment any booking/schedule changes (utils/publicCache.js)
+router.get('/:doctorId/slots', cachePublic(), getFreeSlots);
 
 // ---- PROTECTED ROUTES (doctor only) ----
 

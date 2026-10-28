@@ -310,6 +310,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Any successful change (booking, schedule, profile, review, admin…) clears
+// the short public-list memory, so lists and free slots are never stale.
+// See utils/publicCache.js.
+app.use(require('./utils/publicCache').invalidateOnWrites);
+
 // Auth routes — register, login, get profile
 // This says: "Any request starting with /api/auth → use the auth router"
 // So POST /api/auth/register → goes to auth.js router → calls register controller

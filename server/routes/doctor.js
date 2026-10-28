@@ -14,6 +14,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { cachePublic } = require('../utils/publicCache');
 
 // Import controller functions
 const {
@@ -53,13 +54,14 @@ const handleUpload = (req, res, next) => {
 // GET /api/doctors
 // Anyone can browse doctors (patients searching for a doctor)
 // Supports query params: ?specialization=Cardiology&name=Smith&page=1&limit=10
-router.get('/', getAllDoctors);
+// Public lists answer from a 30 s memory (cleared on any change) — utils/publicCache.js
+router.get('/', cachePublic(), getAllDoctors);
 
 // GET /api/doctors/cities
 // Distinct cities that have active doctors (optionally ?specialization=).
 // MUST be declared before the '/:id' route below, otherwise Express would
 // treat "cities" as a doctor id.
-router.get('/cities', getDoctorCities);
+router.get('/cities', cachePublic(5 * 60 * 1000), getDoctorCities);
 
 // GET /api/doctors/me/stats
 // The logged-in doctor's own "Promote Me" numbers (consultations, earnings,
@@ -75,7 +77,7 @@ router.get('/by-slug/:slug', getDoctorBySlug);
 // GET /api/doctors/:id
 // Anyone can view a doctor's full profile
 // ":id" is a placeholder — the actual URL would be like /api/doctors/65a1b2c3...
-router.get('/:id', getDoctorById);
+router.get('/:id', cachePublic(), getDoctorById);
 
 // POST /api/doctors/:id/link-booking
 // Best-effort counter: the branded page pings this when a visitor taps "Book"

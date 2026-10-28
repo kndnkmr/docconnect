@@ -123,35 +123,26 @@ async function attachNextAvailable(docs) {
   }
 
   return docs.map((d) => {
-    const obj = d.toObject();
+    const obj = typeof d.toObject === 'function' ? d.toObject() : { ...d };
     obj.nextAvailable = computeNextAvailable(obj, bookedByDoctor[d._id.toString()]);
     return obj;
   });
 }
 
-// Attach { average, count } rating stats to a page of doctors. One aggregate
-// query for the whole page (not one per doctor), so it stays cheap regardless
-// of how many doctors are shown.
-async function attachRatings(docs) {
-  if (!docs || docs.length === 0) return docs;
-  const ids = docs.map((d) => d._id);
-
+// Rating stats for EVERY doctor in one aggregate ({ doctorId: { average,
+// count } }). Used by the doctor list so ratings can be fetched at the same
+// time as the doctors themselves (the reviews collection is small), instead
+// of after them and then again for the page.
+async function ratingMapAll() {
   const stats = await Review.aggregate([
-    // Exclude admin-hidden reviews so a hidden review stops counting toward
-    // the public average/count everywhere doctors are listed or ranked.
-    { $match: { doctor: { $in: ids }, isHidden: { $ne: true } } },
+    { $match: { isHidden: { $ne: true } } },
     { $group: { _id: '$doctor', average: { $avg: '$rating' }, count: { $sum: 1 } } }
   ]);
-
   const byId = {};
   stats.forEach((s) => {
-    byId[s._id.toString()] = { average: Math.round(s.average * 10) / 10, count: s.count };
+    if (s._id) byId[s._id.toString()] = { average: Math.round(s.average * 10) / 10, count: s.count };
   });
-
-  return docs.map((d) => {
-    d.rating = byId[d._id.toString()] || { average: 0, count: 0 };
-    return d;
-  });
+  return byId;
 }
 
 // ============================================
@@ -174,7 +165,7 @@ async function attachRatings(docs) {
 //      ahead of a more complete/higher-rated profile just for being new.
 //
 // `doc` here is a plain object that already has `rating` attached (see
-// attachRatings) OR we default rating to 0 when it hasn't been attached yet.
+// ratingMapAll) OR we default rating to 0 when it hasn't been attached yet.
 function computeProfileScore(doc) {
   let score = 0;
 
@@ -319,30 +310,31 @@ const getAllDoctors = async (req, res) => {
     let total;
 
     // Fetch every candidate matching the filter (no DB-level pagination — we
-    // need the whole set to rank it correctly before slicing a page).
-    const candidates = await User.find(filter).select(`${DOCTOR_PRIVATE_FIELDS} -upiQrCode`);
+    // need the whole set to rank it correctly before slicing a page), and the
+    // ratings for all doctors AT THE SAME TIME (two parallel database round
+    // trips instead of four one-after-another). lean() = plain objects,
+    // cheaper than full Mongoose documents for a read-only list.
+    const [candidates, ratingById] = await Promise.all([
+      User.find(filter).select(`${DOCTOR_PRIVATE_FIELDS} -upiQrCode`).lean(),
+      ratingMapAll(),
+    ]);
+    const withRating = (d) => ({ ...d, rating: ratingById[String(d._id)] || { average: 0, count: 0 } });
 
     if (wantAvailableToday) {
       // Honest "available today": compute each candidate's next free slot and
-      // keep only those genuinely free TODAY. attachNextAvailable returns fresh
-      // plain objects, so attach ratings AFTER it, then rank + paginate.
+      // keep only those genuinely free TODAY, then rank + paginate.
       const withNA = await attachNextAvailable(candidates);
-      let freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday);
-      freeToday = await attachRatings(freeToday); // ratings feed the score
+      const freeToday = withNA.filter((d) => d.nextAvailable && d.nextAvailable.isToday).map(withRating);
       sortByQuality(freeToday);
       total = freeToday.length;
       doctorsWithAvailability = freeToday.slice(skip, skip + limit);
     } else {
-      // Normal path: attach ratings to all candidates (needed for the score),
-      // rank by quality, slice the page, then attach next-available to just
-      // that page. attachNextAvailable produces fresh plain objects (dropping
-      // the rating), so re-attach ratings to the final page.
-      const scored = await attachRatings(candidates);
+      // Normal path: rank everyone by quality (ratings feed the score), slice
+      // the page, then attach next-available to just that page (one query).
+      const scored = candidates.map(withRating);
       sortByQuality(scored);
       total = scored.length;
-      const pageDocs = scored.slice(skip, skip + limit);
-      doctorsWithAvailability = await attachNextAvailable(pageDocs);
-      doctorsWithAvailability = await attachRatings(doctorsWithAvailability);
+      doctorsWithAvailability = await attachNextAvailable(scored.slice(skip, skip + limit));
     }
 
     // ---- Send response ----
@@ -426,11 +418,15 @@ const getDoctorCities = async (req, res) => {
 const getDoctorById = async (req, res) => {
   try {
     // req.params.id = the ":id" part from the URL
-    const doctor = await User.findOne({
-      _id: req.params.id,
-      role: 'doctor'
-      // Make sure we're fetching a doctor, not a patient
-    }).select(DOCTOR_PRIVATE_FIELDS);
+    // Profile and its completed-consultation count are fetched together.
+    const [doctor, completedConsultations] = await Promise.all([
+      User.findOne({
+        _id: req.params.id,
+        role: 'doctor'
+        // Make sure we're fetching a doctor, not a patient
+      }).select(DOCTOR_PRIVATE_FIELDS),
+      Appointment.countDocuments({ doctor: req.params.id, status: 'completed' }),
+    ]);
 
     if (!doctor) {
       return res.status(404).json({
@@ -446,13 +442,7 @@ const getDoctorById = async (req, res) => {
     }
 
     // Real social proof: how many consultations this doctor has completed on
-    // the platform. Only meaningful with real data, so the frontend hides it
-    // when the count is 0 rather than showing "0 consultations".
-    const completedConsultations = await Appointment.countDocuments({
-      doctor: doctor._id,
-      status: 'completed'
-    });
-
+    // the platform (fetched above, in parallel). The frontend hides it when 0.
     const doctorObj = doctor.toObject();
     doctorObj.completedConsultations = completedConsultations;
 
