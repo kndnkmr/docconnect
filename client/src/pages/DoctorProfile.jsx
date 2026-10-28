@@ -18,6 +18,7 @@ import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
 import LangToggle from '../components/LangToggle';
 import { formatDoctorName } from '../utils/formatName';
+import { doctorSearchTitle, doctorSearchDescription } from '../utils/doctorSeo';
 import { trackEvent } from '../components/Analytics';
 import toast from 'react-hot-toast';
 
@@ -318,12 +319,10 @@ function DoctorProfile({ clinicMode = false }) {
   return (
     <div>
       <SEO
-        title={doctor
-          ? (clinicMode
-              ? `${formatDoctorName(doctor.name)} — Book an appointment${doctor.city ? ` · ${doctor.city}` : ''}`
-              : `${formatDoctorName(doctor.name)} - ${doctor.specialization || 'Doctor'}`)
-          : 'Doctor Profile'}
-        description={doctor ? `Book an appointment with ${formatDoctorName(doctor.name)} (${doctor.specialization || 'General Physician'}). ${doctor.experience || 0} years experience. Consultation fee: Rs. ${doctor.consultationFee || 'N/A'}.` : ''}
+        // Same English title/description the build bakes into the HTML
+        // (src/utils/doctorSeo.js): name + specialty (both spellings) + city.
+        title={doctor ? doctorSearchTitle(doctor) : 'Doctor Profile'}
+        description={doctor ? doctorSearchDescription(doctor) : ''}
         // Canonical is /dr/:slug on BOTH routes, so Google treats /doctors/:id
         // and /dr/:slug as one page (the /dr one, which is in the sitemap)
         // instead of two competing copies. Falls back to /doctors/:id only for

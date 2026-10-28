@@ -14,6 +14,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 Notable improvements layered on since the core build (newest first):
 
+- **Local Google ranking** — doctor pages now give Google an English title with both specialty spellings + city ("Dr. Pooja Singh – Gynaecologist (Gynecologist) in Bhilai"; WhatsApp previews stay Hindi), full Physician data (specialty, address, hours, map, nearby cities). City pages ("Best Gynaecologist (Gynecologist) in Bhilai") show real fees/consult types/hours, twin-city doctors (Bhilai ↔ Durg ↔ Raipur), a short guide and city FAQs. Doctors can add an optional **Google review link**; patients who rate a consult are offered "Also rate on Google" (never gated on stars). Shared builders: `client/src/utils/doctorSeo.js`, `client/src/utils/cityPage.js`. Details: HOW_IT_WORKS → Local Google ranking.
+- **Readable nav bars** — top and bottom bars are solid with dark labels (no see-through glass), the site opts out of phone auto-dark, and a build test enforces 4.5:1 contrast.
+
 - **Alerts when something breaks** — a GitHub Actions uptime check (`.github/workflows/uptime.yml`) tests the website and the server + database every ~10 min; 3 failed tries → GitHub emails the repo owner. The server itself (`server/utils/healthWatch.js`) emails `ADMIN_NOTIFY_EMAIL`/`ADMIN_EMAIL` if the database is disconnected 3+ min (and again when it's back) or there are 10+ server errors in 10 min, at most once an hour per problem. No extra accounts.
 - **Lighter dashboard** — first download ~122 KB → ~28 KB (gzip). Each tab loads when first opened (patients never download doctor screens); the video-call code (~72 KB) is fetched in the background only when an audio/video visit is upcoming or a call rings, so Join stays instant. After a new deploy, a missing old piece reloads the page once instead of a blank screen.
 

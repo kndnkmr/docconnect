@@ -177,6 +177,16 @@ const userSchema = new mongoose.Schema({
     // Doctor pastes their Google Maps location URL
   },
 
+  googleReviewLink: {
+    type: String,
+    default: ''
+    // Optional: the doctor's Google Business Profile "write a review" link
+    // (Google Business → "Ask for reviews"). After a patient rates the
+    // consultation in-app, they're offered "Also rate on Google" — shown to
+    // EVERY patient regardless of their rating (no review gating, per
+    // Google's policy). More Google reviews = better Google Maps ranking.
+  },
+
   consultationModes: {
     type: [String],
     enum: ['in-person', 'video', 'phone'],

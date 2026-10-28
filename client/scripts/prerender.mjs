@@ -28,6 +28,10 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { citySearchTitle, cityHeading, citySummary, cityGuide, cityFaqs, hoursSummary, nearbyCitySlugs, modesText } from "../src/utils/cityPage.js";
+import { formatDoctorName as appDoctorName } from "../src/utils/formatName.js";
+import { specializationData as SPEC_PAGE_DATA } from "../src/pages/specializationData.js";
+import { doctorSearchTitle, doctorSearchDescription, specialtySchema, openingHours, cleanCity, NEARBY_CITIES, specialtySearchLabel, doctorJsonLd as buildDoctorJsonLd } from "../src/utils/doctorSeo.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIR = join(__dirname, '..');
@@ -297,30 +301,8 @@ function doctorBodyHtml(d) {
   );
 }
 
-// Physician structured data for the doctor page. aggregateRating is included
-// only when the doctor has real in-app reviews (never invented).
-function doctorJsonLd(d) {
-  const name = formatDoctorName(d.name);
-  const obj = {
-    '@context': 'https://schema.org',
-    '@type': 'Physician',
-    '@id': `${SITE}/dr/${d.slug}#physician`,
-    name,
-    url: `${SITE}/dr/${d.slug}`,
-    medicalSpecialty: (d.specialization || '').replace(/\s+/g, ' ').trim() || undefined,
-    description: d.bio || undefined,
-    image: d.profilePhoto && String(d.profilePhoto).startsWith('http') ? d.profilePhoto : undefined,
-    address: d.city ? { '@type': 'PostalAddress', addressLocality: String(d.city).trim(), addressCountry: 'IN' } : undefined,
-    priceRange: Number(d.consultationFee) > 0 ? `Rs. ${d.consultationFee}` : undefined,
-    knowsLanguage: Array.isArray(d.languagesSpoken) && d.languagesSpoken.length ? d.languagesSpoken : undefined,
-  };
-  const rating = d.rating || {};
-  if (Number(rating.count) > 0 && Number(rating.average) > 0) {
-    obj.aggregateRating = { '@type': 'AggregateRating', ratingValue: rating.average, reviewCount: rating.count, bestRating: 5 };
-  }
-  // Drop undefined keys for a clean payload.
-  return JSON.parse(JSON.stringify(obj));
-}
+// Physician structured data: shared with the app — see src/utils/doctorSeo.js.
+const doctorJsonLd = (d) => buildDoctorJsonLd(d, SITE);
 
 // City landing pages (/specialization/:slug/:city) — only for city +
 // specialty combinations that actually have doctors (data-driven, so we never
@@ -344,17 +326,44 @@ async function fetchCityRoutes(specSlugs, specializationData) {
       const docs = ((list && list.doctors) || []).filter((x) => x && x.slug && x.name);
       if (docs.length === 0) continue; // never prerender an empty city page
       const path = `/specialization/${slug}/${citySlug}`;
+      // Same facts/copy the page shows (src/utils/cityPage.js): heading with
+      // both spellings, summary, doctor details, nearby cities, guide, FAQs.
+      const nearby = [];
+      for (const ns of nearbyCitySlugs(citySlug)) {
+        const nl = await getJson(`${API_BASE}/doctors?specialization=${encodeURIComponent(d.title)}&city=${encodeURIComponent(slugToCityName(ns))}&limit=6`);
+        const nd = ((nl && nl.doctors) || []).filter((x) => x && x.slug && x.name && cityToSlug(x.city || '') === ns);
+        if (nd.length) nearby.push({ citySlug: ns, cityName: slugToCityName(ns), doctors: nd });
+      }
+      const conditions = (SPEC_PAGE_DATA[slug] && SPEC_PAGE_DATA[slug].conditions) || [];
+      const args = { slug, specTitle: d.title, cityName, doctors: docs, nearby, conditions, lang: 'en' };
+      const summary = citySummary(args);
+      const guide = cityGuide(args);
+      const faqs = [...cityFaqs(args), ...((SPEC_PAGE_DATA[slug] && SPEC_PAGE_DATA[slug].faqs) || [])];
+      const docLi = (x, cityLabel) => {
+        const facts = [(x.specialization || '').trim(), (x.qualification || '').trim(), Number(x.experience) > 0 ? `${x.experience} yrs` : '', cityLabel,
+          Number(x.consultationFee) > 0 ? `Rs. ${x.consultationFee}` : '', modesText(x.consultationModes || []),
+          hoursSummary(x.availability), Array.isArray(x.languagesSpoken) ? x.languagesSpoken.join(', ') : ''].filter(Boolean);
+        return `<li><a href="/dr/${escText(x.slug)}">${escText(appDoctorName(x.name))}</a> — ${escText(facts.join(' · '))}</li>`;
+      };
       routes.push({
         path,
-        title: `Best ${d.title} Doctors in ${cityName} - Book Appointment`,
-        description: `Consult the best ${d.title.toLowerCase()} doctors in ${cityName} on ${SITE_NAME}. Book video, phone or in-person appointments. ${d.description}`,
+        title: citySearchTitle(d.title, cityName),
+        description: `${cityHeading(d.title, cityName)} on ${SITE_NAME}: ${summary}. ${d.description}`,
         type: 'website',
         ogImage: `${SITE}/og/blog/${slug}.png`,
         bodyHtml:
-          `<article><h1>Best ${escText(d.title)} Doctors in ${escText(cityName)}</h1><p>${escText(d.description)}</p>` +
-          `<ul>${docs.map((x) => `<li><a href="/dr/${escText(x.slug)}">${escText(formatDoctorName(x.name))}</a> — ${escText((x.specialization || '').trim())}</li>`).join('')}</ul>` +
+          `<article><h1>${escText(cityHeading(d.title, cityName))}</h1><p>${escText(summary)}</p><p>${escText(d.description)}</p>` +
+          `<h2>${escText(`${d.title}s in ${cityName}`)}</h2><ul>${docs.map((x) => docLi(x, cityName)).join('')}</ul>` +
+          (nearby.length ? `<h2>${escText(`Also near ${cityName}`)}</h2><ul>${nearby.flatMap((n) => n.doctors.map((x) => docLi(x, n.cityName))).join('')}</ul>` +
+            `<p>${nearby.map((n) => `<a href="/specialization/${slug}/${n.citySlug}">${escText(`${d.title} in ${n.cityName}`)}</a>`).join(' · ')}</p>` : '') +
+          (guide.items.length ? `<h2>${escText(guide.title)}</h2><ul>${guide.items.map((i) => `<li>${escText(i)}</li>`).join('')}</ul>${guide.redFlag ? `<p>${escText(guide.redFlag)}</p>` : ''}` : '') +
+          `<h2>Frequently Asked Questions</h2>${faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
           `<p><a href="/specialization/${slug}">All ${escText(d.title)} doctors</a></p></article>`,
         jsonLd: [{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+        }, {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
@@ -828,8 +837,14 @@ async function fetchDoctorRoutes() {
       const cityHi = d.city ? ` · ${String(d.city).trim()}` : '';
       routes.push({
         path: `/dr/${d.slug}`,
-        title: `${nameHi} — ${specHi}${cityHi}`,
-        description: `${nameHi} (${specHi}) से ProMedicoz पर ऑनलाइन अपॉइंटमेंट बुक करें। ` +
+        // Google: English, both specialty spellings + city (people search
+        // "best gynecologist in bhilai"). Shared with the app's <SEO> via
+        // src/utils/doctorSeo.js so they always match.
+        title: doctorSearchTitle(d),
+        description: doctorSearchDescription(d),
+        // WhatsApp / social preview: stays Hindi, matching the Hindi card.
+        ogTitle: `${nameHi} — ${specHi}${cityHi}`,
+        ogDescription: `${nameHi} (${specHi}) से ProMedicoz पर ऑनलाइन अपॉइंटमेंट बुक करें। ` +
           (Number(d.consultationFee) > 0 ? `परामर्श शुल्क Rs. ${d.consultationFee}। ` : '') +
           'वीडियो, फ़ोन या क्लिनिक पर परामर्श। पैसे सीधे डॉक्टर को, कोई कमीशन नहीं।',
         type: 'profile',
@@ -1099,6 +1114,10 @@ function applyMeta(template, route) {
   const url = `${SITE}${route.path}`;
   const eTitle = esc(title);
   const eDesc = esc(desc);
+  // Social previews (og:/twitter:) may differ from the search title — doctor
+  // pages show Hindi on WhatsApp but English to Google.
+  const eOgTitle = esc(route.ogTitle ? fullTitle(route.ogTitle) : title);
+  const eOgDesc = esc(route.ogDescription || desc);
   const eUrl = esc(url);
 
   let html = template;
@@ -1123,13 +1142,13 @@ function applyMeta(template, route) {
   // og:title
   replaceOnce(
     '<meta property="og:title" content="ProMedicoz - Consult Verified Doctors Online" />',
-    `<meta property="og:title" content="${eTitle}" />`,
+    `<meta property="og:title" content="${eOgTitle}" />`,
     'og:title'
   );
   // og:description
   replaceOnce(
     '<meta property="og:description" content="Find and book verified doctors across India — video, phone, or in-person. Book in under 2 minutes. Your health, our priority." />',
-    `<meta property="og:description" content="${eDesc}" />`,
+    `<meta property="og:description" content="${eOgDesc}" />`,
     'og:description'
   );
   // og:url
@@ -1164,13 +1183,13 @@ function applyMeta(template, route) {
   // twitter:title
   replaceOnce(
     '<meta name="twitter:title" content="ProMedicoz - Consult Verified Doctors Online" />',
-    `<meta name="twitter:title" content="${eTitle}" />`,
+    `<meta name="twitter:title" content="${eOgTitle}" />`,
     'twitter:title'
   );
   // twitter:description
   replaceOnce(
     '<meta name="twitter:description" content="Find and book verified doctors across India — video, phone, or in-person. Book in under 2 minutes." />',
-    `<meta name="twitter:description" content="${eDesc}" />`,
+    `<meta name="twitter:description" content="${eOgDesc}" />`,
     'twitter:description'
   );
 

@@ -1895,6 +1895,20 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## Local Google ranking: doctor + city pages ("best gynecologist in bhilai")
+
+**What Google reads**
+- **Doctor page `/dr/:slug`:** English title + description built from the profile: "Dr. Pooja Singh – Gynaecologist (Gynecologist) in Bhilai | ProMedicoz" (both spellings; typos like "Gyanecologist" recognised). WhatsApp/social previews (og:) stay **Hindi** with the Hindi card. One shared builder, `client/src/utils/doctorSeo.js`, is used by both the build (`scripts/prerender.mjs`) and the app (`DoctorProfile` → `SEO` + `StructuredData`), so they can't disagree. Before Oct 2026 the Google title was Hindi, which hurt English searches.
+- **Physician structured data:** same `@id`/URL as the page; specialty as schema.org values (Gynecologic + Obstetric); clinic address + city; map link; weekly hours; areas served = city + twin cities (`NEARBY_CITIES`: Bhilai ↔ Durg ↔ Raipur, Dehradun ↔ Rishikesh, Delhi ↔ New Delhi); rating only from real in-app reviews (never curated ones). No phone/UPI.
+- **City page `/specialization/:slug/:city`:** H1/title "Best Gynaecologist (Gynecologist) in Bhilai"; a summary line with real counts/fees/consult types; richer doctor cards (qualification, years, consult types, languages, hours, fee → link to `/dr/:slug`); "Also near Bhilai" (twin-city doctors + links); a short guide (fees, consult types, conditions, a hospital-now safety line for gynae/paediatrics); city questions answered from real data + the specialty FAQs (also as FAQPage data). Shared copy: `client/src/utils/cityPage.js`; specialty data moved to `client/src/pages/specializationData.js` so the build can import it. Never claims a specific doctor is "the best".
+- Guarded by `client/tests/doctorSeo.test.mjs` and `client/tests/cityPage.test.mjs`.
+
+**Google reviews loop**
+- Doctor → Edit Profile → **⭐ Google review link (optional)** (Google Business Profile → "Ask for reviews" → copy link). Only real Google links are accepted (https + Google host; checked in the browser and on the server, `googleReviewLinkProblem`).
+- After a patient rates a consultation in-app, they're offered **"⭐ Also rate on Google"** — to **every** patient whatever stars they gave (Google forbids asking only happy patients; a test checks the prompt isn't gated on stars).
+
+**Off-site steps (not code — biggest factor for the Google Maps box):** each doctor's Google Business Profile with category "Obstetrician-gynecologist" (etc.), website + appointment link = their `/dr/:slug` page; a 3–4 line bio in Edit Profile; after a deploy, Google Search Console → URL inspection → **Request indexing** for the doctor page and the city page. Results usually take 2–6 weeks; no ranking is guaranteed.
+
 ## Nav bars: always readable (don't make them see-through)
 
 The top bar (`Navbar.jsx`) and the phone bottom bar (`BottomNav.jsx`) are **solid white** with dark labels. They used to be frosted "glass" (`bg-white/85` + `backdrop-blur`): over blue/green sections the page colour tinted the bar and the grey labels (Home / Doctors / Blog / Login) dropped to ~3.8:1 contrast, and phone dark modes could make them dark-on-dark. Now:

@@ -473,8 +473,25 @@ const getDoctorById = async (req, res) => {
 // Length caps for the doctor's free-text fields (bio is the longest).
 const DOCTOR_TEXT_CAPS = {
   name: 100, specialization: 100, qualification: 200, medicalRegistrationNo: 50,
-  clinicAddress: 500, city: 100, googleMapsLink: 500, bio: 3000, upiId: 100,
+  clinicAddress: 500, city: 100, googleMapsLink: 500, googleReviewLink: 300, bio: 3000, upiId: 100,
 };
+
+// Google review link must really point at Google (patients are sent there).
+// Accepts the forms Google Business gives out: g.page/r/…, maps.app.goo.gl/…,
+// search.google.com/local/writereview?…, google.com/maps/…, g.co/kgs/….
+const GOOGLE_REVIEW_HOSTS = /^(g\.page|g\.co|maps\.app\.goo\.gl|goo\.gl|search\.google\.com|(www\.)?google\.(com|co\.in)|maps\.google\.(com|co\.in))$/i;
+function googleReviewLinkProblem(raw) {
+  const link = String(raw || '').trim();
+  if (!link) return null; // empty = remove it
+  let u;
+  try { u = new URL(link); } catch { return 'Google review link must be a full link starting with https://'; }
+  if (u.protocol !== 'https:') return 'Google review link must start with https://';
+  if (!GOOGLE_REVIEW_HOSTS.test(u.hostname)) return 'Please paste the review link from your Google Business Profile (it starts with https://g.page/ or https://search.google.com/)';
+  if ((u.hostname === 'goo.gl' || /google\./i.test(u.hostname)) && !/^\/(maps|local|search)/.test(u.pathname)) {
+    return 'Please paste the review link from your Google Business Profile';
+  }
+  return null;
+}
 // Links/images patients will open or load: block script-type schemes.
 // (Profile photos can be https URLs, legacy relative paths, or base64
 // data:image/... fallbacks from uploadFile, so those stay allowed.)
@@ -494,6 +511,10 @@ function validateDoctorUpdates(updates) {
     if (/^[a-z][a-z0-9+.-]*:/i.test(link) && !/^https?:\/\//i.test(link)) {
       return 'Google Maps link must start with https://';
     }
+  }
+  if (updates.googleReviewLink !== undefined) {
+    const p = googleReviewLinkProblem(updates.googleReviewLink);
+    if (p) return p;
   }
   for (const f of ['profilePhoto', 'upiQrCode']) {
     if (updates[f] === undefined) continue;
@@ -532,6 +553,7 @@ const updateDoctorProfile = async (req, res) => {
       'clinicAddress',
       'city',
       'googleMapsLink',
+      'googleReviewLink',
       'consultationModes',
       'languagesSpoken',
       'consultationFee',
@@ -589,6 +611,7 @@ const updateDoctorProfile = async (req, res) => {
     if (problem) {
       return res.status(400).json({ message: problem });
     }
+    if (typeof updates.googleReviewLink === 'string') updates.googleReviewLink = updates.googleReviewLink.trim();
     if (req.body.phone !== undefined) {
       updates.phone = await checkPhone(req.body.phone, { selfId: req.user._id });
     }
@@ -784,5 +807,6 @@ module.exports = {
   getDoctorBySlug,
   trackLinkBooking,
   getMyStats,
-  updateDoctorProfile
+  updateDoctorProfile,
+  googleReviewLinkProblem // exported for tests
 };

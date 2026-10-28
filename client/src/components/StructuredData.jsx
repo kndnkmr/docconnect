@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { doctorJsonLd } from '../utils/doctorSeo';
 
 // Structured Data component — adds JSON-LD Schema.org markup
 // This helps Google understand what ProMedicoz is and show rich snippets
@@ -39,21 +40,10 @@ export function WebsiteSchema() {
 export function DoctorSchema({ doctor }) {
   if (!doctor) return null;
 
-  const data = {
-    '@context': 'https://schema.org',
-    '@type': 'Physician',
-    name: doctor.name,
-    medicalSpecialty: doctor.specialization || 'General Practice',
-    description: doctor.bio || `${doctor.name} - ${doctor.specialization || 'Doctor'} on ProMedicoz`,
-    url: `https://www.promedicoz.in/doctors/${doctor._id}`,
-    image: doctor.profilePhoto || 'https://www.promedicoz.in/icons/icon-512.png',
-    address: doctor.clinicAddress ? {
-      '@type': 'PostalAddress',
-      streetAddress: doctor.clinicAddress,
-      addressCountry: 'IN'
-    } : undefined,
-    priceRange: doctor.consultationFee ? `INR ${doctor.consultationFee}` : undefined
-  };
+  // Identical to what the build bakes into the HTML (same @id, /dr/ URL,
+  // city, hours, specialty) — one consistent doctor entity for Google.
+  if (!doctor.slug) return null;
+  const data = doctorJsonLd(doctor);
 
   return (
     <Helmet>

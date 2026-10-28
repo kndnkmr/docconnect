@@ -150,7 +150,7 @@ const getMyAppointments = async (req, res) => {
 
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
-      .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink consultationModes')
+      .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes')
       .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     const byId = {};

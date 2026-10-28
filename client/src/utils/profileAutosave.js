@@ -42,6 +42,16 @@ const isIndianMobile = (v) => {
   return /^[6-9]\d{9}$/.test(d);
 };
 
+// Same rule as the server (googleReviewLinkProblem): https + a Google host.
+const GOOGLE_REVIEW_HOSTS = /^(g\.page|g\.co|maps\.app\.goo\.gl|goo\.gl|search\.google\.com|(www\.)?google\.(com|co\.in)|maps\.google\.(com|co\.in))$/i;
+export function googleReviewLinkOk(link) {
+  let u;
+  try { u = new URL(String(link).trim()); } catch { return false; }
+  if (u.protocol !== 'https:' || !GOOGLE_REVIEW_HOSTS.test(u.hostname)) return false;
+  if ((u.hostname === 'goo.gl' || /google\./i.test(u.hostname)) && !/^\/(maps|local|search)/.test(u.pathname)) return false;
+  return true;
+}
+
 // { field: message } for changed fields that can't be saved as typed.
 export function profileProblems(changes) {
   const p = {};
@@ -63,6 +73,10 @@ export function profileProblems(changes) {
   if ('googleMapsLink' in changes) {
     const v = String(changes.googleMapsLink || '').trim();
     if (v && /^[a-z][a-z0-9+.-]*:/i.test(v) && !/^https?:\/\//i.test(v)) p.googleMapsLink = 'Paste a link starting with https://';
+  }
+  if ('googleReviewLink' in changes) {
+    const v = String(changes.googleReviewLink || '').trim();
+    if (v && !googleReviewLinkOk(v)) p.googleReviewLink = 'Paste the review link from your Google Business Profile (starts with https://g.page/ or https://search.google.com/).';
   }
   return p;
 }

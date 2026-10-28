@@ -30,7 +30,8 @@ import PaymentBox from '../components/PaymentBox';
 import CallAlertsBox from '../components/CallAlertsBox';
 import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp } from '../utils/callAlarm';
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
-import { diffProfile, profileProblems, payloadFor, profileProgress } from '../utils/profileAutosave';
+import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
+import { formatDoctorName } from '../utils/formatName';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
 // doctor screens (and vice versa) and the dashboard's first view is lighter.
@@ -226,6 +227,7 @@ function Dashboard() {
   const [cancelModal, setCancelModal] = useState({ open: false, id: null });
   const [rescheduleModal, setRescheduleModal] = useState({ open: false, appointment: null });
   const [rateModal, setRateModal] = useState({ open: false, id: null });
+  const [googleAsk, setGoogleAsk] = useState({ open: false, link: '', name: '' }); // "Also rate on Google" after an in-app rating
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
@@ -312,7 +314,7 @@ function Dashboard() {
     specialization: '', experience: '', qualification: '', medicalRegistrationNo: '',
     clinicAddress: '', consultationFee: '', bio: '',
     phone: '', whatsappNumber: '', upiId: '', upiQrCode: '', profilePhoto: '',
-    city: '', googleMapsLink: '', consultationModes: ['in-person'],
+    city: '', googleMapsLink: '', googleReviewLink: '', consultationModes: ['in-person'],
     languagesSpoken: []
   });
   const photoInputRef = useRef(null); // hidden file input for one-click photo upload
@@ -422,7 +424,7 @@ function Dashboard() {
         consultationFee: d.consultationFee || '', bio: d.bio || '',
         phone: d.phone || '', whatsappNumber: d.whatsappNumber || '', upiId: d.upiId || '',
         upiQrCode: d.upiQrCode || '', profilePhoto: d.profilePhoto || '',
-        city: d.city || '', googleMapsLink: d.googleMapsLink || '',
+        city: d.city || '', googleMapsLink: d.googleMapsLink || '', googleReviewLink: d.googleReviewLink || '',
         consultationModes: d.consultationModes || ['in-person'],
         languagesSpoken: d.languagesSpoken || []
       };
@@ -845,8 +847,16 @@ function Dashboard() {
     }
     try {
       await reviewAPI.create({ appointmentId: rateModal.id, rating, comment: values.comment || '' });
-      toast.success('Thank you for your review!');
       setRateModal({ open: false, id: null });
+      // If the doctor added their Google review link, offer it — to EVERY
+      // patient whatever stars they gave (Google forbids asking only happy
+      // patients). Link re-checked here before we ever open it.
+      const doc = appointments.find((a) => a._id === rateModal.id)?.doctor;
+      if (doc?.googleReviewLink && googleReviewLinkOk(doc.googleReviewLink)) {
+        setGoogleAsk({ open: true, link: doc.googleReviewLink.trim(), name: formatDoctorName(doc.name) });
+      } else {
+        toast.success('Thank you for your review!');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to submit review');
     }
@@ -1902,6 +1912,7 @@ function Dashboard() {
               { key: 'clinicAddress', label: 'Clinic Address *', placeholder: 'e.g., 123 Health Street' },
               { key: 'city', label: 'City *', placeholder: 'e.g., Delhi, Mumbai, Rishikesh' },
               { key: 'googleMapsLink', label: 'Google Maps Link (optional)', placeholder: 'Paste your clinic Google Maps URL' },
+              { key: 'googleReviewLink', label: '⭐ Google review link (optional)', placeholder: 'https://g.page/r/…/review', type: 'url', hint: 'Google Business Profile → "Ask for reviews" → copy the link. Patients who rate you on ProMedicoz are also offered "Rate on Google" — more Google reviews help you show up in Google Maps.' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210', type: 'tel', hint: '⚠️ Public: if you add this, a "Message on WhatsApp" button appears on your public profile and any patient can message you directly. Leave blank to keep your WhatsApp private.' },
               { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., drname@okicici', hint: 'Shown to patients as a payment fallback if your UPI QR code can\'t be scanned.' },
@@ -2134,6 +2145,21 @@ function Dashboard() {
         submitText="Submit Review"
         onSubmit={handleRateDoctor}
         onCancel={() => setRateModal({ open: false, id: null })}
+      />
+
+      {/* After an in-app rating: optional "Also rate on Google" (only when
+          the doctor added their link; shown whatever the stars). */}
+      <ConfirmModal
+        open={googleAsk.open}
+        title={`🙏 Thanks for rating ${googleAsk.name}`}
+        message="Want to help other patients find them on Google too? It takes a minute."
+        confirmText="⭐ Also rate on Google"
+        cancelText="Maybe later"
+        onConfirm={() => {
+          window.open(googleAsk.link, '_blank', 'noopener,noreferrer');
+          setGoogleAsk({ open: false, link: '', name: '' });
+        }}
+        onCancel={() => setGoogleAsk({ open: false, link: '', name: '' })}
       />
 
       {(() => {

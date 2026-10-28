@@ -51,6 +51,7 @@ const purgeExpiredDeletedAccounts = async () => {
       user.profilePhoto = '';
       user.clinicAddress = '';
       user.googleMapsLink = '';
+      user.googleReviewLink = '';
       user.bio = '';
       user.medicalRegistrationNo = '';
       user.qualification = '';
