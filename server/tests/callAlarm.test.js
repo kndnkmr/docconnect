@@ -110,14 +110,100 @@ test('snooze: rings that person again 5 min later unless someone joined', async 
   assert.strictEqual(pushed.length, 0);
 });
 
+// ---- users (stubbed) for test alarm / readiness / receipts ----
+const User = require('../models/User');
+const users = {};
+let userUpdates = [];
+User.findById = (id) => q(users[String(id)] || null);
+User.updateOne = async (f, u) => { userUpdates.push({ f, u }); };
+const runCtl = async (handler, req) => {
+  const res = { statusCode: 200, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; } };
+  await handler(req, res);
+  return res;
+};
+
 test('test alarm: rings own devices; 400 if none; rate-limited', async () => {
-  const run = async (user) => {
-    const res = { statusCode: 200, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; } };
-    await pushCtl.testAlarm({ user }, res);
-    return res;
-  };
-  const ok = await run({ _id: 'u-test-1' });
+  users['u-test-1'] = { pushSubscriptions: [{ endpoint: 'x' }] };
+  const ok = await runCtl(pushCtl.testAlarm, { user: { _id: 'u-test-1' }, body: {} });
   assert.strictEqual(ok.statusCode, 200);
   assert.strictEqual(pushed[0].payload.kind, 'call');
-  assert.strictEqual((await run({ _id: 'u-test-1' })).statusCode, 429);
+  assert.ok(pushed[0].payload.ackToken, 'test alarm carries a receipt token');
+  assert.strictEqual((await runCtl(pushCtl.testAlarm, { user: { _id: 'u-test-1' }, body: {} })).statusCode, 429);
+  users['u-none'] = { pushSubscriptions: [] };
+  assert.strictEqual((await runCtl(pushCtl.testAlarm, { user: { _id: 'u-none' }, body: {} })).statusCode, 400);
+});
+
+test('locked-screen test: answers at once, rings ~15 s later, records the test', async (t) => {
+  try { t.mock.timers.enable({ apis: ['setTimeout'] }); } catch { t.mock.timers.enable(['setTimeout']); } // Node 20 vs older
+  users['u-lock'] = { pushSubscriptions: [{ endpoint: 'x' }] };
+  userUpdates = [];
+  const r = await runCtl(pushCtl.testAlarm, { user: { _id: 'u-lock' }, body: { locked: true } });
+  assert.strictEqual(r.statusCode, 200);
+  assert.match(r.body.message, /Lock your phone now/);
+  assert.strictEqual(pushed.length, 0, 'not sent yet');
+  assert.strictEqual(userUpdates[0].u.$set.alarmTest.locked, true);
+  t.mock.timers.tick(15 * S);
+  await new Promise((res) => setImmediate(res));
+  assert.strictEqual(pushed.length, 1);
+  assert.match(pushed[0].payload.title, /Locked-screen test/);
+});
+
+test('receipt: phone confirms → seenAt recorded once; bad/forged tokens refused', async () => {
+  userUpdates = [];
+  // test-alarm receipt
+  const testTok = makeRingToken('test', 'u-lock', Date.now() + MIN);
+  assert.strictEqual((await runCtl(pushCtl.ack, { body: { token: testTok } })).statusCode, 200);
+  assert.ok(userUpdates[0].u.$set['alarmTest.seenAt'] instanceof Date);
+  // appointment receipt
+  Appointment.findById = () => q({ _id: 'a1', doctor: 'doc1', patient: 'pat1', callAlerts: {} });
+  const tok = makeRingToken('a1', 'pat1', Date.now() + MIN);
+  const r = await runCtl(pushCtl.ack, { body: { token: tok }, app: { get: () => null } });
+  assert.strictEqual(r.statusCode, 200);
+  assert.ok(updates[0].$set['callAlerts.patient.seenAt'] instanceof Date);
+  // someone else's token for this appointment
+  const stranger = makeRingToken('a1', 'someone', Date.now() + MIN);
+  assert.strictEqual((await runCtl(pushCtl.ack, { body: { token: stranger }, app: { get: () => null } })).statusCode, 400);
+  assert.strictEqual((await runCtl(pushCtl.ack, { body: { token: tok.slice(0, -2) + 'xx' } })).statusCode, 400);
+  // already seen → not overwritten
+  updates.length = 0;
+  Appointment.findById = () => q({ _id: 'a1', doctor: 'doc1', patient: 'pat1', callAlerts: { patient: { seenAt: new Date() } } });
+  await runCtl(pushCtl.ack, { body: { token: tok }, app: { get: () => null } });
+  assert.strictEqual(updates.length, 0);
+});
+
+test('ring carries a receipt token and records sentAt + devices once', async () => {
+  Appointment.find = () => q([apt({ callPreAlertSentAt: new Date(), callReadyCheckSentAt: new Date() })]);
+  await sendCallStartReminders(START + 5 * S);
+  const ring = pushed.find((p) => p.payload.kind === 'call');
+  assert.ok(ring.payload.ackUrl && ring.payload.ackToken);
+  assert.deepStrictEqual(readRingToken(ring.payload.ackToken).appointmentId, 'a1');
+  const set = updates[0].$set;
+  assert.ok(set['callAlerts.doctor.sentAt'] && set['callAlerts.patient.sentAt']);
+  assert.strictEqual(set['callAlerts.patient.devices'], 1);
+});
+
+test('readiness: no alerts / not tested / tested on a locked screen in last 60 days', () => {
+  const { readiness } = require('../utils/callReminder');
+  const now = Date.now();
+  assert.strictEqual(readiness({ pushSubscriptions: [] }, now), 'no-alerts');
+  assert.strictEqual(readiness({ pushSubscriptions: [{}] }, now), 'not-tested');
+  assert.strictEqual(readiness({ pushSubscriptions: [{}], alarmTest: { locked: false, seenAt: new Date(now) } }, now), 'not-tested');
+  assert.strictEqual(readiness({ pushSubscriptions: [{}], alarmTest: { locked: true, seenAt: new Date(now - 10 * 864e5) } }, now), 'ok');
+  assert.strictEqual(readiness({ pushSubscriptions: [{}], alarmTest: { locked: true, seenAt: new Date(now - 61 * 864e5) } }, now), 'not-tested');
+});
+
+test('30 min before: checks both, nudges the one not ready, records results', async () => {
+  users.doc1 = { name: 'Sharma', pushSubscriptions: [{}], alarmTest: { locked: true, seenAt: new Date(START - 2 * 864e5) } };
+  users.pat1 = { name: 'Asha', email: '', pushSubscriptions: [{}], alarmTest: {} };
+  Appointment.find = () => q([apt()]);
+  assert.strictEqual(planFor(apt(), START - 40 * MIN).readyCheck, false);
+  assert.strictEqual(planFor(apt(), START - 30 * MIN).readyCheck, true);
+  assert.strictEqual(planFor(apt({ callReadyCheckSentAt: new Date() }), START - 30 * MIN).readyCheck, false);
+  await sendCallStartReminders(START - 30 * MIN);
+  const set = updates[0].$set;
+  assert.strictEqual(set['callAlerts.doctor.ready'], 'ok');
+  assert.strictEqual(set['callAlerts.patient.ready'], 'not-tested');
+  assert.ok(set.callReadyCheckSentAt);
+  assert.deepStrictEqual(pushed.map((p) => p.to), ['pat1'], 'only the patient is nudged');
+  assert.match(pushed[0].payload.title, /15-second test/);
 });

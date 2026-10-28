@@ -137,6 +137,32 @@ export const isIOSDevice = (ua = typeof navigator !== 'undefined' ? navigator.us
 export const isStandalone = () =>
   typeof window !== 'undefined' && ((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true);
 
+// Is the OTHER person's phone likely not to ring? Uses the server's records:
+// callAlerts.<role> = { sentAt, devices, seenAt (phone receipt), ready }.
+//   'not-ready'    → before the call: the 30-min check found alerts off / not
+//                    tested on a locked screen (keep their number handy)
+//   'not-received' → the ring was sent ≥45 s ago but their phone never
+//                    confirmed it (locked + battery saver / Do Not Disturb)
+//   'no-alerts'    → the ring went out to 0 devices (alerts off)
+//   null           → fine, or nothing to say
+// myRole = 'doctor' | 'patient' (the viewer); the other side is checked.
+const RECEIPT_GRACE_MS = 45 * 1000;
+export function otherAlertProblem(apt, myRole, now = Date.now()) {
+  if (!apt || apt.status !== 'confirmed' || apt.paymentStatus !== 'paid') return null;
+  if (!['video', 'phone'].includes(apt.consultationType)) return null;
+  const t = slotTimes(apt.date, apt.timeSlot);
+  if (!t || now > t.end) return null;
+  if (apt.callStartedAt && new Date(apt.callStartedAt).getTime() >= t.start - 15 * 60000) return null;
+  const other = (apt.callAlerts || {})[myRole === 'doctor' ? 'patient' : 'doctor'] || {};
+  if (other.sentAt) {
+    if (other.seenAt) return null;
+    if (other.devices === 0) return 'no-alerts';
+    return now - new Date(other.sentAt).getTime() >= RECEIPT_GRACE_MS ? 'not-received' : null;
+  }
+  if (now < t.start && (other.ready === 'not-tested' || other.ready === 'no-alerts')) return 'not-ready';
+  return null;
+}
+
 // Show "Not joined yet? Call / WhatsApp them" — from 2 min after the start
 // until the slot ends, for a confirmed + paid video/phone appointment.
 export function showNoShowHelp(apt, now = Date.now()) {

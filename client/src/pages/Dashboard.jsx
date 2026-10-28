@@ -28,7 +28,7 @@ import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
 import PaymentBox from '../components/PaymentBox';
 import CallAlertsBox from '../components/CallAlertsBox';
-import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp } from '../utils/callAlarm';
+import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp, otherAlertProblem } from '../utils/callAlarm';
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
@@ -1734,8 +1734,41 @@ function Dashboard() {
                       {wantsCallAlerts(apt) && !videoCallAppointmentId && (
                         <CallAlertsBox when={(apt.timeSlot || '').split(' - ')[0]} />
                       )}
+                      {/* The OTHER person's phone may not ring (from the phone
+                          receipts + the 30-min check). A normal phone call
+                          rings even when their screen is locked. */}
+                      {(() => {
+                        const problem = !videoCallAppointmentId && otherAlertProblem(apt, isDoctor ? 'doctor' : 'patient');
+                        if (!problem) return null;
+                        const who = isDoctor ? (apt.patient?.name || 'The patient') : `Dr. ${apt.doctor?.name || ''}`.trim();
+                        const text = {
+                          'not-received': `📵 ${who}'s phone didn't get the call alert (screen locked or battery saver?).`,
+                          'no-alerts': `🔕 ${who} has call alerts off — their phone won't ring.`,
+                          'not-ready': `⚠️ ${who}'s phone hasn't passed a locked-screen test — it may not ring at ${(apt.timeSlot || '').split(' - ')[0]}.`,
+                        }[problem];
+                        return (
+                          <div className="mt-3 p-3 bg-orange-50 border border-orange-300 rounded-lg" role="status">
+                            <p className="text-xs font-semibold text-orange-900">{text}</p>
+                            <p className="text-[11px] text-orange-900 mt-0.5 mb-2">{isDoctor ? 'A normal phone call rings even on a locked screen:' : 'You can reach them another way:'}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {isDoctor && apt.patient?.phone && (
+                                <a href={`tel:${apt.patient.phone}`} className="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700">📞 Call patient</a>
+                              )}
+                              {isDoctor && apt.patient?.phone && (
+                                <a href={`https://wa.me/${String(apt.patient.phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz. Your ${apt.consultationType === 'video' ? 'video' : 'audio'} consultation (${apt.timeSlot}) is ${problem === 'not-ready' ? 'coming up' : 'starting now'}. Please open ProMedicoz and tap Join: https://www.promedicoz.in/dashboard`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp patient</a>
+                              )}
+                              {isPatient && (
+                                <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">💬 Message doctor</button>
+                              )}
+                              {isPatient && (
+                                <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}): the doctor's phone may not be getting the call alert. Please call them. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 Ask ProMedicoz to call them</a>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
                       {/* 2 min in and the other person hasn't joined: reach them directly. */}
-                      {showNoShowHelp(apt) && !videoCallAppointmentId && (
+                      {showNoShowHelp(apt) && !videoCallAppointmentId && !otherAlertProblem(apt, isDoctor ? 'doctor' : 'patient') && (
                         <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs font-semibold text-amber-900 mb-2">
                             {isDoctor ? 'Patient not joined yet? Reach them directly:' : "Doctor not joined yet? They'll ring you; you can also:"}

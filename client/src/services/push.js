@@ -100,11 +100,23 @@ export const disablePushNotifications = async (authToken) => {
 
 // "🔔 Test my alarm": the server rings this account's devices with the same
 // alarm-style notification a call uses. Resolves { ok, message }.
-export const sendTestAlarm = async () => {
+// { locked: true } → the server waits 15 s so you can lock the phone first.
+export const sendTestAlarm = async ({ locked = false } = {}) => {
   try {
-    const { data } = await API.post('/push/test-alarm');
-    return { ok: true, message: data.message };
+    const { data } = await API.post('/push/test-alarm', { locked });
+    return { ok: true, message: data.message, delayMs: data.delayMs || 0, sendAt: data.sendAt, receipts: data.receipts !== false };
   } catch (error) {
     return { ok: false, message: error.response?.data?.message || 'Could not send a test alarm.' };
+  }
+};
+
+// My last test: { sentAt, locked, seenAt } — seenAt is set when a phone
+// confirmed it received the alert.
+export const getAlarmTestStatus = async () => {
+  try {
+    const { data } = await API.get('/push/test-status');
+    return data.alarmTest || null;
+  } catch {
+    return null;
   }
 };

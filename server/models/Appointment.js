@@ -187,6 +187,17 @@ const appointmentSchema = new mongoose.Schema({
     type: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, at: Date }],
     default: [],
   },
+  // Did the call alert actually REACH each person's phone? The phone's
+  // service worker sends a signed receipt when it shows the alert
+  // (POST /api/push/ack). "sent" ≠ "rang": a locked phone in battery-saver
+  // can swallow it. Lets the other side (and Admin) see "didn't get it" and
+  // reach them by a normal phone call instead. ready: result of the check
+  // ~30 min before ('ok' | 'not-tested' | 'no-alerts').
+  callAlerts: {
+    doctor: { sentAt: Date, devices: Number, seenAt: Date, ready: String },
+    patient: { sentAt: Date, devices: Number, seenAt: Date, ready: String },
+  },
+  callReadyCheckSentAt: { type: Date, default: null },
 
   // ---- "Needs help" follow-ups (utils/journeyReminders.js, utils/needsHelp.js) ----
   // Doctor reminded to confirm a still-pending booking (once).

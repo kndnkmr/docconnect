@@ -1482,6 +1482,23 @@ function AdminDashboard() {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
                           {apt.status}
                         </span>
+                        {/* Video/phone: did the call alert actually reach each phone?
+                            (phone receipts — see server pushController.ack) */}
+                        {['video', 'phone'].includes(apt.consultationType) && apt.callAlerts && (apt.callAlerts.doctor || apt.callAlerts.patient) && (
+                          <div className="mt-1 text-[11px] leading-snug text-gray-700" title="Call alert: ✅ reached the phone · ❌ sent but the phone never confirmed (locked / battery saver / Do Not Disturb) · 🔕 alerts off · ⚠️ not tested on a locked screen (30-min check)">
+                            {[['Dr', apt.callAlerts.doctor], ['Pt', apt.callAlerts.patient]].map(([who, a]) => {
+                              const t = (d) => new Date(d).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Kolkata' });
+                              let txt = '—';
+                              if (a && a.seenAt) txt = `✅ ${t(a.seenAt)}`;
+                              else if (a && a.sentAt && a.devices === 0) txt = '🔕 alerts off';
+                              else if (a && a.sentAt) txt = `❌ not received`;
+                              else if (a && a.ready === 'no-alerts') txt = '🔕 alerts off';
+                              else if (a && a.ready === 'not-tested') txt = '⚠️ not tested';
+                              else if (a && a.ready === 'ok') txt = '✓ tested';
+                              return <div key={who}>📞 {who}: {txt}</div>;
+                            })}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {(() => {

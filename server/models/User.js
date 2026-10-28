@@ -509,6 +509,13 @@ const userSchema = new mongoose.Schema({
     }],
     default: []
   },
+  // Last "Test my alarm": when it was sent, whether it was a locked-screen
+  // test (sent after a 15 s delay), and when a phone confirmed it arrived.
+  alarmTest: {
+    sentAt: { type: Date, default: null },
+    locked: { type: Boolean, default: false },
+    seenAt: { type: Date, default: null },
+  },
 
   verificationToken: {
     type: String,

@@ -434,6 +434,7 @@ const io = initSocket(server);
 // appointmentController.js. Polling stays as a fallback if this is unset
 // (e.g. during tests, where the socket layer is never exercised).
 app.set('io', io);
+require('./utils/live').setIo(io); // background jobs (e.g. call alerts) can push live updates
 
 // ---- STEP 10: Start the server ----
 // Only listen when run directly (node server.js), not when imported by tests.

@@ -7,9 +7,14 @@
 // top of the saved change, and the client also catches up on reconnect /
 // when the tab becomes visible.
 
+// Background jobs have no request: server.js registers the socket server
+// here once so they can send live updates too.
+let globalIo = null;
+const setIo = (io) => { globalIo = io; };
+
 function tellUsers(req, userIds, event = 'appointment-updated', payload = {}) {
   try {
-    const io = req && req.app && typeof req.app.get === 'function' ? req.app.get('io') : null;
+    const io = (req && req.app && typeof req.app.get === 'function' ? req.app.get('io') : null) || globalIo;
     if (!io) return;
     const seen = new Set();
     for (const raw of [].concat(userIds || [])) {
@@ -27,4 +32,4 @@ function tellUsers(req, userIds, event = 'appointment-updated', payload = {}) {
 const appointmentChanged = (req, apt, extra = {}) =>
   tellUsers(req, [apt.patient, apt.doctor], 'appointment-updated', { appointmentId: String(apt._id), ...extra });
 
-module.exports = { tellUsers, appointmentChanged };
+module.exports = { tellUsers, appointmentChanged, setIo };

@@ -5,7 +5,9 @@
 
 const User = require('../models/User');
 const { sendPushToUser, RING_PUSH_OPTS } = require('../utils/push');
-const { readRingToken } = require('../utils/ringToken');
+const { readRingToken, makeRingToken, ackUrl } = require('../utils/ringToken');
+// Locked-screen test: ring after this delay so the person can lock the phone.
+const LOCKED_TEST_DELAY_MS = 15 * 1000;
 const { snoozeRing } = require('../utils/callReminder');
 
 const MAX_SUBSCRIPTIONS = 10; // devices/browsers per account
@@ -102,17 +104,37 @@ const testAlarm = async (req, res) => {
       return res.status(429).json({ message: 'Just sent one. Please wait a few seconds and try again.' });
     }
     lastTest.set(key, now);
-    const delivered = await sendPushToUser(req.user._id, {
+    // Locked-screen test: wait 15 s so the person can lock their phone first.
+    const locked = Boolean(req.body && req.body.locked);
+    const delayMs = locked ? LOCKED_TEST_DELAY_MS : 0;
+    const me = await User.findById(req.user._id).select('pushSubscriptions');
+    const devices = (me && me.pushSubscriptions ? me.pushSubscriptions.length : 0);
+    if (!devices) {
+      return res.status(400).json({ message: 'No phone or browser with call alerts was found for your account. Turn on call alerts first.' });
+    }
+    const sendAt = new Date(now + delayMs);
+    await User.updateOne({ _id: req.user._id }, { $set: { alarmTest: { sentAt: sendAt, locked, seenAt: null } } });
+    const url = ackUrl();
+    const payload = {
       kind: 'call',
-      title: '🔔 Test alarm — ProMedicoz',
+      title: locked ? '🔒 Locked-screen test — ProMedicoz' : '🔔 Test alarm — ProMedicoz',
       body: 'If your phone rang or vibrated, call alerts work. Tap to close.',
       url: '/dashboard',
       tag: 'test-alarm',
-    }, RING_PUSH_OPTS);
+      // Receipt: the phone confirms it showed this (see /push/ack).
+      ackUrl: url || undefined,
+      ackToken: url ? makeRingToken('test', String(req.user._id), now + delayMs + 10 * 60 * 1000) : undefined,
+    };
+    const send = () => sendPushToUser(req.user._id, payload, RING_PUSH_OPTS);
+    if (delayMs) {
+      setTimeout(() => { send().catch(() => {}); }, delayMs).unref?.();
+      return res.json({ message: `Lock your phone now — it will ring in ${Math.round(delayMs / 1000)} seconds.`, delayMs, sendAt, receipts: Boolean(url) });
+    }
+    const delivered = await send();
     if (!delivered) {
       return res.status(400).json({ message: 'No phone or browser with call alerts was found for your account. Turn on call alerts first.' });
     }
-    res.json({ message: `Test alarm sent to ${delivered} device${delivered === 1 ? '' : 's'}.`, delivered });
+    res.json({ message: `Test alarm sent to ${delivered} device${delivered === 1 ? '' : 's'}.`, delivered, delayMs: 0, sendAt, receipts: Boolean(url) });
   } catch (error) {
     console.error('Test alarm error:', error.message);
     res.status(500).json({ message: 'Error sending test alarm' });
@@ -136,4 +158,39 @@ const snooze = async (req, res) => {
   }
 };
 
-module.exports = { getPublicKey, subscribe, unsubscribe, testAlarm, snooze };
+// ---- Delivery receipt from the phone (service worker, no login) ----
+// POST /api/push/ack  { token }  — token = signed { appointment|'test', user }
+// from the alert payload. Records that the alert really reached that phone.
+const ack = async (req, res) => {
+  try {
+    const t = readRingToken(req.body && req.body.token);
+    if (!t) return res.status(400).json({ message: 'Invalid or expired' });
+    const now = new Date();
+    if (t.appointmentId === 'test') {
+      await User.updateOne({ _id: t.userId, 'alarmTest.seenAt': null }, { $set: { 'alarmTest.seenAt': now } });
+      return res.json({ ok: true });
+    }
+    const Appointment = require('../models/Appointment');
+    const apt = await Appointment.findById(t.appointmentId).select('doctor patient callAlerts');
+    if (!apt) return res.status(400).json({ message: 'not found' });
+    const role = String(apt.doctor) === t.userId ? 'doctor' : String(apt.patient) === t.userId ? 'patient' : null;
+    if (!role) return res.status(400).json({ message: 'not a participant' });
+    if (!(apt.callAlerts && apt.callAlerts[role] && apt.callAlerts[role].seenAt)) {
+      await Appointment.updateOne({ _id: apt._id }, { $set: { [`callAlerts.${role}.seenAt`]: now } });
+      // Tell both open Dashboards so "their phone didn't get it" clears live.
+      try { require('../utils/live').appointmentChanged(req, apt); } catch { /* best effort */ }
+    }
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Push ack error:', error.message);
+    res.status(500).json({ message: 'Error' });
+  }
+};
+
+// ---- Result of my last alarm test (for the "did it ring?" check) ----
+const testStatus = async (req, res) => {
+  const me = await User.findById(req.user._id).select('alarmTest');
+  res.json({ alarmTest: (me && me.alarmTest) || null });
+};
+
+module.exports = { getPublicKey, subscribe, unsubscribe, testAlarm, snooze, ack, testStatus };

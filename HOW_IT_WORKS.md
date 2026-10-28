@@ -1895,6 +1895,17 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## Call alerts on a locked phone (any time of day)
+
+A website can't ring like a phone call. On a locked phone, battery savers (Xiaomi/Samsung/Oppo/Vivo) and Do Not Disturb can silence or delay its alert; the in-page ring only plays while the app is open. We already send the alert at the highest priority the web allows; these make the gaps visible and give a way around them (free):
+- **Receipts:** every ring (and every alarm test) carries a signed token; when the phone actually shows it, the service worker posts it to `POST /api/push/ack` (no login). Saved as `Appointment.callAlerts.{doctor|patient}.{sentAt, devices, seenAt}` and `User.alarmTest.seenAt`. "sent" ≠ "rang".
+- **🔒 Test with screen locked** (appointment card): rings 15 s later so the person locks the phone; then the page checks the receipt → "✅ It reached your phone while locked" or "❌ It didn't" + fix steps for their phone brand (`client/src/utils/alertFixSteps.js`). A passed locked test counts for 60 days.
+- **~30 min before** each video/phone appointment: each person is checked (`readiness()` in `utils/callReminder.js`: alerts on? passed a locked test?). If not ready they get a push + email to do the 15-second test; result saved as `callAlerts.<role>.ready`.
+- **The other side sees it:** before the call "⚠️ X's phone hasn't passed a locked-screen test"; ~45 s after the ring with no receipt "📵 X's phone didn't get the call alert" → doctor: **📞 Call patient** (a normal phone call rings even when locked) / WhatsApp; patient: Message doctor / ask ProMedicoz to call them. (`otherAlertProblem()` in `utils/callAlarm.js`.)
+- **Admin → Appointments:** per video/phone appointment, "📞 Dr: ✅ 6:00:06 PM · Pt: ❌ not received" (or 🔕 alerts off / ⚠️ not tested).
+- Needs `RENDER_EXTERNAL_URL` (set by Render automatically) or `PUBLIC_API_URL` so the phone knows where to send receipts.
+- Still not possible for free: ringing a phone whose browser is fully blocked by the phone → the paid real-phone-call option (Exotel / MSG91: bridged phone consultations + a short wake-up call for video).
+
 ## Admin → 🩺 Manage doctor (doctors who want ProMedicoz to run their profile)
 
 Some doctors send their details and want the admin to manage everything so they "just see patients".

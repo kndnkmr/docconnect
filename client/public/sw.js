@@ -11,7 +11,7 @@
 // Bumping CACHE_NAME on each meaningful change forces old caches to be cleared,
 // so users pick up new versions without manually clearing their browser cache.
 
-const CACHE_NAME = 'promedicoz-v7';
+const CACHE_NAME = 'promedicoz-v8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -73,6 +73,11 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     Promise.all([
       self.registration.showNotification(data.title, options),
+      // Receipt: tell the server this alert really reached THIS phone (signed
+      // token, no login). Lets the other person / Admin see "didn't get it".
+      data.ackUrl && data.ackToken
+        ? fetch(data.ackUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: data.ackToken }) }).catch(() => {})
+        : null,
       // Tell any open ProMedicoz tab, so it can ring in-page too.
       data.kind === 'call'
         ? self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) =>

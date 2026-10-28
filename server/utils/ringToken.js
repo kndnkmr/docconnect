@@ -36,9 +36,14 @@ function readRingToken(token, now = Date.now()) {
 
 // Absolute URL of the snooze endpoint for the service worker, or '' if the
 // server doesn't know its own public address (then the Later button is hidden).
-function snoozeUrl() {
+// The same token also signs delivery receipts (POST /api/push/ack): "this
+// alert for appointment A reached user U's phone". For the alarm test the
+// "appointment" is the literal 'test'.
+function pushApiUrl(path) {
   const base = (process.env.PUBLIC_API_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, '').replace(/\/api$/, '');
-  return base ? `${base}/api/push/snooze` : '';
+  return base ? `${base}/api/push/${path}` : '';
 }
+const snoozeUrl = () => pushApiUrl('snooze');
+const ackUrl = () => pushApiUrl('ack');
 
-module.exports = { makeRingToken, readRingToken, snoozeUrl };
+module.exports = { makeRingToken, readRingToken, snoozeUrl, ackUrl };
