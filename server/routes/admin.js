@@ -85,6 +85,11 @@ router.post('/fix-email-index', fixEmailIndexAdmin);
 router.get('/db-check', require('../controllers/adminController').getDbCheck);
 router.post('/fix-slot-index', require('../controllers/adminController').fixSlotIndexAdmin);
 
+// Database backups (nightly, encrypted, private) — utils/backup.js
+router.get('/backups', require('../controllers/adminController').getBackups);
+router.post('/backups/run', require('../controllers/adminController').runBackupNow);
+router.get('/backups/download', require('../controllers/adminController').backupDownload);
+
 // POST /api/admin/backfill-doctor-languages - one-time: set a default
 // languagesSpoken (Hindi + English) on doctors who registered before the
 // field existed and haven't set any yet. Idempotent; never overwrites a

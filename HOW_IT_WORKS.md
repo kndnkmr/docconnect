@@ -819,30 +819,7 @@ there's nothing to grep for — recorded here so the reasoning isn't lost:
   create a new database user or change this one, scope it the same way
   and never assign an admin-level role to an application's own connection
   credential
-- **No backups exist** - confirmed this is Atlas's free M0 tier, which
-  has zero backup capability regardless of settings. This is a conscious,
-  deferred risk, not an oversight - revisit once there's real paying
-  usage. In the meantime, the non-destructive admin tools (Deactivate,
-  "Reset for Re-registration") cover the most likely accident scenario
-  without needing a database backup at all; they just don't help against
-  a bug in a future code change or a manual mistake made directly in
-  Atlas's Data Explorer
-
-### Privacy Policy Accuracy (maintenance reminder)
-
-Found genuinely out of sync with the actual code during a review: it said
-video calls used "Jitsi Meet" (the app switched to Daily.co a while ago)
-and that account deletion "permanently removes all data within 30 days"
-(the real policy is a 90-day grace period then anonymization only —
-appointment/prescription/report records are deliberately retained, not
-deleted). Both fixed in `client/src/pages/PrivacyPolicy.jsx`.
-**If you ever change**: the video calling provider, the account deletion/
-retention window, or add a new category of data collected from patients —
-check `PrivacyPolicy.jsx` at the same time. It's easy for this page to
-drift out of sync since nothing enforces it staying accurate.
-
-### Bilingual Patient Experience (English / हिंदी)
-
+- **Backups: nightly, encrypted, made by the server itself** (added Oct 2026). Atlas's free M0 tier has no backups, so `utils/backup.js` copies every collection at ~02:30 IST, gzips it, encrypts it with AES-256-GCM using `BACKUP_KEY` (set only on Render), and stores it as a **private** raw file in Cloudinary (`promedicoz/backups/`), keeping the newest 14. Admin → Overview shows "💾 Database backups" (last run, Back up now, encrypted downloads). See **Backups & Restore** below. Keep a copy of `BACKUP_KEY` outside Render (password manager): without it the backups can't be opened.
 - A language toggle appears on the home page (prominently in the hero, not
   the navbar) and the booking flow. The choice is stored in localStorage
   (`promedicoz_lang`) so it carries across pages and visits.
@@ -1874,6 +1851,33 @@ category chips, Most Read / Most Loved / Start Here, read counts) is unchanged.
 
 ---
 
+## Backups & Restore
+
+**What's backed up:** every MongoDB collection (users, appointments, prescriptions, reports, reviews, messages, complaints, …), as Extended JSON so ids and dates restore exactly. Uploaded files (photos, QR codes, reports) already live in Cloudinary and aren't part of the database file.
+
+**When / where:** nightly ~02:30 IST (a restart catches up the same day) + on demand (Admin → Overview → **Back up now**). Private Cloudinary raw files `promedicoz/backups/backup-YYYYMMDD-HHMM.pmzbak`, newest 14 kept. Each run is logged in the `backupruns` collection (time, size, counts — no data).
+
+**Turning it on (once):**
+1. On your Mac: `openssl rand -hex 32` → copy the 64-character result.
+2. Save it in your password manager as "ProMedicoz BACKUP_KEY". **Without it, backups can't be restored.**
+3. Render → **docconnect-sg** → Environment → add `BACKUP_KEY` = that value → Save (it redeploys).
+4. Admin → Overview → **Back up now** → the card turns green "✓ On".
+
+Never change `BACKUP_KEY` casually: older backups need the key they were made with. If you must change it, keep the old one too.
+
+**Restoring (bad day checklist):**
+1. Admin → Overview → 💾 → **Stored** → **Download (encrypted)** the backup you want (or Cloudinary → Media Library → `promedicoz/backups`).
+2. On a computer with this repo: `cd server && npm install`
+3. Look inside first (no database touched):
+   `BACKUP_KEY=<key> node scripts/restore-backup.js backup-YYYYMMDD-HHMM.pmzbak --json /tmp/check.json`
+4. Restore into a **new** database next to the live one (safe default name `docconnect_restore_<date>`):
+   `BACKUP_KEY=<key> node scripts/restore-backup.js backup-…pmzbak --to "<MONGODB_URI from Render>"`
+   It refuses to write into a database that already has data unless you add `--overwrite`.
+5. Check the restored data in Atlas → Data Explorer. Only when sure: either copy what you need back, or point Render's `MONGODB_URI` at the restored database (`--db docconnect --overwrite` replaces the live one — last resort).
+6. Delete `/tmp/check.json` afterwards (it contains health data).
+
+Tested end to end (real MongoDB): backup → restore gave identical records, ids and dates; wrong key and overwrite were refused; the original database was untouched.
+
 ## Pending Cleanup (after the Oregon → Singapore move, Oct 2026)
 
 Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:
@@ -1883,6 +1887,7 @@ Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:
 - [ ] **Render:** the region list showed "Oregon: 2 existing services" — find out what the second one is before changing or deleting it.
 - [x] **Server dependencies** (done 28 Oct 2026): critical/high/moderate fixed (`npm audit fix`; `resend` 2.1.0 → 6.35.0 pinned, with `sendEmail` now checking `result.error`). 3 low remain inside Resend's React-email renderer, which we don't use (we send plain HTML). Re-check with `cd server && npm audit --omit=dev` every few months.
 - [ ] **Vercel:** the deployment page shows "2 Recommendations" — review.
+- [ ] **Backups:** add `BACKUP_KEY` on Render (see Backups & Restore) and press **Back up now** once.
 - [ ] *(No need)* Atlas index `doctor_1_date_1_timeSlot_1` on appointments is a harmless leftover next to the working `unique_active_slot` guard.
 
 ## How to Make Changes (Future You)

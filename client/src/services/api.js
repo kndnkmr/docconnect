@@ -378,6 +378,11 @@ export const adminAPI = {
   dbCheck: () => API.get('/admin/db-check'),
   fixSlotIndex: () => API.post('/admin/fix-slot-index'),
 
+  // Database backups (nightly, encrypted): status, back up now, 5-min download link
+  getBackups: () => API.get('/admin/backups'),
+  runBackup: () => API.post('/admin/backups/run'),
+  backupDownload: (id) => API.get('/admin/backups/download', { params: { id } }),
+
   // Generate/relay a password reset link for a user (manual recovery assist
   // for phone-only patients with no email on file; also works as a "resend")
   generateResetLink: (id) => API.post(`/admin/users/${id}/reset-link`),

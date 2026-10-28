@@ -14,6 +14,7 @@ const NeedsHelp = lazy(() => import('./admin/NeedsHelp'));
 const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
+import BackupsCard from './admin/BackupsCard';
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('stats');
@@ -934,6 +935,9 @@ function AdminDashboard() {
               <span className="text-sm text-red-700 whitespace-nowrap">Open Needs help →</span>
             </button>
           )}
+          {/* Nightly encrypted database backups (status, back up now, stored list). */}
+          <BackupsCard />
+
           {/* Double-booking guard status (database rule that stops two
               patients taking the same slot at the same instant). */}
           {slotGuard && !slotGuard.unknown && (

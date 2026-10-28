@@ -216,6 +216,12 @@ connectWithRetry()
     // Doctor "please confirm" (pending 3h / slot within 4h) and patient
     // "please pay" (slot within 2h) nudges, once each (utils/journeyReminders.js).
     setInterval(runJourneyReminders, 10 * 60 * 1000);
+
+    // Nightly encrypted database backup (~02:30 IST, catches up after a
+    // restart; needs BACKUP_KEY + Cloudinary). See utils/backup.js.
+    const { maybeRunNightly } = require('./utils/backup');
+    maybeRunNightly();
+    setInterval(() => maybeRunNightly(), 10 * 60 * 1000);
   })
   .catch((error) => {
     // Only startup-task errors land here now (connection failures retry above).

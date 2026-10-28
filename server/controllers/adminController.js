@@ -1283,4 +1283,32 @@ const fixSlotIndexAdmin = async (req, res) => {
   res.status(400).json({ message: report.error || 'Could not turn the double-booking guard on.', report });
 };
 
-module.exports = { getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
+// ============================================
+// BACKUPS (admin) — see utils/backup.js
+// ============================================
+// GET  /api/admin/backups               → status, recent runs, stored files
+// POST /api/admin/backups/run           → back up now
+// GET  /api/admin/backups/download?id=  → 5-minute signed link (encrypted file)
+const backup = require('../utils/backup');
+const getBackups = async (req, res) => {
+  try {
+    res.json(await backup.backupStatus());
+  } catch (error) {
+    console.error('Backups status error:', error.message);
+    res.status(500).json({ message: 'Error reading backup status' });
+  }
+};
+const runBackupNow = async (req, res) => {
+  const r = await backup.runBackup({ trigger: `admin:${req.user._id}` });
+  if (r.ok) return res.json({ message: `Backup saved (${Math.round(r.bytes / 1024)} KB).`, run: r });
+  res.status(400).json({ message: r.error || 'Backup failed', run: r });
+};
+const backupDownload = (req, res) => {
+  try {
+    res.json({ url: backup.downloadUrl(String(req.query.id || '')) });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
