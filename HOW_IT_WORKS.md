@@ -49,7 +49,7 @@ These are settings stored on each platform — they tell the services how to fin
 
 | Where | Variable | Value | Purpose |
 |-------|----------|-------|---------|
-| Vercel | `VITE_API_URL` | `https://docconnect-fcg6.onrender.com/api` | Frontend knows where to send API requests |
+| Vercel | `VITE_API_URL` | `https://docconnect-sg.onrender.com/api` | Frontend knows where to send API requests |
 | Render | `MONGODB_URI` | `mongodb+srv://...@docconnect.mongodb.net/docconnect` | Backend knows where the database is |
 | Render | `JWT_SECRET` | *(a long random string — set only in the Render dashboard, never written in docs)* | Secret key for signing login tokens |
 | Render | `NODE_ENV` | `production` | Tells app to hide error details from users |
@@ -143,7 +143,7 @@ Step 2: User clicks submit
         → Frontend validates: all fields filled? passwords match? length >= 6?
 
 Step 3: Frontend sends to backend:
-        POST https://docconnect-fcg6.onrender.com/api/auth/register
+        POST https://docconnect-sg.onrender.com/api/auth/register
         Body: { name: "Dr. Priya", email: "priya@email.com", password: "123456", role: "doctor" }
 
 Step 4: Backend (authController.js) receives request:
@@ -196,7 +196,7 @@ Step 1: Dashboard.jsx shows the profile form (already pre-loaded)
 
 Step 2: User fills form and clicks save
         → Frontend sends:
-        PUT https://docconnect-fcg6.onrender.com/api/doctors/profile
+        PUT https://docconnect-sg.onrender.com/api/doctors/profile
         Header: Authorization: Bearer eyJ... (proves who they are)
         Body: { specialization: "Neurologist", experience: 12, consultationFee: 500, ... }
 
@@ -789,9 +789,25 @@ These are Atlas/Render dashboard settings, not application code, so
 there's nothing to grep for — recorded here so the reasoning isn't lost:
 
 - **Atlas org requires MFA** for anyone logging into the Atlas web console
+- **Backend region: Render Singapore** (`docconnect-sg`, moved from Oregon
+  in Oct 2026). The database is in Atlas Mumbai and users are in India;
+  from Oregon every database lookup crossed the Pacific (~0.25 s each), so
+  the doctor list took ~1.5 s. From Singapore it's ~0.4 s (cities 0.54 →
+  0.2 s). Render can't change a service's region: the move was a new
+  service with the same settings + env vars (JWT_SECRET and VAPID keys
+  copied exactly, so logins and call alerts carried over), then Vercel's
+  `VITE_API_URL` → `https://docconnect-sg.onrender.com/api` + redeploy.
+  `VITE_API_URL` must be type **Config**, not Secret (Vercel refuses
+  secret `VITE_` vars; they're public in the built JS anyway).
 - **Network Access** is restricted to Render's actual outbound IP ranges
-  for this service (found via Render → service → Connect → Outbound tab)
-  plus one personal IP — previously `0.0.0.0/0` ("allow from anywhere"),
+  for the backend service (Render → service → Connect → Outbound tab) plus
+  one personal IP. **Any new/moved Render service needs its Outbound ranges
+  added here**, or it stays "database: Disconnected" (the server now
+  retries every 30 s, so no restart is needed once they're added).
+  Current Singapore entries: `74.220.52.0/24`, `74.220.60.0/24` (comment
+  "Render Singapore"); the two "Render outbound range" entries
+  (`74.220.48.0/24`, `74.220.56.0/24`) belonged to the retired Oregon
+  service and can be removed once it's deleted. Previously `0.0.0.0/0` ("allow from anywhere"),
   which meant the database credential alone was the only thing standing
   between the internet and the data. Render's outbound ranges are shared
   with other Render customers in the same region, not unique to this
@@ -992,7 +1008,7 @@ production data state, not just the code.
 ### Production Smoke Test (run after risky changes)
 
 A fast way to confirm the critical flows work on live, using curl against the
-Render backend (`https://docconnect-fcg6.onrender.com/api`):
+Render backend (`https://docconnect-sg.onrender.com/api`):
 1. `GET /health` → `"database":"Connected"`
 2. Register a patient (phone-only) → expect `201` + `patientId`
 3. Login (by phone), `GET /auth/me` → role patient
@@ -1692,8 +1708,8 @@ For confirmed + paid video/phone appointments (job every 20 s):
 | Website (custom domain) | https://www.promedicoz.in |
 | Free health tools | https://www.promedicoz.in/tools |
 | Frontend (Vercel backup) | https://docconnect-mocha.vercel.app |
-| Backend (API) | https://docconnect-fcg6.onrender.com |
-| API Health Check | https://docconnect-fcg6.onrender.com/api/health |
+| Backend (API) | https://docconnect-sg.onrender.com |
+| API Health Check | https://docconnect-sg.onrender.com/api/health |
 | GitHub Repo | https://github.com/kndnkmr/docconnect |
 
 ---

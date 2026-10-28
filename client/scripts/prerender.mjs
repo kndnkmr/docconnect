@@ -372,8 +372,8 @@ async function fetchCityRoutes(specSlugs, specializationData) {
 
 // Backend address: the same VITE_API_URL the app is built with (set in
 // Vercel), so moving the backend (e.g. to Render Singapore) needs no code
-// change here. Falls back to the original Render URL.
-const API_BASE = (process.env.VITE_API_URL || 'https://docconnect-fcg6.onrender.com/api').replace(/\/+$/, '');
+// change here. Falls back to the Render Singapore URL.
+const API_BASE = (process.env.VITE_API_URL || 'https://docconnect-sg.onrender.com/api').replace(/\/+$/, '');
 
 // ---- Pregnancy due-date calculator pages ----
 // EN + HI tool pages (indexable, hreflang pair) and one share page per due
