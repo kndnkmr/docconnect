@@ -15,11 +15,13 @@
 
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
+const Prescription = require('../models/Prescription');
 const { sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification } = require('../utils/sendEmail');
-const { sendPushToUser } = require('../utils/push');
+const { sendPushToUser, RING_PUSH_OPTS } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 const { createBooking, BookingError, BOOKABLE_DOCTOR } = require('../utils/booking');
 const { slotProblem } = require('../utils/slots');
+const { appointmentChanged } = require('../utils/live');
 
 // Free-text caps (stop unbounded payloads being stored).
 const MAX_NOTES = 2000;
@@ -44,6 +46,7 @@ const bookAppointment = async (req, res) => {
       consentIP: req.headers['x-forwarded-for'] || req.ip || '',
       consentBy: 'patient',
     });
+    appointmentChanged(req, appointment); // the doctor's open dashboard shows it at once
 
     res.status(201).json({
       message: 'Appointment booked successfully! Waiting for doctor confirmation.',
@@ -168,14 +171,27 @@ const getMyAppointments = async (req, res) => {
       used.forEach((u) => { usedFollowUp[String(u.originalAppointment)] = { _id: u._id, date: u.date, timeSlot: u.timeSlot }; });
     }
 
+    // Which of these appointments already have a prescription (so the card
+    // can say "💊 Prescription ready" and update live). One query per page.
+    const rxByApt = {};
+    if (docs.length) {
+      const rxs = await Prescription.find({ appointment: { $in: docs.map((d) => d._id) } })
+        .select('appointment medicines updatedAt');
+      rxs.forEach((r) => {
+        rxByApt[String(r.appointment)] = { _id: r._id, medicineCount: (r.medicines || []).length, updatedAt: r.updatedAt };
+      });
+    }
+
     const appointments = orderedIds
       .map((id) => byId[id.toString()])
       .filter(Boolean)
       .map((d) => {
         const used = usedFollowUp[String(d._id)];
-        if (!used) return d;
+        const rx = rxByApt[String(d._id)];
+        if (!used && !rx) return d;
         const obj = d.toObject();
-        obj.followUpBooked = used;
+        if (used) obj.followUpBooked = used;
+        if (rx) obj.prescriptionInfo = rx;
         return obj;
       });
 
@@ -335,6 +351,8 @@ const updateAppointmentStatus = async (req, res) => {
     await appointment.populate('doctor', 'name specialization consultationFee');
     await appointment.populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
+    appointmentChanged(req, appointment, { status });
+
     // Send confirmation email to patient when doctor confirms
     if (status === 'confirmed') {
       sendAppointmentConfirmation(appointment.patient, appointment.doctor, appointment);
@@ -412,6 +430,7 @@ const cancelAppointment = async (req, res) => {
 
     await appointment.save();
 
+    appointmentChanged(req, appointment, { status: 'cancelled' });
     // Let the doctor know instantly, without waiting for them to check the dashboard.
     sendPushToUser(appointment.doctor, {
       title: 'Appointment cancelled',
@@ -534,6 +553,7 @@ const rescheduleAppointment = async (req, res) => {
 
     await appointment.populate('doctor', 'name specialization profilePhoto');
 
+    appointmentChanged(req, appointment, { rescheduled: true });
     // Notify the doctor: it moved and needs re-confirmation (push + email).
     const newDateLabel = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
     sendPushToUser(appointment.doctor._id ? appointment.doctor._id : appointment.doctor, {
@@ -603,6 +623,7 @@ const markPayment = async (req, res) => {
     appointment.paymentMarkedByRole = req.user.role === 'admin' ? 'admin' : 'doctor';
     await appointment.save();
 
+    appointmentChanged(req, appointment, { paymentStatus: 'paid' });
     // Tell the patient straight away (previously they only found out by
     // reopening the dashboard).
     sendPushToUser(String(appointment.patient), {
@@ -673,34 +694,36 @@ const setCallStatus = async (req, res) => {
     appointment.callStartedBy = active ? req.user._id : null;
     await appointment.save({ validateModifiedOnly: true });
 
-    // Push an instant update to the OTHER participant over the socket, so
-    // their ringing banner shows/clears immediately instead of waiting on
-    // the next poll (getIncomingCalls, polled every 5s, stays as a fallback).
+    // Tell the OTHER participant: socket (their open dashboard rings at once)
+    // + an alarm-style push (reaches them even with the app closed). The
+    // push no longer depends on the socket server being available.
     const io = req.app.get('io');
-    if (io) {
-      const otherUserId =
-        appointment.doctor.toString() === uid ? appointment.patient.toString() : appointment.doctor.toString();
+    const otherUserId =
+      appointment.doctor.toString() === uid ? appointment.patient.toString() : appointment.doctor.toString();
+    const fromName = req.user.role === 'doctor' ? `Dr. ${req.user.name}` : req.user.name;
 
-      if (appointment.callActive) {
-        const fromName = req.user.role === 'doctor' ? `Dr. ${req.user.name}` : req.user.name;
+    if (appointment.callActive) {
+      if (io) {
         io.to(`user:${otherUserId}`).emit('incoming-call', {
           appointmentId: appointment._id.toString(),
           consultationType: appointment.consultationType,
           fromName
         });
-        // Push notification too — reaches the other participant even if the
-        // app isn't open in a foreground tab right now (socket alone can't).
-        sendPushToUser(otherUserId, {
-          title: `Incoming ${appointment.consultationType === 'video' ? 'video' : 'audio'} call`,
-          body: `${fromName} is calling you now.`,
-          url: '/dashboard',
-          tag: `call-${appointment._id}`
-        });
-      } else {
-        io.to(`user:${otherUserId}`).emit('call-ended', {
-          appointmentId: appointment._id.toString()
-        });
       }
+      // Patient → doctor stays generic on the lock screen (no patient name).
+      const toDoctor = appointment.doctor.toString() === otherUserId;
+      sendPushToUser(otherUserId, {
+        kind: 'call',
+        appointmentId: appointment._id.toString(),
+        title: `📞 Incoming ${appointment.consultationType === 'video' ? 'video' : 'audio'} call`,
+        body: toDoctor ? 'Your patient has joined and is waiting. Tap Join now.' : `${fromName} is calling you now. Tap Join now.`,
+        url: `/dashboard?join=${appointment._id}`,
+        tag: `call-${appointment._id}`
+      }, RING_PUSH_OPTS);
+    } else if (io) {
+      io.to(`user:${otherUserId}`).emit('call-ended', {
+        appointmentId: appointment._id.toString()
+      });
     }
 
     res.json({ message: 'Call status updated', callActive: appointment.callActive });

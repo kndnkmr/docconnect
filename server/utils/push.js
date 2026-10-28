@@ -28,22 +28,32 @@ function ensureConfigured() {
 }
 
 // Send a push notification to every subscribed device of a user.
-// payload: { title, body, url, tag } — tag lets the browser replace/group
-// notifications (e.g. repeated "incoming call" pings collapse into one).
-// Silently no-ops if push isn't configured or the user has no subscriptions —
-// never throws, never blocks the caller (same pattern as email sending).
-const sendPushToUser = async (userId, payload) => {
+// payload: { title, body, url, tag, ...extras } — the service worker
+//   (client/public/sw.js) also reads: kind ('call' = alarm style: stays on
+//   screen, long vibration, re-alerts, Join/Later buttons), appointmentId,
+//   snoozeUrl + snoozeToken.
+// opts: { urgency: 'very-low'|'low'|'normal'|'high', TTL: seconds } —
+//   rings use high urgency + a short TTL so a phone delivers them at once
+//   and never shows a stale "starting now" an hour late.
+// Returns how many devices accepted it (0 if push isn't set up / no devices).
+// Never throws, never blocks the caller (same pattern as email sending).
+const sendPushToUser = async (userId, payload, opts = {}) => {
   try {
-    if (!ensureConfigured()) return;
+    if (!ensureConfigured()) return 0;
     const user = await User.findById(userId).select('pushSubscriptions');
-    if (!user || !user.pushSubscriptions || user.pushSubscriptions.length === 0) return;
+    if (!user || !user.pushSubscriptions || user.pushSubscriptions.length === 0) return 0;
 
     const data = JSON.stringify(payload);
+    const options = {};
+    if (opts.urgency) options.urgency = opts.urgency;
+    if (opts.TTL !== undefined) options.TTL = opts.TTL;
     const staleEndpoints = [];
+    let delivered = 0;
 
     await Promise.all(user.pushSubscriptions.map(async (sub) => {
       try {
-        await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, data);
+        await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, data, options);
+        delivered += 1;
       } catch (error) {
         // 404/410 = subscription no longer valid (browser unsubscribed, site
         // data cleared, etc.) — clean it up so we stop retrying it forever.
@@ -60,9 +70,14 @@ const sendPushToUser = async (userId, payload) => {
         $pull: { pushSubscriptions: { endpoint: { $in: staleEndpoints } } }
       });
     }
+    return delivered;
   } catch (error) {
     console.error('sendPushToUser error:', error.message);
+    return 0;
   }
 };
 
-module.exports = { sendPushToUser };
+// Alarm-style options for "your call is starting" / "incoming call" pushes.
+const RING_PUSH_OPTS = { urgency: 'high', TTL: 90 };
+
+module.exports = { sendPushToUser, RING_PUSH_OPTS };

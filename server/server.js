@@ -180,7 +180,10 @@ mongoose.connect(process.env.MONGODB_URI)
     // starts, instead of relying on one of them remembering to click Join
     // first. Runs every minute - cheap at this scale, and the job itself
     // dedupes via callReminderSentAt so nobody gets pushed twice.
-    setInterval(sendCallStartReminders, 60 * 1000);
+    // Call alarm: "starting in 10 min", then up to 3 rings ~40 s apart at
+    // slot start (stops once someone joins) + "In 5 min" snoozes. Every 20 s
+    // so the 40 s ring spacing holds. See utils/callReminder.js.
+    setInterval(() => sendCallStartReminders(), 20 * 1000);
 
     // Remind both doctor and patient ~1 hour before a confirmed appointment
     // (any consultation type) to cut no-shows. Same once-a-minute cadence;

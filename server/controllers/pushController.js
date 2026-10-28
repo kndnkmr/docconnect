@@ -4,6 +4,9 @@
 // Endpoints the frontend uses to turn push notifications on/off.
 
 const User = require('../models/User');
+const { sendPushToUser, RING_PUSH_OPTS } = require('../utils/push');
+const { readRingToken } = require('../utils/ringToken');
+const { snoozeRing } = require('../utils/callReminder');
 
 const MAX_SUBSCRIPTIONS = 10; // devices/browsers per account
 
@@ -86,4 +89,51 @@ const unsubscribe = async (req, res) => {
   }
 };
 
-module.exports = { getPublicKey, subscribe, unsubscribe };
+// POST /api/push/test-alarm (protected)
+// "🔔 Test my alarm": rings THIS account's devices with the same alarm-style
+// notification a call uses, so people can check sound/volume/permission
+// before their appointment. At most once every 30 s per account.
+const lastTest = new Map();
+const testAlarm = async (req, res) => {
+  try {
+    const key = String(req.user._id);
+    const now = Date.now();
+    if (now - (lastTest.get(key) || 0) < 30 * 1000) {
+      return res.status(429).json({ message: 'Just sent one. Please wait a few seconds and try again.' });
+    }
+    lastTest.set(key, now);
+    const delivered = await sendPushToUser(req.user._id, {
+      kind: 'call',
+      title: '🔔 Test alarm — ProMedicoz',
+      body: 'If your phone rang or vibrated, call alerts work. Tap to close.',
+      url: '/dashboard',
+      tag: 'test-alarm',
+    }, RING_PUSH_OPTS);
+    if (!delivered) {
+      return res.status(400).json({ message: 'No phone or browser with call alerts was found for your account. Turn on call alerts first.' });
+    }
+    res.json({ message: `Test alarm sent to ${delivered} device${delivered === 1 ? '' : 's'}.`, delivered });
+  } catch (error) {
+    console.error('Test alarm error:', error.message);
+    res.status(500).json({ message: 'Error sending test alarm' });
+  }
+};
+
+// POST /api/push/snooze (public, signed token)
+// The call notification's "In 5 min" button. The service worker has no login
+// token, so the notification carries a signed ring token (utils/ringToken.js)
+// that only allows snoozing this one ring for this one person.
+const snooze = async (req, res) => {
+  try {
+    const t = readRingToken(req.body && req.body.token);
+    if (!t) return res.status(400).json({ message: 'Invalid or expired' });
+    const r = await snoozeRing(t.appointmentId, t.userId);
+    if (!r.ok) return res.status(400).json({ message: r.reason });
+    res.json({ message: 'OK, ringing again in 5 minutes', at: r.at });
+  } catch (error) {
+    console.error('Snooze error:', error.message);
+    res.status(500).json({ message: 'Error' });
+  }
+};
+
+module.exports = { getPublicKey, subscribe, unsubscribe, testAlarm, snooze };

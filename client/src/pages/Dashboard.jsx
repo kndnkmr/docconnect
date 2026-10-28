@@ -21,6 +21,8 @@ import VideoCall from '../components/VideoCall';
 import AnnouncementBanner from '../components/AnnouncementBanner';
 import toast from 'react-hot-toast';
 import PaymentBox from '../components/PaymentBox';
+import CallAlertsBox from '../components/CallAlertsBox';
+import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp } from '../utils/callAlarm';
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress } from '../utils/profileAutosave';
 
@@ -454,43 +456,32 @@ function Dashboard() {
     } catch (error) { console.error('Fetch prescriptions list error:', error); }
   };
 
-  // ---- Ringtone (generated with Web Audio API — no asset needed) ----
-  const startRing = () => {
-    try {
-      if (ringIntervalRef.current) return; // already ringing
-      if (!audioCtxRef.current) {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (Ctx) audioCtxRef.current = new Ctx();
-      }
-      const ctx = audioCtxRef.current;
-      const beep = () => {
-        if (!ctx) return;
-        if (ctx.state === 'suspended') ctx.resume();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 800;
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.5);
-      };
-      beep();
-      ringIntervalRef.current = setInterval(beep, 1300);
-      if (navigator.vibrate) navigator.vibrate([500, 300, 500, 300, 500]);
-    } catch (e) { /* audio not available — visual banner still shows */ }
-  };
+  // ---- Ringtone: phone-style ring, repeating vibration, flashing tab
+  // title (utils/callAlarm.js). Sound needs one earlier tap on the page,
+  // so the first tap/keypress anywhere on the Dashboard unlocks audio. ----
+  const startRing = () => startRinging('📞 Calling… — ProMedicoz');
+  const stopRing = () => stopRinging();
+  useEffect(() => {
+    const unlock = () => {
+      unlockAudio();
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
 
-  const stopRing = () => {
-    if (ringIntervalRef.current) {
-      clearInterval(ringIntervalRef.current);
-      ringIntervalRef.current = null;
-    }
-    if (navigator.vibrate) navigator.vibrate(0);
-  };
+  // Latest versions of the refreshers, for socket / service-worker / timer
+  // callbacks (avoids stale filters and page numbers).
+  const fetchAppointmentsRef = useRef(fetchAppointments);
+  fetchAppointmentsRef.current = fetchAppointments;
+  const ringCheckRef = useRef(() => {});
+  const scheduledCheckRef = useRef(() => {});
+  const [live, setLive] = useState(null); // null = unknown, true = live, false = reconnecting
 
   // ---- Poll for incoming calls every 5 seconds ----
   useEffect(() => {
@@ -519,6 +510,7 @@ function Dashboard() {
       } catch (e) { /* silent */ }
     };
 
+    ringCheckRef.current = checkIncomingCalls;
     checkIncomingCalls();
     // Fallback poll — normally the 'incoming-call' socket event below fires
     // instantly, so this interval is just a safety net if the socket drops.
@@ -584,9 +576,37 @@ function Dashboard() {
     socket.on('call-ended', handleCallEnded);
     socket.on('message-notification', handleMessageNotification);
     socket.on('report-updated', handleReportUpdated);
-    // A patient paid / sent a receipt / undid it → refresh the doctor's list.
-    const handleAppointmentUpdated = () => { fetchAppointments(); };
+    // Anything about an appointment changed on the other side (booked,
+    // confirmed, completed, cancelled, rescheduled, paid, prescription…).
+    const handleAppointmentUpdated = () => {
+      fetchAppointmentsRef.current();
+      if (isDoctor) fetchPendingCount();
+    };
     socket.on('appointment-updated', handleAppointmentUpdated);
+
+    // Doctor wrote/updated a prescription → refresh the cards right away
+    // and say so, wherever on the Dashboard the patient is.
+    const handlePrescriptionUpdated = () => {
+      fetchAppointmentsRef.current();
+      if (isPatient) {
+        toast((tt) => (
+          <span className="flex items-center gap-3">
+            <span>💊 Your doctor sent your prescription</span>
+            <button type="button" onClick={() => { toast.dismiss(tt.id); goToTab('prescriptions'); }} className="font-semibold text-primary-600 underline">View</button>
+          </span>
+        ), { duration: 8000, id: 'rx-ready' });
+      }
+    };
+    socket.on('prescription-updated', handlePrescriptionUpdated);
+
+    // Connection state: "● Live" dot, and catch up on anything missed while
+    // the connection was down (phone asleep, network switch, server restart).
+    const handleConnect = () => { setLive(true); fetchAppointmentsRef.current(); fetchUnreadCounts(); };
+    const handleDisconnect = () => setLive(false);
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleDisconnect);
+    setLive(socket.connected);
 
     return () => {
       socket.off('incoming-call', handleIncomingCall);
@@ -594,6 +614,10 @@ function Dashboard() {
       socket.off('message-notification', handleMessageNotification);
       socket.off('report-updated', handleReportUpdated);
       socket.off('appointment-updated', handleAppointmentUpdated);
+      socket.off('prescription-updated', handlePrescriptionUpdated);
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleDisconnect);
     };
   }, [isDoctor]);
 
@@ -638,10 +662,73 @@ function Dashboard() {
       }
     };
 
+    scheduledCheckRef.current = checkScheduledStart;
     checkScheduledStart();
     const interval = setInterval(checkScheduledStart, 30000);
     return () => clearInterval(interval);
   }, [appointments, isDoctor]);
+
+  // ---- Catch-up: coming back to the tab / phone waking up → quiet refresh
+  // (and an immediate call check). While the live connection is down, a
+  // light check every 60 s keeps the page current. ----
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      fetchAppointmentsRef.current();
+      fetchUnreadCounts();
+      ringCheckRef.current();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+  useEffect(() => {
+    if (live !== false) return undefined;
+    const t = setInterval(() => { fetchAppointmentsRef.current(); ringCheckRef.current(); }, 60000);
+    return () => clearInterval(t);
+  }, [live]);
+
+  // ---- A call notification arrived while this tab is open: ring in-page
+  // too (the service worker forwards it). ----
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return undefined;
+    const onMsg = (e) => {
+      if (!e.data || e.data.type !== 'pmz-call') return;
+      ringCheckRef.current();
+      fetchAppointmentsRef.current();
+      setTimeout(() => scheduledCheckRef.current(), 1500);
+    };
+    navigator.serviceWorker.addEventListener('message', onMsg);
+    return () => navigator.serviceWorker.removeEventListener('message', onMsg);
+  }, []);
+
+  // ---- "Join now" from a call notification opens /dashboard?join=<id> ----
+  const joinHandledRef = useRef('');
+  useEffect(() => {
+    const id = searchParams.get('join');
+    if (!id || joinHandledRef.current === id || !/^[a-f0-9]{24}$/i.test(id)) return;
+    joinHandledRef.current = id;
+    (async () => {
+      try {
+        const { data } = await appointmentAPI.getById(id);
+        const apt = data.appointment || data;
+        const ok = apt && apt.status === 'confirmed' && apt.consultationType !== 'in-person' && isWithinCallWindow(apt);
+        if (ok) {
+          stopRing();
+          setIncomingCall(null);
+          startCall(apt);
+        } else if (apt && apt.timeSlot) {
+          toast(`This call opens at ${apt.timeSlot.split(' - ')[0]}. We'll ring you then.`, { duration: 6000 });
+        }
+      } catch (e) {
+        toast.error('Could not open that call. Please use the Join button on the appointment.');
+      } finally {
+        const next = new URLSearchParams(searchParams);
+        next.delete('join');
+        navigate({ search: next.toString() ? `?${next}` : '' }, { replace: true });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   // ---- Start a call: open the call immediately, signal the other party in background ----
   const startCall = (apt) => {
@@ -1290,6 +1377,12 @@ function Dashboard() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
             <p className="text-primary-100 mt-1 text-sm sm:text-base">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
+            {live !== null && (
+              <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-white/15 text-[11px] font-medium" role="status" aria-live="polite">
+                <span className={`w-2 h-2 rounded-full ${live ? 'bg-green-300' : 'bg-amber-300 animate-pulse'}`} aria-hidden="true" />
+                {live ? 'Live · updates appear instantly' : 'Reconnecting… updates may be a little late'}
+              </span>
+            )}
           </div>
 
           {/* At-a-glance stat chips — tap to jump to the relevant view. */}
@@ -1478,8 +1571,8 @@ function Dashboard() {
                   // Write/Update Prescription button below.
                   const aptReport = isDoctor ? doctorReports.find((r) => r.appointment === apt._id) : null;
                   const hasPrescription = isDoctor
-                    ? doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === apt._id)
-                    : false;
+                    ? (!!apt.prescriptionInfo || doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === apt._id))
+                    : !!apt.prescriptionInfo;
                   return (
                   <div key={apt._id} className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden p-6 pl-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     {/* Status accent strip — read the appointment's state at a glance. */}
@@ -1541,6 +1634,46 @@ function Dashboard() {
                       {isPatient && (
                         <PaymentBox apt={apt} user={user} onChanged={fetchAppointments} onViewReceipt={setReceiptImage} />
                       )}
+                      {/* Prescription ready — appears live when the doctor saves it. */}
+                      {isPatient && apt.prescriptionInfo && (
+                        <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-sm font-semibold text-purple-800">
+                            💊 Prescription ready{apt.prescriptionInfo.medicineCount ? ` · ${apt.prescriptionInfo.medicineCount} medicine${apt.prescriptionInfo.medicineCount === 1 ? '' : 's'}` : ''}
+                            {apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
+                              <span className="font-normal"> · free follow-up till {new Date(apt.followUpDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                            )}
+                          </p>
+                          <button type="button" onClick={() => goToTab('prescriptions')} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700">
+                            View prescription
+                          </button>
+                        </div>
+                      )}
+                      {/* Will my phone ring at appointment time? (video/phone, next 48 h) */}
+                      {wantsCallAlerts(apt) && !videoCallAppointmentId && (
+                        <CallAlertsBox when={(apt.timeSlot || '').split(' - ')[0]} />
+                      )}
+                      {/* 2 min in and the other person hasn't joined: reach them directly. */}
+                      {showNoShowHelp(apt) && !videoCallAppointmentId && (
+                        <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                          <p className="text-xs font-semibold text-amber-900 mb-2">
+                            {isDoctor ? 'Patient not joined yet? Reach them directly:' : "Doctor not joined yet? They'll ring you; you can also:"}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {isDoctor && apt.patient?.phone && (
+                              <a href={`tel:${apt.patient.phone}`} className="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700">📞 Call patient</a>
+                            )}
+                            {isDoctor && apt.patient?.phone && (
+                              <a href={`https://wa.me/${String(apt.patient.phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz. I'm ready for your ${apt.consultationType === 'video' ? 'video' : 'audio'} consultation (${apt.timeSlot}). Please open ProMedicoz and tap Join: https://www.promedicoz.in/dashboard`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp patient</a>
+                            )}
+                            {isPatient && (
+                              <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">💬 Message doctor</button>
+                            )}
+                            {isPatient && (
+                              <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}) has started but the doctor hasn't joined. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp support</a>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       {!isPatient && apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
 
                       {/* Next step guidance */}
@@ -1556,16 +1689,9 @@ function Dashboard() {
                         )}
                         <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'completed' && (
-                            <>
-                              ✅ Consultation done.{' '}
-                              <button
-                                type="button"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToTab('prescriptions'); }}
-                                className="underline hover:text-blue-900"
-                              >
-                                View your prescription →
-                              </button>
-                            </>
+                            apt.prescriptionInfo
+                              ? <>✅ Consultation done.</>
+                              : <>✅ Consultation done. Your prescription will appear here the moment your doctor writes it.</>
                           )}
                           {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}

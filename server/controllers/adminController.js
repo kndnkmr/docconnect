@@ -207,6 +207,7 @@ const confirmAppointmentAsAdmin = async (req, res) => {
     // Identical side effects to the doctor-confirm path — so the patient gets
     // the same confirmation they'd get if the doctor had clicked confirm.
     sendAppointmentConfirmation(appointment.patient, appointment.doctor, appointment);
+    require('../utils/live').appointmentChanged(req, appointment, { status: 'confirmed' });
     sendPushToUser(appointment.patient._id, {
       title: 'Appointment confirmed',
       body: `Dr. ${appointment.doctor.name} confirmed your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,

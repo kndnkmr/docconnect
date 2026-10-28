@@ -22,6 +22,10 @@ const notifyPrescriptionUpdate = (req, prescription) => {
         prescriptionId: prescription._id.toString(),
         appointmentId: prescription.appointment.toString()
       });
+      // The doctor's other open tabs/devices refresh too.
+      io.to(`user:${prescription.doctor.toString()}`).emit('appointment-updated', {
+        appointmentId: prescription.appointment.toString()
+      });
     }
     sendPushToUser(patientId, {
       title: 'New prescription from your doctor',

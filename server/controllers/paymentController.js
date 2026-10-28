@@ -28,6 +28,7 @@
 const Appointment = require('../models/Appointment');
 const { sendPushToUser } = require('../utils/push');
 const { uploadFile } = require('../utils/uploadFile');
+const { appointmentChanged } = require('../utils/live');
 
 const REMIND_AFTER_MS = 2 * 60 * 60 * 1000;   // patient can remind 2h after claiming
 const REMIND_EVERY_MS = 6 * 60 * 60 * 1000;   // ...and then at most every 6h
@@ -221,6 +222,7 @@ const adminPaymentAction = async (req, res) => {
       apt.paymentMarkedByRole = 'admin';
       apt.paymentAdminNote = note;
       await apt.save({ validateModifiedOnly: true });
+      appointmentChanged(req, apt, { paymentStatus: 'paid' });
       sendPushToUser(String(apt.patient), {
         title: 'Payment confirmed',
         body: `Your payment for ${shortWhen(apt)} with Dr. ${apt.doctor ? apt.doctor.name : ''} is confirmed.`,
@@ -248,6 +250,7 @@ const adminPaymentAction = async (req, res) => {
       apt.paymentMarkedByRole = 'admin';
       apt.paymentAdminNote = note;
       await apt.save({ validateModifiedOnly: true });
+      appointmentChanged(req, apt, { paymentStatus: 'pending' });
       sendPushToUser(String(apt.patient), {
         title: 'Payment details are ready',
         body: `You can complete the payment for ${shortWhen(apt)} from your dashboard.`,

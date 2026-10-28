@@ -11,7 +11,7 @@
 // Bumping CACHE_NAME on each meaningful change forces old caches to be cleared,
 // so users pick up new versions without manually clearing their browser cache.
 
-const CACHE_NAME = 'promedicoz-v6';
+const CACHE_NAME = 'promedicoz-v7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -49,22 +49,57 @@ self.addEventListener('push', (event) => {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch (e) { /* fall back to defaults above */ }
 
+  const options = {
+    body: data.body,
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    tag: data.tag,
+    data: { url: data.url || '/dashboard', kind: data.kind || '', snoozeUrl: data.snoozeUrl || '', snoozeToken: data.snoozeToken || '' }
+  };
+
+  // Call alarm (appointment starting / incoming call / test alarm):
+  // stays on screen until tapped, long vibration, alerts again on every
+  // ring even with the same tag, and Join now / In 5 min buttons.
+  // (The phone chooses the sound; Android uses the notification sound.)
+  if (data.kind === 'call') {
+    options.requireInteraction = true;
+    options.renotify = !!data.tag;
+    options.silent = false;
+    options.vibrate = [800, 300, 800, 300, 800, 300, 800, 300, 800];
+    options.actions = [{ action: 'join', title: 'Join now' }];
+    if (data.snoozeUrl && data.snoozeToken) options.actions.push({ action: 'later', title: 'In 5 min' });
+  }
+
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
-      tag: data.tag,
-      data: { url: data.url || '/dashboard' }
-    })
+    Promise.all([
+      self.registration.showNotification(data.title, options),
+      // Tell any open ProMedicoz tab, so it can ring in-page too.
+      data.kind === 'call'
+        ? self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) =>
+            list.forEach((c) => c.postMessage({ type: 'pmz-call', appointmentId: data.appointmentId || '' })))
+        : null,
+    ])
   );
 });
 
 // Clicking the notification focuses an existing tab if one is open,
-// otherwise opens a new one at the target URL.
+// otherwise opens a new one at the target URL. "In 5 min" asks the server
+// to ring this person again in 5 minutes (signed token, no login needed).
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || '/dashboard';
+  const d = event.notification.data || {};
+  const targetUrl = d.url || '/dashboard';
+
+  if (event.action === 'later' && d.snoozeUrl && d.snoozeToken) {
+    event.waitUntil(
+      fetch(d.snoozeUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: d.snoozeToken })
+      }).catch(() => {})
+    );
+    return;
+  }
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsList) => {

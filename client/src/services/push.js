@@ -97,3 +97,14 @@ export const disablePushNotifications = async (authToken) => {
     console.error('disablePushNotifications failed:', error);
   }
 };
+
+// "🔔 Test my alarm": the server rings this account's devices with the same
+// alarm-style notification a call uses. Resolves { ok, message }.
+export const sendTestAlarm = async () => {
+  try {
+    const { data } = await API.post('/push/test-alarm');
+    return { ok: true, message: data.message };
+  } catch (error) {
+    return { ok: false, message: error.response?.data?.message || 'Could not send a test alarm.' };
+  }
+};

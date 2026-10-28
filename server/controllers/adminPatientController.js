@@ -238,6 +238,7 @@ const bookForPatient = async (req, res) => {
       tag: `appointment-${appointment._id}`
     });
 
+    require('../utils/live').appointmentChanged(req, appointment);
     res.status(201).json({
       message: `Booked with Dr. ${doctor.name} on ${when} for ${b.bookedFor === 'family' ? b.familyMemberName : user.name}. Waiting for the doctor to confirm.`,
       appointment,

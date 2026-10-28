@@ -1587,10 +1587,34 @@ Nobody presses save to keep progress.
 - Push subscriptions: `https` endpoint + valid keys, max 10 devices per account.
 - Medical info: valid blood group, emergency phone format, 1000-character caps.
 
+### 6. Call alarm — `utils/callReminder.js`, `client/public/sw.js`, `utils/callAlarm.js`, `components/CallAlertsBox.jsx`
+
+For confirmed + paid video/phone appointments (job every 20 s):
+
+| When | What | Notes |
+|---|---|---|
+| −10 min | "⏰ starts in 10 min" (both) | once (`callPreAlertSentAt`) |
+| 0 min | 📞 ring (both) | `kind: 'call'` push: stays on screen (`requireInteraction`), long vibrate, `renotify`, **Join now** / **In 5 min**; urgency high, TTL 90 s |
+| +40 s, +80 s | ring again | max 3 (`callRingCount`); stops as soon as either side joins (`callStartedAt`) |
+| "In 5 min" | that person rung again 5 min later | SW posts a signed ring token (`utils/ringToken.js`, HMAC with JWT_SECRET) to `POST /api/push/snooze`; needs `PUBLIC_API_URL` or Render's `RENDER_EXTERNAL_URL`, else the button is hidden |
+
+- **Join now** opens `/dashboard?join=<id>`; the Dashboard opens the call directly if it's within the call window.
+- **Incoming call** (other side tapped Join) uses the same alarm style. Doctor-facing text never names the patient.
+- **In-app:** phone-style double ring via Web Audio (unlocked on the first tap), vibration pattern every cycle, flashing tab title; the SW forwards call pushes to open tabs (`pmz-call` message) so they ring too.
+- **Call alerts box** on video/phone cards within 48 h: on (Test my alarm → `POST /api/push/test-alarm`) / off (Turn on) / blocked (how to allow) / iPhone not on Home Screen (how to add).
+- **No-show help** from 2 min after the start: doctor → tel: + WhatsApp patient; patient → chat + WhatsApp support.
+- **Limits:** a website can't override silent mode or pick the ringtone; iPhone web push needs ProMedicoz added to the Home Screen.
+
+### 7. Live updates everywhere — `utils/live.js` + Dashboard socket handlers
+
+- Server emits `appointment-updated` to both sides on: booking (patient and admin), confirm/complete/cancel, patient cancel, reschedule, mark paid, admin confirm, admin payment help; payment steps notify the doctor; prescriptions emit `prescription-updated` to the patient (+ `appointment-updated` to the doctor).
+- `GET /appointments/my` adds `prescriptionInfo { _id, medicineCount }` per appointment, so the patient card shows "💊 Prescription ready" and the toast "Your doctor sent your prescription · View".
+- **Never missed:** refetch on socket (re)connect and when the tab becomes visible; a 60 s check while disconnected; "● Live / Reconnecting…" under the welcome header.
+
 ### Tests for all of the above
 
-- Server: `cd server && npm test` (~90 checks, no DB): `gaps.test.js`, `payment.test.js`, `needsHelp.test.js`, `slotIndex.test.js`, `adminPatient.test.js`, `login.test.js`, `register.test.js`.
-- Client: `cd client && npm test` (runs before every build): `paymentFlow`, `needsHelp`, `consultModes`, `drafts`, `profileAutosave` and the medical tests.
+- Server: `cd server && npm test` (~97 checks, no DB): `callAlarm.test.js`, `gaps.test.js`, `payment.test.js`, `needsHelp.test.js`, `slotIndex.test.js`, `adminPatient.test.js`, `login.test.js`, `register.test.js`.
+- Client: `cd client && npm test` (runs before every build): `callAlarm`, `paymentFlow`, `needsHelp`, `consultModes`, `drafts`, `profileAutosave` and the medical tests.
 
 ---
 

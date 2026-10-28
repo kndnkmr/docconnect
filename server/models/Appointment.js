@@ -176,6 +176,18 @@ const appointmentSchema = new mongoose.Schema({
   paymentMarkedByRole: { type: String, enum: ['', 'doctor', 'admin'], default: '' },
   paymentAdminNote: { type: String, default: '' },
 
+  // ---- Call alarm (utils/callReminder.js) ----
+  // "Starting in 10 min" sent; how many times the slot-start ring has gone
+  // out (max 3, ~40 s apart, stops once someone joins); per-person "In 5 min"
+  // snoozes from the notification's Later button.
+  callPreAlertSentAt: { type: Date, default: null },
+  callRingCount: { type: Number, default: 0 },
+  callLastRingAt: { type: Date, default: null },
+  ringSnoozes: {
+    type: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, at: Date }],
+    default: [],
+  },
+
   // ---- "Needs help" follow-ups (utils/journeyReminders.js, utils/needsHelp.js) ----
   // Doctor reminded to confirm a still-pending booking (once).
   confirmReminderSentAt: { type: Date, default: null },
