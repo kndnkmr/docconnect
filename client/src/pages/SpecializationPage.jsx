@@ -132,7 +132,8 @@ function SpecializationPage() {
   // City pages: facts, guide and city-specific questions from the doctors'
   // own profiles (shared with the build — src/utils/cityPage.js).
   const cityArgs = cityName ? { slug, specTitle: data.title, cityName, doctors, nearby, conditions: view.conditions } : null;
-  const summary = cityArgs && !loading ? citySummary({ ...cityArgs, lang }) : '';
+  // Only once doctors have loaded — never "0 verified …" on a slow/failed fetch.
+  const summary = cityArgs && !loading && doctors.length ? citySummary({ ...cityArgs, lang }) : '';
   const guide = cityArgs && !loading && doctors.length ? cityGuide({ ...cityArgs, lang }) : null;
   const cityQs = cityArgs && !loading ? cityFaqs({ ...cityArgs, lang }) : [];
   const cityQsEn = cityArgs && !loading ? cityFaqs({ ...cityArgs, lang: 'en' }) : [];
@@ -187,9 +188,9 @@ function SpecializationPage() {
             <LangToggle lang={lang} onChange={setLang} />
           </div>
           <div className="flex items-center gap-4 mb-4">
-            <span className="text-5xl">{view.icon}</span>
+            <span className="text-4xl sm:text-5xl">{view.icon}</span>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
                 {/* City pages: the exact words people search ("best
                     gynecologist in bhilai"), both spellings. */}
                 {cityName ? cityHeading(view.title, cityName) : view.title}

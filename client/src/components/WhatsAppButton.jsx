@@ -11,6 +11,7 @@
 // the footer Grievance/Support link), so a floating "message us on WhatsApp"
 // just adds clutter — especially on mobile where it overlaps content.
 
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 
@@ -35,6 +36,29 @@ function WhatsAppButton() {
   const authPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
   if (authPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
 
+  // Hide on doctor pages and booking: they have their own sticky
+  // "Book Appointment" bar at the bottom, and the floating button sat right
+  // on top of it on phones.
+  if (pathname.startsWith('/dr/') || pathname.startsWith('/doctors/') || pathname.startsWith('/book-appointment')) return null;
+
+  return <FloatingWhatsApp phoneNumber={phoneNumber} />;
+}
+
+// While the visitor scrolls (phones), fade the button out so it never sits
+// over the text or a card they're reading; it comes back ~1 s after they stop.
+function FloatingWhatsApp({ phoneNumber }) {
+  const [scrolling, setScrolling] = useState(false);
+  useEffect(() => {
+    let t;
+    const onScroll = () => {
+      setScrolling(true);
+      clearTimeout(t);
+      t = setTimeout(() => setScrolling(false), 1000);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); clearTimeout(t); };
+  }, []);
+
   const message = encodeURIComponent(
     'Hi ProMedicoz, I need help with:\n\n1. Finding the right doctor\n2. Booking an appointment\n3. Other query\n\nPlease assist me.'
   );
@@ -48,7 +72,7 @@ function WhatsAppButton() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-20 md:bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-2.5 shadow-md hover:shadow-lg transition-all group"
+      className={`fixed bottom-20 md:bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-2.5 shadow-md hover:shadow-lg transition-all duration-300 group ${scrolling ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-2' : 'opacity-100'}`}
       aria-label="Contact us on WhatsApp"
     >
       {/* WhatsApp icon (SVG) */}

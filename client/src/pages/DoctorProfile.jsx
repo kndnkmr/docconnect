@@ -375,7 +375,7 @@ function DoctorProfile({ clinicMode = false }) {
           <div className="flex flex-wrap items-center gap-2 mt-4">
             {combinedStats.totalReviews > 0 && (
               <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium">
-                ⭐ {combinedStats.averageRating} <span className="text-primary-100">/ 5 · {combinedStats.totalReviews}</span>
+                ⭐ {combinedStats.averageRating} <span className="text-primary-100">/ 5 · {combinedStats.totalReviews} {lang === 'hi' ? 'समीक्षाएं' : (combinedStats.totalReviews === 1 ? 'review' : 'reviews')}</span>
               </span>
             )}
             {nextSlot && nextSlot.isToday && (
