@@ -370,7 +370,10 @@ async function fetchCityRoutes(specSlugs, specializationData) {
   return routes;
 }
 
-const API_BASE = 'https://docconnect-fcg6.onrender.com/api';
+// Backend address: the same VITE_API_URL the app is built with (set in
+// Vercel), so moving the backend (e.g. to Render Singapore) needs no code
+// change here. Falls back to the original Render URL.
+const API_BASE = (process.env.VITE_API_URL || 'https://docconnect-fcg6.onrender.com/api').replace(/\/+$/, '');
 
 // ---- Pregnancy due-date calculator pages ----
 // EN + HI tool pages (indexable, hreflang pair) and one share page per due
@@ -808,7 +811,7 @@ async function attachListingBodies(routes, articles, specializationData) {
 // we simply skip doctor pages (they still work as normal SPA routes with the
 // default banner) rather than failing the whole build.
 async function fetchDoctorRoutes() {
-  const API = 'https://docconnect-fcg6.onrender.com/api/doctors?limit=200';
+  const API = `${API_BASE}/doctors?limit=200`;
   try {
     const r = await fetch(API, { headers: { accept: 'application/json' } });
     if (!r.ok) { console.warn(`[prerender] doctor list fetch failed (${r.status}); skipping /dr pages.`); return []; }
