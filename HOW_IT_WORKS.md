@@ -1881,7 +1881,7 @@ Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:
 - [ ] **Render:** delete the suspended Oregon service `docconnect` (Settings → Delete Web Service). The live backend is `docconnect-sg` — don't touch that one.
 - [ ] **MongoDB Atlas → Network Access:** remove the two Oregon entries "Render outbound range 1" (`74.220.48.0/24`) and "Render outbound range 2" (`74.220.56.0/24`). Keep the two "Render Singapore" entries and the personal IP. Don't switch to `0.0.0.0/0` (see Production Security Configuration).
 - [ ] **Render:** the region list showed "Oregon: 2 existing services" — find out what the second one is before changing or deleting it.
-- [ ] **Server dependencies:** Render's `npm install` reports 10 vulnerabilities (4 low, 2 moderate, 3 high, 1 critical). Review with `cd server && npm audit`, update with pinned versions, run `npm test`, then deploy.
+- [x] **Server dependencies** (done 28 Oct 2026): critical/high/moderate fixed (`npm audit fix`; `resend` 2.1.0 → 6.35.0 pinned, with `sendEmail` now checking `result.error`). 3 low remain inside Resend's React-email renderer, which we don't use (we send plain HTML). Re-check with `cd server && npm audit --omit=dev` every few months.
 - [ ] **Vercel:** the deployment page shows "2 Recommendations" — review.
 - [ ] *(No need)* Atlas index `doctor_1_date_1_timeSlot_1` on appointments is a harmless leftover next to the working `unique_active_slot` guard.
 
