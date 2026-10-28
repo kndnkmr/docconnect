@@ -14,6 +14,9 @@ Built as a learning project covering: authentication, CRUD operations, file uplo
 
 Notable improvements layered on since the core build (newest first):
 
+- **Alerts when something breaks** — a GitHub Actions uptime check (`.github/workflows/uptime.yml`) tests the website and the server + database every ~10 min; 3 failed tries → GitHub emails the repo owner. The server itself (`server/utils/healthWatch.js`) emails `ADMIN_NOTIFY_EMAIL`/`ADMIN_EMAIL` if the database is disconnected 3+ min (and again when it's back) or there are 10+ server errors in 10 min, at most once an hour per problem. No extra accounts.
+- **Lighter dashboard** — first download ~122 KB → ~28 KB (gzip). Each tab loads when first opened (patients never download doctor screens); the video-call code (~72 KB) is fetched in the background only when an audio/video visit is upcoming or a call rings, so Join stays instant. After a new deploy, a missing old piece reloads the page once instead of a blank screen.
+
 - **Nightly encrypted database backups** — the free Atlas tier has none, so the server copies the whole database every night (~2:30 AM IST), encrypts it (AES-256, key only on Render) and stores it privately in Cloudinary, keeping 14 nights. Admin → Overview shows status + "Back up now"; `server/scripts/restore-backup.js` restores into a new database (never overwrites without `--overwrite`). Setup and restore steps: HOW_IT_WORKS → Backups & Restore. Also: server security updates (critical/high package vulnerabilities fixed; Resend email SDK 6.35.0).
 - **Backend moved to Render Singapore** — next to the Mumbai database and Indian users (was Oregon, USA). Doctor list ~1.5 s → ~0.4 s, other requests 2–3× faster; same plan and price. The server also now keeps retrying the database connection every 30 s instead of giving up at startup.
 - **Call alarm + live updates** — at a video/phone appointment both people get "⏰ starts in 10 min", then an alarm-style notification at the start time that stays on screen, vibrates long, re-alerts up to 3 times ~40 s apart (stops as soon as either side joins) and has **Join now** (opens the call directly) / **In 5 min** (rings that person again in 5 minutes). Sent high-priority so phones don't delay it. With the app open: a phone-style ring (sound unlocked by the first tap), repeating vibration and a flashing "📞 Calling…" tab title. Each video/phone card within 48 h shows **Call alerts** status with one-tap **Turn on** / **🔔 Test my alarm** (rings your own phone now) and iPhone "add to Home Screen" help. If someone hasn't joined 2 minutes in, the doctor gets **📞 Call patient / 💬 WhatsApp patient** and the patient gets **Message doctor / WhatsApp support**. **Prescriptions and every appointment change now appear live** on the other side's Dashboard (any tab): "💊 Your doctor sent your prescription · View" and a "💊 Prescription ready" card, with a "● Live" indicator and automatic catch-up when the phone wakes or the connection returns. Limits: a website can't override silent mode; iPhone needs ProMedicoz on the Home Screen for notifications.
@@ -268,6 +271,7 @@ docconnect/
 ├── HOW_IT_WORKS.md              ← Full technical documentation
 ├── WINDOWS_SETUP.md             ← Windows laptop setup guide
 ├── .gitignore                   ← Files excluded from Git
+├── .github/workflows/uptime.yml ← GitHub uptime check every ~10 min (emails on failure)
 │
 ├── server/                      ← BACKEND
 │   ├── .env                     ← Secret config (create manually after clone)
@@ -319,6 +323,7 @@ docconnect/
 │   │
 │   ├── utils/                   ← Helpers
 │   │   ├── sendEmail.js         ← Email notifications (Resend)
+│   │   ├── healthWatch.js       ← Emails admin on database down (3+ min) / 10+ server errors in 10 min
 │   │   ├── formatPhone.js       ← Indian phone number formatting
 │   │   ├── daily.js             ← Daily.co room + join-token helper
 │   │   ├── push.js              ← Web Push sender (VAPID) — cleans up stale subscriptions automatically
@@ -594,6 +599,7 @@ You should see the DocConnect landing page!
 | NODE_ENV | No | Environment mode | development |
 | RESEND_API_KEY | No | Resend email API key (enables email notifications) | re_xxxx... |
 | ADMIN_EMAIL | No | Email promoted to admin on startup (auto-creates the account if it doesn't exist) | admin@example.com |
+| ADMIN_NOTIFY_EMAIL | No | Where alert emails go (database down, error spikes, payments waiting 24h). Falls back to ADMIN_EMAIL | alerts@example.com |
 | ADMIN_PASSWORD | No | Password used only when auto-creating a new admin account | (strong password) |
 | ADMIN_NAME | No | Display name for an auto-created admin account | Administrator |
 | DAILY_API_KEY | No | Daily.co API key (enables in-app video/audio calls) | (secret, server only) |

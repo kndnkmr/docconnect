@@ -820,6 +820,8 @@ there's nothing to grep for — recorded here so the reasoning isn't lost:
   and never assign an admin-level role to an application's own connection
   credential
 - **Backups: nightly, encrypted, made by the server itself** (added Oct 2026). Atlas's free M0 tier has no backups, so `utils/backup.js` copies every collection at ~02:30 IST, gzips it, encrypts it with AES-256-GCM using `BACKUP_KEY` (set only on Render), and stores it as a **private** raw file in Cloudinary (`promedicoz/backups/`), keeping the newest 14. Admin → Overview shows "💾 Database backups" (last run, Back up now, encrypted downloads). See **Backups & Restore** below. Keep a copy of `BACKUP_KEY` outside Render (password manager): without it the backups can't be opened.
+- **Alerts** (added Oct 2026): GitHub uptime check every ~10 min + server emails on database down / error spikes. See **Alerts: knowing when something breaks** below.
+- **Dashboard loads in pieces** (added Oct 2026): tabs, chat and the call screen load on demand. See **Dashboard loading** below.
 - A language toggle appears on the home page (prominently in the hero, not
   the navbar) and the booking flow. The choice is stored in localStorage
   (`promedicoz_lang`) so it carries across pages and visits.
@@ -1906,7 +1908,8 @@ Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:
 - [ ] **Render:** the region list showed "Oregon: 2 existing services" — find out what the second one is before changing or deleting it.
 - [x] **Server dependencies** (done 28 Oct 2026): critical/high/moderate fixed (`npm audit fix`; `resend` 2.1.0 → 6.35.0 pinned, with `sendEmail` now checking `result.error`). 3 low remain inside Resend's React-email renderer, which we don't use (we send plain HTML). Re-check with `cd server && npm audit --omit=dev` every few months.
 - [ ] **Vercel:** the deployment page shows "2 Recommendations" — review.
-- [ ] **Backups:** add `BACKUP_KEY` on Render (see Backups & Restore) and press **Back up now** once.
+- [x] **Backups** (done 28 Oct 2026): `BACKUP_KEY` added on Render, first backup made and downloaded OK.
+- [ ] **Uptime check:** confirm GitHub → Actions → Uptime check shows a green run (first scheduled run can be slow; **Run workflow** starts one).
 - [ ] *(No need)* Atlas index `doctor_1_date_1_timeSlot_1` on appointments is a harmless leftover next to the working `unique_active_slot` guard.
 
 ## How to Make Changes (Future You)
