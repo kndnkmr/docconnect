@@ -16,7 +16,7 @@
 //   onChange={setEmail}    → React updates when user types
 // This gives us full control (validation, formatting, etc.)
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
@@ -85,6 +85,14 @@ const GUIDE = {
 };
 
 function Login() {
+  // While the person fills in this form, quietly download the Dashboard
+  // code, so the page after "Create account" / "Log in" opens straight away
+  // instead of loading it then (it's ~125 KB). Same file the app uses.
+  useEffect(() => {
+    const t = setTimeout(() => { import('./Dashboard').catch(() => {}); }, 1200);
+    return () => clearTimeout(t);
+  }, []);
+
   // ---- State for form fields ----
   const [email, setEmail] = useState('');
   const location = useLocation();

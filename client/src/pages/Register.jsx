@@ -9,7 +9,7 @@
 // - Doctor: update profile, manage appointments, set availability
 // - Patient: browse doctors, book appointments
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
@@ -23,6 +23,14 @@ import { loadDraft, clearDraft, DRAFT_TTL } from '../utils/drafts';
 import useAutoDraft from '../utils/useAutoDraft';
 
 function Register() {
+  // While the person fills in this form, quietly download the Dashboard
+  // code, so the page after "Create account" / "Log in" opens straight away
+  // instead of loading it then (it's ~125 KB). Same file the app uses.
+  useEffect(() => {
+    const t = setTimeout(() => { import('./Dashboard').catch(() => {}); }, 1200);
+    return () => clearTimeout(t);
+  }, []);
+
   const [searchParams] = useSearchParams();
   // Read ?role=doctor from the URL (if present)
   const defaultRole = searchParams.get('role') === 'doctor' ? 'doctor' : 'patient';

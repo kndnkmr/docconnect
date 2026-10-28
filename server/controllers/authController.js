@@ -82,8 +82,14 @@ const register = async (req, res) => {
     // (very common — many keyboards auto-capitalize the first letter) would
     // silently miss an existing account instead of catching the duplicate.
     const normalizedEmail = email ? email.toLowerCase().trim() : '';
+    const formattedPhone = phone ? formatIndianPhone(phone) : '';
+    // Both duplicate lookups run at the same time (each is a database round
+    // trip); the results are then handled in the same order as before.
+    const [existingByEmail, existingByPhone] = await Promise.all([
+      normalizedEmail ? User.findOne({ email: normalizedEmail }) : null,
+      formattedPhone && isValidIndianPhone(phone) ? User.findOne({ phone: formattedPhone }) : null,
+    ]);
     if (normalizedEmail) {
-      const existingByEmail = await User.findOne({ email: normalizedEmail });
       if (existingByEmail) {
         if (existingByEmail.isDeleted) {
           // Disassociate email from deleted account (keep record for legal) and allow re-registration
@@ -104,7 +110,6 @@ const register = async (req, res) => {
     // real phone number (no unique index on phone, unlike email) whenever
     // someone re-registered after deleting - the old "deleted" duplicate never
     // got renamed out of the way, since the lookup silently found nothing.
-    const formattedPhone = phone ? formatIndianPhone(phone) : '';
     if (phone && !isValidIndianPhone(phone)) {
       return res.status(400).json({
         message: 'Please enter a valid 10-digit Indian mobile number'
@@ -112,7 +117,6 @@ const register = async (req, res) => {
     }
 
     if (formattedPhone) {
-      const existingByPhone = await User.findOne({ phone: formattedPhone });
       if (existingByPhone) {
         if (existingByPhone.isDeleted) {
           // Disassociate phone from deleted account and allow re-registration
@@ -139,8 +143,17 @@ const register = async (req, res) => {
       });
     }
 
-    // Step 5: Create the user in the database
+    // Step 5: Create the user in the database. A doctor's email-verification
+    // token is set in the same write (it used to be a second save).
+    let verifyToken = '';
+    const verifyFields = {};
+    if (role === 'doctor' && email) {
+      verifyToken = crypto.randomBytes(32).toString('hex');
+      verifyFields.verificationToken = crypto.createHash('sha256').update(verifyToken).digest('hex');
+      verifyFields.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+    }
     const user = await User.create({
+      ...verifyFields,
       name,
       email,
       password,
@@ -161,17 +174,14 @@ const register = async (req, res) => {
     }
 
     // Step 6: If doctor, send verification email
-    if (role === 'doctor' && email) {
-      const verifyToken = crypto.randomBytes(32).toString('hex');
-      const hashedToken = crypto.createHash('sha256').update(verifyToken).digest('hex');
-
-      user.verificationToken = hashedToken;
-      user.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-      await user.save({ validateBeforeSave: false });
-
+    // Sent in the background: the doctor gets their account (and dashboard)
+    // straight away instead of waiting ~0.5-1.5 s for the email service.
+    // sendEmail never throws; failures are logged, and the dashboard has a
+    // "Resend Email" button.
+    if (verifyToken) {
       const verifyUrl = `https://www.promedicoz.in/verify-email/${verifyToken}`;
 
-      await sendEmail({
+      sendEmail({
         to: email,
         subject: 'Verify Your ProMedicoz Account',
         html: `
