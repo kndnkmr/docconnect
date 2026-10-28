@@ -16,7 +16,7 @@ This document explains how the entire application works — the architecture, da
 │ React pages + Tailwind   │     │ Node.js + Express        │     │ Stores all data          │
 │ What users see & click   │     │ Business logic + auth    │     │ Users, bookings, etc.    │
 │                          │     │ API endpoints            │     │                          │
-│ docconnect-mocha         │     │ docconnect-fcg6          │     │ docconnect cluster       │
+│ docconnect-mocha         │     │ docconnect-sg            │     │ docconnect cluster       │
 │   .vercel.app            │     │   .onrender.com          │     │   .mongodb.net           │
 └─────────────────────────┘     └─────────────────────────┘     └─────────────────────────┘
 ```
