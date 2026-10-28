@@ -34,6 +34,14 @@ const sendEmail = async ({ to, subject, html }) => {
       html
     });
 
+    // Resend v3+ reports API failures in `result.error` instead of throwing
+    // (e.g. bad key, unverified domain, rate limit), so check it explicitly —
+    // otherwise a failed send would be logged as "Email sent".
+    if (result && result.error) {
+      console.error('Email send error:', { to, subject, name: result.error.name, message: result.error.message });
+      return { success: false, error: result.error.message || result.error.name };
+    }
+
     console.log('Email sent:', { to, subject, id: result.data?.id });
     return { success: true, id: result.data?.id };
 
