@@ -222,8 +222,10 @@ const getMyAppointments = async (req, res) => {
 
 const getAppointmentById = async (req, res) => {
   try {
+    // Same doctor fields the patient's appointment list already shows, so the
+    // live booking page can show the payment box (UPI ID/QR) once confirmed.
     const appointment = await Appointment.findById(req.params.id)
-      .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress')
+      .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes')
       .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     if (!appointment) {
@@ -361,10 +363,17 @@ const updateAppointmentStatus = async (req, res) => {
     // Push notification to the patient — works even if they have no email on
     // file (phone-only accounts), as long as they've enabled notifications.
     if (status === 'confirmed') {
+      // Payment is the patient's next step, so say so and open the booking
+      // page at the Pay step (not a generic dashboard).
+      const fee = Number(appointment.doctor.consultationFee) || 0;
+      const payDue = fee > 0 && (!appointment.paymentStatus || appointment.paymentStatus === 'pending');
+      const when = `${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}`;
       sendPushToUser(appointment.patient._id, {
-        title: 'Appointment confirmed',
-        body: `Dr. ${appointment.doctor.name} confirmed your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,
-        url: '/dashboard',
+        title: payDue ? `✅ Dr. ${appointment.doctor.name} confirmed — pay Rs. ${fee}` : 'Appointment confirmed',
+        body: payDue
+          ? `${when}. Tap to pay and lock your slot.`
+          : `Dr. ${appointment.doctor.name} confirmed your appointment on ${when}.`,
+        url: `/booking-confirmation?id=${appointment._id}`,
         tag: `appointment-${appointment._id}`
       });
     } else if (status === 'cancelled') {

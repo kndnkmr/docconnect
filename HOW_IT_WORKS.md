@@ -1895,6 +1895,19 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## After booking: "where do I pay?" (live booking page)
+
+Before (Oct 2026): the page after booking was a static thank-you built from the booking form. When the doctor confirmed, it still said "once confirmed, you'll see payment details" with only a Dashboard button, so patients didn't know where to pay. It also said "Your booking is confirmed. Waiting for doctor to accept" (contradictory) and showed "No booking details found" after a refresh.
+
+Now `/booking-confirmation?id=<appointment id>` (`client/src/pages/BookingConfirmation.jsx`) loads the real booking and stays live (socket `appointment-updated`, a 20 s poll while waiting, refresh on return to the tab):
+- **Request sent → Doctor confirmed → Pay → Payment sent → All set** (stage from `bookingStage()` in `utils/paymentFlow.js`). The hero, the highlighted step and the actions change by themselves.
+- **When confirmed, the same payment box as the Dashboard (`PaymentBox`) appears right on this page**: UPI app button, QR, UPI ID, screenshot or UTR.
+- Cancelled by the doctor → says so + "Book another slot".
+- The **doctor-confirmed notification** ("✅ Dr. X confirmed — pay Rs. 300 · Tap to pay") and the **confirmation email** ("Pay ₹300 now") open this page. Logged-out patients log in and come straight back to it.
+- **Dashboard:** a pinned "💳 1 payment due · Pay now" strip for confirmed + unpaid bookings; Pay now (and `/dashboard?apt=<id>`) scrolls to the card and highlights it.
+- `GET /api/appointments/:id` (patient/doctor of that booking only) now includes the doctor's payment fields, the same ones the patient's list already had.
+- Tests: `client/tests/bookingFlow.test.mjs`.
+
 ## Local Google ranking: doctor + city pages ("best gynecologist in bhilai")
 
 **What Google reads**

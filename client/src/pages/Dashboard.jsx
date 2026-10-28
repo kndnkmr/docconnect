@@ -32,6 +32,7 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
+import { paymentStage } from '../utils/paymentFlow';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
 // doctor screens (and vice versa) and the dashboard's first view is lighter.
@@ -105,6 +106,7 @@ const getWhenDateRange = (value) => {
 const PATIENT_TXT = {
   en: {
     welcome: (name) => `Welcome, ${name}!`,
+    payDueOne: '1 payment due', payDueMany: (n) => `${n} payments due`, payDueConfirmed: 'confirmed', payNow: 'Pay now',
     welcomeSub: 'View your appointments and find doctors',
     tabAppointments: 'My Appointments',
     tabTimeline: 'Health History',
@@ -116,6 +118,7 @@ const PATIENT_TXT = {
     bookNew: '+ Book New Appointment',
   },
   hi: {
+    payDueOne: '1 भुगतान बाकी', payDueMany: (n) => `${n} भुगतान बाकी`, payDueConfirmed: 'ने पुष्टि की', payNow: 'अभी भुगतान करें',
     welcome: (name) => `नमस्ते, ${name}!`,
     welcomeSub: 'अपनी अपॉइंटमेंट देखें और डॉक्टर खोजें',
     tabAppointments: 'मेरी अपॉइंटमेंट',
@@ -734,6 +737,25 @@ function Dashboard() {
     navigator.serviceWorker.addEventListener('message', onMsg);
     return () => navigator.serviceWorker.removeEventListener('message', onMsg);
   }, []);
+
+  // ---- Jump to one appointment: "Pay now" strip, or /dashboard?apt=<id>
+  // (from the live booking page). Scrolls to the card and highlights it.
+  const [highlightAptId, setHighlightAptId] = useState('');
+  const focusAppointment = (id) => {
+    setHighlightAptId(id);
+    const el = document.getElementById(`apt-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => setHighlightAptId((cur) => (cur === id ? '' : cur)), 6000);
+  };
+  const aptParamHandledRef = useRef('');
+  useEffect(() => {
+    const id = searchParams.get('apt');
+    if (!id || !/^[a-f0-9]{24}$/i.test(id) || aptParamHandledRef.current === id) return;
+    if (!appointments.some((a) => a._id === id)) return; // wait until it's loaded
+    aptParamHandledRef.current = id;
+    setTimeout(() => focusAppointment(id), 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, appointments]);
 
   // ---- "Join now" from a call notification opens /dashboard?join=<id> ----
   const joinHandledRef = useRef('');
@@ -1603,6 +1625,24 @@ function Dashboard() {
             </div>
           ) : (
             <>
+              {/* Patient: confirmed but unpaid → pinned "Payment due" strip at
+                  the top, so "where do I pay?" is never a question. */}
+              {isPatient && (() => {
+                const due = appointments.filter((a) => paymentStage(a) === 'pay' && Number(a.doctor?.consultationFee) > 0);
+                if (!due.length) return null;
+                const first = due[0];
+                return (
+                  <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-orange-300 bg-orange-50 px-4 py-3" role="status">
+                    <div className="min-w-0">
+                      <p className="font-bold text-orange-900">💳 {due.length === 1 ? (pt.payDueOne || '1 payment due') : (pt.payDueMany ? pt.payDueMany(due.length) : `${due.length} payments due`)}</p>
+                      <p className="text-sm text-orange-900 truncate">{formatDoctorName(first.doctor?.name)} {pt.payDueConfirmed || 'confirmed'} · Rs. {first.doctor?.consultationFee}</p>
+                    </div>
+                    <button type="button" onClick={() => focusAppointment(first._id)} className="flex-shrink-0 px-4 py-2 rounded-lg bg-orange-600 text-white text-sm font-semibold hover:bg-orange-700">
+                      {pt.payNow || 'Pay now'}
+                    </button>
+                  </div>
+                );
+              })()}
               <div className="space-y-4">
                 {[...appointments].sort((a, b) => {
                   const order = { pending: 0, confirmed: 1, completed: 2, cancelled: 3 };
@@ -1616,7 +1656,7 @@ function Dashboard() {
                     ? (!!apt.prescriptionInfo || doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === apt._id))
                     : !!apt.prescriptionInfo;
                   return (
-                  <div key={apt._id} className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden p-6 pl-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div key={apt._id} id={`apt-${apt._id}`} className={`relative bg-white rounded-2xl shadow-md border overflow-hidden p-6 pl-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 scroll-mt-24 transition-shadow ${highlightAptId === apt._id ? 'border-orange-400 ring-4 ring-orange-200' : 'border-gray-100'}`}>
                     {/* Status accent strip — read the appointment's state at a glance. */}
                     <span className={`absolute left-0 inset-y-0 w-1.5 ${getStatusAccent(apt.status)}`} aria-hidden="true" />
                     <div className="flex-grow">

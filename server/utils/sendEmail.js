@@ -121,10 +121,10 @@ const sendAppointmentConfirmation = async (patient, doctor, appointment) => {
           ${doctor.consultationFee ? `<p style="margin: 4px 0; color: #374151;"><strong>Fee:</strong> ₹${doctor.consultationFee}</p>` : ''}
         </div>
 
-        <p style="color: #4b5563;">Please log in to your dashboard to make the payment and view details.</p>
+        <p style="color: #4b5563;">${doctor.consultationFee ? `<strong>Next step: pay ₹${doctor.consultationFee}</strong> to lock your slot — the button below opens your booking with the payment options (UPI app, QR, UPI ID).` : 'Open your booking to see the details.'}</p>
         
-        <a href="https://www.promedicoz.in/login" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
-          Go to Dashboard
+        <a href="https://www.promedicoz.in/booking-confirmation?id=${appointment._id}" style="display: inline-block; background: ${doctor.consultationFee ? '#16a34a' : '#2563eb'}; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
+          ${doctor.consultationFee ? `Pay ₹${doctor.consultationFee} now` : 'Open my booking'}
         </a>
 
         <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">

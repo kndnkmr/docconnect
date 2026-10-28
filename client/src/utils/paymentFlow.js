@@ -22,6 +22,26 @@ export function paymentStage(apt) {
   return null;
 }
 
+// Where a booking is in the patient's journey (live booking page):
+//   'confirming' → waiting for the doctor to confirm      (step 1)
+//   'pay'        → confirmed, patient should pay now       (step 2)
+//   'checking'   → patient paid / sent proof, doctor checks (step 3)
+//   'ready'      → paid (or free) — just attend on the day (step 4)
+//   'done' | 'cancelled'
+export function bookingStage(apt) {
+  if (!apt) return null;
+  if (apt.status === 'cancelled') return 'cancelled';
+  if (apt.status === 'completed') return 'done';
+  if (apt.status === 'pending') return 'confirming';
+  const fee = Number(apt.doctor && apt.doctor.consultationFee) || 0;
+  const p = paymentStage(apt);
+  if (p === 'paid' || (fee <= 0 && apt.status === 'confirmed')) return 'ready';
+  if (p === 'pay') return 'pay';
+  if (p === 'waiting' || p === 'proof') return 'checking';
+  return 'confirming';
+}
+export const BOOKING_STEP = { confirming: 0, pay: 1, checking: 2, ready: 3, done: 3 };
+
 // One-tap UPI link (opens GPay / PhonePe / Paytm / BHIM with the payee,
 // amount and a note filled in). The note carries the patient ID + date so the
 // doctor can match the payment in their UPI app. Returns '' without a UPI ID.

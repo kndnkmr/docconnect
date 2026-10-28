@@ -395,7 +395,7 @@ function BookAppointment() {
     setIsSubmitting(true);
 
     try {
-      await appointmentAPI.book({
+      const { data: bookRes } = await appointmentAPI.book({
         doctorId,
         date: formData.date,
         timeSlot: formData.timeSlot,
@@ -412,7 +412,10 @@ function BookAppointment() {
       setBooked(true);
       clearDraft(draftName, userId);
       toast.success('Appointment booked! Waiting for doctor confirmation.');
-      navigate('/booking-confirmation', {
+      // ?id= lets the page load the live booking (refresh, alert link) and
+      // show the payment box the moment the doctor confirms.
+      const newId = bookRes?.appointment?._id;
+      navigate(newId ? `/booking-confirmation?id=${newId}` : '/booking-confirmation', {
         state: {
           doctorName: doctor?.name,
           specialization: doctor?.specialization,
