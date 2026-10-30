@@ -18,6 +18,11 @@ import { useLang } from '../../context/LangContext';
 import VoiceSearch, { isVoiceSupported } from '../../components/VoiceSearch';
 import { searchArticles } from '../../utils/blogSearch';
 import { getContinue, getSaved } from '../../utils/blogReading';
+// Fetch-ahead helpers, themselves loaded after the list has shown (the map of
+// all article files is ~12 KB; the list's first paint shouldn't wait for it).
+const bodies = () => import('./articleBodies');
+const prefetchArticle = (slug) => { bodies().then((m) => m.prefetchArticle(slug)).catch(() => {}); };
+const prefetchArticlePage = () => { bodies().then((m) => m.prefetchArticlePage()).catch(() => {}); };
 
 const PAGE = 12;
 
@@ -134,10 +139,31 @@ function BlogList() {
   }, [views]);
   const suggestions = q ? list.slice(0, 4) : [];
 
+  // ---- Open articles fast: download ahead of the tap ----
+  // A finger touching / mouse hovering / keyboard focusing a card starts its
+  // download (a touch comes ~100–300 ms before the tap registers).
+  const early = (slug) => ({ onPointerDown: () => prefetchArticle(slug), onMouseEnter: () => prefetchArticle(slug), onFocus: () => prefetchArticle(slug) });
+  // Once the list has shown: the article page's code, and the "Continue
+  // reading" article (likely the next tap).
+  useEffect(() => {
+    const go = () => { prefetchArticlePage(); if (cont) prefetchArticle(cont.slug); };
+    if ('requestIdleCallback' in window) { const id = requestIdleCallback(go, { timeout: 2500 }); return () => cancelIdleCallback(id); }
+    const id = setTimeout(go, 1200);
+    return () => clearTimeout(id);
+  }, [cont]);
+  // Search / voice results: fetch the top matches once the words settle
+  // (each is a small file, ~3–8 KB).
+  const suggestionKey = suggestions.map((a) => a.slug).join(',');
+  useEffect(() => {
+    if (!suggestionKey) return undefined;
+    const id = setTimeout(() => suggestionKey.split(',').forEach(prefetchArticle), 350);
+    return () => clearTimeout(id);
+  }, [suggestionKey]);
+
   const card = (a) => {
     const c = catOf(a.specialization);
     return (
-      <Link key={a.slug} to={hrefOf(a.slug)} className="flex gap-3 items-start bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:shadow-md hover:border-primary-200 transition-all">
+      <Link key={a.slug} to={hrefOf(a.slug)} {...early(a.slug)} className="flex gap-3 items-start bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:shadow-md hover:border-primary-200 transition-all">
         <span className={`flex-shrink-0 w-12 h-12 rounded-xl ${TINT[a.specialization] || 'bg-primary-100'} flex items-center justify-center text-2xl`} aria-hidden="true">{a.image}</span>
         <span className="min-w-0 flex-1">
           <span className="block font-semibold text-gray-900 leading-snug line-clamp-2">{titleOf(a)}</span>
@@ -182,7 +208,7 @@ function BlogList() {
             <div className="mt-2 bg-white rounded-2xl shadow-lg overflow-hidden text-gray-900" role="list" aria-label={t.suggestionsFor(q)}>
               <p className="px-4 pt-3 pb-1 text-xs text-gray-600">{t.suggestionsFor(q)}</p>
               {suggestions.map((a) => (
-                <Link key={a.slug} to={hrefOf(a.slug)} role="listitem" onClick={() => trackEvent('blog_suggestion_click', { article_slug: a.slug })}
+                <Link key={a.slug} to={hrefOf(a.slug)} role="listitem" {...early(a.slug)} onClick={() => trackEvent('blog_suggestion_click', { article_slug: a.slug })}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-primary-50 border-t border-gray-100">
                   <span className="text-xl" aria-hidden="true">{a.image}</span>
                   <span className="text-sm font-medium line-clamp-1">{titleOf(a)}</span>
@@ -208,7 +234,7 @@ function BlogList() {
         </div>
 
         {isDefault && cont && (
-          <Link to={`/blog/${cont.slug}${cont.hi ? '/hi' : ''}`} className="mt-1 mb-4 flex items-center gap-3 rounded-2xl border border-primary-200 bg-primary-50 p-3 hover:bg-primary-100">
+          <Link to={`/blog/${cont.slug}${cont.hi ? '/hi' : ''}`} {...early(cont.slug)} className="mt-1 mb-4 flex items-center gap-3 rounded-2xl border border-primary-200 bg-primary-50 p-3 hover:bg-primary-100">
             <span className="text-2xl" aria-hidden="true">{cont.image}</span>
             <span className="min-w-0 flex-1">
               <span className="block text-xs font-bold text-primary-800">{t.continue} · {t.readPct(cont.pct)}</span>
@@ -223,7 +249,7 @@ function BlogList() {
             <h2 className="text-base font-bold text-gray-900 mb-2">{t.saved}</h2>
             <div className="-mx-4 px-4 flex gap-3 overflow-x-auto snap-x pb-1">
               {saved.map((s) => (
-                <Link key={s.slug} to={hrefOf(s.slug)} className="snap-start flex-shrink-0 w-44 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:border-primary-200">
+                <Link key={s.slug} to={hrefOf(s.slug)} {...early(s.slug)} className="snap-start flex-shrink-0 w-44 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:border-primary-200">
                   <span className="text-2xl" aria-hidden="true">{s.image}</span>
                   <span className="block text-sm font-semibold text-gray-900 mt-1 line-clamp-2">{(hi && titlesHi && titlesHi[s.slug]) || s.title}</span>
                 </Link>
@@ -237,7 +263,7 @@ function BlogList() {
             <h2 className="text-base font-bold text-gray-900 mb-2">{t.popular}</h2>
             <div className="-mx-4 px-4 flex gap-3 overflow-x-auto snap-x pb-1">
               {popular.map(({ a, n }, i) => (
-                <Link key={a.slug} to={hrefOf(a.slug)} className="snap-start flex-shrink-0 w-48 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:border-primary-200">
+                <Link key={a.slug} to={hrefOf(a.slug)} {...early(a.slug)} className="snap-start flex-shrink-0 w-48 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm hover:border-primary-200">
                   <span className="flex items-center justify-between">
                     <span className="text-2xl" aria-hidden="true">{a.image}</span>
                     <span className="text-xs font-bold text-gray-500">#{i + 1}</span>

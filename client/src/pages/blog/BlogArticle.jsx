@@ -11,8 +11,8 @@ import { noteProgress, isSaved, toggleSaved } from '../../utils/blogReading';
 // title/date/specialty, the English + Hinglish body and 3 related links. So
 // opening an article downloads only that one small file — not the metadata of
 // all 373 articles (that used to be a 45 KB extra download before any text).
-// Vite turns each into its own chunk.
-const ARTICLE_BODIES = import.meta.glob('./articles/*.js');
+// Vite turns each into its own chunk. Loading + the shared cache (the blog list
+// fetches articles ahead of the tap) live in ./articleBodies.js.
 const ZOOM_KEY = 'pmz_blog_zoom';
 const ZOOMS = [0.9, 1, 1.15, 1.3];
 
@@ -36,10 +36,7 @@ function speechChunks(blocks) {
   }
   return out;
 }
-const loadArticleBody = (slug) => {
-  const load = ARTICLE_BODIES[`./articles/${slug}.js`];
-  return load ? load().then((m) => m.default) : Promise.resolve(null);
-};
+import { hasArticle, loadArticleBody, readyArticle, prefetchArticle } from './articleBodies';
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
 import { trackEvent } from '../../components/Analytics';
@@ -239,13 +236,20 @@ function BlogArticle({ defaultLang = 'en' }) {
   const { slug } = useParams();
   // Does this article exist? Checked against the list of generated files, so
   // no other blog data has to be downloaded first.
-  const meta = Boolean(ARTICLE_BODIES[`./articles/${slug}.js`]);
+  const meta = hasArticle(slug);
 
   // Load this article's body. `loaded` remembers which slug it belongs to, so
-  // switching articles never shows the previous article's text.
-  const [loaded, setLoaded] = useState({ slug: null, body: null, failed: false });
+  // switching articles never shows the previous article's text. If the blog
+  // list already fetched it (prefetch), it's drawn straight away — no
+  // "Loading…" at all.
+  const [loaded, setLoaded] = useState(() => {
+    const ready = readyArticle(slug);
+    return ready ? { slug, body: ready, failed: false } : { slug: null, body: null, failed: false };
+  });
+  const readyNow = readyArticle(slug);
+  if (readyNow && loaded.slug !== slug) setLoaded({ slug, body: readyNow, failed: false });
   useEffect(() => {
-    if (!meta) return undefined;
+    if (!meta || readyArticle(slug)) return undefined;
     let cancelled = false;
     loadArticleBody(slug)
       .then((body) => { if (!cancelled) setLoaded({ slug, body, failed: !body }); })
@@ -928,7 +932,7 @@ function BlogArticle({ defaultLang = 'en' }) {
           <h3 className="text-lg font-semibold text-gray-800 mb-4">{hiUi ? 'Aur padhein' : 'More to read'}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {relatedArticles.map(a => (
-              <Link key={a.slug} to={hiUi && a.titleHi ? `/blog/${a.slug}/hi` : `/blog/${a.slug}`} className="p-4 bg-white border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
+              <Link key={a.slug} to={hiUi && a.titleHi ? `/blog/${a.slug}/hi` : `/blog/${a.slug}`} onPointerDown={() => prefetchArticle(a.slug)} onMouseEnter={() => prefetchArticle(a.slug)} className="p-4 bg-white border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
                 <span className="text-2xl">{a.image}</span>
                 <span className="block text-xs text-primary-600 font-medium mt-2">{a.specialization}</span>
                 <h4 className="font-medium text-gray-800 mt-1 text-sm line-clamp-2">{hiUi && a.titleHi ? a.titleHi : a.title}</h4>
