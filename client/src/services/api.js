@@ -427,9 +427,12 @@ export const adminAPI = {
   getDoctorForManage: (id) => API.get(`/admin/doctors/${id}`),
   updateDoctorAsAdmin: (id, data) => API.put(`/admin/doctors/${id}`, data),
   // fieldName: 'profilePhoto' | 'upiQrCode'
-  uploadDoctorImage: (id, fieldName, file) => {
+  // upiId (optional, QR only): read from the QR in the browser; the server
+  // only uses it if the doctor has no UPI ID yet.
+  uploadDoctorImage: (id, fieldName, file, upiId = '') => {
     const fd = new FormData();
     fd.append('fieldName', fieldName);
+    if (upiId) fd.append('upiId', upiId);
     fd.append('file', file);
     return API.post(`/admin/doctors/${id}/image`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
   },

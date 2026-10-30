@@ -187,12 +187,19 @@ const uploadDoctorImage = async (req, res) => {
     if (!['profilePhoto', 'upiQrCode'].includes(field)) throw new ManageError(400, 'fieldName must be profilePhoto or upiQrCode');
     if (!req.file) throw new ManageError(400, 'Please choose an image.');
     if (!/^image\//.test(req.file.mimetype || '')) throw new ManageError(400, 'Please upload an image (JPG or PNG).');
+    // The admin screen reads the UPI ID from the QR in the browser and sends
+    // it along. Only fills an EMPTY UPI ID (never overwrites one).
+    const readUpi = field === 'upiQrCode' && typeof req.body.upiId === 'string' ? req.body.upiId.trim() : '';
+    if (readUpi && validateDoctorUpdates({ upiId: readUpi })) throw new ManageError(400, 'The UPI ID read from the QR is not valid.');
     const url = await uploadFile(req.file.buffer, req.file.mimetype, field === 'upiQrCode' ? 'promedicoz/qr' : 'promedicoz/profile');
     doctor[field] = url;
-    logEdit(doctor, req.user._id, [field]);
+    const fields = [field];
+    if (readUpi && !String(doctor.upiId || '').trim()) { doctor.upiId = readUpi; fields.push('upiId'); }
+    logEdit(doctor, req.user._id, fields);
     await doctor.save({ validateModifiedOnly: true });
     const toldNow = await notifyNowIfUrgent(doctor);
-    res.json({ message: field === 'upiQrCode' ? `UPI QR code updated.${toldNow ? ' The doctor was told.' : ''}` : 'Photo updated.', url, toldNow });
+    const upiNote = fields.includes('upiId') ? ` UPI ID ${doctor.upiId} saved from the QR.` : '';
+    res.json({ message: field === 'upiQrCode' ? `UPI QR code updated.${upiNote}${toldNow ? ' The doctor was told.' : ''}` : 'Photo updated.', url, toldNow, upiId: doctor.upiId });
   } catch (error) {
     fail(res, error, 'Uploading image');
   }

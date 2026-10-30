@@ -33,7 +33,8 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
-import { paymentStage } from '../utils/paymentFlow';
+import { paymentStage, buildUpiLink, isMobileDevice } from '../utils/paymentFlow';
+import { readUpiFromImage, isValidUpiId, sameUpi } from '../utils/upiQr';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
 // doctor screens (and vice versa) and the dashboard's first view is lighter.
@@ -1174,6 +1175,62 @@ function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, profileLoaded, isDoctor]);
 
+  // ---- Doctor: payments (UPI) ----
+  // Read the UPI ID + account name from the doctor's QR (utils/upiQr.js), so
+  // patients get the one-tap "Pay with UPI app" button even if the doctor
+  // never typed a UPI ID, and wrong pictures are caught at upload.
+  const [qrRead, setQrRead] = useState(null); // { kind:'upi'|'other'|'none'|'error', upiId?, name? }
+  const [qrUploading, setQrUploading] = useState(false);
+  useEffect(() => {
+    if (!isDoctor || !profileLoaded || !profileData.upiQrCode) { setQrRead(null); return undefined; }
+    let cancelled = false;
+    readUpiFromImage(getUploadUrl(profileData.upiQrCode)).then((r) => { if (!cancelled) setQrRead(r); });
+    return () => { cancelled = true; };
+  }, [isDoctor, profileLoaded, profileData.upiQrCode]);
+  // Older profiles: QR uploaded but UPI ID never typed → fill it in once
+  // (the autosave above saves it) and say so.
+  const upiAutoFilledRef = useRef(false);
+  useEffect(() => {
+    if (!qrRead || qrRead.kind !== 'upi' || upiAutoFilledRef.current) return;
+    if (String(profileData.upiId || '').trim()) return;
+    upiAutoFilledRef.current = true;
+    setProfileData((prev) => ({ ...prev, upiId: qrRead.upiId }));
+    toast.success(`We read your UPI ID from your QR code (${qrRead.upiId}) and saved it. Patients can now pay you in one tap.`, { duration: 7000 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qrRead]);
+
+  const uploadQr = async (file) => {
+    if (!file) return;
+    setQrUploading(true);
+    try {
+      const read = await readUpiFromImage(file);
+      if (read.kind === 'other') {
+        toast.error("This QR code isn't a UPI payment QR (it opens a website or something else). Please upload the QR from your UPI app: GPay / PhonePe / Paytm → tap your photo → QR code.", { duration: 9000 });
+        return;
+      }
+      if (read.kind !== 'upi' && !window.confirm("We couldn't find a QR code in this picture, so patients may not be able to pay you with it.\n\nTip: open your UPI app, show your QR code and take a screenshot.\n\nUpload this picture anyway?")) {
+        return;
+      }
+      const typed = String(profileData.upiId || '').trim();
+      const fillUpi = read.kind === 'upi' && !isValidUpiId(typed);
+      const data = new FormData();
+      data.append('fieldName', 'upiQrCode');
+      if (fillUpi) data.append('upiId', read.upiId);
+      data.append('profilePhoto', file);
+      const response = await doctorAPI.updateProfile(data);
+      const d = response.data.doctor || {};
+      const saved = { upiQrCode: d.upiQrCode, ...(fillUpi ? { upiId: d.upiId || read.upiId } : {}) };
+      setProfileData((prev) => ({ ...prev, ...saved }));
+      if (profileSavedRef.current) profileSavedRef.current = { ...profileSavedRef.current, ...saved };
+      toast.success(fillUpi ? `QR code uploaded. We read your UPI ID from it: ${read.upiId}` : 'QR code uploaded!', { duration: 6000 });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to upload QR code');
+    } finally {
+      setQrUploading(false);
+    }
+  };
+  const paymentsReady = !!(profileData.upiQrCode || isValidUpiId(profileData.upiId));
+
   // Switching apps / locking the phone before the autosave fires: keep the
   // unsaved changes on the device (restored on the next visit and saved).
   const profileDataRef = useRef(profileData);
@@ -1217,7 +1274,7 @@ function Dashboard() {
     } else if (hasAvailability === false) {
       toast.success('Profile saved! Now let\'s set your availability →', { duration: 4000 });
       goToTab('availability');
-    } else if (!profileData.upiQrCode) {
+    } else if (!paymentsReady) {
       toast.success('Profile saved! Don\'t forget your UPI QR code above so patients can pay you.', { duration: 5000 });
     } else {
       toast.success('Profile saved!');
@@ -1311,9 +1368,9 @@ function Dashboard() {
       actionLabel: 'Set Availability', action: () => goToTab('availability')
     },
     {
-      key: 'payment', done: !!profileData.upiQrCode,
-      label: 'Add your UPI QR code',
-      hint: 'So patients can pay you directly when they book',
+      key: 'payment', done: paymentsReady,
+      label: 'Set up payments: upload your UPI QR code',
+      hint: 'We read your UPI ID from it, so patients can pay you in one tap with your fee filled in. Typing your UPI ID works too.',
       actionLabel: 'Add QR Code', action: () => goToTab('profile')
     }
   ] : [];
@@ -2199,7 +2256,7 @@ function Dashboard() {
               { key: 'googleReviewLink', label: '⭐ Google review link (optional)', placeholder: 'https://g.page/r/…/review', type: 'url', hint: 'Google Business Profile → "Ask for reviews" → copy the link. Patients who rate you on ProMedicoz are also offered "Rate on Google" — more Google reviews help you show up in Google Maps.' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210', type: 'tel', hint: '⚠️ Public: if you add this, a "Message on WhatsApp" button appears on your public profile and any patient can message you directly. Leave blank to keep your WhatsApp private.' },
-              { key: 'upiId', label: 'UPI ID (optional)', placeholder: 'e.g., drname@okicici', hint: 'Shown to patients as a payment fallback if your UPI QR code can\'t be scanned.' },
+              { key: 'upiId', label: 'UPI ID', placeholder: 'e.g., drname@okicici', hint: 'Filled in for you when you upload your UPI QR below. Patients\' "Pay with UPI app" button pays this ID with your fee filled in.' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
@@ -2293,21 +2350,58 @@ function Dashboard() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-                  const data = new FormData();
-                  data.append('profilePhoto', file);
-                  data.append('fieldName', 'upiQrCode');
-                  try {
-                    const response = await doctorAPI.updateProfile(data);
-                    setProfileData(prev => ({ ...prev, upiQrCode: response.data.doctor.upiQrCode }));
-                    if (profileSavedRef.current) profileSavedRef.current = { ...profileSavedRef.current, upiQrCode: response.data.doctor.upiQrCode };
-                    toast.success('QR code uploaded!');
-                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to upload QR code'); }
-                }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                disabled={qrUploading}
+                aria-label="Upload your UPI QR code"
+                onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; uploadQr(file); }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-60"
               />
+              {qrUploading && <p className="text-xs text-gray-600 mt-1" role="status">Reading your QR and uploading…</p>}
+              {/* What patients will actually pay — so the doctor can see it works. */}
+              {(() => {
+                const typed = String(profileData.upiId || '').trim();
+                const typedOk = isValidUpiId(typed);
+                const qrUpi = qrRead && qrRead.kind === 'upi' ? qrRead : null;
+                const payUpi = typedOk ? typed : qrUpi ? qrUpi.upiId : '';
+                const mismatch = typedOk && qrUpi && !sameUpi(typed, qrUpi.upiId);
+                const checkLink = payUpi && isMobileDevice() ? buildUpiLink({ upiId: payUpi, doctorName: profileData.name || user?.name }) : '';
+                if (profileData.upiQrCode && qrRead && qrRead.kind === 'other') {
+                  return (
+                    <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800" role="alert">
+                      <p className="font-semibold">✗ Your uploaded picture isn't a UPI payment QR</p>
+                      <p className="mt-1">Patients can't pay with it. Please upload the QR from your UPI app (GPay / PhonePe / Paytm → tap your photo → QR code).</p>
+                    </div>
+                  );
+                }
+                if (profileData.upiQrCode && qrRead && (qrRead.kind === 'none' || qrRead.kind === 'error') && !typedOk) {
+                  return (
+                    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900" role="status">
+                      <p className="font-semibold">⚠ We couldn't read the QR in your picture</p>
+                      <p className="mt-1">Patients paying from their phone may not be able to use it. Upload a clear screenshot of the QR from your UPI app, or type your UPI ID above.</p>
+                    </div>
+                  );
+                }
+                if (!payUpi) return null;
+                return (
+                  <>
+                    <div className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3 text-xs text-green-900">
+                      <p className="font-semibold text-sm">✓ Payments ready</p>
+                      <p className="mt-1">Patients will pay{qrUpi && qrUpi.name && sameUpi(qrUpi.upiId, payUpi) ? <> <strong>{qrUpi.name}</strong> ·</> : ''} <span className="font-mono break-all">{payUpi}</span></p>
+                      <p className="mt-1 text-green-800">They get a one-tap "Pay with UPI app" button with your fee filled in, and can save your QR to scan from their gallery.</p>
+                      {checkLink && (
+                        <a href={checkLink} className="mt-2 inline-block px-3 py-1.5 rounded-lg bg-white border border-green-300 font-semibold text-green-800 hover:bg-green-100">📱 Check it opens my UPI app</a>
+                      )}
+                      {checkLink && <p className="mt-1 text-[11px] text-green-800">It should show your own name. Then just go back, no money is sent.</p>}
+                    </div>
+                    {mismatch && (
+                      <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900" role="status">
+                        <p className="font-semibold">⚠ Your QR pays <span className="font-mono">{qrUpi.upiId}</span>, but the UPI ID box says <span className="font-mono">{typed}</span></p>
+                        <p className="mt-1">Patients' one-tap button uses the UPI ID box. That's fine if both are your account (PhonePe, for example, gives one account several IDs). If not, use the QR's ID.</p>
+                        <button type="button" onClick={() => setProfileData((prev) => ({ ...prev, upiId: qrUpi.upiId }))} className="mt-2 px-3 py-1.5 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600">Use the QR's UPI ID</button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
             <button type="submit" className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">Save now</button>
           </form>

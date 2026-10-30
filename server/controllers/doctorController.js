@@ -505,6 +505,8 @@ function googleReviewLinkProblem(raw) {
 // (Profile photos can be https URLs, legacy relative paths, or base64
 // data:image/... fallbacks from uploadFile, so those stay allowed.)
 const UNSAFE_URL = /^\s*(javascript|vbscript|file):|^\s*data:(?!image\/)/i;
+// Same rule as the client (utils/upiQr.js) and the UPI apps: handle@provider.
+const UPI_ID_RE = /^[\w.-]{2,256}@[a-zA-Z][\w.-]{1,64}$/;
 
 // Returns a message for the first invalid field in `updates`, or null.
 function validateDoctorUpdates(updates) {
@@ -524,6 +526,11 @@ function validateDoctorUpdates(updates) {
   if (updates.googleReviewLink !== undefined) {
     const p = googleReviewLinkProblem(updates.googleReviewLink);
     if (p) return p;
+  }
+  // UPI ID: empty (= remove it) or a real-looking ID. Patients' "Pay with UPI
+  // app" button pays exactly this, so a typo would send money nowhere.
+  if (typeof updates.upiId === 'string' && updates.upiId.trim() && !UPI_ID_RE.test(updates.upiId.trim())) {
+    return "That doesn't look like a UPI ID. It looks like name@okicici or 98xxxxxxxx@ybl (no spaces).";
   }
   for (const f of ['profilePhoto', 'upiQrCode']) {
     if (updates[f] === undefined) continue;
@@ -590,8 +597,13 @@ const updateDoctorProfile = async (req, res) => {
 
     // If a file was uploaded, store it (Cloudinary URL, or base64 fallback)
     if (req.file) {
+      const isQr = req.body.fieldName === 'upiQrCode';
+      // Photo / QR must be an image (the shared upload filter also lets PDFs
+      // through for reports; a PDF "QR" can't be shown to patients).
+      if (!/^image\//.test(req.file.mimetype || '')) {
+        return res.status(400).json({ message: isQr ? 'Please upload a picture of your UPI QR code (JPG or PNG), not a PDF.' : 'Please upload a photo (JPG or PNG).' });
+      }
       try {
-        const isQr = req.body.fieldName === 'upiQrCode';
         const imageUrl = await uploadFile(
           req.file.buffer,
           req.file.mimetype,
@@ -621,6 +633,7 @@ const updateDoctorProfile = async (req, res) => {
       return res.status(400).json({ message: problem });
     }
     if (typeof updates.googleReviewLink === 'string') updates.googleReviewLink = updates.googleReviewLink.trim();
+    if (typeof updates.upiId === 'string') updates.upiId = updates.upiId.trim();
     if (req.body.phone !== undefined) {
       updates.phone = await checkPhone(req.body.phone, { selfId: req.user._id });
     }

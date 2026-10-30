@@ -6,6 +6,8 @@
 // 9-digit phone) is shown inline and held back until fixed; the rest save.
 // Same rules as the server (server/controllers/doctorController.js).
 
+import { isValidUpiId } from './upiQr.js';
+
 // Saved by their own upload buttons, never by autosave.
 const NOT_AUTOSAVED = new Set(['profilePhoto', 'upiQrCode']);
 
@@ -77,6 +79,10 @@ export function profileProblems(changes) {
   if ('googleReviewLink' in changes) {
     const v = String(changes.googleReviewLink || '').trim();
     if (v && !googleReviewLinkOk(v)) p.googleReviewLink = 'Paste the review link from your Google Business Profile (starts with https://g.page/ or https://search.google.com/).';
+  }
+  if ('upiId' in changes) {
+    const v = String(changes.upiId || '').trim();
+    if (v && !isValidUpiId(v)) p.upiId = "That doesn't look like a UPI ID. It looks like name@okicici or 98xxxxxxxx@ybl (no spaces).";
   }
   return p;
 }

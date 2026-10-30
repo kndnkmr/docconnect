@@ -13,6 +13,7 @@ import { adminAPI, getUploadUrl } from '../../services/api';
 import { formatDoctorName } from '../../utils/formatName';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../../utils/languages';
 import { googleReviewLinkOk } from '../../utils/profileAutosave';
+import { readUpiFromImage } from '../../utils/upiQr';
 
 const input = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none';
 // Same look without forcing full width (for fields on one row).
@@ -106,7 +107,15 @@ function ImagesTab({ doctor, onSaved }) {
     if (!file) return;
     setBusy(fieldName);
     try {
-      const { data } = await adminAPI.uploadDoctorImage(doctor._id, fieldName, file);
+      // QR: check it's really a UPI QR, and pass on the UPI ID inside it.
+      let upiId = '';
+      if (fieldName === 'upiQrCode') {
+        const read = await readUpiFromImage(file);
+        if (read.kind === 'other') { toast.error("That QR isn't a UPI payment QR (it opens a website or something else). Ask the doctor for the QR from their UPI app."); return; }
+        if (read.kind !== 'upi' && !window.confirm("No QR code could be read in this picture, so patients may not be able to pay with it. Upload anyway?")) return;
+        if (read.kind === 'upi') upiId = read.upiId;
+      }
+      const { data } = await adminAPI.uploadDoctorImage(doctor._id, fieldName, file, upiId);
       toast.success(data.message);
       onSaved();
     } catch (e) {

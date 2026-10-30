@@ -1996,6 +1996,37 @@ Replaces the older "Blog List Redesign" layout above.
 - ⭐ Save, likes, reads, share buttons and tool links work as before.
 - Language follows the app switch; the article's own English / Hinglish toggle also flips the app.
 
+## Paying the doctor: UPI ID read from the QR (Aug 2026)
+
+**Problem.** Most patients pay from the same phone that shows the doctor's QR, and you can't scan your own screen. The one-tap "Pay with UPI app" button (a `upi://pay` link with the fee filled in) needs the doctor's UPI ID, and many doctors only uploaded a QR. In Aug 2026, 6 of 18 doctors had a QR but no UPI ID.
+
+**Fix.** Every UPI QR is the text `upi://pay?pa=<UPI ID>&pn=<account name>…`, so we read it from the image: `client/src/utils/upiQr.js` (`readUpiFromImage`; tests in `tests/upiQr.test.mjs`).
+- It tries the phone's own QR reader first (BarcodeDetector). Otherwise it uses `jsqr` 1.4.0, a lazy-loaded chunk of about 47 KB gz.
+- Cloudinary images allow this (CORS). All 15 live QRs were read in testing.
+
+**Patient pay box (`PaymentBox.jsx`):**
+- The UPI ID paid is the one the doctor typed. If there isn't one, it's the ID read from the QR.
+- It shows "Your UPI app will show the name: …" (the QR's account holder, often not the doctor's name), only when the QR and the paid ID are the same account.
+- "⬇ Save QR to gallery" (phones): iPhone gets the share sheet ("Save Image"); others get a normal download of the original PNG/JPG. It never leaves the page. Then: UPI app → Scan → Gallery.
+- A doctor with a UPI ID but no QR gets a QR drawn on the page (`qrcode.react`, fee and patient ID note included) for patients on a computer.
+
+**Doctor profile (`Dashboard.jsx`):**
+- On QR upload the image is read first:
+  - A non-UPI QR (website, Wi-Fi…) is refused.
+  - If no QR is found, the doctor is asked "upload anyway?".
+  - A UPI QR sends `upiId` along when the box is empty or invalid.
+- Old profiles with a QR but an empty UPI ID get it filled in once on opening the profile; autosave saves it and a toast says so.
+- A "✓ Payments ready" card shows who patients will pay, with "📱 Check it opens my UPI app" (no amount, so nothing is sent).
+- If the typed ID ≠ the QR's ID, an amber warning offers "Use the QR's UPI ID". It never auto-overwrites a typed ID, because PhonePe gives one account several handles.
+- The checklist's payment step is done with a QR or a valid UPI ID.
+
+**Admin → Manage doctor:** same QR check. `POST /admin/doctors/:id/image` takes an optional `upiId` and fills it only if the doctor has none; it's logged and the doctor is told.
+
+**Server:**
+- `validateDoctorUpdates` rejects a malformed UPI ID (empty is allowed), and the doctor's UPI ID is trimmed.
+- The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
+- Tests: `server/tests/upiPay.test.js`.
+
 ## Privacy wording (keep it true)
 
 **Free tools** (Report Samjhao, due date, ovulation, vaccines, `/tools`) use one clear promise. Your details stay **on your phone**: they're never sent to ProMedicoz, never saved and never shared. Report Samjhao also says no other company or AI service sees the photo.
