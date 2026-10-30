@@ -25,33 +25,17 @@ import { offeredModes, pickMode } from '../utils/consultModes';
 import { loadDraft, clearDraft, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import useAutoDraft from '../utils/useAutoDraft';
 import { useLang } from '../context/LangContext';
+import { dayTiles, groupSlots, slotStart, symptomsFor, missingStep } from '../utils/bookingUi';
+import { formatDoctorName } from '../utils/formatName';
+import VoiceSearch, { isVoiceSupported } from '../components/VoiceSearch';
 
 // Any one of the medical info fields being set is enough to consider it
 // "on file" — no need for every field to be filled in.
 const hasMedicalInfo = (u) =>
   !!(u?.allergies || u?.currentMedications || u?.medicalHistory || u?.bloodGroup || u?.emergencyContactName || u?.insuranceProvider);
 
-// Common symptoms for the quick-pick list. Bilingual so a Hindi-speaking
-// patient can recognise them — but the value STORED (and shown to the
-// doctor) is always the English `en`, so the doctor side stays English.
-const COMMON_SYMPTOMS = [
-  { en: 'Fever', hi: 'बुखार' },
-  { en: 'Cough', hi: 'खांसी' },
-  { en: 'Cold', hi: 'सर्दी' },
-  { en: 'Headache', hi: 'सिरदर्द' },
-  { en: 'Body Ache', hi: 'बदन दर्द' },
-  { en: 'Fatigue', hi: 'थकान' },
-  { en: 'Nausea/Vomiting', hi: 'मतली / उल्टी' },
-  { en: 'Diarrhea', hi: 'दस्त' },
-  { en: 'Stomach Pain', hi: 'पेट दर्द' },
-  { en: 'Chest Pain', hi: 'सीने में दर्द' },
-  { en: 'Shortness of Breath', hi: 'सांस लेने में तकलीफ' },
-  { en: 'Sore Throat', hi: 'गले में खराश' },
-  { en: 'Skin Rash', hi: 'त्वचा पर चकत्ते' },
-  { en: 'Dizziness', hi: 'चक्कर आना' },
-  { en: 'Joint Pain', hi: 'जोड़ों का दर्द' },
-  { en: 'Back Pain', hi: 'कमर दर्द' },
-];
+// Problem chips now match the doctor's specialty — see utils/bookingUi.js
+// (symptomsFor). The stored value is always English, so the doctor side stays English.
 
 // Bilingual UI strings for the patient booking flow (Phase 2). Doctor-entered
 // content (name, specialization) and the values sent to the server stay in
@@ -105,6 +89,31 @@ const BOOKING_TXT = {
     booking: 'Booking...',
     confirmBooking: 'Confirm Booking',
     pendingNote: 'Your appointment will be pending until the doctor confirms.',
+    // ---- New look ----
+    docTrust: 'Pay only after the doctor confirms',
+    yrs: (n) => `${n} yrs`,
+    when: 'When?',
+    howWho: 'How & for whom?',
+    problem: "What's the problem?",
+    earliest: (label) => `⚡ Earliest: ${label}`,
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    off: 'Off',
+    otherDate: '📅 Other date:',
+    groups: { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening', night: 'Night' },
+    pickDayFirst: 'Pick a day above to see free times',
+    slotsFree: (n) => `${n} free time${n === 1 ? '' : 's'} on this day`,
+    modeHint: { video: 'Face to face on video, from home', phone: 'Talk from home, no travel', clinic: 'Visit the clinic' },
+    modeShort: { video: '📹 Video', phone: '📞 Phone', 'in-person': '🏥 Clinic' },
+    forWhom: 'For whom?',
+    myselfChip: '🙋 Myself',
+    addMember: '+ Add family member',
+    reasonPh2: 'Tell the doctor in your own words (Hindi or English)…',
+    voiceHint: 'Tap 🎤 and speak — we type it for you. You can edit it.',
+    summaryPick: 'Pick a day and time',
+    payAfter: 'pay after confirm',
+    bookNow: 'Book now →',
+    missing: { time: 'Pick a day and time first', who: 'Choose who this is for', reason: 'Tell the doctor what the problem is', consent: 'Tick the consent box to continue' },
   },
   hi: {
     back: '← डॉक्टर प्रोफ़ाइल पर वापस जाएं',
@@ -154,6 +163,31 @@ const BOOKING_TXT = {
     booking: 'बुकिंग हो रही है...',
     confirmBooking: 'बुकिंग की पुष्टि करें',
     pendingNote: 'डॉक्टर की पुष्टि होने तक आपका अपॉइंटमेंट लंबित रहेगा।',
+    // ---- New look ----
+    docTrust: 'डॉक्टर की पुष्टि के बाद ही भुगतान',
+    yrs: (n) => `${n} साल`,
+    when: 'कब?',
+    howWho: 'कैसे और किसके लिए?',
+    problem: 'क्या परेशानी है?',
+    earliest: (label) => `⚡ सबसे जल्दी: ${label}`,
+    today: 'आज',
+    tomorrow: 'कल',
+    off: 'छुट्टी',
+    otherDate: '📅 कोई और तारीख:',
+    groups: { morning: 'सुबह', afternoon: 'दोपहर', evening: 'शाम', night: 'रात' },
+    pickDayFirst: 'खाली समय देखने के लिए ऊपर दिन चुनें',
+    slotsFree: (n) => `इस दिन ${n} समय खाली हैं`,
+    modeHint: { video: 'घर बैठे वीडियो पर आमने-सामने', phone: 'घर से बात करें, कहीं जाना नहीं', clinic: 'क्लिनिक पर मिलें' },
+    modeShort: { video: '📹 वीडियो', phone: '📞 फ़ोन', 'in-person': '🏥 क्लिनिक' },
+    forWhom: 'किसके लिए?',
+    myselfChip: '🙋 मेरे लिए',
+    addMember: '+ परिवार सदस्य जोड़ें',
+    reasonPh2: 'अपने शब्दों में डॉक्टर को बताएं (हिंदी या English)…',
+    voiceHint: '🎤 दबाकर बोलें — हम लिख देंगे। आप बदल भी सकते हैं।',
+    summaryPick: 'दिन और समय चुनें',
+    payAfter: 'पुष्टि के बाद भुगतान',
+    bookNow: 'बुक करें →',
+    missing: { time: 'पहले दिन और समय चुनें', who: 'चुनें कि किसके लिए है', reason: 'डॉक्टर को परेशानी बताएं', consent: 'आगे बढ़ने के लिए सहमति पर टिक करें' },
   },
 };
 
@@ -168,6 +202,7 @@ function BookAppointment() {
   // translation logic, so they stay English regardless of this.
   const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = BOOKING_TXT[lang];
+  const [voiceOk] = useState(() => isVoiceSupported());
 
   // Check if this is a repeat booking (prefilled data from Dashboard)
   const repeatData = location.state || {};
@@ -301,7 +336,7 @@ function BookAppointment() {
     const fetchFamilyMembers = async () => {
       try {
         const response = await familyMemberAPI.getAll();
-        setFamilyMembers(response.data.familyMembers);
+        setFamilyMembers(Array.isArray(response.data.familyMembers) ? response.data.familyMembers : []);
       } catch (error) {
         // Non-critical — patient just can't select family member
         console.error('Fetch family members error:', error);
@@ -445,6 +480,50 @@ function BookAppointment() {
     return today.toISOString().split('T')[0];
   };
 
+  // ---- New look helpers (utils/bookingUi.js) ----
+  const tiles = dayTiles({ availability: doctor?.availability, blockedDates: doctor?.blockedDates });
+  const inTiles = tiles.some((d) => d.date === formData.date);
+  const baseSymptoms = symptomsFor(doctor?.specialization);
+  // Keep any chosen problem visible even if it isn't in this doctor's list
+  // (e.g. restored from an older draft).
+  const symptomList = [...baseSymptoms, ...symptoms.filter((s) => !baseSymptoms.some((b) => b.en === s)).map((s) => ({ en: s, hi: s }))];
+  const locale = lang === 'hi' ? 'hi-IN' : 'en-IN';
+  const dayLabel = (date, opts) => new Date(`${date}T00:00:00Z`).toLocaleDateString(locale, { timeZone: 'UTC', ...opts });
+  const earliest = doctor?.nextAvailable || null;
+  const earliestLabel = earliest
+    ? `${earliest.isToday ? t.today : dayLabel(earliest.date, { weekday: 'short', day: 'numeric' })} ${slotStart(earliest.timeSlot)}`
+    : '';
+  const pickEarliest = () => {
+    if (!earliest) return;
+    if (formData.date === earliest.date) {
+      if (availableSlots.includes(earliest.timeSlot)) setFormData((prev) => ({ ...prev, timeSlot: earliest.timeSlot }));
+      return;
+    }
+    restoreSlotRef.current = earliest.timeSlot; // selected once that day's free times load (if still free)
+    setFormData((prev) => ({ ...prev, date: earliest.date }));
+  };
+  const stepRefs = { time: useRef(null), who: useRef(null), reason: useRef(null), consent: useRef(null) };
+  const missing = missingStep({ date: formData.date, timeSlot: formData.timeSlot, reason: formData.reason, consent: consentGiven, bookedFor, familyMemberName: selectedFamilyMember });
+  // Tapping Book with something missing: say what, and take them there.
+  const onBookTap = (e) => {
+    if (!missing || isSubmitting) return;
+    e.preventDefault();
+    toast(t.missing[missing], { icon: '👆', id: 'book-missing' }); // replaces, never stacks
+    const el = stepRefs[missing].current;
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  const modeHint = { video: t.modeHint.video, phone: t.modeHint.phone, 'in-person': (doctor?.clinicAddress || doctor?.city || '').trim() || t.modeHint.clinic };
+  const summary = formData.timeSlot
+    ? `${dayLabel(formData.date, { weekday: 'short', day: 'numeric', month: 'short' })} · ${slotStart(formData.timeSlot)} · ${{ video: '📹', phone: '📞', 'in-person': '🏥' }[formData.consultationType] || ''}`
+    : t.summaryPick;
+  const chip = (on) => `inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-sm font-medium transition-colors ${on ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-800 hover:border-primary-400'}`;
+  const stepHead = (n, title) => (
+    <h2 className="flex items-center gap-2.5 text-base font-bold text-gray-900">
+      <span className="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0" aria-hidden="true">{n}</span>
+      {title}
+    </h2>
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -454,246 +533,157 @@ function BookAppointment() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8">
       <SEO title="Book Appointment" description="Book your appointment on ProMedicoz." path="/book-appointment" noindex />
-      <div className="flex items-center justify-between mb-6 max-w-2xl mx-auto">
-        <Link to={`/doctors/${doctorId}`} className="text-primary-600 hover:underline inline-block">
+      <div className="max-w-2xl mx-auto">
+        <Link to={`/doctors/${doctorId}`} className="text-primary-700 hover:underline text-sm inline-block mb-3">
           {t.back}
         </Link>
-      </div>
 
-      <div className="max-w-2xl mx-auto">
-        {/* Doctor summary card — who you're booking + the fee, up front. */}
-        <div className="bg-white rounded-2xl shadow-md p-5 mb-6 flex items-center gap-4">
-          <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-primary-50">
+        {/* Who you're booking — trust up front: qualification, years, fee,
+            and that you pay only after the doctor confirms. */}
+        <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 text-white p-4 sm:p-5 mb-5 flex items-center gap-4 shadow-md">
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white/40">
             {doctor?.profilePhoto ? (
               <img src={getUploadUrl(doctor.profilePhoto, { width: 150 })} alt={doctor.name} className="w-16 h-16 rounded-full object-cover" />
             ) : (
-              <span className="text-2xl">🧑‍⚕️</span>
+              <span className="text-2xl" aria-hidden="true">🧑‍⚕️</span>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-lg font-bold text-gray-800 truncate">{doctor?.name}</h2>
-            <p className="text-primary-600 text-sm font-medium">{doctor?.specialization || 'General Physician'}</p>
+            <p className="text-lg font-bold truncate">{formatDoctorName(doctor?.name)}</p>
+            <p className="text-sm text-primary-100 truncate">
+              {[doctor?.specialization?.trim() || 'General Physician', doctor?.qualification?.trim(), doctor?.experience > 0 ? t.yrs(doctor.experience) : ''].filter(Boolean).join(' · ')}
+            </p>
+            <p className="text-xs text-green-200 mt-1 font-medium">✓ {t.docTrust}</p>
           </div>
           {doctor?.consultationFee > 0 && (
-            <div className="flex-shrink-0 text-center bg-green-50 border border-green-100 rounded-xl px-3 py-2">
+            <div className="flex-shrink-0 text-center bg-white rounded-xl px-3 py-2">
               <div className="text-base font-extrabold text-green-700 leading-none">Rs. {doctor.consultationFee}</div>
-              <div className="text-[10px] text-green-600 mt-0.5">{t.feeLabel}</div>
+              <div className="text-[10px] text-gray-600 mt-0.5">{t.feeLabel}</div>
             </div>
           )}
         </div>
 
-        {/* Booking form */}
-        <div className="bg-white rounded-xl shadow-md p-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">{t.title}</h1>
+        {repeatData.repeatBooking && (
+          <div className="mb-4 p-3 bg-primary-50 border border-primary-200 rounded-xl flex items-center gap-2">
+            <span className="text-lg" aria-hidden="true">🔄</span>
+            <p className="text-sm text-primary-800">{t.repeatNote}</p>
+          </div>
+        )}
+        {restored && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-3" role="status">
+            <p className="text-sm text-blue-800">{t.restored(savedAgo(restored.savedAt))}</p>
+            <button type="button" onClick={startFresh} className="text-sm font-semibold text-primary-700 hover:underline whitespace-nowrap">{t.startFresh}</button>
+          </div>
+        )}
 
-          {/* Repeat booking indicator */}
-          {repeatData.repeatBooking && (
-            <div className="mb-5 p-3 bg-primary-50 border border-primary-200 rounded-lg flex items-center gap-2">
-              <span className="text-lg">🔄</span>
-              <p className="text-sm text-primary-700">
-                {t.repeatNote}
-              </p>
-            </div>
-          )}
-
-          {restored && (
-            <div className="mb-5 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between gap-3" role="status">
-              <p className="text-sm text-blue-800">{t.restored(savedAgo(restored.savedAt))}</p>
-              <button type="button" onClick={startFresh} className="text-sm font-semibold text-primary-600 hover:underline whitespace-nowrap">{t.startFresh}</button>
-            </div>
-          )}
-
-          <form id="book-form" onSubmit={handleSubmit} className="space-y-5">
-            {/* Step 1 — Date & time */}
-            <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
-              <h2 className="text-base font-bold text-gray-800">{t.step1}</h2>
+        <h1 className="sr-only">{t.title}</h1>
+        <form id="book-form" onSubmit={handleSubmit} className="space-y-5">
+          {/* ---- 1. When? ---- */}
+          <section ref={stepRefs.time} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 scroll-mt-24" aria-labelledby="step-when">
+            <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+              <div id="step-when">{stepHead(1, t.when)}</div>
+              {earliest && (
+                <button type="button" onClick={pickEarliest} className="px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-bold hover:bg-green-200">
+                  {t.earliest(earliestLabel)}
+                </button>
+              )}
             </div>
 
-            {/* Date picker */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.dateLabel}
-              </label>
+            {/* Day tiles: next 2 weeks; days the doctor doesn't work are "Off". */}
+            <div className="-mx-1 px-1 flex gap-2 overflow-x-auto pb-1 snap-x" role="radiogroup" aria-label={t.dateLabel}>
+              {tiles.map((d) => {
+                const on = formData.date === d.date;
+                return (
+                  <button
+                    key={d.date}
+                    type="button"
+                    role="radio"
+                    aria-checked={on}
+                    disabled={d.off}
+                    onClick={() => setFormData((prev) => ({ ...prev, date: d.date }))}
+                    aria-label={`${dayLabel(d.date, { weekday: 'long', day: 'numeric', month: 'long' })}${d.off ? ` — ${t.off}` : ''}`}
+                    className={`snap-start flex-shrink-0 w-16 rounded-xl border py-2 text-center transition-colors ${
+                      d.off ? 'bg-gray-100 border-gray-100 text-gray-500 cursor-not-allowed'
+                        : on ? 'bg-primary-600 border-primary-600 text-white shadow-sm'
+                          : 'bg-white border-gray-300 text-gray-900 hover:border-primary-400'}`}
+                  >
+                    <span className={`block text-[11px] font-medium ${on ? 'text-primary-100' : ''}`}>
+                      {d.off ? t.off : d.rel === 'today' ? t.today : d.rel === 'tomorrow' ? t.tomorrow : dayLabel(d.date, { month: 'short' })}
+                    </span>
+                    <span className="block text-lg font-extrabold leading-tight">{d.dayNum}</span>
+                    <span className={`block text-[11px] ${on ? 'text-primary-100' : ''}`}>{dayLabel(d.date, { weekday: 'short' })}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {/* Any later date */}
+            <label className="mt-3 flex items-center gap-2 text-sm text-gray-700">
+              <span className="whitespace-nowrap">{t.otherDate}</span>
               <input
                 type="date"
-                value={formData.date}
-                onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                value={inTiles ? '' : formData.date}
+                onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
                 min={getTodayString()}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-                required
+                aria-label={t.dateLabel}
+                className={`px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none ${!inTiles && formData.date ? 'border-primary-500 bg-primary-50' : 'border-gray-300'}`}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {t.dateHint}
-              </p>
-            </div>
+            </label>
 
-            {/* Time slot selector - NOW DYNAMIC */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.slotLabel}
-              </label>
-
-              {/* Show loading while fetching slots */}
+            {/* Free times, grouped Morning / Afternoon / Evening / Night */}
+            <div className="mt-4">
               {slotsLoading ? (
-                <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm">
-                  {t.slotsLoading}
-                </div>
+                <p className="px-3 py-3 bg-gray-50 rounded-lg text-gray-600 text-sm" role="status">{t.slotsLoading}</p>
               ) : !formData.date ? (
-                // No date selected yet
-                <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm">
-                  {t.pickDateFirst}
-                </div>
+                <p className="px-3 py-3 bg-gray-50 rounded-lg text-gray-600 text-sm">{t.pickDayFirst}</p>
               ) : availableSlots.length === 0 ? (
-                // Date selected but no slots available
-                <div className="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                  {slotsMessage || t.noSlots}
-                </div>
+                <p className="px-3 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{slotsMessage || t.noSlots}</p>
               ) : (
-                // Slots available — show as selectable grid
                 <>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {availableSlots.map((slot) => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, timeSlot: slot }))}
-                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
-                          formData.timeSlot === slot
-                            ? 'border-primary-500 bg-primary-50 text-primary-700 ring-2 ring-primary-200'
-                            : 'border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        {slot}
-                      </button>
+                  <div className="space-y-3" role="radiogroup" aria-label={t.slotLabel}>
+                    {groupSlots(availableSlots).map((g) => (
+                      <div key={g.key}>
+                        <p className="text-xs font-bold text-gray-700 mb-1.5">{g.icon} {t.groups[g.key]}</p>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          {g.items.map((slot) => {
+                            const on = formData.timeSlot === slot;
+                            return (
+                              <button
+                                key={slot}
+                                type="button"
+                                role="radio"
+                                aria-checked={on}
+                                onClick={() => setFormData((prev) => ({ ...prev, timeSlot: slot }))}
+                                className={`py-2.5 rounded-lg border text-sm font-semibold transition-colors ${on ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 text-gray-900 hover:border-primary-400 hover:bg-primary-50'}`}
+                              >
+                                {slotStart(slot)}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                  {/* Slots info message */}
-                  <p className="text-xs text-green-600 mt-2">
-                    {slotsMessage}
-                  </p>
+                  <p className="text-xs text-green-700 mt-2">{t.slotsFree(availableSlots.length)}</p>
                 </>
               )}
               {slotLostNote && !formData.timeSlot && (
-                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t.slotLost(slotLostNote)}</p>
+                <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t.slotLost(slotLostNote)}</p>
               )}
             </div>
+          </section>
 
-            {/* Step 2 — Who & how */}
-            <div className="flex items-center gap-2.5 pt-2 border-t border-gray-100">
-              <span className="w-6 h-6 mt-4 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
-              <h2 className="text-base font-bold text-gray-800 mt-4">{t.step2}</h2>
-            </div>
+          {/* ---- 2. How & for whom? ---- */}
+          <section ref={stepRefs.who} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-4 scroll-mt-24" aria-labelledby="step-how">
+            <div id="step-how">{stepHead(2, t.howWho)}</div>
 
-            {/* Who is this booking for? */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.bookingFor}
-              </label>
-              <select
-                value={bookedFor}
-                onChange={(e) => {
-                  setBookedFor(e.target.value);
-                  if (e.target.value === 'self') setSelectedFamilyMember('');
-                }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-              >
-                <option value="self">{t.myself}</option>
-                <option value="family">{t.familyMember}</option>
-              </select>
-            </div>
-
-            {/* Family member selection (only when booking for family) */}
-            {bookedFor === 'family' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.selectFamily}
-                </label>
-                {familyMembers.length === 0 ? (
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-700">
-                      {t.noFamily}
-                    </p>
-                    <Link
-                      to={`/dashboard?tab=familyMembers&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`}
-                      className="text-sm text-primary-600 hover:underline mt-1 inline-block"
-                    >
-                      {t.addFamily}
-                    </Link>
-                  </div>
-                ) : (
-                  <select
-                    value={selectedFamilyMember}
-                    onChange={(e) => setSelectedFamilyMember(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-                    required
-                  >
-                    <option value="">{t.chooseFamily}</option>
-                    {familyMembers.map((member) => (
-                      <option key={member._id} value={member.name}>
-                        {member.name} ({member.relationship}{member.age ? `, ${member.age} yrs` : ''})
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-            )}
-
-            {/* Medical info reminder — only for a self-booking, since this is
-                the ACCOUNT HOLDER's medical info (allergies, emergency
-                contact, etc.), which has nothing to do with a family member
-                being booked for instead. Always reads live from the
-                patient's profile rather than being copied onto the
-                appointment, so the doctor always sees the current version,
-                not a possibly-stale one from whenever this was booked. */}
-            {bookedFor === 'self' && (
-              hasMedicalInfo(user) ? (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-                  <p className="font-medium mb-1">{t.medInfoOnFile}</p>
-                  <ul className="text-green-700 space-y-0.5 list-disc list-inside">
-                    {user.allergies && <li>{t.lblAllergies}: {user.allergies}</li>}
-                    {user.currentMedications && <li>{t.lblMedications}: {user.currentMedications}</li>}
-                    {user.medicalHistory && <li>{t.lblHistory}: {user.medicalHistory}</li>}
-                    {user.bloodGroup && <li>{t.lblBlood}: {user.bloodGroup}</li>}
-                    {user.emergencyContactName && <li>{t.lblEmergency}: {user.emergencyContactName}</li>}
-                    {user.insuranceProvider && <li>{t.lblInsurance}: {user.insuranceProvider}</li>}
-                  </ul>
-                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="text-green-700 underline text-xs mt-1 inline-block">
-                    {t.updateIfChanged}
-                  </Link>
-                </div>
-              ) : (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                  {t.addMedPrompt}{' '}
-                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="underline font-medium">
-                    {t.addInSettings}
-                  </Link>
-                </div>
-              )
-            )}
-
-            {/* Consultation type — tap-to-pick mode cards (writes the same
-                formData.consultationType values the old dropdown did). */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.consultType}
-              </label>
-              {modes.length === 1 ? (
-                // Only one way to consult: nothing to choose, just say it.
-                <div className="flex items-center gap-3 px-3 py-3 rounded-xl border border-primary-500 bg-primary-50 ring-2 ring-primary-200">
-                  <span className="text-xl" aria-hidden="true">{{ video: '📹', phone: '📞', 'in-person': '🏥' }[modes[0]]}</span>
-                  <div>
-                    <p className="text-sm font-semibold text-primary-700">{{ video: t.video, phone: t.phone, 'in-person': t.inPerson }[modes[0]]}</p>
-                    <p className="text-xs text-gray-500">{t.onlyMode(doctor?.name || '')}</p>
-                  </div>
-                </div>
-              ) : (
-              <div className={`grid gap-2 ${modes.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              <p className="text-sm font-semibold text-gray-800 mb-2">{t.consultType}</p>
+              <div className={`grid gap-2 ${modes.length === 1 ? 'grid-cols-1' : modes.length === 2 ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-3'}`} role="radiogroup" aria-label={t.consultType}>
                 {[
-                  { key: 'video', icon: '📹', label: t.video },
                   { key: 'phone', icon: '📞', label: t.phone },
+                  { key: 'video', icon: '📹', label: t.video },
                   { key: 'in-person', icon: '🏥', label: t.inPerson },
                 ].filter((m) => modes.includes(m.key)).map((m) => {
                   const on = formData.consultationType === m.key;
@@ -701,131 +691,169 @@ function BookAppointment() {
                     <button
                       key={m.key}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, consultationType: m.key }))}
-                      className={`flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-xl border text-center transition-all ${on ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200' : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'}`}
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => setFormData((prev) => ({ ...prev, consultationType: m.key }))}
+                      className={`flex items-start gap-3 text-left px-3 py-3 rounded-xl border transition-colors ${on ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200' : 'border-gray-300 bg-white hover:border-primary-400'}`}
                     >
-                      <span className="text-xl" aria-hidden="true">{m.icon}</span>
-                      <span className={`text-xs font-medium leading-tight ${on ? 'text-primary-700' : 'text-gray-600'}`}>{m.label}</span>
+                      <span className="text-2xl leading-none" aria-hidden="true">{m.icon}</span>
+                      <span className="min-w-0">
+                        <span className={`block text-sm font-bold ${on ? 'text-primary-800' : 'text-gray-900'}`}>{m.label}</span>
+                        <span className="block text-xs text-gray-600 mt-0.5 line-clamp-2">{modeHint[m.key]}</span>
+                      </span>
                     </button>
                   );
                 })}
               </div>
-              )}
-              {modeSwitched && <p className="text-xs text-amber-700 mt-2">{t.modeSwitched(doctor?.name || '')}</p>}
+              {modes.length === 1 && <p className="text-xs text-gray-600 mt-2">{t.onlyMode(formatDoctorName(doctor?.name).replace(/^Dr\. /, ''))}</p>}
+              {modeSwitched && <p className="text-xs text-amber-800 mt-2">{t.modeSwitched(formatDoctorName(doctor?.name).replace(/^Dr\. /, ''))}</p>}
             </div>
 
-            {/* Step 3 — Reason for visit */}
-            <div className="flex items-center gap-2.5 pt-2 border-t border-gray-100">
-              <span className="w-6 h-6 mt-4 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
-              <h2 className="text-base font-bold text-gray-800 mt-4">{t.step3}</h2>
-            </div>
-
-            {/* Structured symptom tags — optional quick-pick, supplements
-                the free-text reason below rather than replacing it */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.symptomsLabel}
-              </label>
-              <p className="text-xs text-gray-500 mb-2">{t.symptomsHint}</p>
-              <div className="flex flex-wrap gap-2">
-                {COMMON_SYMPTOMS.map((s) => (
-                  <button
-                    key={s.en}
-                    type="button"
-                    onClick={() => toggleSymptom(s.en)}
-                    className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${
-                      symptoms.includes(s.en)
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-gray-200 text-gray-600 hover:border-primary-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    {lang === 'hi' ? s.hi : s.en}
-                  </button>
-                ))}
+              <p className="text-sm font-semibold text-gray-800 mb-2">{t.forWhom}</p>
+              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t.forWhom}>
+                <button type="button" role="radio" aria-checked={bookedFor === 'self'} onClick={() => { setBookedFor('self'); setSelectedFamilyMember(''); }} className={chip(bookedFor === 'self')}>
+                  {t.myselfChip}
+                </button>
+                {familyMembers.map((m) => {
+                  const on = bookedFor === 'family' && selectedFamilyMember === m.name;
+                  return (
+                    <button key={m._id} type="button" role="radio" aria-checked={on} onClick={() => { setBookedFor('family'); setSelectedFamilyMember(m.name); }} className={chip(on)}>
+                      👤 {m.name}{m.age ? ` (${m.age})` : ''}
+                    </button>
+                  );
+                })}
+                <Link to={`/dashboard?tab=familyMembers&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="inline-flex items-center px-3.5 py-2 rounded-full border border-dashed border-gray-400 text-sm font-medium text-primary-700 hover:bg-primary-50">
+                  {t.addMember}
+                </Link>
               </div>
+              {bookedFor === 'family' && !selectedFamilyMember && <p className="text-xs text-amber-800 mt-2">{t.missing.who}</p>}
             </div>
 
-            {/* Reason */}
+            {/* The account holder's medical info (self-booking only) — read live
+                from their profile so the doctor always sees the current version. */}
+            {bookedFor === 'self' && (
+              hasMedicalInfo(user) ? (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-900">
+                  <p className="font-medium mb-1">{t.medInfoOnFile}</p>
+                  <ul className="text-green-800 space-y-0.5 list-disc list-inside">
+                    {user.allergies && <li>{t.lblAllergies}: {user.allergies}</li>}
+                    {user.currentMedications && <li>{t.lblMedications}: {user.currentMedications}</li>}
+                    {user.medicalHistory && <li>{t.lblHistory}: {user.medicalHistory}</li>}
+                    {user.bloodGroup && <li>{t.lblBlood}: {user.bloodGroup}</li>}
+                    {user.emergencyContactName && <li>{t.lblEmergency}: {user.emergencyContactName}</li>}
+                    {user.insuranceProvider && <li>{t.lblInsurance}: {user.insuranceProvider}</li>}
+                  </ul>
+                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="text-green-800 underline text-xs mt-1 inline-block">
+                    {t.updateIfChanged}
+                  </Link>
+                </div>
+              ) : (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-900">
+                  {t.addMedPrompt}{' '}
+                  <Link to={`/dashboard?tab=account&back=${encodeURIComponent(`/book-appointment/${doctorId}`)}`} className="underline font-medium">
+                    {t.addInSettings}
+                  </Link>
+                </div>
+              )
+            )}
+          </section>
+
+          {/* ---- 3. What's the problem? ---- */}
+          <section ref={stepRefs.reason} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-3 scroll-mt-24" aria-labelledby="step-problem">
+            <div id="step-problem">{stepHead(3, t.problem)}</div>
+            <div className="flex flex-wrap gap-2" aria-label={t.symptomsLabel} role="group">
+              {symptomList.map((s) => {
+                const on = symptoms.includes(s.en);
+                return (
+                  <button key={s.en} type="button" aria-pressed={on} onClick={() => toggleSymptom(s.en)}
+                    className={`px-3 py-1.5 rounded-full border text-sm transition-colors ${on ? 'border-primary-600 bg-primary-50 text-primary-800 font-semibold' : 'border-gray-300 text-gray-800 hover:border-primary-400'}`}>
+                    {on ? '✓ ' : ''}{lang === 'hi' ? s.hi : s.en}
+                  </button>
+                );
+              })}
+            </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.reasonLabel}
-              </label>
-              <textarea
-                value={formData.reason}
-                onChange={(e) => setFormData(prev => ({ ...prev, reason: e.target.value }))}
-                placeholder={t.reasonPlaceholder}
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none"
-                required
-              />
+              <label htmlFor="book-reason" className="block text-sm font-semibold text-gray-800 mb-1">{t.reasonLabel}</label>
+              <div className="relative">
+                <textarea
+                  id="book-reason"
+                  value={formData.reason}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, reason: e.target.value }))}
+                  placeholder={t.reasonPh2}
+                  rows={3}
+                  className={`w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none ${voiceOk ? 'pr-14' : ''}`}
+                  required
+                />
+                {voiceOk && (
+                  <VoiceSearch
+                    lang={lang}
+                    hideHint
+                    onResult={(said) => setFormData((prev) => ({ ...prev, reason: prev.reason.trim() ? `${prev.reason.trim()} ${said}` : said }))}
+                  />
+                )}
+              </div>
+              {voiceOk && <p className="text-xs text-gray-600 mt-1">{t.voiceHint}</p>}
             </div>
+          </section>
 
-            {/* Consent checkbox (bilingual: English + Hindi) */}
-            <label className="flex items-start gap-2 cursor-pointer bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <input
-                type="checkbox"
-                id="consent"
-                checked={consentGiven}
-                onChange={(e) => setConsentGiven(e.target.checked)}
-                className="w-4 h-4 mt-0.5 text-primary-600 rounded focus:ring-primary-500"
-              />
-              <span className="text-xs text-gray-600 space-y-1">
-                <span className="block">
-                  I agree to the <a href="/terms" target="_blank" className="text-primary-600 underline">Terms &amp; Conditions</a> and consent to teleconsultation. I understand this is not an emergency service.
-                </span>
-                <span className="block text-gray-500">
-                  मैं <a href="/terms" target="_blank" className="text-primary-600 underline">नियम और शर्तों</a> से सहमत हूँ और टेलीकंसल्टेशन के लिए अपनी सहमति देता/देती हूँ। मैं समझता/समझती हूँ कि यह आपातकालीन सेवा नहीं है।
-                </span>
+          {/* Consent (bilingual: English + Hindi) */}
+          <label ref={stepRefs.consent} className="flex items-start gap-2 cursor-pointer bg-white border border-gray-200 rounded-2xl p-4 scroll-mt-24">
+            <input
+              type="checkbox"
+              id="consent"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              className="w-5 h-5 mt-0.5 text-primary-600 rounded focus:ring-primary-500 flex-shrink-0"
+            />
+            <span className="text-xs text-gray-700 space-y-1">
+              <span className="block">
+                I agree to the <a href="/terms" target="_blank" className="text-primary-700 underline">Terms &amp; Conditions</a> and consent to teleconsultation. I understand this is not an emergency service.
               </span>
-            </label>
+              <span className="block text-gray-600">
+                मैं <a href="/terms" target="_blank" className="text-primary-700 underline">नियम और शर्तों</a> से सहमत हूँ और टेलीकंसल्टेशन के लिए अपनी सहमति देता/देती हूँ। मैं समझता/समझती हूँ कि यह आपातकालीन सेवा नहीं है।
+              </span>
+            </span>
+          </label>
 
-            {/* Submit — inline button for tablet/desktop; on mobile the sticky
-                bottom bar carries the action (md:hidden here to avoid two). */}
-            <button
-              type="submit"
-              disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
-              className="btn btn-primary w-full hidden md:flex"
-            >
-              {isSubmitting ? t.booking : t.confirmBooking}
+          {/* Tablet/desktop: summary + Book inline (phones use the sticky bar). */}
+          <div className="hidden md:flex items-center justify-between gap-4 bg-white rounded-2xl border border-gray-200 p-4">
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-gray-900 truncate">{summary}</p>
+              {doctor?.consultationFee > 0 && <p className="text-sm"><span className="font-extrabold text-green-700">Rs. {doctor.consultationFee}</span> <span className="text-gray-600">· {t.payAfter}</span></p>}
+            </div>
+            <button type="submit" onClick={onBookTap} disabled={isSubmitting} aria-disabled={!!missing} className={`btn btn-primary px-8 ${missing ? 'opacity-70' : ''}`}>
+              {isSubmitting ? t.booking : t.bookNow}
             </button>
-          </form>
+          </div>
+        </form>
 
-          <p className="text-gray-500 text-sm mt-4 text-center">
-            {t.pendingNote}
-          </p>
-        </div>
+        <p className="text-gray-600 text-sm mt-4 text-center">{t.pendingNote}</p>
       </div>
 
-      {/* Sticky mobile submit bar — fee + Confirm always reachable while the
-          patient scrolls the form. Submits #book-form via the form attribute,
-          so it shares the exact same disabled rules + submit handler.
-          IMPORTANT: it sits ABOVE the global BottomNav (which is fixed at
-          bottom-0, h-16 = 64px, + the safe-area inset). If this bar also sat
-          at bottom-0 the BottomNav (z-50) would cover it and the Confirm
-          button would be invisible — so we offset it by the nav height and
-          give it z-50 too. The spacer below reserves room for both bars. */}
+      {/* Phone: what you're booking + Book, always visible above the bottom
+          menu (BottomNav is fixed at bottom-0, h-16 + safe area). Shares the
+          form's submit handler via form="book-form". */}
       <div className="h-36 md:hidden" aria-hidden="true" />
       <div
-        className="fixed inset-x-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] px-4 py-3 flex items-center gap-3"
+        className="fixed inset-x-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center gap-3"
         style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
       >
         <div className="flex-1 min-w-0">
-          {doctor?.consultationFee > 0 ? (
-            <>
-              <p className="text-lg font-bold text-gray-800 leading-none">Rs. {doctor.consultationFee}</p>
-              <p className="text-[11px] text-gray-500 mt-0.5">{formData.timeSlot ? formData.timeSlot.split(' - ')[0] : t.pickDateFirst}</p>
-            </>
-          ) : (
-            <p className="text-sm font-medium text-gray-700 truncate">{doctor?.name}</p>
+          <p className="text-sm font-bold text-gray-900 truncate">{summary}</p>
+          {doctor?.consultationFee > 0 && (
+            <p className="text-xs"><span className="text-base font-extrabold text-green-700">Rs. {doctor.consultationFee}</span> <span className="text-gray-600">{t.payAfter}</span></p>
           )}
         </div>
         <button
           type="submit"
           form="book-form"
-          disabled={isSubmitting || !formData.timeSlot || !consentGiven || (bookedFor === 'family' && !selectedFamilyMember)}
-          className="btn btn-primary flex-shrink-0 disabled:opacity-60"
+          onClick={onBookTap}
+          disabled={isSubmitting}
+          aria-disabled={!!missing}
+          className={`btn btn-primary flex-shrink-0 ${missing ? 'opacity-70' : ''}`}
         >
-          {isSubmitting ? t.booking : t.confirmBooking}
+          {isSubmitting ? t.booking : t.bookNow}
         </button>
       </div>
     </div>

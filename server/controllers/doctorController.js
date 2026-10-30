@@ -446,6 +446,14 @@ const getDoctorById = async (req, res) => {
     // the platform (fetched above, in parallel). The frontend hides it when 0.
     const doctorObj = doctor.toObject();
     doctorObj.completedConsultations = completedConsultations;
+    // Earliest free slot (same calculation as the doctor list) — the booking
+    // page's "⚡ Earliest" button. Best effort: never blocks the profile.
+    try {
+      const [withNA] = await attachNextAvailable([doctor]);
+      doctorObj.nextAvailable = (withNA && withNA.nextAvailable) || null;
+    } catch {
+      doctorObj.nextAvailable = null;
+    }
 
     res.json({ doctor: doctorObj });
 
@@ -694,6 +702,14 @@ const getDoctorBySlug = async (req, res) => {
 
     const doctorObj = doctor.toObject();
     doctorObj.completedConsultations = completedConsultations;
+    // Earliest free slot (same calculation as the doctor list) — the booking
+    // page's "⚡ Earliest" button. Best effort: never blocks the profile.
+    try {
+      const [withNA] = await attachNextAvailable([doctor]);
+      doctorObj.nextAvailable = (withNA && withNA.nextAvailable) || null;
+    } catch {
+      doctorObj.nextAvailable = null;
+    }
 
     res.json({ doctor: doctorObj });
   } catch (error) {

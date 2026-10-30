@@ -1895,6 +1895,15 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## Booking page (new look, Oct 2026)
+
+`client/src/pages/BookAppointment.jsx` + pure helpers in `client/src/utils/bookingUi.js` (tests: `client/tests/bookingUi.test.mjs`). Same server rules, consent, drafts, repeat/follow-up bookings as before.
+- **Doctor card** at the top: name, specialty · qualification · years, fee, "Pay only after the doctor confirms".
+- **1. When?** Day tiles for the next 14 days (Today / Tomorrow). Days the doctor doesn't work, leave days, and today once its hours are over show as **Off**. "📅 Other date" for later dates. **⚡ Earliest** jumps to the doctor's next free slot. `GET /api/doctors/:id` and `/by-slug/:slug` now include `nextAvailable`, the same calculation as the doctor list. Free times are grouped Morning / Afternoon / Evening / Night.
+- **2. How & for whom?** Consult-type cards with a one-line "why" (the clinic card shows the clinic address). "For whom" chips: Myself, each family member by name (age), and "+ Add family member".
+- **3. What's the problem?** Problem chips matched to the doctor's specialty (gynae, child, neuro, skin; others get the general list). The stored value is always English, so doctors see English. The reason box has 🎤 voice input (reuses `components/VoiceSearch.jsx`; hidden where the phone can't do it); what the patient says is typed into the box and can be edited.
+- **Summary bar** (phones: above the bottom menu; desktop: under the form): "Sat, 31 Oct · 5:30 PM · 📞 · Rs. 300 · pay after confirm" + **Book now**. Tapping with something missing says what (time → who → reason → consent) and scrolls there.
+
 ## English / हिंदी: one switch for the whole app
 
 - **One choice, one switch:** `client/src/context/LangContext.jsx` (`LangProvider` in `main.jsx`, `useLang()` → `{ lang, setLang, tr }`). The switch is in the top bar (`components/HeaderLangSwitch.jsx`, phone: next to the menu). Every page re-renders at once. Before, each page kept its own copy and had its own switch in a different place (or none).
