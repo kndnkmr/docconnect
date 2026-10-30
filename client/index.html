@@ -46,12 +46,34 @@
          instead fire one page_view on every route change from React
          (see src/components/Analytics.jsx). That way each blog article view is
          counted correctly. -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-28BZZQPPXF"></script>
+    <!-- Google Analytics, loaded AFTER the page has shown (it's 178 KB — the
+         biggest download on the site — and used to compete with the page on
+         slow phones). gtag() below queues every page view / event in
+         dataLayer right away, and the real script sends them once it loads,
+         so nothing is lost. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-28BZZQPPXF', { send_page_view: false });
+      (function () {
+        var done = false;
+        function loadGA() {
+          if (done) return; done = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-28BZZQPPXF';
+          document.head.appendChild(s);
+        }
+        function later() {
+          if ('requestIdleCallback' in window) requestIdleCallback(loadGA, { timeout: 4000 });
+          else setTimeout(loadGA, 2500);
+        }
+        if (document.readyState === 'complete') later();
+        else window.addEventListener('load', later);
+        // Someone leaving quickly still gets counted.
+        document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') loadGA(); });
+      })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <!-- PWA -->

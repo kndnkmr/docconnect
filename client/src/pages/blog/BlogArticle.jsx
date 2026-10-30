@@ -1,17 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-// Light metadata for ALL articles (title, date, specialty…) — used to find this
-// article and build the related-articles list.
-import { articleMeta as articles } from './blogMeta';
+import { useLang } from '../../context/LangContext';
+import { noteProgress, isSaved, toggleSaved } from '../../utils/blogReading';
 
-// The article BODY (content + Hinglish contentHi) is loaded on demand, one
-// small file per article, instead of bundling all 373 articles (~1 MB
-// gzipped) into this page. Files are generated into ./articles/ from
-// blogData.js by scripts/gen-blog-meta.mjs. Vite turns each into its own chunk.
+// Each article file (generated into ./articles/ from blogData.js by
+// scripts/gen-blog-meta.mjs) carries EVERYTHING this page needs: its own
+// title/date/specialty, the English + Hinglish body and 3 related links. So
+// opening an article downloads only that one small file — not the metadata of
+// all 373 articles (that used to be a 45 KB extra download before any text).
+// Vite turns each into its own chunk.
 const ARTICLE_BODIES = import.meta.glob('./articles/*.js');
+const ZOOM_KEY = 'pmz_blog_zoom';
+const ZOOMS = [0.9, 1, 1.15, 1.3];
+
+// Plain sentences for "Listen": strip **bold** markers, split into chunks of
+// ~200 characters (some phone voices stop on long text).
+function speechChunks(blocks) {
+  const out = [];
+  const add = (t) => {
+    const clean = String(t || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+    if (!clean) return;
+    let buf = '';
+    for (const s of clean.split(/(?<=[.!?।])\s+/)) {
+      if ((buf + ' ' + s).length > 200 && buf) { out.push(buf); buf = s; } else buf = buf ? `${buf} ${s}` : s;
+    }
+    if (buf) out.push(buf);
+  };
+  for (const b of blocks || []) {
+    if (b.type === 'table') continue; // tables don't read well aloud
+    add(b.title); add(b.text);
+    (b.items || []).forEach(add);
+  }
+  return out;
+}
 const loadArticleBody = (slug) => {
   const load = ARTICLE_BODIES[`./articles/${slug}.js`];
   return load ? load().then((m) => m.default) : Promise.resolve(null);
@@ -125,7 +149,7 @@ function renderBlock(block, idx, ctx) {
       return <p key={idx} className="text-gray-700 text-lg leading-relaxed mb-6 border-l-4 border-primary-400 pl-4 italic">{renderInline(block.text)}</p>;
 
     case 'heading':
-      return <h2 key={idx} className="text-2xl font-bold text-gray-800 mt-10 mb-4">{renderInline(block.text)}</h2>;
+      return <h2 key={idx} id={`sec-${idx}`} className="scroll-mt-24 text-2xl font-bold text-gray-800 mt-10 mb-4">{renderInline(block.text)}</h2>;
 
     case 'paragraph':
       return <p key={idx} className="text-gray-700 leading-relaxed mb-5 whitespace-pre-line text-[1.05rem]">{renderInline(block.text, ctx)}</p>;
@@ -145,7 +169,7 @@ function renderBlock(block, idx, ctx) {
     case 'callout': {
       const s = CALLOUT_STYLES[block.variant] || CALLOUT_STYLES.info;
       return (
-        <div key={idx} className={`my-6 rounded-xl border p-4 sm:p-5 ${s.box}`}>
+        <div key={idx} id={`box-${idx}`} className={`scroll-mt-24 my-6 rounded-xl border p-4 sm:p-5 ${s.box}`}>
           <div className="flex items-start gap-3">
             <span className="text-xl flex-shrink-0">{s.icon}</span>
             <div className="flex-1">
@@ -213,7 +237,9 @@ function renderBlock(block, idx, ctx) {
 // directly so it can be indexed for Hindi searches.
 function BlogArticle({ defaultLang = 'en' }) {
   const { slug } = useParams();
-  const meta = articles.find(a => a.slug === slug);
+  // Does this article exist? Checked against the list of generated files, so
+  // no other blog data has to be downloaded first.
+  const meta = Boolean(ARTICLE_BODIES[`./articles/${slug}.js`]);
 
   // Load this article's body. `loaded` remembers which slug it belongs to, so
   // switching articles never shows the previous article's text.
@@ -228,25 +254,158 @@ function BlogArticle({ defaultLang = 'en' }) {
   }, [slug, meta]);
   const body = loaded.slug === slug ? loaded.body : null;
   const bodyFailed = loaded.slug === slug && loaded.failed;
-  // Same shape as before (meta + content + contentHi), so everything below
-  // is unchanged. Null until the body has loaded.
-  const article = meta && body ? { ...meta, ...body } : null;
+  // meta + content + contentHi + related, all from the one file. Null until
+  // it has loaded.
+  const article = meta && body ? { slug, ...body } : null;
 
   // ---- Language (English | Hinglish) ----
-  // Some articles have a Hinglish version (contentHi) for readers who find
-  // English hard. The toggle only appears when contentHi exists; otherwise the
-  // article stays English exactly as before. Default is always English.
+  // Follows the app-wide English/हिंदी switch in the header, so a reader who
+  // chose हिंदी once gets the Hinglish version of every article. The /hi route
+  // always opens in Hinglish. Articles without contentHi stay English.
+  const app = useLang();
   const hasHindi = Array.isArray(article?.contentHi) && article.contentHi.length > 0;
-  const [lang, setLang] = useState(defaultLang);
-  // Reset to the route's default language when the article changes. (If an
-  // article has no Hinglish version, activeContent below still falls back to
-  // English, so we never try to render a missing array.)
-  useEffect(() => { setLang(defaultLang); }, [slug, defaultLang]);
+  const [lang, setLangLocal] = useState(defaultLang === 'hi' ? 'hi' : app.lang);
+  const appLangRef = useRef(app.lang);
+  useEffect(() => { setLangLocal(defaultLang === 'hi' ? 'hi' : appLangRef.current); }, [slug, defaultLang]);
+  // Header switch flipped while reading → follow it.
+  useEffect(() => {
+    if (appLangRef.current !== app.lang) { appLangRef.current = app.lang; setLangLocal(app.lang); }
+  }, [app.lang]);
+  // The toggle on the article also flips the whole app.
+  const setLang = (l) => { setLangLocal(l); app.setLang(l); };
   // The /hi route is a separate, indexable page only when a Hinglish version
   // exists. Its canonical must point at itself (not the English page), or
   // Google would treat it as a duplicate and drop it.
   const isHindiPage = defaultLang === 'hi' && hasHindi;
   const activeContent = (lang === 'hi' && hasHindi) ? article.contentHi : article?.content;
+  const hiUi = lang === 'hi' && hasHindi;
+
+  // Rendered body, memoised so the reading tools below (progress, size,
+  // listen) never re-run the auto-linker over the whole article.
+  const renderedBody = useMemo(() => {
+    if (!activeContent) return null;
+    const linkCtx = { currentSlug: slug, used: new Set() };
+    return activeContent.map((block, idx) => renderBlock(block, idx, linkCtx));
+  }, [activeContent, slug]);
+
+  // "In this article" chips (only worth it with 3+ sections) and the first
+  // warning box, which gets its own red chip at the top.
+  const sections = useMemo(() => (activeContent || [])
+    .map((b, idx) => (b.type === 'heading' ? { id: `sec-${idx}`, text: String(b.text || '').replace(/\*\*/g, '') } : null))
+    .filter(Boolean), [activeContent]);
+  const warnId = useMemo(() => {
+    const i = (activeContent || []).findIndex((b) => b.type === 'callout' && b.variant === 'warning');
+    return i >= 0 ? `box-${i}` : null;
+  }, [activeContent]);
+  const jumpTo = (id, what) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    trackEvent('article_jump', { article_slug: slug, to: what });
+  };
+
+  // ---- A− / A+ text size (remembered on this phone) ----
+  const [zoom, setZoom] = useState(() => {
+    try { const z = Number(localStorage.getItem(ZOOM_KEY)); return ZOOMS.includes(z) ? z : 1; } catch { return 1; }
+  });
+  const changeZoom = (dir) => {
+    const next = ZOOMS[Math.min(ZOOMS.length - 1, Math.max(0, ZOOMS.indexOf(zoom) + dir))];
+    setZoom(next);
+    try { localStorage.setItem(ZOOM_KEY, String(next)); } catch { /* ignore */ }
+  };
+
+  // ---- ⭐ Save for later ----
+  const [saved, setSaved] = useState(false);
+  useEffect(() => { setSaved(isSaved(slug)); }, [slug]);
+  const onSave = () => {
+    if (!article) return;
+    const on = toggleSaved({ slug, title: hiUi && article.titleHi ? article.titleHi : article.title, image: article.image });
+    setSaved(on);
+    toast.success(on ? (hiUi ? 'Save ho gaya — Blog page par "Saved" me milega' : 'Saved — find it under "Saved" on the blog page') : (hiUi ? 'Saved se hata diya' : 'Removed from saved'));
+    trackEvent('article_save', { article_slug: slug, on });
+  };
+
+  // ---- Reading progress bar, sticky "Talk to a doctor" bar, Continue reading ----
+  // The bar's width is set directly on the element (no React re-render per
+  // scroll frame). Only the sticky bar's show/hide goes through state.
+  const bodyRef = useRef(null);
+  const barRef = useRef(null);
+  const endCtaRef = useRef(null);
+  const [showSticky, setShowSticky] = useState(false);
+  useEffect(() => {
+    if (!article) return undefined;
+    let raf = 0;
+    let lastNote = 0;
+    const measure = () => {
+      raf = 0;
+      const el = bodyRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const total = Math.max(1, r.height - window.innerHeight * 0.6);
+      const pct = Math.min(1, Math.max(0, -r.top / total));
+      if (barRef.current) barRef.current.style.transform = `scaleX(${pct})`;
+      // Hide once the big "consultation" card at the end is on screen.
+      const endCard = endCtaRef.current?.getBoundingClientRect();
+      const endVisible = endCard ? endCard.top < window.innerHeight : false;
+      setShowSticky(pct > 0.12 && !endVisible);
+      const now = Date.now();
+      if (now - lastNote > 2000 || pct >= 0.9) {
+        lastNote = now;
+        noteProgress({ slug, title: hiUi && article.titleHi ? article.titleHi : article.title, image: article.image, hi: hiUi }, pct);
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(measure); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    measure();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [article, slug, hiUi]);
+
+  // ---- 🔊 Listen (the phone reads the article aloud; free, works offline) ----
+  // Pause = stop and remember the sentence, so it resumes reliably even on
+  // phones where speechSynthesis.pause() is broken.
+  const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  const [speech, setSpeech] = useState('idle'); // idle | playing | paused
+  const speakAt = useRef(0);
+  const speakToken = useRef(0);
+  const chunks = useMemo(() => speechChunks(activeContent), [activeContent]);
+  const stopSpeech = (reset = true) => {
+    speakToken.current += 1;
+    try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
+    if (reset) { speakAt.current = 0; setSpeech('idle'); }
+  };
+  const playFrom = (start) => {
+    const synth = window.speechSynthesis;
+    const token = ++speakToken.current;
+    synth.cancel();
+    const voices = synth.getVoices();
+    // An Indian-English voice reads both English and Hinglish (Roman script)
+    // naturally; if the phone has none, the default voice with lang en-IN.
+    const voice = voices.find((v) => /en[-_]IN/i.test(v.lang)) || null;
+    const say = (i) => {
+      if (token !== speakToken.current) return;
+      if (i >= chunks.length) { speakAt.current = 0; setSpeech('idle'); return; }
+      speakAt.current = i;
+      const u = new window.SpeechSynthesisUtterance(chunks[i]);
+      u.lang = 'en-IN';
+      if (voice) u.voice = voice;
+      u.rate = 0.95;
+      u.onend = () => say(i + 1);
+      u.onerror = () => { if (token === speakToken.current) setSpeech('idle'); };
+      synth.speak(u);
+    };
+    setSpeech('playing');
+    say(start);
+  };
+  const onListen = () => {
+    if (speech === 'playing') { stopSpeech(false); setSpeech('paused'); return; }
+    if (speech === 'idle') trackEvent('article_listen', { article_slug: slug, lang: hiUi ? 'hinglish' : 'en' });
+    playFrom(speech === 'paused' ? speakAt.current : 0);
+  };
+  // New article, language switch or leaving the page → stop talking.
+  useEffect(() => () => { if (canSpeak) stopSpeech(); }, [slug, lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- ❤️ Like ----
   // A friendly heart "like" backed by our DB (no dislike — deliberately, on a
@@ -412,14 +571,9 @@ function BlogArticle({ defaultLang = 'en' }) {
 
   // Related articles: same specialty first (most relevant to what the reader
   // is already interested in), then fill up to 3 with other recent articles.
-  const others = articles.filter(a => a.slug !== slug);
-  const sameSpecialty = others
-    .filter(a => a.specialization === article.specialization)
-    .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
-  const rest = others
-    .filter(a => a.specialization !== article.specialization)
-    .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
-  const relatedArticles = [...sameSpecialty, ...rest].slice(0, 3);
+  // (Worked out at build time by gen-blog-meta.mjs and shipped in this
+  // article's own file.)
+  const relatedArticles = Array.isArray(article.related) ? article.related : [];
 
   // Article structured data for Google. Richer fields (image, dateModified,
   // mainEntityOfPage) improve eligibility for article rich results. We reuse
@@ -437,8 +591,15 @@ function BlogArticle({ defaultLang = 'en' }) {
     publisher: { '@type': 'Organization', name: 'ProMedicoz', logo: { '@type': 'ImageObject', url: 'https://www.promedicoz.in/icons/icon-512.png' } }
   };
 
+  const toolBtn = 'inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm font-medium transition-colors';
+  const doctorsLink = `/doctors?specialization=${encodeURIComponent(article.specialization)}`;
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Reading progress — a thin bar at the very top of the screen. */}
+      <div className="fixed top-0 left-0 right-0 h-1 z-[60] pointer-events-none" aria-hidden="true">
+        <div ref={barRef} className="h-full bg-primary-600 origin-left" style={{ transform: 'scaleX(0)' }} />
+      </div>
       <SEO
         title={isHindiPage ? (article.titleHi || `${article.title} (Hindi mein)`) : article.title}
         description={article.description}
@@ -468,9 +629,63 @@ function BlogArticle({ defaultLang = 'en' }) {
               </>
             )}
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">{article.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4 break-words">{hiUi && article.titleHi ? article.titleHi : article.title}</h1>
           <p className="text-lg text-gray-600">{article.description}</p>
         </div>
+
+        {/* Reading tools: listen, text size, save. */}
+        <div className="mb-4 flex flex-wrap items-center gap-2" role="toolbar" aria-label={hiUi ? 'Padhne ke tools' : 'Reading tools'}>
+          {canSpeak && chunks.length > 0 && (
+            <>
+              <button
+                type="button"
+                onClick={onListen}
+                aria-pressed={speech === 'playing'}
+                className={`${toolBtn} ${speech === 'playing' ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-primary-200 text-primary-700 hover:bg-primary-50'}`}
+              >
+                <span aria-hidden="true">{speech === 'playing' ? '⏸' : '🔊'}</span>
+                {speech === 'playing' ? (hiUi ? 'Roken' : 'Pause') : speech === 'paused' ? (hiUi ? 'Aage sunein' : 'Resume') : (hiUi ? 'Sunein' : 'Listen')}
+              </button>
+              {speech !== 'idle' && (
+                <button type="button" onClick={() => stopSpeech()} className={`${toolBtn} bg-white border-gray-300 text-gray-700 hover:bg-gray-50`} aria-label={hiUi ? 'Sunna band karein' : 'Stop listening'}>
+                  <span aria-hidden="true">⏹</span>{hiUi ? 'Band' : 'Stop'}
+                </button>
+              )}
+            </>
+          )}
+          <div className="inline-flex rounded-full border border-gray-300 bg-white overflow-hidden" role="group" aria-label={hiUi ? 'Akshar ka size' : 'Text size'}>
+            <button type="button" onClick={() => changeZoom(-1)} disabled={zoom === ZOOMS[0]} className="h-9 px-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40" aria-label={hiUi ? 'Chhote akshar' : 'Smaller text'}>A−</button>
+            <button type="button" onClick={() => changeZoom(1)} disabled={zoom === ZOOMS[ZOOMS.length - 1]} className="h-9 px-3 text-base font-bold text-gray-700 hover:bg-gray-50 border-l border-gray-300 disabled:opacity-40" aria-label={hiUi ? 'Bade akshar' : 'Bigger text'}>A+</button>
+          </div>
+          <button
+            type="button"
+            onClick={onSave}
+            aria-pressed={saved}
+            className={`${toolBtn} ${saved ? 'bg-amber-50 border-amber-300 text-amber-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+          >
+            <span aria-hidden="true">{saved ? '⭐' : '☆'}</span>
+            {saved ? 'Saved' : (hiUi ? 'Baad me padhein' : 'Save')}
+          </button>
+        </div>
+
+        {/* Jump chips: warning signs first (red), then the article's sections. */}
+        {(warnId || sections.length >= 3) && (
+          <nav className="mb-6" aria-label={hiUi ? 'Is article me' : 'In this article'}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">{hiUi ? 'Is article me' : 'In this article'}</p>
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x" style={{ scrollbarWidth: 'none' }}>
+              {warnId && (
+                <button type="button" onClick={() => jumpTo(warnId, 'warning')} className="snap-start flex-shrink-0 h-9 px-3 rounded-full bg-red-50 border border-red-200 text-red-700 text-sm font-semibold hover:bg-red-100">
+                  ⚠️ {hiUi ? 'Khatre ke sanket' : 'Warning signs'}
+                </button>
+              )}
+              {sections.length >= 3 && sections.map((s) => (
+                <button key={s.id} type="button" onClick={() => jumpTo(s.id, 'section')} className="snap-start flex-shrink-0 max-w-[16rem] truncate h-9 px-3 rounded-full bg-gray-50 border border-gray-200 text-gray-700 text-sm hover:bg-primary-50 hover:border-primary-200">
+                  {s.text}
+                </button>
+              ))}
+            </div>
+          </nav>
+        )}
 
         {/* Pregnancy articles only: point readers to the free due-date tool
             near the top, where they will actually see it. */}
@@ -609,16 +824,13 @@ function BlogArticle({ defaultLang = 'en' }) {
             auto-links are deduped across the whole article (each target linked
             once) and never link back to this same article. Renders either the
             English content or, when the reader picks it, the Hinglish version. */}
-        <div className="max-w-none">
-          {(() => {
-            const linkCtx = { currentSlug: slug, used: new Set() };
-            return activeContent.map((block, idx) => renderBlock(block, idx, linkCtx));
-          })()}
+        <div ref={bodyRef} className="max-w-none" style={zoom !== 1 ? { zoom } : undefined}>
+          {renderedBody}
         </div>
 
         {/* CTA — bilingual (follows the language toggle) and tracked, so we can
             measure which articles actually drive readers to find a doctor. */}
-        <div className="mt-10 p-6 bg-primary-50 border border-primary-200 rounded-xl text-center">
+        <div ref={endCtaRef} className="mt-10 p-6 bg-primary-50 border border-primary-200 rounded-xl text-center">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             {lang === 'hi' && hasHindi
               ? `${article.specialization} consultation chahiye?`
@@ -713,20 +925,45 @@ function BlogArticle({ defaultLang = 'en' }) {
             with other recent articles. This keeps people reading instead of
             bouncing after one article. */}
         <div className="mt-10">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">More to read</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">{hiUi ? 'Aur padhein' : 'More to read'}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {relatedArticles.map(a => (
-              <Link key={a.slug} to={`/blog/${a.slug}`} className="p-4 bg-white border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
+              <Link key={a.slug} to={hiUi && a.titleHi ? `/blog/${a.slug}/hi` : `/blog/${a.slug}`} className="p-4 bg-white border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
                 <span className="text-2xl">{a.image}</span>
                 <span className="block text-xs text-primary-600 font-medium mt-2">{a.specialization}</span>
-                <h4 className="font-medium text-gray-800 mt-1 text-sm line-clamp-2">{a.title}</h4>
-                <span className="text-primary-600 text-xs mt-2 inline-block">Read →</span>
+                <h4 className="font-medium text-gray-800 mt-1 text-sm line-clamp-2">{hiUi && a.titleHi ? a.titleHi : a.title}</h4>
+                <span className="text-primary-600 text-xs mt-2 inline-block">{hiUi ? 'Padhein →' : 'Read →'}</span>
               </Link>
             ))}
           </div>
           <div className="mt-5 text-center">
-            <Link to="/blog" className="text-primary-600 hover:underline text-sm font-medium">Browse all health articles →</Link>
+            <Link to="/blog" className="text-primary-600 hover:underline text-sm font-medium">{hiUi ? 'Saare health articles dekhein →' : 'Browse all health articles →'}</Link>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky "Talk to a doctor" bar — appears once the reader is into the
+          article, sits above the mobile bottom tabs and leaves room on the
+          right for the WhatsApp button. Hidden near the end, where the big
+          CTA card already is. */}
+      <div
+        className={`fixed z-40 left-3 right-[4.5rem] md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[36rem] bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-4 transition-all duration-300 ${showSticky ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'}`}
+        aria-hidden={!showSticky}
+      >
+        <div className="flex items-center gap-2 rounded-2xl bg-white border border-primary-200 shadow-lg pl-3 pr-1.5 py-1.5">
+          <span className="text-xl" aria-hidden="true">🩺</span>
+          <span className="flex-1 min-w-0 leading-tight">
+            <span className="block text-[11px] text-gray-500">{hiUi ? 'Online baat karein' : 'Talk to a'}</span>
+            <span className="block text-sm font-semibold text-gray-800 truncate">{article.specialization}</span>
+          </span>
+          <Link
+            to={doctorsLink}
+            tabIndex={showSticky ? 0 : -1}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'sticky' })}
+            className="flex-shrink-0 rounded-xl bg-primary-600 text-white text-sm font-semibold px-3 py-2 hover:bg-primary-700"
+          >
+            {hiUi ? 'Doctor dekhein' : 'See doctors'}
+          </Link>
         </div>
       </div>
     </div>

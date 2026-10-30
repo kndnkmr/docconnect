@@ -30,12 +30,12 @@ test('first visit follows the phone language; a saved choice wins', () => {
   assert.equal(initialLang(), 'en');
 });
 
-test('top-bar switch: visitors + patients everywhere except blog/tools/admin; never doctors/admins', () => {
-  for (const p of ['/', '/doctors', '/dr/pooja-singh', '/book-appointment/x', '/booking-confirmation', '/login', '/register', '/dashboard', '/specialization/gynaecologist/bhilai']) {
+test('top-bar switch: visitors + patients everywhere (incl. blog) except tools/admin; never doctors/admins', () => {
+  for (const p of ['/', '/doctors', '/dr/pooja-singh', '/book-appointment/x', '/booking-confirmation', '/login', '/register', '/dashboard', '/specialization/gynaecologist/bhilai', '/blog', '/blog/x', '/blog/x/hi']) {
     assert.equal(showHeaderLang(p, undefined), true, p);
     assert.equal(showHeaderLang(p, 'patient'), true, p);
   }
-  for (const p of ['/blog', '/blog/x', '/blog/x/hi', '/tools', '/tools/due-date-calculator/hi', '/admin']) assert.equal(showHeaderLang(p, undefined), false, p);
+  for (const p of ['/tools', '/tools/due-date-calculator/hi', '/admin']) assert.equal(showHeaderLang(p, undefined), false, p);
   assert.equal(showHeaderLang('/dashboard', 'doctor'), false);
   assert.equal(showHeaderLang('/', 'admin'), false);
 });

@@ -3,16 +3,17 @@
 // ============================================
 // Lives in the Navbar on every page (phone: next to the menu button), so a
 // patient who can't read English always finds it in the same place.
-// Hidden for doctors and admins (their screens are English) and on the blog
-// and free-tool pages, which have their own language by web address
-// (/blog/…/hi, /tools/…/hi) and their own switch.
+// Hidden for doctors and admins (their screens are English) and on the
+// free-tool pages, which have their own language by web address
+// (/tools/…/hi) and their own switch. The blog DOES show it: the blog list
+// and articles follow it (Hindi → Hinglish titles and articles).
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
 
 export function showHeaderLang(pathname, role) {
   if (role === 'doctor' || role === 'admin') return false;
-  return !/^\/(blog|tools|admin)(\/|$)/.test(pathname || '');
+  return !/^\/(tools|admin)(\/|$)/.test(pathname || '');
 }
 
 export default function HeaderLangSwitch({ compact = false }) {

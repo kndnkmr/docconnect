@@ -87,8 +87,21 @@ async function main() {
   if (noHiTitle.length) {
     console.warn(`[gen-blog-meta] ${noHiTitle.length} article(s) have no Hinglish title in titlesHi.js (Hindi page falls back to the English title): ${noHiTitle.join(', ')}`);
   }
+  // Related articles are worked out HERE (same specialty first, newest first,
+  // then other newest) so the article page doesn't have to download the
+  // metadata of all articles just to show 3 links. Each body file carries its
+  // own light meta too, so the article page needs no other blog data at all.
+  const byDate = (x, y) => new Date(y.publishedDate) - new Date(x.publishedDate);
+  const light = (x) => ({ slug: x.slug, title: x.title, titleHi: titlesHi[x.slug] || '', specialization: x.specialization, image: x.image });
   for (const a of articles) {
-    const bodyOnly = { content: a.content || [], contentHi: a.contentHi || [], titleHi: titlesHi[a.slug] || '' };
+    const others = articles.filter((x) => x.slug !== a.slug);
+    const related = [
+      ...others.filter((x) => x.specialization === a.specialization).sort(byDate),
+      ...others.filter((x) => x.specialization !== a.specialization).sort(byDate),
+    ].slice(0, 3).map(light);
+    const meta = {};
+    for (const f of META_FIELDS) meta[f] = a[f];
+    const bodyOnly = { ...meta, content: a.content || [], contentHi: a.contentHi || [], titleHi: titlesHi[a.slug] || '', related };
     await writeFile(
       join(ARTICLES_DIR, `${a.slug}.js`),
       `// AUTO-GENERATED from blogData.js by scripts/gen-blog-meta.mjs — do not edit.\nexport default ${JSON.stringify(bodyOnly)};\n`,
