@@ -14,6 +14,7 @@ import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import { rowsToMedicines, medicinesToRows } from '../utils/rxRows';
+import { useLang } from '../context/LangContext';
 // Doctor-only prescription medicine cards — loaded when the box first opens.
 const MedicineEditor = lazy(() => import('../components/MedicineEditor'));
 // Chat and the call screen load only when needed. The call screen carries
@@ -116,15 +117,226 @@ const PATIENT_TXT = {
     tabComplaints: 'Complaints',
     tabAccount: 'Account Settings',
     bookNew: '+ Book New Appointment',
+    // ---- Shared with doctors (English here is exactly today's text) ----
+    statusLabels: { pending: 'Pending', confirmed: 'Confirmed', completed: 'Appointment Completed', cancelled: 'Cancelled' },
+    statusFilters: { '': 'All', pending: 'Pending', confirmed: 'Confirmed', completed: 'Completed', cancelled: 'Cancelled' },
+    when: { '': 'All', today: 'Today', tomorrow: 'Tomorrow', thisWeek: 'This Week', nextWeek: 'Next Week' },
+    or: 'or',
+    jumpToDate: 'Jump to a specific date',
+    searchPh: '🔍 Search by doctor name or phone...',
+    loadingApts: 'Loading appointments...',
+    noMatch: (q) => `No appointments match "${q}"`,
+    noFiltered: (status, date, whenValue) => `No ${[status, date ? `on ${date}` : WHEN_FILTERS.find((f) => f.value === whenValue)?.label].filter(Boolean).join(' ').toLowerCase()} appointments`,
+    noAptsYet: 'No appointments yet',
+    clearSearch: 'Clear search',
+    showAll: 'Show all appointments',
+    emptyPatientHelp: 'Click "+ Book New Appointment" above to search by specialization or symptom and find the right doctor.',
+    emptyFamilyLink: '👨‍👩‍👧 Booking for a family member instead? Add them here →',
+    reason: '📝 Reason:',
+    bookedFor: (name) => `Booked for: ${name} (family member)`,
+    bookedBySupport: 'Booked for you by ProMedicoz support',
+    notes: 'Notes:',
+    joinMeetingLink: 'Join Meeting Link',
+    rxReady: (count) => `💊 Prescription ready${count ? ` · ${count} medicine${count === 1 ? '' : 's'}` : ''}`,
+    freeFollowUpTill: (date) => ` · free follow-up till ${date}`,
+    viewRx: 'View prescription',
+    alertProblem: (who, time) => ({
+      'not-received': `📵 ${who}'s phone didn't get the call alert (screen locked or battery saver?).`,
+      'no-alerts': `🔕 ${who} has call alerts off — their phone won't ring.`,
+      'not-ready': `⚠️ ${who}'s phone hasn't passed a locked-screen test — it may not ring at ${time}.`,
+    }),
+    reachOther: 'You can reach them another way:',
+    messageDoctor: '💬 Message doctor',
+    askPmzCall: '💬 Ask ProMedicoz to call them',
+    doctorNotJoined: "Doctor not joined yet? They'll ring you; you can also:",
+    whatsappSupport: '💬 WhatsApp support',
+    hintPending: '⏳ Waiting for doctor to confirm your appointment.',
+    hintPay: '💳 Next: pay using the box above, then upload the payment screenshot.',
+    joinCall: (type) => (type === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'),
+    hintPaidCall: (type) => `✅ Payment confirmed! Click "${type === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`,
+    hintPaidClinic: '✅ Payment confirmed! Visit the clinic at your appointment time.',
+    directions: '📍 Get Directions',
+    hintDone: '✅ Consultation done.',
+    hintDoneWaitRx: '✅ Consultation done. Your prescription will appear here the moment your doctor writes it.',
+    hintCancelled: '❌ This appointment was cancelled.',
+    reschedule: 'Reschedule',
+    cancel: 'Cancel',
+    followUpBooked: (date) => `✓ Free follow-up booked: ${date}`,
+    freeFollowUp: 'Free Follow-up',
+    bookAgain: 'Book Again',
+    rate: '⭐ Rate',
+    callOpensAt: (slot) => `Call opens at your slot time (${slot})`,
+    chat: '💬 Chat',
+    viewReceipt: 'View Receipt',
+    prev: 'Previous',
+    pageOf: (p, n) => `Page ${p} of ${n}`,
+    next: 'Next',
+    // Top banners
+    bookingSaved: "Your booking is saved. Come back to it when you're done here.",
+    backToBooking: '← Back to your booking',
+    youWereBooking: (doctorName) => `You were booking ${doctorName ? `Dr. ${doctorName}` : 'an appointment'}`,
+    draftFor: (name) => `for ${name}`,
+    draftSaved: (ago) => `saved ${ago}`,
+    continueBtn: 'Continue →',
+    discard: 'Discard',
+    pushTitle: "Get alerts on your phone — don't miss anything",
+    pushDesc: 'Get notified the instant your doctor confirms your appointment, replies, or the call starts — right on your phone, even when the app is closed. No email needed.',
+    pushOn: 'Turn on alerts',
+    dismiss: 'Dismiss',
+    pushOk: 'Notifications enabled! You\'ll get instant updates.',
+    pushFail: 'Could not enable notifications. You can allow them from your browser\'s site settings.',
+    live: 'Live · updates appear instantly',
+    reconnecting: 'Reconnecting… updates may be a little late',
+    // Toasts
+    rxSentToast: '💊 Your doctor sent your prescription',
+    view: 'View',
+    callOpensToast: (time) => `This call opens at ${time}. We'll ring you then.`,
+    callOpenFail: 'Could not open that call. Please use the Join button on the appointment.',
+    aptCancelled: 'Appointment cancelled',
+    cancelFail: 'Failed to cancel',
+    ratingRange: 'Please enter a rating between 1 and 5',
+    reviewThanks: 'Thank you for your review!',
+    reviewFail: 'Failed to submit review',
+    receiptUnavailable: 'Receipt unavailable',
+    // Modals
+    cancelTitle: 'Cancel Appointment',
+    cancelMsg: 'Are you sure you want to cancel this appointment?',
+    cancelConfirm: 'Cancel Appointment',
+    modalCancel: 'Cancel',
+    rateTitle: 'Rate Your Doctor',
+    rateDesc: 'How was your experience?',
+    rateLabel: 'Rating (1-5 stars)',
+    reviewLabel: 'Review (optional)',
+    reviewPh: 'Write a short review...',
+    submitReview: 'Submit Review',
+    googleTitle: (name) => `🙏 Thanks for rating ${name}`,
+    googleMsg: 'Want to help other patients find them on Google too? It takes a minute.',
+    googleConfirm: '⭐ Also rate on Google',
+    googleLater: 'Maybe later',
+    // Incoming call overlay
+    timeForConsult: (type) => `Time for your ${type === 'video' ? 'Video' : 'Audio'} Consultation`,
+    incomingCall: (type) => `Incoming ${type === 'video' ? 'Video' : 'Audio'} Call`,
+    startingNow: (name) => `Your appointment with ${name} is starting now.`,
+    isCalling: (name) => `${name} is calling you…`,
+    notNow: 'Not Now',
+    decline: 'Decline',
+    joinNow: 'Join Now',
+    accept: 'Accept',
+    connecting: 'Connecting your call…',
   },
   hi: {
+    statusLabels: { pending: 'पुष्टि बाकी', confirmed: 'पक्की हुई', completed: 'अपॉइंटमेंट पूरी हुई', cancelled: 'रद्द' },
+    statusFilters: { '': 'सभी', pending: 'पुष्टि बाकी', confirmed: 'पक्की', completed: 'पूरी हुई', cancelled: 'रद्द' },
+    when: { '': 'सभी', today: 'आज', tomorrow: 'कल', thisWeek: 'इस हफ्ते', nextWeek: 'अगले हफ्ते' },
+    or: 'या',
+    jumpToDate: 'कोई खास तारीख चुनें',
+    searchPh: '🔍 डॉक्टर का नाम या फ़ोन नंबर से खोजें...',
+    loadingApts: 'अपॉइंटमेंट लोड हो रही हैं...',
+    noMatch: (q) => `"${q}" से कोई अपॉइंटमेंट नहीं मिली`,
+    noFiltered: (status, date, whenValue) => {
+      const st = { pending: 'पुष्टि बाकी', confirmed: 'पक्की', completed: 'पूरी हुई', cancelled: 'रद्द' }[status];
+      const wh = date ? `${date} की` : { today: 'आज की', tomorrow: 'कल की', thisWeek: 'इस हफ्ते की', nextWeek: 'अगले हफ्ते की' }[whenValue];
+      return [wh, 'कोई', st, 'अपॉइंटमेंट नहीं'].filter(Boolean).join(' ');
+    },
+    noAptsYet: 'अभी कोई अपॉइंटमेंट नहीं है',
+    clearSearch: 'खोज हटाएं',
+    showAll: 'सभी अपॉइंटमेंट दिखाएं',
+    emptyPatientHelp: 'ऊपर "+ नई अपॉइंटमेंट बुक करें" दबाएं — बीमारी या लक्षण से सही डॉक्टर खोजें।',
+    emptyFamilyLink: '👨‍👩‍👧 परिवार के किसी सदस्य के लिए बुक करना है? उन्हें यहाँ जोड़ें →',
+    reason: '📝 कारण:',
+    bookedFor: (name) => `किसके लिए: ${name} (परिवार के सदस्य)`,
+    bookedBySupport: 'ProMedicoz सहायता टीम ने आपके लिए बुक की',
+    notes: 'नोट:',
+    joinMeetingLink: 'मीटिंग लिंक से जुड़ें',
+    rxReady: (count) => `💊 पर्चा तैयार है${count ? ` · ${count} दवा` : ''}`,
+    freeFollowUpTill: (date) => ` · ${date} तक फ्री फॉलो-अप`,
+    viewRx: 'पर्चा देखें',
+    alertProblem: (who, time) => ({
+      'not-received': `📵 ${who} के फ़ोन पर कॉल की सूचना नहीं पहुँची (स्क्रीन लॉक या बैटरी सेवर?)।`,
+      'no-alerts': `🔕 ${who} ने कॉल सूचना बंद रखी है — उनका फ़ोन नहीं बजेगा।`,
+      'not-ready': `⚠️ ${who} का फ़ोन लॉक स्क्रीन टेस्ट में पास नहीं हुआ — ${time} पर शायद न बजे।`,
+    }),
+    reachOther: 'आप उनसे दूसरे तरीके से भी बात कर सकते हैं:',
+    messageDoctor: '💬 डॉक्टर को मैसेज करें',
+    askPmzCall: '💬 ProMedicoz से कहें कि उन्हें फ़ोन करें',
+    doctorNotJoined: 'डॉक्टर अभी नहीं जुड़े? वे आपको कॉल करेंगे; आप ये भी कर सकते हैं:',
+    whatsappSupport: '💬 WhatsApp पर सहायता',
+    hintPending: '⏳ डॉक्टर के अपॉइंटमेंट पक्की करने का इंतज़ार है।',
+    hintPay: '💳 अगला कदम: ऊपर दिए बॉक्स से भुगतान करें, फिर भुगतान का स्क्रीनशॉट अपलोड करें।',
+    joinCall: (type) => (type === 'video' ? '📹 वीडियो कॉल से जुड़ें' : '📞 फ़ोन कॉल से जुड़ें'),
+    hintPaidCall: (type) => `✅ भुगतान हो गया! अपॉइंटमेंट के समय "${type === 'video' ? '📹 वीडियो कॉल से जुड़ें' : '📞 फ़ोन कॉल से जुड़ें'}" दबाएं।`,
+    hintPaidClinic: '✅ भुगतान हो गया! अपॉइंटमेंट के समय क्लिनिक पहुँचें।',
+    directions: '📍 रास्ता देखें',
+    hintDone: '✅ डॉक्टर से बात पूरी हुई।',
+    hintDoneWaitRx: '✅ डॉक्टर से बात पूरी हुई। डॉक्टर जैसे ही पर्चा लिखेंगे, वह यहाँ दिख जाएगा।',
+    hintCancelled: '❌ यह अपॉइंटमेंट रद्द हो गई है।',
+    reschedule: 'समय बदलें',
+    cancel: 'रद्द करें',
+    followUpBooked: (date) => `✓ फ्री फॉलो-अप बुक है: ${date}`,
+    freeFollowUp: 'फ्री फॉलो-अप',
+    bookAgain: 'फिर से बुक करें',
+    rate: '⭐ रेटिंग दें',
+    callOpensAt: (slot) => `कॉल आपके समय पर खुलेगी (${slot})`,
+    chat: '💬 चैट',
+    viewReceipt: 'रसीद देखें',
+    prev: 'पिछला',
+    pageOf: (p, n) => `पेज ${p} / ${n}`,
+    next: 'अगला',
+    bookingSaved: 'आपकी बुकिंग सेव है। यहाँ का काम पूरा करके वापस आ जाइए।',
+    backToBooking: '← अपनी बुकिंग पर वापस जाएं',
+    youWereBooking: (doctorName) => (doctorName ? `आप Dr. ${doctorName} के साथ अपॉइंटमेंट बुक कर रहे थे` : 'आप एक अपॉइंटमेंट बुक कर रहे थे'),
+    draftFor: (name) => `${name} के लिए`,
+    draftSaved: (ago) => `सेव हुआ: ${ago}`,
+    continueBtn: 'आगे बढ़ें →',
+    discard: 'हटाएं',
+    pushTitle: 'फ़ोन पर सूचना पाएं — कुछ भी न छूटे',
+    pushDesc: 'डॉक्टर अपॉइंटमेंट पक्की करें, जवाब दें या कॉल शुरू हो — तुरंत आपके फ़ोन पर सूचना आएगी, ऐप बंद होने पर भी। ईमेल की ज़रूरत नहीं।',
+    pushOn: 'सूचना चालू करें',
+    dismiss: 'बंद करें',
+    pushOk: 'सूचना चालू हो गई! अब आपको तुरंत अपडेट मिलेंगे।',
+    pushFail: 'सूचना चालू नहीं हो सकी। आप ब्राउज़र की साइट सेटिंग्स से इसे चालू कर सकते हैं।',
+    live: 'लाइव · अपडेट तुरंत दिखेंगे',
+    reconnecting: 'फिर से जुड़ रहे हैं… अपडेट थोड़ा देर से आ सकते हैं',
+    rxSentToast: '💊 डॉक्टर ने आपका पर्चा भेज दिया है',
+    view: 'देखें',
+    callOpensToast: (time) => `यह कॉल ${time} पर खुलेगी। तब हम आपको कॉल करेंगे।`,
+    callOpenFail: 'कॉल नहीं खुल सकी। कृपया अपॉइंटमेंट पर दिए "जुड़ें" बटन का इस्तेमाल करें।',
+    aptCancelled: 'अपॉइंटमेंट रद्द हो गई',
+    cancelFail: 'रद्द नहीं हो सकी',
+    ratingRange: 'कृपया 1 से 5 के बीच रेटिंग दें',
+    reviewThanks: 'आपकी राय के लिए धन्यवाद!',
+    reviewFail: 'राय नहीं भेजी जा सकी',
+    receiptUnavailable: 'रसीद नहीं मिली',
+    cancelTitle: 'अपॉइंटमेंट रद्द करें',
+    cancelMsg: 'क्या आप सच में यह अपॉइंटमेंट रद्द करना चाहते हैं?',
+    cancelConfirm: 'हाँ, रद्द करें',
+    modalCancel: 'नहीं, रहने दें',
+    rateTitle: 'डॉक्टर को रेटिंग दें',
+    rateDesc: 'आपका अनुभव कैसा रहा?',
+    rateLabel: 'रेटिंग (1 से 5 स्टार)',
+    reviewLabel: 'आपकी राय (ज़रूरी नहीं)',
+    reviewPh: 'दो शब्द लिखें...',
+    submitReview: 'राय भेजें',
+    googleTitle: (name) => `🙏 ${name} को रेटिंग देने के लिए धन्यवाद`,
+    googleMsg: 'क्या आप Google पर भी रेटिंग देंगे, ताकि दूसरे मरीज़ उन्हें ढूंढ सकें? बस एक मिनट लगेगा।',
+    googleConfirm: '⭐ Google पर भी रेटिंग दें',
+    googleLater: 'बाद में',
+    timeForConsult: (type) => `आपकी ${type === 'video' ? 'वीडियो कॉल' : 'फ़ोन कॉल'} का समय हो गया`,
+    incomingCall: (type) => `${type === 'video' ? 'वीडियो कॉल' : 'फ़ोन कॉल'} आ रही है`,
+    startingNow: (name) => `${name} के साथ आपकी अपॉइंटमेंट अभी शुरू हो रही है।`,
+    isCalling: (name) => `${name} आपको कॉल कर रहे हैं…`,
+    notNow: 'अभी नहीं',
+    decline: 'मना करें',
+    joinNow: 'अभी जुड़ें',
+    accept: 'कॉल उठाएं',
+    connecting: 'आपकी कॉल जोड़ी जा रही है…',
     payDueOne: '1 भुगतान बाकी', payDueMany: (n) => `${n} भुगतान बाकी`, payDueConfirmed: 'ने पुष्टि की', payNow: 'अभी भुगतान करें',
     welcome: (name) => `नमस्ते, ${name}!`,
     welcomeSub: 'अपनी अपॉइंटमेंट देखें और डॉक्टर खोजें',
     tabAppointments: 'मेरी अपॉइंटमेंट',
     tabTimeline: 'स्वास्थ्य इतिहास',
     tabFamily: 'परिवार के सदस्य',
-    tabPrescriptions: 'प्रिस्क्रिप्शन',
+    tabPrescriptions: 'पर्चे',
     tabReports: 'मेरी रिपोर्ट',
     tabComplaints: 'शिकायतें',
     tabAccount: 'खाता सेटिंग्स',
@@ -136,8 +348,11 @@ function Dashboard() {
   const { user, isDoctor, isPatient, isAdmin } = useAuth();
   // Patient-only Hindi: pick the dictionary only for a Hindi-choosing patient;
   // doctors always get English regardless of the stored language.
-  const _lang = (typeof localStorage !== 'undefined' && localStorage.getItem('promedicoz_lang')) || 'en';
+  const { lang: _lang } = useLang(); // app-wide (top-bar switch)
   const pt = PATIENT_TXT[isPatient && _lang === 'hi' ? 'hi' : 'en'];
+  // Latest `pt` for socket/effect callbacks registered once (no stale language).
+  const ptRef = useRef(pt);
+  ptRef.current = pt;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -294,9 +509,9 @@ function Dashboard() {
     const ok = await enablePushNotifications();
     setShowPushNudge(false);
     if (ok) {
-      toast.success('Notifications enabled! You\'ll get instant updates.');
+      toast.success(pt.pushOk);
     } else {
-      toast.error('Could not enable notifications. You can allow them from your browser\'s site settings.');
+      toast.error(pt.pushFail);
     }
   };
 
@@ -628,8 +843,8 @@ function Dashboard() {
       if (isPatient) {
         toast((tt) => (
           <span className="flex items-center gap-3">
-            <span>💊 Your doctor sent your prescription</span>
-            <button type="button" onClick={() => { toast.dismiss(tt.id); goToTab('prescriptions'); }} className="font-semibold text-primary-600 underline">View</button>
+            <span>{ptRef.current.rxSentToast}</span>
+            <button type="button" onClick={() => { toast.dismiss(tt.id); goToTab('prescriptions'); }} className="font-semibold text-primary-600 underline">{ptRef.current.view}</button>
           </span>
         ), { duration: 8000, id: 'rx-ready' });
       }
@@ -773,10 +988,10 @@ function Dashboard() {
           setIncomingCall(null);
           startCall(apt);
         } else if (apt && apt.timeSlot) {
-          toast(`This call opens at ${apt.timeSlot.split(' - ')[0]}. We'll ring you then.`, { duration: 6000 });
+          toast(ptRef.current.callOpensToast(apt.timeSlot.split(' - ')[0]), { duration: 6000 });
         }
       } catch (e) {
-        toast.error('Could not open that call. Please use the Join button on the appointment.');
+        toast.error(ptRef.current.callOpenFail);
       } finally {
         const next = new URLSearchParams(searchParams);
         next.delete('join');
@@ -852,11 +1067,11 @@ function Dashboard() {
   const handleCancel = async () => {
     try {
       await appointmentAPI.cancel(cancelModal.id, { cancellationReason: 'Cancelled by patient from dashboard' });
-      toast.success('Appointment cancelled');
+      toast.success(pt.aptCancelled);
       setCancelModal({ open: false, id: null });
       fetchAppointments();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to cancel');
+      toast.error(error.response?.data?.message || pt.cancelFail);
     }
   };
 
@@ -864,7 +1079,7 @@ function Dashboard() {
   const handleRateDoctor = async (values) => {
     const rating = parseInt(values.rating);
     if (isNaN(rating) || rating < 1 || rating > 5) {
-      toast.error('Please enter a rating between 1 and 5');
+      toast.error(pt.ratingRange);
       return;
     }
     try {
@@ -877,10 +1092,10 @@ function Dashboard() {
       if (doc?.googleReviewLink && googleReviewLinkOk(doc.googleReviewLink)) {
         setGoogleAsk({ open: true, link: doc.googleReviewLink.trim(), name: formatDoctorName(doc.name) });
       } else {
-        toast.success('Thank you for your review!');
+        toast.success(pt.reviewThanks);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to submit review');
+      toast.error(error.response?.data?.message || pt.reviewFail);
     }
   };
 
@@ -1069,7 +1284,7 @@ function Dashboard() {
   // Raw status values ("completed") read as terse/ambiguous next to a
   // patient's name — spell them out for the badge instead of changing the
   // underlying status values themselves.
-  const getStatusLabel = (status) => ({ pending: 'Pending', confirmed: 'Confirmed', completed: 'Appointment Completed', cancelled: 'Cancelled' }[status] || status);
+  const getStatusLabel = (status) => (pt.statusLabels[status] || status);
 
   // ---- Doctor onboarding checklist ----
   // Verifying email and adding a photo already have their own banners below.
@@ -1127,9 +1342,9 @@ function Dashboard() {
           "Account Settings"): one tap back, with the form still filled in. */}
       {isPatient && backToBooking && (
         <div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <p className="text-sm text-primary-800">Your booking is saved. Come back to it when you're done here.</p>
+          <p className="text-sm text-primary-800">{pt.bookingSaved}</p>
           <button type="button" onClick={() => navigate(backToBooking)} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 whitespace-nowrap">
-            ← Back to your booking
+            {pt.backToBooking}
           </button>
         </div>
       )}
@@ -1138,21 +1353,21 @@ function Dashboard() {
       {isPatient && !backToBooking && bookingDraft && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <p className="font-semibold text-green-900">You were booking {bookingDraft.data.doctorName ? `Dr. ${bookingDraft.data.doctorName}` : 'an appointment'}</p>
+            <p className="font-semibold text-green-900">{pt.youWereBooking(bookingDraft.data.doctorName)}</p>
             <p className="text-xs text-green-800 mt-0.5">
               {[
                 bookingDraft.data.date && new Date(`${bookingDraft.data.date}T00:00:00Z`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }),
                 bookingDraft.data.timeSlot && bookingDraft.data.timeSlot.split(' - ')[0],
-                bookingDraft.data.bookedFor === 'family' && bookingDraft.data.familyMemberName && `for ${bookingDraft.data.familyMemberName}`,
-                `saved ${savedAgo(bookingDraft.savedAt)}`,
+                bookingDraft.data.bookedFor === 'family' && bookingDraft.data.familyMemberName && pt.draftFor(bookingDraft.data.familyMemberName),
+                pt.draftSaved(savedAgo(bookingDraft.savedAt)),
               ].filter(Boolean).join(' · ')}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <button type="button" onClick={() => navigate(`/book-appointment/${bookingDraft.data.doctorId}`)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 whitespace-nowrap">
-              Continue →
+              {pt.continueBtn}
             </button>
-            <button type="button" onClick={discardBookingDraft} className="text-sm text-gray-600 hover:underline">Discard</button>
+            <button type="button" onClick={discardBookingDraft} className="text-sm text-gray-600 hover:underline">{pt.discard}</button>
           </div>
         </div>
       )}
@@ -1164,11 +1379,11 @@ function Dashboard() {
           <div className="flex items-start sm:items-center gap-3">
             <span className="text-3xl">🔔</span>
             <div>
-              <p className="font-bold text-base">Get alerts on your phone — don't miss anything</p>
+              <p className="font-bold text-base">{pt.pushTitle}</p>
               <p className="text-sm text-indigo-100 mt-0.5">
                 {isDoctor
                   ? "Get notified the instant a patient books, pays, or messages you — right on your phone, even when the app is closed. No email needed."
-                  : "Get notified the instant your doctor confirms your appointment, replies, or the call starts — right on your phone, even when the app is closed. No email needed."}
+                  : pt.pushDesc}
               </p>
             </div>
           </div>
@@ -1177,12 +1392,12 @@ function Dashboard() {
               onClick={handleEnablePush}
               className="px-5 py-2.5 bg-white text-indigo-700 rounded-lg text-sm font-semibold hover:bg-gray-100 whitespace-nowrap"
             >
-              Turn on alerts
+              {pt.pushOn}
             </button>
             <button
               onClick={dismissPushNudge}
               className="text-indigo-200 hover:text-white text-xl px-1"
-              aria-label="Dismiss"
+              aria-label={pt.dismiss}
             >
               &times;
             </button>
@@ -1444,7 +1659,7 @@ function Dashboard() {
             {live !== null && (
               <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-white/15 text-[11px] font-medium" role="status" aria-live="polite">
                 <span className={`w-2 h-2 rounded-full ${live ? 'bg-green-300' : 'bg-amber-300 animate-pulse'}`} aria-hidden="true" />
-                {live ? 'Live · updates appear instantly' : 'Reconnecting… updates may be a little late'}
+                {live ? pt.live : pt.reconnecting}
               </span>
             )}
           </div>
@@ -1521,11 +1736,11 @@ function Dashboard() {
               hard to even discover the feature exists. */}
           <div className="flex flex-wrap gap-2 mb-2">
             {[
-              { value: '', label: 'All' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'confirmed', label: 'Confirmed' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'cancelled', label: 'Cancelled' },
+              { value: '', label: pt.statusFilters[''] },
+              { value: 'pending', label: pt.statusFilters.pending },
+              { value: 'confirmed', label: pt.statusFilters.confirmed },
+              { value: 'completed', label: pt.statusFilters.completed },
+              { value: 'cancelled', label: pt.statusFilters.cancelled },
             ].map((f) => (
               <button
                 key={f.value}
@@ -1561,10 +1776,10 @@ function Dashboard() {
                     : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
                 }`}
               >
-                {f.label}
+                {pt.when[f.value] || f.label}
               </button>
             ))}
-            <span className="text-gray-400 text-sm">or</span>
+            <span className="text-gray-400 text-sm">{pt.or}</span>
             <input
               type="date"
               value={aptSpecificDate}
@@ -1572,7 +1787,7 @@ function Dashboard() {
               className={`px-3 py-1.5 rounded-full text-sm border outline-none focus:ring-2 focus:ring-primary-500 ${
                 aptSpecificDate ? 'border-indigo-500 text-indigo-700 bg-indigo-50' : 'border-gray-200 text-gray-600'
               }`}
-              title="Jump to a specific date"
+              title={pt.jumpToDate}
             />
             {aptSpecificDate && (
               <button onClick={() => { setAptSpecificDate(''); setPage(1); }} className="text-gray-400 hover:text-gray-600 text-sm">✕</button>
@@ -1584,39 +1799,39 @@ function Dashboard() {
               type="text"
               value={aptSearch}
               onChange={(e) => setAptSearch(e.target.value)}
-              placeholder={isDoctor ? '🔍 Search by patient name, phone, or Patient ID...' : '🔍 Search by doctor name or phone...'}
+              placeholder={isDoctor ? '🔍 Search by patient name, phone, or Patient ID...' : pt.searchPh}
               className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
             />
           </div>
 
           {loading ? (
-            <div className="text-center py-8 text-gray-600">Loading appointments...</div>
+            <div className="text-center py-8 text-gray-600">{pt.loadingApts}</div>
           ) : appointments.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-md">
               <div className="text-5xl mb-4">{aptSearchDebounced || aptStatusFilter ? '🔍' : '📋'}</div>
               <h3 className="text-xl font-medium text-gray-700">
                 {aptSearchDebounced
-                  ? `No appointments match "${aptSearchDebounced}"`
+                  ? pt.noMatch(aptSearchDebounced)
                   : aptStatusFilter || aptWhenFilter || aptSpecificDate
-                  ? `No ${[aptStatusFilter, aptSpecificDate ? `on ${aptSpecificDate}` : WHEN_FILTERS.find((f) => f.value === aptWhenFilter)?.label].filter(Boolean).join(' ').toLowerCase()} appointments`
-                  : 'No appointments yet'}
+                  ? pt.noFiltered(aptStatusFilter, aptSpecificDate, aptWhenFilter)
+                  : pt.noAptsYet}
               </h3>
               {aptSearchDebounced ? (
                 <button onClick={() => setAptSearch('')} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
-                  Clear search
+                  {pt.clearSearch}
                 </button>
               ) : (aptStatusFilter || aptWhenFilter || aptSpecificDate) ? (
                 <button onClick={() => { setAptStatusFilter(''); setAptWhenFilter(''); setAptSpecificDate(''); setPage(1); }} className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block">
-                  Show all appointments
+                  {pt.showAll}
                 </button>
               ) : isPatient ? (
                 <>
-                  <p className="text-gray-500 mt-2">Click "+ Book New Appointment" above to search by specialization or symptom and find the right doctor.</p>
+                  <p className="text-gray-500 mt-2">{pt.emptyPatientHelp}</p>
                   <button
                     onClick={() => goToTab('familyMembers')}
                     className="text-primary-600 text-sm font-medium hover:underline mt-3 inline-block"
                   >
-                    👨‍👩‍👧 Booking for a family member instead? Add them here →
+                    {pt.emptyFamilyLink}
                   </button>
                 </>
               ) : (
@@ -1667,7 +1882,7 @@ function Dashboard() {
                       </div>
                       <p className="text-gray-600 text-sm flex items-center gap-1.5"><span aria-hidden="true">📅</span> {formatDate(apt.date)} <span className="text-gray-300">·</span> <span aria-hidden="true">🕐</span> {apt.timeSlot}</p>
                       {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">📞 Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
-                      <p className="text-gray-500 text-sm mt-1">📝 Reason: {apt.reason}</p>
+                      <p className="text-gray-500 text-sm mt-1">{pt.reason} {apt.reason}</p>
                       {apt.symptoms?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                           {apt.symptoms.map((s) => (
@@ -1703,14 +1918,14 @@ function Dashboard() {
                           </div>
                         </details>
                       )}
-                      {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">Booked for: {apt.familyMemberName} (family member)</p>}
+                      {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">{pt.bookedFor(apt.familyMemberName)}</p>}
                       {apt.bookedByAdmin && (
                         <p className="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-200">
-                          🤝 {isDoctor ? 'Booked by ProMedicoz support (patient agreed on call)' : 'Booked for you by ProMedicoz support'}
+                          🤝 {isDoctor ? 'Booked by ProMedicoz support (patient agreed on call)' : pt.bookedBySupport}
                         </p>
                       )}
-                      {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">Notes: {apt.notes}</p>}
-                      {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">Join Meeting Link</a>}
+                      {apt.notes && <p className="text-gray-500 text-sm mt-1 italic">{pt.notes} {apt.notes}</p>}
+                      {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">{pt.joinMeetingLink}</a>}
                       {/* Patient payment steps — every state has a way forward
                           (pay / waiting / proof sent / paid). See PaymentBox. */}
                       {isPatient && (
@@ -1720,13 +1935,13 @@ function Dashboard() {
                       {isPatient && apt.prescriptionInfo && (
                         <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg flex flex-wrap items-center justify-between gap-2">
                           <p className="text-sm font-semibold text-purple-800">
-                            💊 Prescription ready{apt.prescriptionInfo.medicineCount ? ` · ${apt.prescriptionInfo.medicineCount} medicine${apt.prescriptionInfo.medicineCount === 1 ? '' : 's'}` : ''}
+                            {pt.rxReady(apt.prescriptionInfo.medicineCount)}
                             {apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
-                              <span className="font-normal"> · free follow-up till {new Date(apt.followUpDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                              <span className="font-normal">{pt.freeFollowUpTill(new Date(apt.followUpDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }))}</span>
                             )}
                           </p>
                           <button type="button" onClick={() => goToTab('prescriptions')} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700">
-                            View prescription
+                            {pt.viewRx}
                           </button>
                         </div>
                       )}
@@ -1741,15 +1956,11 @@ function Dashboard() {
                         const problem = !videoCallAppointmentId && otherAlertProblem(apt, isDoctor ? 'doctor' : 'patient');
                         if (!problem) return null;
                         const who = isDoctor ? (apt.patient?.name || 'The patient') : `Dr. ${apt.doctor?.name || ''}`.trim();
-                        const text = {
-                          'not-received': `📵 ${who}'s phone didn't get the call alert (screen locked or battery saver?).`,
-                          'no-alerts': `🔕 ${who} has call alerts off — their phone won't ring.`,
-                          'not-ready': `⚠️ ${who}'s phone hasn't passed a locked-screen test — it may not ring at ${(apt.timeSlot || '').split(' - ')[0]}.`,
-                        }[problem];
+                        const text = pt.alertProblem(who, (apt.timeSlot || '').split(' - ')[0])[problem];
                         return (
                           <div className="mt-3 p-3 bg-orange-50 border border-orange-300 rounded-lg" role="status">
                             <p className="text-xs font-semibold text-orange-900">{text}</p>
-                            <p className="text-[11px] text-orange-900 mt-0.5 mb-2">{isDoctor ? 'A normal phone call rings even on a locked screen:' : 'You can reach them another way:'}</p>
+                            <p className="text-[11px] text-orange-900 mt-0.5 mb-2">{isDoctor ? 'A normal phone call rings even on a locked screen:' : pt.reachOther}</p>
                             <div className="flex flex-wrap gap-2">
                               {isDoctor && apt.patient?.phone && (
                                 <a href={`tel:${apt.patient.phone}`} className="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-semibold hover:bg-primary-700">📞 Call patient</a>
@@ -1758,10 +1969,10 @@ function Dashboard() {
                                 <a href={`https://wa.me/${String(apt.patient.phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz. Your ${apt.consultationType === 'video' ? 'video' : 'audio'} consultation (${apt.timeSlot}) is ${problem === 'not-ready' ? 'coming up' : 'starting now'}. Please open ProMedicoz and tap Join: https://www.promedicoz.in/dashboard`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp patient</a>
                               )}
                               {isPatient && (
-                                <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">💬 Message doctor</button>
+                                <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">{pt.messageDoctor}</button>
                               )}
                               {isPatient && (
-                                <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}): the doctor's phone may not be getting the call alert. Please call them. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 Ask ProMedicoz to call them</a>
+                                <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}): the doctor's phone may not be getting the call alert. Please call them. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">{pt.askPmzCall}</a>
                               )}
                             </div>
                           </div>
@@ -1771,7 +1982,7 @@ function Dashboard() {
                       {showNoShowHelp(apt) && !videoCallAppointmentId && !otherAlertProblem(apt, isDoctor ? 'doctor' : 'patient') && (
                         <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs font-semibold text-amber-900 mb-2">
-                            {isDoctor ? 'Patient not joined yet? Reach them directly:' : "Doctor not joined yet? They'll ring you; you can also:"}
+                            {isDoctor ? 'Patient not joined yet? Reach them directly:' : pt.doctorNotJoined}
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {isDoctor && apt.patient?.phone && (
@@ -1781,10 +1992,10 @@ function Dashboard() {
                               <a href={`https://wa.me/${String(apt.patient.phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz. I'm ready for your ${apt.consultationType === 'video' ? 'video' : 'audio'} consultation (${apt.timeSlot}). Please open ProMedicoz and tap Join: https://www.promedicoz.in/dashboard`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp patient</a>
                             )}
                             {isPatient && (
-                              <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">💬 Message doctor</button>
+                              <button type="button" onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="px-3 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600">{pt.messageDoctor}</button>
                             )}
                             {isPatient && (
-                              <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}) has started but the doctor hasn't joined. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">💬 WhatsApp support</a>
+                              <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900'}?text=${encodeURIComponent(`Hi ProMedicoz, my ${apt.consultationType} consultation with Dr. ${apt.doctor?.name || ''} (${apt.timeSlot}) has started but the doctor hasn't joined. Patient ID: ${user?.patientId || ''}`)}`} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-100">{pt.whatsappSupport}</a>
                             )}
                           </div>
                         </div>
@@ -1794,21 +2005,21 @@ function Dashboard() {
                       {/* Next step guidance */}
                       <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg">
                         <p className="text-xs text-blue-700 font-medium">
-                          {isPatient && apt.status === 'pending' && '⏳ Waiting for doctor to confirm your appointment.'}
-                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '💳 Next: pay using the box above, then upload the payment screenshot.'}
-                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Payment confirmed! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`}
-                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment confirmed! Visit the clinic at your appointment time.'}
+                          {isPatient && apt.status === 'pending' && pt.hintPending}
+                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && pt.hintPay}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && pt.hintPaidCall(apt.consultationType)}
+                          {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && pt.hintPaidClinic}
                         </p>
                         {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && (
-                          <a href={apt.doctor?.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(apt.doctor?.clinicAddress || apt.doctor?.city || '')}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-xs text-primary-600 hover:underline font-medium">📍 Get Directions</a>
+                          <a href={apt.doctor?.googleMapsLink || `https://maps.google.com?q=${encodeURIComponent(apt.doctor?.clinicAddress || apt.doctor?.city || '')}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-xs text-primary-600 hover:underline font-medium">{pt.directions}</a>
                         )}
                         <p className="text-xs text-blue-700 font-medium">
                           {isPatient && apt.status === 'completed' && (
                             apt.prescriptionInfo
-                              ? <>✅ Consultation done.</>
-                              : <>✅ Consultation done. Your prescription will appear here the moment your doctor writes it.</>
+                              ? <>{pt.hintDone}</>
+                              : <>{pt.hintDoneWaitRx}</>
                           )}
-                          {isPatient && apt.status === 'cancelled' && '❌ This appointment was cancelled.'}
+                          {isPatient && apt.status === 'cancelled' && pt.hintCancelled}
                           {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
                           {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && (
@@ -1892,22 +2103,22 @@ function Dashboard() {
                         </>
                       )}
                       {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">{hasPrescription ? 'Update Prescription' : 'Write Prescription'}</button>}
-                      {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setRescheduleModal({ open: true, appointment: apt })} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Reschedule</button>}
-                      {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Cancel</button>}
+                      {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setRescheduleModal({ open: true, appointment: apt })} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">{pt.reschedule}</button>}
+                      {isPatient && ['pending', 'confirmed'].includes(apt.status) && <button onClick={() => setCancelModal({ open: true, id: apt._id })} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">{pt.cancel}</button>}
                       {isPatient && apt.status === 'completed' && (
                         <>
                           {/* One free follow-up per visit: once booked (and not
                               cancelled), show it instead of the button. */}
                           {apt.followUpBooked && (
                             <span className="inline-flex items-center px-3 py-2 bg-green-50 text-green-800 border border-green-200 rounded-lg text-sm font-medium">
-                              ✓ Free follow-up booked: {new Date(apt.followUpBooked.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' })}
+                              {pt.followUpBooked(new Date(apt.followUpBooked.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' }))}
                             </span>
                           )}
                           {!apt.followUpBooked && apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
-                            <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, isFollowUp: true, originalAppointmentId: apt._id, reason: 'Follow-up: ' + apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Free Follow-up</button>
+                            <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, isFollowUp: true, originalAppointmentId: apt._id, reason: 'Follow-up: ' + apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">{pt.freeFollowUp}</button>
                           )}
-                          <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, originalAppointmentId: apt._id, reason: apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600">Book Again</button>
-                          <button onClick={() => setRateModal({ open: true, id: apt._id })} className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">⭐ Rate</button>
+                          <button onClick={() => navigate(`/book-appointment/${apt.doctor?._id}`, { state: { repeatBooking: true, originalAppointmentId: apt._id, reason: apt.reason, consultationType: apt.consultationType, bookedFor: apt.bookedFor || 'self', familyMemberName: apt.familyMemberName || '' } })} className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600">{pt.bookAgain}</button>
+                          <button onClick={() => setRateModal({ open: true, id: apt._id })} className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">{pt.rate}</button>
                         </>
                       )}
                       {/* Chat and Video — for confirmed/completed appointments */}
@@ -1915,14 +2126,14 @@ function Dashboard() {
                         <>
                           {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isWithinCallWindow(apt) && (
                             <button onClick={() => startCall(apt)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
-                              {apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}
+                              {pt.joinCall(apt.consultationType)}
                             </button>
                           )}
                           {isPatient && apt.consultationType !== 'in-person' && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && isAppointmentToday(apt.date) && !isWithinCallWindow(apt) && (
-                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-lg">Call opens at your slot time ({apt.timeSlot})</span>
+                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-lg">{pt.callOpensAt(apt.timeSlot)}</span>
                           )}
                           <button onClick={() => { setChatAppointmentId(apt._id); fetchUnreadCounts(); }} className="relative px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600">
-                            💬 Chat
+                            {pt.chat}
                             {unreadMessages.unreadCount > 0 && (
                               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{unreadMessages.unreadCount}</span>
                             )}
@@ -1934,7 +2145,7 @@ function Dashboard() {
                           onClick={() => setReceiptImage(getUploadUrl(apt.paymentScreenshot))}
                           className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
                         >
-                          View Receipt
+                          {pt.viewReceipt}
                         </button>
                       )}
                       {/* Block patient — doctor only */}
@@ -1950,9 +2161,9 @@ function Dashboard() {
               {/* Pagination */}
               {pagination && pagination.totalPages > 1 && (
                 <div className="flex justify-center items-center gap-4 mt-8">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">Previous</button>
-                  <span className="text-sm text-gray-600">Page {page} of {pagination.totalPages}</span>
-                  <button onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))} disabled={page === pagination.totalPages} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">Next</button>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">{pt.prev}</button>
+                  <span className="text-sm text-gray-600">{pt.pageOf(page, pagination.totalPages)}</span>
+                  <button onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))} disabled={page === pagination.totalPages} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-200">{pt.next}</button>
                 </div>
               )}
             </>
@@ -2189,9 +2400,10 @@ function Dashboard() {
       {/* === MODALS === */}
       <ConfirmModal
         open={cancelModal.open}
-        title="Cancel Appointment"
-        message="Are you sure you want to cancel this appointment?"
-        confirmText="Cancel Appointment"
+        title={pt.cancelTitle}
+        message={pt.cancelMsg}
+        confirmText={pt.cancelConfirm}
+        cancelText={pt.modalCancel}
         variant="danger"
         onConfirm={handleCancel}
         onCancel={() => setCancelModal({ open: false, id: null })}
@@ -2209,13 +2421,14 @@ function Dashboard() {
 
       <PromptModal
         open={rateModal.open}
-        title="Rate Your Doctor"
-        description="How was your experience?"
+        title={pt.rateTitle}
+        description={pt.rateDesc}
         fields={[
-          { name: 'rating', label: 'Rating (1-5 stars)', type: 'number', min: 1, max: 5, required: true, placeholder: '5' },
-          { name: 'comment', label: 'Review (optional)', type: 'textarea', placeholder: 'Write a short review...' }
+          { name: 'rating', label: pt.rateLabel, type: 'number', min: 1, max: 5, required: true, placeholder: '5' },
+          { name: 'comment', label: pt.reviewLabel, type: 'textarea', placeholder: pt.reviewPh }
         ]}
-        submitText="Submit Review"
+        submitText={pt.submitReview}
+        cancelText={pt.modalCancel}
         onSubmit={handleRateDoctor}
         onCancel={() => setRateModal({ open: false, id: null })}
       />
@@ -2224,10 +2437,10 @@ function Dashboard() {
           the doctor added their link; shown whatever the stars). */}
       <ConfirmModal
         open={googleAsk.open}
-        title={`🙏 Thanks for rating ${googleAsk.name}`}
-        message="Want to help other patients find them on Google too? It takes a minute."
-        confirmText="⭐ Also rate on Google"
-        cancelText="Maybe later"
+        title={pt.googleTitle(googleAsk.name)}
+        message={pt.googleMsg}
+        confirmText={pt.googleConfirm}
+        cancelText={pt.googleLater}
         onConfirm={() => {
           window.open(googleAsk.link, '_blank', 'noopener,noreferrer');
           setGoogleAsk({ open: false, link: '', name: '' });
@@ -2341,7 +2554,7 @@ function Dashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setReceiptImage(null)}>
           <div className="absolute inset-0 bg-black/80" />
           <div className="relative max-w-lg w-full">
-            <img src={receiptImage} alt="Payment Receipt" className="w-full rounded-lg" onError={() => { setReceiptImage(null); toast.error('Receipt unavailable'); }} />
+            <img src={receiptImage} alt="Payment Receipt" className="w-full rounded-lg" onError={() => { setReceiptImage(null); toast.error(pt.receiptUnavailable); }} />
             <button onClick={() => setReceiptImage(null)} className="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-gray-800 font-bold">&times;</button>
           </div>
         </div>
@@ -2354,26 +2567,26 @@ function Dashboard() {
             <div className="text-5xl mb-3 animate-bounce">{incomingCall.consultationType === 'video' ? '📹' : '📞'}</div>
             <h3 className="text-xl font-bold text-gray-800 mb-1">
               {incomingCall.isScheduledStart
-                ? `Time for your ${incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Consultation`
-                : `Incoming ${incomingCall.consultationType === 'video' ? 'Video' : 'Audio'} Call`}
+                ? pt.timeForConsult(incomingCall.consultationType)
+                : pt.incomingCall(incomingCall.consultationType)}
             </h3>
             <p className="text-gray-600 mb-6">
               {incomingCall.isScheduledStart
-                ? `Your appointment with ${incomingCall.fromName} is starting now.`
-                : `${incomingCall.fromName} is calling you…`}
+                ? pt.startingNow(incomingCall.fromName)
+                : pt.isCalling(incomingCall.fromName)}
             </p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={declineIncomingCall}
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600"
               >
-                {incomingCall.isScheduledStart ? 'Not Now' : 'Decline'}
+                {incomingCall.isScheduledStart ? pt.notNow : pt.decline}
               </button>
               <button
                 onClick={acceptIncomingCall}
                 className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700"
               >
-                {incomingCall.isScheduledStart ? 'Join Now' : 'Accept'}
+                {incomingCall.isScheduledStart ? pt.joinNow : pt.accept}
               </button>
             </div>
           </div>
@@ -2384,7 +2597,7 @@ function Dashboard() {
       {videoCallAppointmentId && (
         <Suspense fallback={
           <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center text-white" role="status" aria-live="polite">
-            Connecting your call…
+            {pt.connecting}
           </div>
         }>
           <VideoCall

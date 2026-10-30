@@ -1,9 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LangContext';
 
 function BottomNav() {
   const { isAuthenticated, isDoctor, isPatient } = useAuth();
   const location = useLocation();
+  // Visitors + patients follow the English / हिंदी switch; doctors/admin stay English.
+  const { lang } = useLang();
+  const tr = (en, hi) => (lang === 'hi' && !isDoctor && (isPatient || !isAuthenticated) ? hi : en);
 
   // Which Dashboard tab (if any) the current URL points to — used to tell
   // the doctor's 4 tab-based links apart, since they all share the same
@@ -31,10 +35,10 @@ function BottomNav() {
     // the Appointments tab, same as doctors losing their browse links.
     : isPatient
     ? [
-        { path: '/dashboard', tab: 'appointments', icon: '📋', label: 'Appointments' },
-        { path: '/dashboard?tab=prescriptions', tab: 'prescriptions', icon: '💊', label: 'Prescriptions' },
-        { path: '/dashboard?tab=reports', tab: 'reports', icon: '📄', label: 'Reports' },
-        { path: '/dashboard?tab=account', tab: 'account', icon: '👤', label: 'Account' },
+        { path: '/dashboard', tab: 'appointments', icon: '📋', label: tr('Appointments', 'अपॉइंटमेंट') },
+        { path: '/dashboard?tab=prescriptions', tab: 'prescriptions', icon: '💊', label: tr('Prescriptions', 'पर्चे') },
+        { path: '/dashboard?tab=reports', tab: 'reports', icon: '📄', label: tr('Reports', 'रिपोर्ट') },
+        { path: '/dashboard?tab=account', tab: 'account', icon: '👤', label: tr('Account', 'खाता') },
       ]
     // Fallback for any other authenticated role (currently just admin) —
     // keeps the original browse-oriented layout since admins aren't
@@ -48,10 +52,10 @@ function BottomNav() {
         { path: '/blog', icon: '📝', label: 'Blog' },
       ]
     : [
-        { path: '/', icon: '🏠', label: 'Home' },
-        { path: '/doctors', icon: '🔍', label: 'Doctors' },
-        { path: '/blog', icon: '📝', label: 'Blog' },
-        { path: '/login', icon: '👤', label: 'Login' },
+        { path: '/', icon: '🏠', label: tr('Home', 'होम') },
+        { path: '/doctors', icon: '🔍', label: tr('Doctors', 'डॉक्टर') },
+        { path: '/blog', icon: '📝', label: tr('Blog', 'ब्लॉग') },
+        { path: '/login', icon: '👤', label: tr('Login', 'लॉग इन') },
       ];
 
   return (

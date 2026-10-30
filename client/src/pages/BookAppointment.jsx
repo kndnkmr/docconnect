@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 import { offeredModes, pickMode } from '../utils/consultModes';
 import { loadDraft, clearDraft, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import useAutoDraft from '../utils/useAutoDraft';
+import { useLang } from '../context/LangContext';
 
 // Any one of the medical info fields being set is enough to consider it
 // "on file" — no need for every field to be filled in.
@@ -165,9 +166,8 @@ function BookAppointment() {
   // Language — shares the same stored choice as the Home page toggle, so a
   // patient's selection carries across the site. Doctor-facing pages have no
   // translation logic, so they stay English regardless of this.
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = BOOKING_TXT[lang];
-  const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   // Check if this is a repeat booking (prefilled data from Dashboard)
   const repeatData = location.state || {};
@@ -460,22 +460,6 @@ function BookAppointment() {
         <Link to={`/doctors/${doctorId}`} className="text-primary-600 hover:underline inline-block">
           {t.back}
         </Link>
-        {/* Language toggle — same choice as the home page, available here too
-            in case a patient landed straight on the booking page. */}
-        <div className="inline-flex items-center bg-gray-100 rounded-full p-0.5 text-xs">
-          <button
-            onClick={() => changeLang('en')}
-            className={`px-3 py-1 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-primary-600 text-white' : 'text-gray-600'}`}
-          >
-            English
-          </button>
-          <button
-            onClick={() => changeLang('hi')}
-            className={`px-3 py-1 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-primary-600 text-white' : 'text-gray-600'}`}
-          >
-            हिंदी
-          </button>
-        </div>
       </div>
 
       <div className="max-w-2xl mx-auto">

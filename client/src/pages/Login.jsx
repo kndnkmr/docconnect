@@ -26,13 +26,14 @@ import PasswordToggleIcon from '../components/PasswordToggleIcon';
 import Spinner from '../components/Spinner';
 import toast from 'react-hot-toast';
 import { trackEvent } from '../components/Analytics';
+import { useLang } from '../context/LangContext';
 
 // Same help number as the floating WhatsApp button.
 const WHATSAPP_HELP = import.meta.env.VITE_WHATSAPP_NUMBER || '919997019900';
 const spacedPhone = (p) => (p && p.length === 10 ? `${p.slice(0, 5)} ${p.slice(5)}` : p || '');
 
-// Guidance text for first-time patients (follows the saved language; the
-// rest of this page stays English as before).
+// All fixed text on this page (follows the app-wide language). Server
+// messages are shown as they come.
 const GUIDE = {
   en: {
     bookTitle: 'Book your appointment',
@@ -57,6 +58,24 @@ const GUIDE = {
     forgot: 'Forgot password? Reset it →',
     help: '💬 Still stuck? Get help on WhatsApp',
     helpMsg: (p, d) => `Hi ProMedicoz, I can't log in.${p ? ` My number: ${p}.` : ''}${d ? ` I want to book ${d}.` : ''}`,
+    title: 'Welcome Back',
+    subtitle: 'Sign in to your ProMedicoz account — works for both Doctors and Patients.',
+    phoneTab: 'Phone',
+    emailTab: 'Email',
+    phoneLabel: 'Phone Number',
+    emailLabel: 'Email Address',
+    passwordLabel: 'Password',
+    passwordPh: 'Enter your password',
+    hidePw: 'Hide password',
+    showPw: 'Show password',
+    signingIn: 'Signing in...',
+    signIn: 'Sign In',
+    forgotLink: 'Forgot your password?',
+    noAccount: "Don't have an account?",
+    registerHere: 'Register here',
+    fillAll: 'Please fill in all fields',
+    welcome: (n) => `Welcome back, ${n}!`,
+    loginFailed: 'Login failed. Please try again.',
   },
   hi: {
     bookTitle: 'अपनी अपॉइंटमेंट बुक करें',
@@ -81,6 +100,24 @@ const GUIDE = {
     forgot: 'पासवर्ड भूल गए? नया बनाएं →',
     help: '💬 फिर भी दिक्कत? WhatsApp पर मदद लें',
     helpMsg: (p, d) => `Hi ProMedicoz, I can't log in.${p ? ` My number: ${p}.` : ''}${d ? ` I want to book ${d}.` : ''}`,
+    title: 'फिर से स्वागत है',
+    subtitle: 'अपने ProMedicoz खाते में लॉग इन करें — डॉक्टर और मरीज़ दोनों के लिए।',
+    phoneTab: 'फ़ोन',
+    emailTab: 'ईमेल',
+    phoneLabel: 'मोबाइल नंबर',
+    emailLabel: 'ईमेल',
+    passwordLabel: 'पासवर्ड',
+    passwordPh: 'अपना पासवर्ड लिखें',
+    hidePw: 'पासवर्ड छुपाएं',
+    showPw: 'पासवर्ड दिखाएं',
+    signingIn: 'लॉग इन हो रहा है...',
+    signIn: 'लॉग इन करें',
+    forgotLink: 'पासवर्ड भूल गए?',
+    noAccount: 'खाता नहीं है?',
+    registerHere: 'यहाँ रजिस्टर करें',
+    fillAll: 'कृपया सारी जानकारी भरें',
+    welcome: (n) => `स्वागत है, ${n}!`,
+    loginFailed: 'लॉग इन नहीं हो पाया। फिर से कोशिश करें।',
   },
 };
 
@@ -124,7 +161,7 @@ function Login() {
   const [step, setStep] = useState(() => (bookingIntent && !location.state?.skipAsk ? 'ask' : 'form'));
   const [loginError, setLoginError] = useState(null); // { code, phone }
   const [wrongTries, setWrongTries] = useState(0);
-  const lang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi' ? 'hi' : 'en'; } catch { return 'en'; } })();
+  const { lang } = useLang(); // app-wide (top-bar switch)
   const L = GUIDE[lang];
   const carry = { from: returnTo, doctorName };
   const goRegister = (withPhone, source) => {
@@ -142,7 +179,7 @@ function Login() {
     // Basic validation
     const identifier = loginMethod === 'email' ? email : phone;
     if (!identifier || !password) {
-      toast.error('Please fill in all fields');
+      toast.error(L.fillAll);
       return;
     }
 
@@ -162,7 +199,7 @@ function Login() {
       // Save to auth context (and localStorage)
       login(token, user);
 
-      toast.success(`Welcome back, ${user.name}!`);
+      toast.success(L.welcome(user.name));
 
       // Admins always go to the Admin Panel (a patient booking page etc. is
       // never meaningful for them). Everyone else is returned to where they
@@ -188,7 +225,7 @@ function Login() {
         trackEvent('login_error', { code: code.toLowerCase(), booking: bookingIntent ? 'yes' : 'no' });
       } else {
         // Deleted/suspended accounts, network errors etc. — as before.
-        const message = data.message || 'Login failed. Please try again.';
+        const message = data.message || L.loginFailed;
         toast.error(message);
       }
     } finally {
@@ -199,8 +236,8 @@ function Login() {
 
   return (
     <AuthLayout
-      title={bookingIntent ? L.bookTitle : 'Welcome Back'}
-      subtitle={bookingIntent ? L.bookSub : 'Sign in to your ProMedicoz account — works for both Doctors and Patients.'}
+      title={bookingIntent ? L.bookTitle : L.title}
+      subtitle={bookingIntent ? L.bookSub : L.subtitle}
     >
       <SEO title="Login" description="Sign in to your ProMedicoz account. Manage appointments, view prescriptions, and book doctors." path="/login" noindex />
 
@@ -247,7 +284,7 @@ function Login() {
                   loginMethod === 'phone' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                📱 Phone
+                📱 {L.phoneTab}
               </button>
               <button
                 type="button"
@@ -256,7 +293,7 @@ function Login() {
                   loginMethod === 'email' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                ✉️ Email
+                ✉️ {L.emailTab}
               </button>
             </div>
 
@@ -265,7 +302,7 @@ function Login() {
               {loginMethod === 'phone' ? (
                 <>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number
+                    {L.phoneLabel}
                   </label>
                   <div className="relative">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">📱</span>
@@ -287,7 +324,7 @@ function Login() {
               ) : (
                 <>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
+                    {L.emailLabel}
                   </label>
                   <div className="relative">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">✉️</span>
@@ -310,7 +347,7 @@ function Login() {
             {/* Password Field with show/hide toggle */}
             <div className="mb-6">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {L.passwordLabel}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">🔒</span>
@@ -320,14 +357,14 @@ function Login() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={L.passwordPh}
                   className="w-full pl-11 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? L.hidePw : L.showPw}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   <PasswordToggleIcon visible={showPassword} />
@@ -388,7 +425,7 @@ function Login() {
               className="btn btn-primary w-full"
             >
               {isLoading && <Spinner />}
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? L.signingIn : L.signIn}
               {/* Show a spinner + different text while loading */}
             </button>
           </form>
@@ -396,16 +433,16 @@ function Login() {
           {/* Forgot password link */}
           <p className="text-center mt-4">
             <Link to="/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline">
-              Forgot your password?
+              {L.forgotLink}
             </Link>
           </p>
 
           {/* Link to register page — carries the booking so a new patient
               comes straight back to it after signing up. */}
           <p className="text-center text-gray-600 mt-4">
-            Don't have an account?{' '}
+            {L.noAccount}{' '}
             <Link to="/register" state={carry} onClick={() => trackEvent('login_to_register', { source: 'footer_link', booking: bookingIntent ? 'yes' : 'no' })} className="text-primary-600 font-medium hover:underline">
-              Register here
+              {L.registerHere}
             </Link>
           </p>
           </>

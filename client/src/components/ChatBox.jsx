@@ -3,9 +3,36 @@ import { messageAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getSocket } from '../services/socket';
 import toast from 'react-hot-toast';
+import { useLang } from '../context/LangContext';
+
+// Fixed UI text only — message text is never translated. Doctors/admins
+// always see English.
+const TXT = {
+  en: {
+    title: 'Messages',
+    loading: 'Loading...',
+    empty: 'No messages yet. Start the conversation!',
+    sending: 'Sending…',
+    placeholder: 'Type a message...',
+    send: 'Send',
+    sendFailed: 'Failed to send message',
+  },
+  hi: {
+    title: 'मैसेज',
+    loading: 'लोड हो रहा है...',
+    empty: 'अभी कोई मैसेज नहीं है। बात शुरू करें!',
+    sending: 'भेजा जा रहा है…',
+    placeholder: 'मैसेज लिखें...',
+    send: 'भेजें',
+    sendFailed: 'मैसेज नहीं भेजा जा सका',
+  },
+};
 
 function ChatBox({ appointmentId, onClose }) {
   const { user } = useAuth();
+  const { lang } = useLang();
+  const hi = lang === 'hi' && user?.role !== 'doctor' && user?.role !== 'admin';
+  const t = TXT[hi ? 'hi' : 'en'];
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -98,7 +125,7 @@ function ChatBox({ appointmentId, onClose }) {
       // Roll back the optimistic message on failure and restore the text
       setMessages((prev) => prev.filter((m) => m._id !== tempId));
       setText(trimmed);
-      toast.error(error.response?.data?.message || 'Failed to send message');
+      toast.error(error.response?.data?.message || t.sendFailed);
     } finally {
       setSending(false);
     }
@@ -121,16 +148,16 @@ function ChatBox({ appointmentId, onClose }) {
       <div className="relative bg-white w-full sm:rounded-xl shadow-2xl sm:max-w-md h-[100dvh] sm:h-[70dvh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold text-gray-800">Messages</h3>
+          <h3 className="font-semibold text-gray-800">{t.title}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
         </div>
 
         {/* Messages */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
           {loading ? (
-            <p className="text-center text-gray-500 text-sm">Loading...</p>
+            <p className="text-center text-gray-500 text-sm">{t.loading}</p>
           ) : messages.length === 0 ? (
-            <p className="text-center text-gray-400 text-sm py-8">No messages yet. Start the conversation!</p>
+            <p className="text-center text-gray-400 text-sm py-8">{t.empty}</p>
           ) : (
             messages.map((msg) => {
               const isMine = msg.sender === user?.id || msg.sender === user?._id;
@@ -139,7 +166,7 @@ function ChatBox({ appointmentId, onClose }) {
                   <div className={`max-w-[75%] rounded-lg px-3 py-2 ${isMine ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
                     <p className="text-sm">{msg.text}</p>
                     <p className={`text-xs mt-1 ${isMine ? 'text-primary-200' : 'text-gray-400'}`}>
-                      {msg.pending ? 'Sending…' : formatTime(msg.createdAt)}
+                      {msg.pending ? t.sending : formatTime(msg.createdAt)}
                     </p>
                   </div>
                 </div>
@@ -163,7 +190,7 @@ function ChatBox({ appointmentId, onClose }) {
                 if (c) c.scrollTop = c.scrollHeight;
               }, 300);
             }}
-            placeholder="Type a message..."
+            placeholder={t.placeholder}
             maxLength={1000}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
           />
@@ -172,7 +199,7 @@ function ChatBox({ appointmentId, onClose }) {
             disabled={sending || !text.trim()}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
           >
-            Send
+            {t.send}
           </button>
         </form>
       </div>

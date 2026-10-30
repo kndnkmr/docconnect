@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { prescriptionAPI, familyMemberAPI } from '../../services/api';
 import { personOf, personKey, peopleOf, personEmoji, hasFamilyPrescriptions } from '../../utils/familyChart';
 import { downloadPrescriptionPdf, getPrescriptionPdfFile } from '../../utils/prescriptionPdf';
@@ -6,10 +6,62 @@ import { getSocket } from '../../services/socket';
 import toast from 'react-hot-toast';
 import LoadingBlock from '../../components/LoadingBlock';
 import { trackEvent } from '../../components/Analytics';
+import { useLang } from '../../context/LangContext';
 
 // The daily medicine chart and the family view load only when opened.
 const RxChart = lazy(() => import('./RxChart'));
 const FamilyMeds = lazy(() => import('./FamilyMeds'));
+
+// Bilingual fixed UI text. Doctor names, diagnosis, medicines, tests, notes,
+// registration numbers and dates are shown exactly as the doctor wrote them.
+const RX_TXT = {
+  en: {
+    newRxToast: 'New prescription received!',
+    pdfFailed: 'Could not generate PDF. Please try again.',
+    shareText: (doc, date) => `Prescription from Dr. ${doc} (${date}) — via ProMedicoz`,
+    shareTitle: 'Prescription',
+    pdfDownloadedAttach: 'PDF downloaded — attach it in WhatsApp to share.',
+    shareFailed: 'Could not share. Please try downloading instead.',
+    heading: 'My Prescriptions',
+    emptyTitle: 'No prescriptions yet',
+    emptyText: 'Prescriptions from your doctors will appear here after consultations.',
+    regNo: 'Reg. No:',
+    appt: 'Appt:',
+    diagnosis: 'Diagnosis: ',
+    medicines: 'Medicines:',
+    tests: 'Tests Recommended:',
+    afterTests: 'After completing these tests,',
+    uploadHere: 'upload your reports here →',
+    uploadInTab: 'upload your reports in the "My Reports" tab.',
+    notes: 'Notes: ',
+    followUp: 'Follow-up:',
+    download: '⬇️ Download PDF',
+    shareWa: '📤 Share via WhatsApp',
+  },
+  hi: {
+    newRxToast: 'नया पर्चा आया है!',
+    pdfFailed: 'PDF नहीं बन पाई। कृपया दोबारा कोशिश करें।',
+    shareText: (doc, date) => `डॉ. ${doc} का पर्चा (${date}) — ProMedicoz से`,
+    shareTitle: 'पर्चा',
+    pdfDownloadedAttach: 'PDF डाउनलोड हो गई — भेजने के लिए इसे WhatsApp में जोड़ें।',
+    shareFailed: 'भेज नहीं पाए। कृपया PDF डाउनलोड कर लें।',
+    heading: 'मेरे पर्चे',
+    emptyTitle: 'अभी कोई पर्चा नहीं है',
+    emptyText: 'डॉक्टर को दिखाने के बाद उनके लिखे पर्चे यहाँ दिखेंगे।',
+    regNo: 'रजि. नं.:',
+    appt: 'अपॉइंटमेंट:',
+    diagnosis: 'बीमारी: ',
+    medicines: 'दवाएं:',
+    tests: 'ये जाँच करवाएं:',
+    afterTests: 'जाँच हो जाने के बाद,',
+    uploadHere: 'अपनी रिपोर्ट यहाँ अपलोड करें →',
+    uploadInTab: '"मेरी रिपोर्ट" टैब में अपनी रिपोर्ट अपलोड करें।',
+    notes: 'डॉक्टर की सलाह: ',
+    followUp: 'दोबारा दिखाने की तारीख:',
+    download: '⬇️ PDF डाउनलोड करें',
+    shareWa: '📤 WhatsApp पर भेजें',
+  },
+};
 
 function PatientPrescriptions({ onNavigateTab }) {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -25,7 +77,11 @@ function PatientPrescriptions({ onNavigateTab }) {
     familyMemberAPI.getAll().then((r) => setFamilyMembers(r.data.familyMembers || [])).catch(() => {});
   }, []);
   // Button label follows the patient's saved language (the card itself stays as today).
-  const hiLang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi'; } catch { return false; } })();
+  const hiLang = useLang().lang === 'hi';
+  const t = hiLang ? RX_TXT.hi : RX_TXT.en;
+  // The socket listener is registered once; read the latest text through a ref.
+  const tRef = useRef(t);
+  tRef.current = t;
 
   const fetchPrescriptions = async () => {
     try {
@@ -50,7 +106,7 @@ function PatientPrescriptions({ onNavigateTab }) {
 
     const handlePrescriptionUpdate = () => {
       fetchPrescriptions();
-      toast.success('New prescription received!');
+      toast.success(tRef.current.newRxToast);
     };
 
     socket.on('prescription-updated', handlePrescriptionUpdate);
@@ -68,7 +124,7 @@ function PatientPrescriptions({ onNavigateTab }) {
       await downloadPrescriptionPdf(rx);
     } catch (error) {
       console.error('Generate PDF error:', error);
-      toast.error('Could not generate PDF. Please try again.');
+      toast.error(t.pdfFailed);
     }
   };
 
@@ -81,21 +137,21 @@ function PatientPrescriptions({ onNavigateTab }) {
   const handleShareWhatsApp = async (rx) => {
     try {
       const file = await getPrescriptionPdfFile(rx);
-      const shareText = `Prescription from Dr. ${rx.doctor?.name || ''} (${formatDate(rx.createdAt)}) — via ProMedicoz`;
+      const shareText = t.shareText(rx.doctor?.name || '', formatDate(rx.createdAt));
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Prescription', text: shareText });
+        await navigator.share({ files: [file], title: t.shareTitle, text: shareText });
         return;
       }
 
       // Fallback: download the PDF, then open WhatsApp with a text message
       await downloadPrescriptionPdf(rx);
-      toast('PDF downloaded — attach it in WhatsApp to share.', { icon: '📎', duration: 5000 });
+      toast(t.pdfDownloadedAttach, { icon: '📎', duration: 5000 });
       window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
     } catch (error) {
       if (error?.name !== 'AbortError') { // user cancelling the native share sheet isn't an error
         console.error('Share prescription error:', error);
-        toast.error('Could not share. Please try downloading instead.');
+        toast.error(t.shareFailed);
       }
     }
   };
@@ -109,7 +165,7 @@ function PatientPrescriptions({ onNavigateTab }) {
 
   return (
     <div className="max-w-3xl">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">My Prescriptions</h2>
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">{t.heading}</h2>
 
       {/* Family: one tap to today's medicines for everyone, plus a person filter. */}
       {hasFamily && (
@@ -141,8 +197,8 @@ function PatientPrescriptions({ onNavigateTab }) {
       {prescriptions.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-md">
           <div className="text-5xl mb-4">💊</div>
-          <h3 className="text-xl font-medium text-gray-700">No prescriptions yet</h3>
-          <p className="text-gray-500 mt-2">Prescriptions from your doctors will appear here after consultations.</p>
+          <h3 className="text-xl font-medium text-gray-700">{t.emptyTitle}</h3>
+          <p className="text-gray-500 mt-2">{t.emptyText}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -158,24 +214,24 @@ function PatientPrescriptions({ onNavigateTab }) {
                   <h3 className="font-semibold text-gray-800">Dr. {rx.doctor?.name}</h3>
                   <p className="text-sm text-gray-500">{rx.doctor?.specialization} • {formatDate(rx.createdAt)}</p>
                   {rx.doctor?.medicalRegistrationNo && (
-                    <p className="text-xs text-gray-400 mt-0.5">Reg. No: {rx.doctor.medicalRegistrationNo}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{t.regNo} {rx.doctor.medicalRegistrationNo}</p>
                   )}
                 </div>
                 {rx.appointment && (
                   <span className="text-xs text-gray-400">
-                    Appt: {formatDate(rx.appointment.date)} {rx.appointment.timeSlot}
+                    {t.appt} {formatDate(rx.appointment.date)} {rx.appointment.timeSlot}
                   </span>
                 )}
               </div>
 
               <div className="mb-3">
-                <span className="text-sm font-medium text-gray-700">Diagnosis: </span>
+                <span className="text-sm font-medium text-gray-700">{t.diagnosis}</span>
                 <span className="text-sm text-gray-800">{rx.diagnosis}</span>
               </div>
 
               {rx.medicines && rx.medicines.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Medicines:</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">{t.medicines}</p>
                   <div className="space-y-1 ml-3">
                     {rx.medicines.map((med, idx) => (
                       <div key={idx} className="text-sm text-gray-600">
@@ -192,24 +248,24 @@ function PatientPrescriptions({ onNavigateTab }) {
 
               {rx.testsRecommended && rx.testsRecommended.length > 0 && (
                 <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm font-medium text-yellow-800 mb-1">Tests Recommended:</p>
+                  <p className="text-sm font-medium text-yellow-800 mb-1">{t.tests}</p>
                   <div className="space-y-1 ml-3">
                     {rx.testsRecommended.map((test, idx) => (
                       <div key={idx} className="text-sm text-yellow-700">• {test}</div>
                     ))}
                   </div>
                   <p className="text-xs text-yellow-600 mt-2">
-                    After completing these tests,{' '}
+                    {t.afterTests}{' '}
                     {onNavigateTab ? (
                       <button
                         type="button"
                         onClick={() => onNavigateTab('reports')}
                         className="underline font-semibold hover:text-yellow-800"
                       >
-                        upload your reports here →
+                        {t.uploadHere}
                       </button>
                     ) : (
-                      'upload your reports in the "My Reports" tab.'
+                      t.uploadInTab
                     )}
                   </p>
                 </div>
@@ -217,14 +273,14 @@ function PatientPrescriptions({ onNavigateTab }) {
 
               {rx.notes && (
                 <div className="mb-2">
-                  <span className="text-sm font-medium text-gray-700">Notes: </span>
+                  <span className="text-sm font-medium text-gray-700">{t.notes}</span>
                   <span className="text-sm text-gray-600 italic">{rx.notes}</span>
                 </div>
               )}
 
               {rx.followUpDate && (
                 <p className="text-sm text-primary-600 font-medium mt-2">
-                  Follow-up: {formatDate(rx.followUpDate)}
+                  {t.followUp} {formatDate(rx.followUpDate)}
                 </p>
               )}
 
@@ -246,13 +302,13 @@ function PatientPrescriptions({ onNavigateTab }) {
                   onClick={() => handleDownload(rx)}
                   className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
                 >
-                  ⬇️ Download PDF
+                  {t.download}
                 </button>
                 <button
                   onClick={() => handleShareWhatsApp(rx)}
                   className="px-3 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
                 >
-                  📤 Share via WhatsApp
+                  {t.shareWa}
                 </button>
               </div>
             </div>

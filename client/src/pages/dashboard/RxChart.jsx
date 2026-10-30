@@ -15,6 +15,7 @@ import LangToggle from '../../components/LangToggle';
 import { trackEvent } from '../../components/Analytics';
 import { buildChart, buildIcs, chartText, istDay } from '../../utils/rxChart';
 import { personOf } from '../../utils/familyChart';
+import { useLang } from '../../context/LangContext';
 
 const TIMES_KEY = 'promedicoz_rx_times';
 const DEFAULT_TIMES = { morning: '08:00', afternoon: '14:00', evening: '18:00', night: '21:00' };
@@ -162,9 +163,8 @@ function Box({ title, note, list, cls = 'bg-gray-50 border-gray-200 text-gray-90
 }
 
 function RxChart({ rx, onClose }) {
-  const [lang, setLang] = useState(() => {
-    try { return localStorage.getItem('promedicoz_lang') === 'hi' ? 'hi' : 'en'; } catch { return 'en'; }
-  });
+  const appLang = useLang().lang;
+  const [lang, setLang] = useState(appLang);
   const t = T[lang];
   const [large, setLarge] = useState(false);
   const [times, setTimes] = useState(loadTimes);

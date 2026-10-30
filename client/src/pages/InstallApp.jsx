@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import SEO from '../components/SEO';
 import { usePwa } from '../context/PwaContext';
 import toast from 'react-hot-toast';
+import { useLang } from '../context/LangContext';
 
 // Public site URL used for sharing + QR.
 const SITE_URL = 'https://www.promedicoz.in';
@@ -96,9 +97,8 @@ const TXT = {
 };
 
 function InstallApp() {
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
-  const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   // The install prompt is captured once, app-wide, in PwaContext and shared
   // via usePwa() — so this page, the navbar, and the Home strip all offer the
@@ -175,22 +175,6 @@ function InstallApp() {
       {/* Gradient header band + language toggle */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-8 pb-16 text-center">
-          <div className="flex justify-center mb-5">
-            <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
-              <button
-                onClick={() => changeLang('en')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-              >
-                English
-              </button>
-              <button
-                onClick={() => changeLang('hi')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-              >
-                हिंदी
-              </button>
-            </div>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-bold">{t.heroTitle}</h1>
           <p className="text-primary-100 mt-2 text-sm sm:text-base max-w-xl mx-auto">{t.heroSubtitle}</p>
         </div>

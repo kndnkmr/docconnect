@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { appointmentAPI, prescriptionAPI, reportAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
 import LoadingBlock from '../../components/LoadingBlock';
+import { useLang } from '../../context/LangContext';
 
 // ============================================
 // Patient Health Timeline — "My Health History"
@@ -33,6 +34,60 @@ const FILTERS = [
   { value: 'report', label: 'Reports' },
 ];
 
+// Bilingual fixed UI text. Doctor names, diagnoses, reasons, report titles and
+// dates stay as stored. Status / consultation-type labels are display-only and
+// fall back to the raw value when not listed.
+const TIMELINE_TXT = {
+  en: {
+    type: { appointment: 'Consultation', prescription: 'Prescription', report: 'Report' },
+    filter: { all: 'All', appointment: 'Consultations', prescription: 'Prescriptions', report: 'Reports' },
+    loading: 'Loading your health history…',
+    heading: 'My Health History',
+    subheading: 'Everything in one place — your consultations, prescriptions, and reports, newest first.',
+    emptyTitle: 'Your health history is empty',
+    emptyFilterTitle: 'Nothing to show for this filter',
+    emptyText: 'Once you consult a doctor, your appointments, prescriptions, and reports will appear here as a timeline.',
+    emptyFilterText: 'Try a different filter above.',
+    doctor: 'Doctor',
+    consultType: {},
+    status: {},
+    forName: (name) => ` • for ${name}`,
+    reason: 'Reason:',
+    diagnosis: 'Diagnosis:',
+    medicinesCount: (n) => `${n} ${n === 1 ? 'medicine' : 'medicines'} prescribed`,
+    medicalReport: 'Medical report',
+    sharedWith: (name) => `Shared with Dr. ${name}`,
+    reviewed: 'Reviewed by doctor',
+    pending: 'Pending review',
+    viewRx: 'View full prescription →',
+    viewReport: 'View report →',
+  },
+  hi: {
+    type: { appointment: 'अपॉइंटमेंट', prescription: 'पर्चा', report: 'रिपोर्ट' },
+    filter: { all: 'सभी', appointment: 'अपॉइंटमेंट', prescription: 'पर्चे', report: 'रिपोर्ट' },
+    loading: 'आपकी सेहत का इतिहास लोड हो रहा है…',
+    heading: 'मेरी सेहत का इतिहास',
+    subheading: 'सब कुछ एक जगह — आपके अपॉइंटमेंट, पर्चे और रिपोर्ट, सबसे नए पहले।',
+    emptyTitle: 'अभी आपकी सेहत का कोई इतिहास नहीं है',
+    emptyFilterTitle: 'इसमें दिखाने को कुछ नहीं है',
+    emptyText: 'डॉक्टर को दिखाने के बाद आपके अपॉइंटमेंट, पर्चे और रिपोर्ट यहाँ तारीख के हिसाब से दिखेंगे।',
+    emptyFilterText: 'ऊपर कोई दूसरा विकल्प चुनकर देखें।',
+    doctor: 'डॉक्टर',
+    consultType: { 'in-person': 'क्लिनिक पर', video: 'वीडियो कॉल', phone: 'फ़ोन कॉल' },
+    status: { completed: 'पूरा हुआ', confirmed: 'पक्का', pending: 'पुष्टि बाकी', cancelled: 'रद्द' },
+    forName: (name) => ` • ${name} के लिए`,
+    reason: 'कारण:',
+    diagnosis: 'बीमारी:',
+    medicinesCount: (n) => `${n} दवा लिखी गई`,
+    medicalReport: 'मेडिकल रिपोर्ट',
+    sharedWith: (name) => `डॉ. ${name} को भेजी`,
+    reviewed: 'डॉक्टर ने देख ली',
+    pending: 'देखना बाकी है',
+    viewRx: 'पूरा पर्चा देखें →',
+    viewReport: 'रिपोर्ट देखें →',
+  },
+};
+
 function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
@@ -54,6 +109,8 @@ const STATUS_CHIP = {
 };
 
 function PatientHealthTimeline({ onNavigateTab }) {
+  const { lang } = useLang();
+  const t = TIMELINE_TXT[lang] || TIMELINE_TXT.en;
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [items, setItems] = useState([]); // merged, sorted timeline entries
@@ -143,14 +200,14 @@ function PatientHealthTimeline({ onNavigateTab }) {
     }
   });
 
-  if (loading) return <LoadingBlock label="Loading your health history…" />;
+  if (loading) return <LoadingBlock label={t.loading} />;
 
   return (
     <div className="max-w-3xl">
       <div className="mb-2">
-        <h2 className="text-xl font-semibold text-gray-800">My Health History</h2>
+        <h2 className="text-xl font-semibold text-gray-800">{t.heading}</h2>
         <p className="text-sm text-gray-500 mt-1">
-          Everything in one place — your consultations, prescriptions, and reports, newest first.
+          {t.subheading}
         </p>
       </div>
 
@@ -168,7 +225,7 @@ function PatientHealthTimeline({ onNavigateTab }) {
                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
               }`}
             >
-              {f.label} <span className="opacity-70">({count})</span>
+              {t.filter[f.value] || f.label} <span className="opacity-70">({count})</span>
             </button>
           );
         })}
@@ -178,12 +235,12 @@ function PatientHealthTimeline({ onNavigateTab }) {
         <div className="text-center py-12 bg-white rounded-xl shadow-md">
           <div className="text-5xl mb-4">📖</div>
           <h3 className="text-xl font-medium text-gray-700">
-            {items.length === 0 ? 'Your health history is empty' : 'Nothing to show for this filter'}
+            {items.length === 0 ? t.emptyTitle : t.emptyFilterTitle}
           </h3>
           <p className="text-gray-500 mt-2">
             {items.length === 0
-              ? 'Once you consult a doctor, your appointments, prescriptions, and reports will appear here as a timeline.'
-              : 'Try a different filter above.'}
+              ? t.emptyText
+              : t.emptyFilterText}
           </p>
         </div>
       ) : (
@@ -207,6 +264,8 @@ function PatientHealthTimeline({ onNavigateTab }) {
 
 // A single timeline card. Content differs by entry type but shares one shell.
 function TimelineEntry({ entry, onNavigateTab }) {
+  const { lang } = useLang();
+  const t = TIMELINE_TXT[lang] || TIMELINE_TXT.en;
   const meta = TYPE_META[entry.type];
   const { data } = entry;
 
@@ -226,7 +285,7 @@ function TimelineEntry({ entry, onNavigateTab }) {
             <span className="text-xl flex-shrink-0" aria-hidden="true">{meta.icon}</span>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${meta.chip}`}>{meta.label}</span>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${meta.chip}`}>{t.type[entry.type] || meta.label}</span>
                 <span className="text-xs text-gray-400">{formatDate(entry.date)}</span>
               </div>
 
@@ -234,25 +293,25 @@ function TimelineEntry({ entry, onNavigateTab }) {
               {entry.type === 'appointment' && (
                 <div className="mt-1.5">
                   <p className="font-medium text-gray-800">
-                    Dr. {data.doctor?.name || 'Doctor'}
+                    Dr. {data.doctor?.name || t.doctor}
                     {data.doctor?.specialization ? ` — ${data.doctor.specialization}` : ''}
                   </p>
                   <p className="text-sm text-gray-600 mt-0.5">
                     {data.timeSlot ? `${data.timeSlot} • ` : ''}
-                    <span className="capitalize">{data.consultationType || 'in-person'}</span>
-                    {data.bookedFor === 'family' && data.familyMemberName ? ` • for ${data.familyMemberName}` : ''}
+                    <span className="capitalize">{t.consultType[data.consultationType || 'in-person'] || data.consultationType || 'in-person'}</span>
+                    {data.bookedFor === 'family' && data.familyMemberName ? t.forName(data.familyMemberName) : ''}
                   </p>
-                  {data.reason && <p className="text-sm text-gray-500 mt-1">Reason: {data.reason}</p>}
+                  {data.reason && <p className="text-sm text-gray-500 mt-1">{t.reason} {data.reason}</p>}
                 </div>
               )}
 
               {entry.type === 'prescription' && (
                 <div className="mt-1.5">
-                  <p className="font-medium text-gray-800">Dr. {data.doctor?.name || 'Doctor'}</p>
-                  {data.diagnosis && <p className="text-sm text-gray-600 mt-0.5">Diagnosis: {data.diagnosis}</p>}
+                  <p className="font-medium text-gray-800">Dr. {data.doctor?.name || t.doctor}</p>
+                  {data.diagnosis && <p className="text-sm text-gray-600 mt-0.5">{t.diagnosis} {data.diagnosis}</p>}
                   {data.medicines && data.medicines.length > 0 && (
                     <p className="text-sm text-gray-500 mt-1">
-                      {data.medicines.length} {data.medicines.length === 1 ? 'medicine' : 'medicines'} prescribed
+                      {t.medicinesCount(data.medicines.length)}
                     </p>
                   )}
                 </div>
@@ -260,16 +319,16 @@ function TimelineEntry({ entry, onNavigateTab }) {
 
               {entry.type === 'report' && (
                 <div className="mt-1.5">
-                  <p className="font-medium text-gray-800">{data.title || 'Medical report'}</p>
+                  <p className="font-medium text-gray-800">{data.title || t.medicalReport}</p>
                   <p className="text-sm text-gray-600 mt-0.5">
-                    Shared with Dr. {data.doctor?.name || 'Doctor'}
+                    {t.sharedWith(data.doctor?.name || t.doctor)}
                   </p>
                   <span
                     className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                       data.isReviewed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                     }`}
                   >
-                    {data.isReviewed ? 'Reviewed by doctor' : 'Pending review'}
+                    {data.isReviewed ? t.reviewed : t.pending}
                   </span>
                 </div>
               )}
@@ -279,7 +338,7 @@ function TimelineEntry({ entry, onNavigateTab }) {
           {/* Status chip for appointments (aligned right) */}
           {entry.type === 'appointment' && data.status && (
             <span className={`flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_CHIP[data.status] || 'bg-gray-100 text-gray-600'}`}>
-              {data.status}
+              {t.status[data.status] || data.status}
             </span>
           )}
         </div>
@@ -292,7 +351,7 @@ function TimelineEntry({ entry, onNavigateTab }) {
               onClick={() => onNavigateTab(entry.type === 'prescription' ? 'prescriptions' : 'reports')}
               className="text-primary-600 text-xs font-medium hover:underline"
             >
-              {entry.type === 'prescription' ? 'View full prescription →' : 'View report →'}
+              {entry.type === 'prescription' ? t.viewRx : t.viewReport}
             </button>
           </div>
         )}

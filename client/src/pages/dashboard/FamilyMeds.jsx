@@ -14,6 +14,7 @@ import LangToggle from '../../components/LangToggle';
 import { trackEvent } from '../../components/Analytics';
 import { istDay } from '../../utils/rxChart';
 import { buildFamilyDay, buildFamilyIcs, familyDayText, personEmoji, isEmptyDay } from '../../utils/familyChart';
+import { useLang } from '../../context/LangContext';
 
 const TIMES_KEY = 'promedicoz_rx_times'; // shared with the single chart
 const DEFAULT_TIMES = { morning: '08:00', afternoon: '14:00', evening: '18:00', night: '21:00' };
@@ -122,7 +123,8 @@ function PersonBlock({ p, list, t, familyMembers }) {
 }
 
 export default function FamilyMeds({ prescriptions, familyMembers = [], onClose }) {
-  const [lang, setLang] = useState(() => { try { return localStorage.getItem('promedicoz_lang') === 'hi' ? 'hi' : 'en'; } catch { return 'en'; } });
+  const appLang = useLang().lang;
+  const [lang, setLang] = useState(appLang);
   const t = T[lang];
   const today = istDay(new Date());
   const day = useMemo(() => buildFamilyDay(prescriptions, today), [prescriptions, today]);

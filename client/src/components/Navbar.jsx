@@ -16,6 +16,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePwa } from '../context/PwaContext';
 import toast from 'react-hot-toast';
+import HeaderLangSwitch from './HeaderLangSwitch';
+import { useLang } from '../context/LangContext';
 
 function Navbar() {
   const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
@@ -23,6 +25,11 @@ function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
+  // Labels follow the app-wide English / हिंदी choice for visitors and
+  // patients; doctors and admins always see English.
+  const { lang } = useLang();
+  const hi = lang === 'hi' && !isDoctor && !(user && user.role === 'admin');
+  const tr = (en, h) => (hi ? h : en);
 
   // Close the mobile hamburger menu on any click/tap outside the navbar —
   // before this, the only way to close it was hitting the hamburger icon
@@ -46,14 +53,14 @@ function Navbar() {
   // Closes the mobile menu if it was triggered from there.
   const handleInstall = async () => {
     const accepted = await promptInstall();
-    if (accepted) toast.success('ProMedicoz installed!');
+    if (accepted) toast.success(tr('ProMedicoz installed!', 'ProMedicoz इंस्टॉल हो गया!'));
     setIsMobileMenuOpen(false);
   };
 
   // Handle logout
   const handleLogout = () => {
     logout();
-    toast.success('Logged out successfully');
+    toast.success(tr('Logged out successfully', 'आप लॉग आउट हो गए'));
     navigate('/');
     // Redirect to home after logout
   };
@@ -97,11 +104,11 @@ function Navbar() {
             {!isDoctor && !isPatient && (
               <>
                 <Link to="/doctors" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
-                  Find Doctors
+                  {tr('Find Doctors', 'डॉक्टर खोजें')}
                 </Link>
 
                 <Link to="/blog" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
-                  Blog
+                  {tr('Blog', 'ब्लॉग')}
                 </Link>
 
                 {/* One-tap install when the browser supports it (Chrome/
@@ -112,11 +119,11 @@ function Navbar() {
                     onClick={handleInstall}
                     className="flex items-center gap-1.5 border border-green-600 text-green-700 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
                   >
-                    📲 Install App
+                    📲 {tr('Install App', 'ऐप इंस्टॉल करें')}
                   </button>
                 ) : (
                   <Link to="/install" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
-                    📲 Get App
+                    📲 {tr('Get App', 'ऐप पाएं')}
                   </Link>
                 )}
               </>
@@ -138,7 +145,7 @@ function Navbar() {
                   </Link>
                 ) : (
                   <Link to="/dashboard" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
-                    Dashboard
+                    {tr('Dashboard', 'डैशबोर्ड')}
                   </Link>
                 )}
                 <div className="flex items-center gap-3">
@@ -151,7 +158,7 @@ function Navbar() {
                     </span>
                     <span className="text-sm font-medium text-gray-700 max-w-[8rem] truncate">{user.name}</span>
                     <span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs capitalize">
-                      {user.role}
+                      {user.role === 'patient' ? tr('patient', 'मरीज़') : user.role}
                     </span>
                   </span>
                   {/* Only show when the browser is actually ready to install
@@ -161,14 +168,14 @@ function Navbar() {
                       onClick={handleInstall}
                       className="flex items-center gap-1.5 border border-green-600 text-green-700 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
                     >
-                      📲 Install
+                      📲 {tr('Install', 'इंस्टॉल')}
                     </button>
                   )}
                   <button
                     onClick={handleLogout}
                     className="text-red-600 px-3.5 py-1.5 rounded-full text-sm font-medium border border-transparent transition-all duration-200 hover:bg-red-50 hover:border-red-200"
                   >
-                    Logout
+                    {tr('Logout', 'लॉग आउट')}
                   </button>
                 </div>
               </>
@@ -178,21 +185,23 @@ function Navbar() {
                     all platforms via /install), so no separate Chrome-only
                     install button here — it read as a duplicate. */}
                 <Link to="/login" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
-                  Login
+                  {tr('Login', 'लॉग इन')}
                 </Link>
                 <Link to="/register" className="bg-primary-600 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0">
-                  Register
+                  {tr('Register', 'रजिस्टर')}
                 </Link>
               </>
             )}
+            <HeaderLangSwitch />
           </div>
 
-          {/* ---- Mobile Menu Button (hamburger icon) ---- */}
-          {/* md:hidden = only visible on mobile (hidden on medium+ screens) */}
+          {/* ---- Phone: language switch + menu button ---- */}
+          <div className="md:hidden flex items-center gap-2">
+          <HeaderLangSwitch compact />
           <button
             className="md:hidden flex items-center justify-center w-10 h-10 -mr-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/40"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={tr('Toggle menu', 'मेनू खोलें / बंद करें')}
             aria-expanded={isMobileMenuOpen}
           >
             {/* Simple hamburger icon using spans */}
@@ -206,6 +215,7 @@ function Navbar() {
               )}
             </svg>
           </button>
+          </div>
         </div>
 
         {isMobileMenuOpen && (
@@ -217,11 +227,11 @@ function Navbar() {
                   prompt the Home strip and /install page use. */}
               {canInstall ? (
                 <button onClick={handleInstall} className="flex items-center gap-2 text-left text-green-700 font-medium hover:bg-green-50 rounded-lg px-3 py-2.5 transition-colors">
-                  📲 Install App (1 tap)
+                  📲 {tr('Install App (1 tap)', 'ऐप इंस्टॉल करें (1 टैप)')}
                 </button>
               ) : (
                 <Link to="/install" className="flex items-center gap-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                  📲 Get the App
+                  📲 {tr('Get the App', 'ऐप पाएं')}
                 </Link>
               )}
 
@@ -235,7 +245,7 @@ function Navbar() {
                     </span>
                     <div className="min-w-0">
                       <div className="text-sm font-medium text-gray-800 truncate">{user.name}</div>
-                      <div className="text-xs text-gray-500 capitalize">{user.role}</div>
+                      <div className="text-xs text-gray-500 capitalize">{user.role === 'patient' ? tr('patient', 'मरीज़') : user.role}</div>
                     </div>
                   </div>
                   {user.role === 'admin' ? (
@@ -244,20 +254,20 @@ function Navbar() {
                     </Link>
                   ) : (
                     <Link to="/dashboard" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                      Dashboard
+                      {tr('Dashboard', 'डैशबोर्ड')}
                     </Link>
                   )}
                   <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-left text-red-600 hover:bg-red-50 rounded-lg px-3 py-2.5 transition-colors">
-                    Logout
+                    {tr('Logout', 'लॉग आउट')}
                   </button>
                 </>
               ) : (
                 <>
                   <Link to="/login" className="text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                    Login
+                    {tr('Login', 'लॉग इन')}
                   </Link>
                   <Link to="/register" className="mt-1 text-center bg-primary-600 text-white font-semibold rounded-lg px-3 py-2.5 shadow-sm transition-colors hover:bg-primary-700" onClick={() => setIsMobileMenuOpen(false)}>
-                    Register
+                    {tr('Register', 'रजिस्टर')}
                   </Link>
                 </>
               )}

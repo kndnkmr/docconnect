@@ -18,8 +18,60 @@ import { authAPI } from '../services/api';
 import SEO from '../components/SEO';
 import AuthLayout from '../components/AuthLayout';
 import toast from 'react-hot-toast';
+import { useLang } from '../context/LangContext';
+
+// Fixed text on this page (follows the app-wide language). Server messages
+// are shown as they come.
+const FORGOT_TXT = {
+  en: {
+    title: 'Forgot Password',
+    subtitle: "Enter your phone or email and we'll help you reset it.",
+    errEmail: 'Please enter your email address',
+    errPhone: 'Please enter your phone number',
+    failed: 'Something went wrong. Please try again.',
+    verifyTitle: "We need to verify it's you",
+    verifyText: "This account has no email on file, so we can't send a reset link automatically. Message us on WhatsApp and we'll help you regain access.",
+    whatsapp: 'Chat with us on WhatsApp',
+    checkTitle: 'Check Your Email',
+    checkText: (isEmail) => `If an account with that ${isEmail ? 'email' : 'phone number'} exists, a password reset link has been emailed to it.`,
+    backToLogin: '← Back to Login',
+    tryAgain: 'Try again',
+    phoneTab: 'Phone',
+    emailTab: 'Email',
+    phoneLabel: 'Phone Number',
+    emailLabel: 'Email Address',
+    sending: 'Sending...',
+    send: 'Send Reset Link',
+    remember: 'Remember your password?',
+    signIn: 'Sign in',
+  },
+  hi: {
+    title: 'पासवर्ड भूल गए',
+    subtitle: 'अपना मोबाइल नंबर या ईमेल लिखें, हम नया पासवर्ड बनाने में मदद करेंगे।',
+    errEmail: 'कृपया अपना ईमेल लिखें',
+    errPhone: 'कृपया अपना मोबाइल नंबर लिखें',
+    failed: 'कुछ गड़बड़ हो गई। फिर से कोशिश करें।',
+    verifyTitle: 'हमें पक्का करना है कि यह आप ही हैं',
+    verifyText: 'इस खाते में कोई ईमेल नहीं है, इसलिए हम अपने-आप लिंक नहीं भेज सकते। WhatsApp पर मैसेज करें, हम आपका खाता फिर से चालू करने में मदद करेंगे।',
+    whatsapp: 'WhatsApp पर बात करें',
+    checkTitle: 'अपना ईमेल देखें',
+    checkText: (isEmail) => `अगर इस ${isEmail ? 'ईमेल' : 'मोबाइल नंबर'} का खाता है, तो नया पासवर्ड बनाने का लिंक उसके ईमेल पर भेज दिया गया है।`,
+    backToLogin: '← लॉग इन पर वापस जाएं',
+    tryAgain: 'फिर से कोशिश करें',
+    phoneTab: 'फ़ोन',
+    emailTab: 'ईमेल',
+    phoneLabel: 'मोबाइल नंबर',
+    emailLabel: 'ईमेल',
+    sending: 'भेज रहे हैं...',
+    send: 'पासवर्ड बदलने का लिंक भेजें',
+    remember: 'पासवर्ड याद आ गया?',
+    signIn: 'लॉग इन करें',
+  },
+};
 
 function ForgotPassword() {
+  const { lang } = useLang(); // app-wide (top-bar switch)
+  const T = FORGOT_TXT[lang] || FORGOT_TXT.en;
   const [method, setMethod] = useState('phone'); // 'phone' or 'email'
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -31,7 +83,7 @@ function ForgotPassword() {
 
     const identifier = method === 'email' ? email : phone;
     if (!identifier) {
-      toast.error(method === 'email' ? 'Please enter your email address' : 'Please enter your phone number');
+      toast.error(method === 'email' ? T.errEmail : T.errPhone);
       return;
     }
 
@@ -48,7 +100,7 @@ function ForgotPassword() {
       }
 
     } catch (error) {
-      const message = error.response?.data?.message || 'Something went wrong. Please try again.';
+      const message = error.response?.data?.message || T.failed;
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -56,7 +108,7 @@ function ForgotPassword() {
   };
 
   return (
-    <AuthLayout title="Forgot Password" subtitle="Enter your phone or email and we'll help you reset it.">
+    <AuthLayout title={T.title} subtitle={T.subtitle}>
       <SEO title="Forgot Password" description="Reset your ProMedicoz account password." path="/forgot-password" noindex />
 
       {/* Form Card */}
@@ -68,10 +120,9 @@ function ForgotPassword() {
               {result.noEmailOnFile ? (
                 <>
                   <div className="text-5xl mb-4">💬</div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">We need to verify it's you</h2>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">{T.verifyTitle}</h2>
                   <p className="text-gray-600 mb-4">
-                    This account has no email on file, so we can't send a reset link automatically.
-                    Message us on WhatsApp and we'll help you regain access.
+                    {T.verifyText}
                   </p>
                   <a
                     href="https://wa.me/919997019900?text=Hi%2C%20I%20need%20help%20resetting%20my%20ProMedicoz%20password"
@@ -79,15 +130,15 @@ function ForgotPassword() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
                   >
-                    Chat with us on WhatsApp
+                    {T.whatsapp}
                   </a>
                 </>
               ) : (
                 <>
                   <div className="text-5xl mb-4">✉️</div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">Check Your Email</h2>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">{T.checkTitle}</h2>
                   <p className="text-gray-600 mb-4">
-                    If an account with that {method === 'email' ? 'email' : 'phone number'} exists, a password reset link has been emailed to it.
+                    {T.checkText(method === 'email')}
                   </p>
                 </>
               )}
@@ -96,13 +147,13 @@ function ForgotPassword() {
                   to="/login"
                   className="block text-primary-600 font-medium hover:underline"
                 >
-                  ← Back to Login
+                  {T.backToLogin}
                 </Link>
                 <button
                   onClick={() => { setResult(null); setEmail(''); setPhone(''); }}
                   className="text-gray-500 text-sm hover:underline"
                 >
-                  Try again
+                  {T.tryAgain}
                 </button>
               </div>
             </div>
@@ -118,7 +169,7 @@ function ForgotPassword() {
                     method === 'phone' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
                   }`}
                 >
-                  Phone
+                  {T.phoneTab}
                 </button>
                 <button
                   type="button"
@@ -127,7 +178,7 @@ function ForgotPassword() {
                     method === 'email' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
                   }`}
                 >
-                  Email
+                  {T.emailTab}
                 </button>
               </div>
 
@@ -135,7 +186,7 @@ function ForgotPassword() {
                 {method === 'phone' ? (
                   <>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
+                      {T.phoneLabel}
                     </label>
                     <input
                       id="phone"
@@ -154,7 +205,7 @@ function ForgotPassword() {
                 ) : (
                   <>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address
+                      {T.emailLabel}
                     </label>
                     <input
                       id="email"
@@ -176,7 +227,7 @@ function ForgotPassword() {
                 disabled={isLoading}
                 className="w-full bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Sending...' : 'Send Reset Link'}
+                {isLoading ? T.sending : T.send}
               </button>
             </form>
           )}
@@ -184,9 +235,9 @@ function ForgotPassword() {
           {/* Back to login link */}
           {!result && (
             <p className="text-center text-gray-600 mt-6">
-              Remember your password?{' '}
+              {T.remember}{' '}
               <Link to="/login" className="text-primary-600 font-medium hover:underline">
-                Sign in
+                {T.signIn}
               </Link>
             </p>
           )}

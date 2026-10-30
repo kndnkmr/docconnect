@@ -19,11 +19,17 @@
 //
 // Matches the gray-pill visual already used on BookAppointment / HowItWorks.
 
+// Now also updates the app-wide choice (context/LangContext.jsx), so the
+// top-bar switch and every page stay in sync. Still used inside full-screen
+// windows (medicine chart) and the tool pages, which pick language by URL.
+import { useLang } from '../context/LangContext';
+
 function LangToggle({ lang, onChange, className = '' }) {
+  const app = useLang();
   const pick = (l) => {
     if (l === lang) return;
-    try { localStorage.setItem('promedicoz_lang', l); } catch { /* ignore */ }
-    onChange(l);
+    app.setLang(l);
+    if (onChange) onChange(l);
   };
 
   return (

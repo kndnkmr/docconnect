@@ -15,10 +15,10 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import VerifiedBadge from '../components/VerifiedBadge';
-import LangToggle from '../components/LangToggle';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { formatDoctorName } from '../utils/formatName';
 import toast from 'react-hot-toast';
+import { useLang } from '../context/LangContext';
 
 // Patient-facing page → bilingual (English / हिंदी) for the fixed UI labels,
 // using the shared 'promedicoz_lang' choice. Doctor-entered content (names,
@@ -91,7 +91,7 @@ function DoctorList() {
   // Honor ?availableToday=true in the URL (e.g. from the home "Doctors
   // available today" strip) so that link lands on a pre-filtered list.
   const urlAvailableToday = searchParams.get('availableToday') === 'true';
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
 
   // ---- State ----
@@ -227,11 +227,6 @@ function DoctorList() {
           card something to sit against for a modern, layered look. */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-20">
-          {/* Language toggle — top-right so a patient can switch EN/हिंदी on
-              the doctor-search page too (shares the site-wide choice). */}
-          <div className="flex justify-end mb-2">
-            <LangToggle lang={lang} onChange={setLang} />
-          </div>
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl font-bold">{t.headerTitle}</h1>
             <p className="text-primary-100 mt-2 text-sm sm:text-base">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { useLang } from '../context/LangContext';
 
 // Patient-facing page → bilingual (English / हिंदी), same lightweight approach
 // as Home.jsx and BookAppointment.jsx: a per-page string dictionary keyed by
@@ -90,9 +91,8 @@ const TXT = {
 };
 
 function HowItWorks() {
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
-  const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   return (
     <div>
@@ -104,24 +104,6 @@ function HowItWorks() {
         <div className="pointer-events-none absolute -top-16 -left-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-20 -right-16 w-80 h-80 bg-cyan-300/15 rounded-full blur-3xl" aria-hidden="true" />
         <div className="relative container mx-auto px-4 py-12 sm:py-16 max-w-3xl text-center">
-          {/* Language toggle */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-sm">
-              <button
-                onClick={() => changeLang('en')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-              >
-                English
-              </button>
-              <button
-                onClick={() => changeLang('hi')}
-                className={`px-4 py-1.5 rounded-full font-medium transition-colors ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-              >
-                हिंदी
-              </button>
-            </div>
-          </div>
-
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{t.heroTitle}</h1>
           <p className="text-primary-100 mt-3 max-w-2xl mx-auto text-sm sm:text-base">{t.heroSubtitle}</p>
           <div className="flex flex-wrap justify-center gap-3 mt-6">

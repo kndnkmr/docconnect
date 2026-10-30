@@ -14,10 +14,10 @@ import { enablePushNotifications, getPushPermission, isPushSupported } from '../
 import { appointmentAPI } from '../services/api';
 import { getSocket } from '../services/socket';
 import { useAuth } from '../context/AuthContext';
-import LangToggle from '../components/LangToggle';
 import PaymentBox from '../components/PaymentBox';
 import { bookingStage, BOOKING_STEP } from '../utils/paymentFlow';
 import { formatDoctorName } from '../utils/formatName';
+import { useLang } from '../context/LangContext';
 
 // Patient-facing → bilingual via shared promedicoz_lang.
 const TXT = {
@@ -104,7 +104,7 @@ function BookingConfirmation() {
   const id = params.get('id');
   const fromBooking = location.state; // instant details right after booking
   const { user } = useAuth();
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
   const [apt, setApt] = useState(null);
   const [loadFailed, setLoadFailed] = useState(false);
@@ -197,10 +197,6 @@ function BookingConfirmation() {
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
       <div className="max-w-lg mx-auto">
-        <div className="flex justify-end mb-4">
-          <LangToggle lang={lang} onChange={setLang} />
-        </div>
-
         {/* Status hero — changes live: sent → confirmed (pay) → paid. */}
         <div className={`text-center mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-br ${HERO_STYLE[s]} text-white p-6 sm:p-8 shadow-md`} role="status" aria-live="polite">
           <div className="text-4xl mb-2" aria-hidden="true">{hero.icon}</div>

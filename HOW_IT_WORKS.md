@@ -1895,6 +1895,16 @@ Two layers, no extra accounts:
 - GitHub can start scheduled runs a few minutes late. Run it by hand: GitHub → Actions → Uptime check → **Run workflow**. Pause: ⋯ → Disable workflow.
 - If you get an alert: open Render → docconnect-sg → **Logs**; for the database, MongoDB Atlas (cluster status, Network Access).
 
+## English / हिंदी: one switch for the whole app
+
+- **One choice, one switch:** `client/src/context/LangContext.jsx` (`LangProvider` in `main.jsx`, `useLang()` → `{ lang, setLang, tr }`). The switch is in the top bar (`components/HeaderLangSwitch.jsx`, phone: next to the menu). Every page re-renders at once. Before, each page kept its own copy and had its own switch in a different place (or none).
+- **First visit** follows the phone's language (Hindi phone → Hindi); after a tap, the choice is saved (`promedicoz_lang`).
+- **Shown** for visitors and patients. **Hidden** for doctors and admins (their screens stay English even if Hindi was saved) and on `/blog` and `/tools`, which pick language by web address (`…/hi`) and keep their own switch. The medicine chart windows keep their in-window switch, which also updates the app-wide choice.
+- **Hindi now covers every patient screen:** top bar + bottom menu, Home, doctor list/profile, city pages, booking, live booking page, login/register/password reset/verify email, the patient Dashboard (cards, statuses, buttons, hints, filters, modals, incoming call), payment box, call alerts (incl. brand fix steps), reschedule, chat, and the Reports / Family / Complaints / Health history / Account / Prescriptions tabs.
+- **Stays English:** doctor + admin screens, Terms/Privacy/Refund (legal text), and data (names, fees, dates, what people typed, server messages).
+- Pattern for new text: a `{ en: {...}, hi: {...} }` dictionary in the file. In screens shared with doctors, use Hindi only when the viewer isn't a doctor/admin (see `AccountSettings.jsx`, `Dashboard.jsx` `pt`). Tests: `client/tests/lang.test.mjs`.
+- Hindi is plain everyday wording. Have a Hindi-speaking person tap through once; send any odd line to fix.
+
 ## Call alerts on a locked phone (any time of day)
 
 A website can't ring like a phone call. On a locked phone, battery savers (Xiaomi/Samsung/Oppo/Vivo) and Do Not Disturb can silence or delay its alert; the in-page ring only plays while the app is open. We already send the alert at the highest priority the web allows; these make the gaps visible and give a way around them (free):

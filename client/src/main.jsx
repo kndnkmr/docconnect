@@ -31,6 +31,8 @@ import { AuthProvider } from './context/AuthContext.jsx';
 // Any component can then check: "Is the user logged in? What's their role?"
 
 import { PwaProvider } from './context/PwaContext.jsx';
+// LangProvider = one English / हिंदी choice for the whole app (top-bar switch).
+import { LangProvider } from './context/LangContext.jsx';
 // PwaProvider = captures the browser's "install app" prompt ONCE and shares
 // it, so every "Get the App" entry point offers the same one-tap install.
 
@@ -47,7 +49,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <AuthProvider>
           <PwaProvider>
-            <App />
+            <LangProvider>
+              <App />
+            </LangProvider>
           </PwaProvider>
         </AuthProvider>
       </BrowserRouter>

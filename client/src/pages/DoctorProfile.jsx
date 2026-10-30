@@ -16,11 +16,11 @@ import { useAuth } from '../context/AuthContext';
 import SEO from '../components/SEO';
 import { DoctorSchema } from '../components/StructuredData';
 import VerifiedBadge from '../components/VerifiedBadge';
-import LangToggle from '../components/LangToggle';
 import { formatDoctorName } from '../utils/formatName';
 import { doctorSearchTitle, doctorSearchDescription } from '../utils/doctorSeo';
 import { trackEvent } from '../components/Analytics';
 import toast from 'react-hot-toast';
+import { useLang } from '../context/LangContext';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
 // translate; doctor-entered content (name, specialization, bio, address,
@@ -126,7 +126,7 @@ function DoctorProfile({ clinicMode = false }) {
   const [resolvedId, setResolvedId] = useState(clinicMode ? null : idParam);
   const id = resolvedId;
 
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
   const { isAuthenticated, isPatient, user } = useAuth();
   const [doctor, setDoctor] = useState(null);
@@ -366,9 +366,6 @@ function DoctorProfile({ clinicMode = false }) {
                 {t.backToDoctors}
               </Link>
             )}
-            {/* Language toggle — lets a patient switch EN/हिंदी here too, not
-                just on Home. Shares the same promedicoz_lang choice site-wide. */}
-            <LangToggle lang={lang} onChange={setLang} />
           </div>
 
           {/* Signal chips — only render the ones we actually have data for. */}

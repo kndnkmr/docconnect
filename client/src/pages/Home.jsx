@@ -11,6 +11,7 @@ import VerifiedBadge from '../components/VerifiedBadge';
 import { formatDoctorName } from '../utils/formatName';
 import VoiceSearch, { isVoiceSupported } from '../components/VoiceSearch';
 import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath, isReportQuery, reportPath } from './tools/toolLinks';
+import { useLang } from '../context/LangContext';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -370,9 +371,8 @@ function Home() {
   // than 3 qualify, the whole section hides itself — so it can't look sparse.
   const [availableDoctors, setAvailableDoctors] = useState([]);
   // Language toggle (Phase 1: Home page). Remembered across visits.
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const t = TXT[lang];
-  const changeLang = (l) => { setLang(l); localStorage.setItem('promedicoz_lang', l); };
 
   // "Health Tip of the Day" — one article, chosen deterministically from the
   // date (same for everyone on a given day, rotates daily). Article content is
@@ -529,21 +529,6 @@ function Home() {
                   📲 {lang === 'hi' ? 'ऐप' : 'Get App'}
                 </Link>
               )}
-
-              <div className="inline-flex items-center bg-white/15 rounded-full p-1 text-xs sm:text-sm">
-                <button
-                  onClick={() => changeLang('en')}
-                  className={`px-2.5 sm:px-4 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap ${lang === 'en' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => changeLang('hi')}
-                  className={`px-2.5 sm:px-4 py-1.5 rounded-full font-medium transition-colors whitespace-nowrap ${lang === 'hi' ? 'bg-white text-primary-700' : 'text-white hover:bg-white/10'}`}
-                >
-                  हिंदी
-                </button>
-              </div>
 
               {/* Share — native share sheet on mobile; otherwise go to the
                   /install page which has all the per-platform share buttons. */}

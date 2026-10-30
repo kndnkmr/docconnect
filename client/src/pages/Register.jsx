@@ -21,6 +21,88 @@ import toast from 'react-hot-toast';
 import { trackEvent } from '../components/Analytics';
 import { loadDraft, clearDraft, DRAFT_TTL } from '../utils/drafts';
 import useAutoDraft from '../utils/useAutoDraft';
+import { useLang } from '../context/LangContext';
+
+// Fixed text on this page (follows the app-wide language). Server messages
+// are shown as they come.
+const REG_TXT = {
+  en: {
+    title: 'Create Account',
+    subtitle: 'Join ProMedicoz today — free in seconds.',
+    bookingWith: 'Booking with',
+    yourAppointment: 'Your appointment',
+    bookingNote: "Create your free account — you'll go straight back to booking.",
+    iAmA: 'I am a...',
+    patient: 'Patient',
+    doctor: 'Doctor',
+    fullName: 'Full Name',
+    emailLabel: 'Email Address',
+    optional: '(optional)',
+    phoneLabel: 'Phone Number',
+    phonePh: '9876543210 (10 digits, +91 added automatically)',
+    phoneTitle: 'Enter your 10-digit mobile number',
+    phoneHint: "Required — you'll log in with this number. Email is optional. We'll add +91 automatically.",
+    takenTitle: 'This number is already registered',
+    takenText: 'You already have an account — no need to create a new one. Log in with this number.',
+    takenBtn: 'Log in with this number →',
+    takenForgot: "Don't remember the password? Reset it →",
+    passwordLabel: 'Password',
+    passwordPh: 'At least 6 characters',
+    hidePw: 'Hide password',
+    showPw: 'Show password',
+    confirmLabel: 'Confirm Password',
+    confirmPh: 'Re-enter your password',
+    creating: 'Creating Account...',
+    registerAs: (isDoctor) => `Register as ${isDoctor ? 'Doctor' : 'Patient'}`,
+    haveAccount: 'Already have an account?',
+    signInHere: 'Sign in here',
+    errNamePw: 'Please fill in name and password',
+    errMobile: 'Please enter your 10-digit mobile number',
+    errContact: 'Please provide either email or phone number',
+    errMatch: 'Passwords do not match',
+    errLength: 'Password must be at least 6 characters',
+    success: 'Account created successfully! Welcome to ProMedicoz.',
+    failed: 'Registration failed. Please try again.',
+  },
+  hi: {
+    title: 'खाता बनाएं',
+    subtitle: 'आज ही ProMedicoz से जुड़ें — मुफ़्त, कुछ ही सेकंड में।',
+    bookingWith: 'इनसे अपॉइंटमेंट',
+    yourAppointment: 'आपकी अपॉइंटमेंट',
+    bookingNote: 'मुफ़्त खाता बनाएं — बनते ही आप सीधे बुकिंग पर लौटेंगे।',
+    iAmA: 'मैं हूँ...',
+    patient: 'मरीज़',
+    doctor: 'डॉक्टर',
+    fullName: 'पूरा नाम',
+    emailLabel: 'ईमेल',
+    optional: '(ज़रूरी नहीं)',
+    phoneLabel: 'मोबाइल नंबर',
+    phonePh: '9876543210 (10 अंक, +91 अपने-आप जुड़ेगा)',
+    phoneTitle: 'अपना 10 अंक का मोबाइल नंबर लिखें',
+    phoneHint: 'ज़रूरी है — इसी नंबर से लॉग इन करेंगे। ईमेल ज़रूरी नहीं। +91 हम अपने-आप जोड़ देंगे।',
+    takenTitle: 'यह नंबर पहले से रजिस्टर है',
+    takenText: 'आपका खाता पहले से है — नया बनाने की ज़रूरत नहीं। इसी नंबर से लॉग इन करें।',
+    takenBtn: 'इसी नंबर से लॉग इन करें →',
+    takenForgot: 'पासवर्ड याद नहीं? नया बनाएं →',
+    passwordLabel: 'पासवर्ड',
+    passwordPh: 'कम से कम 6 अक्षर',
+    hidePw: 'पासवर्ड छुपाएं',
+    showPw: 'पासवर्ड दिखाएं',
+    confirmLabel: 'पासवर्ड दोबारा लिखें',
+    confirmPh: 'वही पासवर्ड फिर से लिखें',
+    creating: 'खाता बन रहा है...',
+    registerAs: (isDoctor) => (isDoctor ? 'डॉक्टर के रूप में रजिस्टर करें' : 'मरीज़ के रूप में रजिस्टर करें'),
+    haveAccount: 'पहले से खाता है?',
+    signInHere: 'यहाँ लॉग इन करें',
+    errNamePw: 'कृपया नाम और पासवर्ड भरें',
+    errMobile: 'कृपया अपना 10 अंक का मोबाइल नंबर लिखें',
+    errContact: 'कृपया ईमेल या मोबाइल नंबर में से एक भरें',
+    errMatch: 'दोनों पासवर्ड एक जैसे नहीं हैं',
+    errLength: 'पासवर्ड कम से कम 6 अक्षर का होना चाहिए',
+    success: 'खाता बन गया! ProMedicoz में आपका स्वागत है।',
+    failed: 'रजिस्टर नहीं हो पाया। फिर से कोशिश करें।',
+  },
+};
 
 function Register() {
   // While the person fills in this form, quietly download the Dashboard
@@ -60,7 +142,8 @@ function Register() {
   });
   // "This phone is already registered" → offer to log in instead (box, not toast).
   const [phoneTaken, setPhoneTaken] = useState(false);
-  const lang = (() => { try { return localStorage.getItem('promedicoz_lang') === 'hi' ? 'hi' : 'en'; } catch { return 'en'; } })();
+  const { lang } = useLang(); // app-wide (top-bar switch)
+  const T = REG_TXT[lang] || REG_TXT.en;
   // Using ONE state object for all fields (alternative to separate useState for each)
   // This is common for forms with many fields
 
@@ -100,28 +183,28 @@ function Register() {
 
     // Validation
     if (!formData.name || !formData.password) {
-      toast.error('Please fill in name and password');
+      toast.error(T.errNamePw);
       return;
     }
 
     // Patients must always give a mobile number (email is optional).
     if (formData.role === 'patient' && formData.phone.length !== 10) {
-      toast.error('Please enter your 10-digit mobile number');
+      toast.error(T.errMobile);
       return;
     }
 
     if (!formData.email && !formData.phone) {
-      toast.error('Please provide either email or phone number');
+      toast.error(T.errContact);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(T.errMatch);
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error(T.errLength);
       return;
     }
 
@@ -144,7 +227,7 @@ function Register() {
       // Auto-login after registration
       login(token, user);
 
-      toast.success('Account created successfully! Welcome to ProMedicoz.');
+      toast.success(T.success);
       trackEvent('register_success', { role: user.role, booking: bookingIntent ? 'yes' : 'no' });
       // A new doctor always lands on their dashboard to finish onboarding; a
       // new patient is returned to wherever they were headed (e.g. the booking
@@ -152,7 +235,7 @@ function Register() {
       navigate(user.role === 'doctor' ? '/dashboard' : (returnTo || '/dashboard'), { replace: true });
 
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+      const message = error.response?.data?.message || T.failed;
       if (/phone number already exists/i.test(message)) {
         setPhoneTaken(true);
         trackEvent('register_phone_taken', { booking: bookingIntent ? 'yes' : 'no' });
@@ -165,7 +248,7 @@ function Register() {
   };
 
   return (
-    <AuthLayout title="Create Account" subtitle="Join ProMedicoz today — free in seconds.">
+    <AuthLayout title={T.title} subtitle={T.subtitle}>
       <SEO title="Register" description="Create your free ProMedicoz account. Book doctors, manage appointments, and access prescriptions online." path="/register" noindex />
 
       {/* Form Card */}
@@ -174,12 +257,10 @@ function Register() {
               that they'll come straight back to book. */}
           {bookingIntent && (
             <div className="mb-5 rounded-xl bg-green-50 border border-green-200 px-4 py-3">
-              <p className="text-xs text-green-800">{lang === 'hi' ? 'इनसे अपॉइंटमेंट' : 'Booking with'}</p>
-              <p className="font-bold text-green-900">{doctorName || (lang === 'hi' ? 'आपकी अपॉइंटमेंट' : 'Your appointment')}</p>
+              <p className="text-xs text-green-800">{T.bookingWith}</p>
+              <p className="font-bold text-green-900">{doctorName || T.yourAppointment}</p>
               <p className="mt-1 text-xs text-green-800">
-                {lang === 'hi'
-                  ? 'मुफ़्त खाता बनाएं — बनते ही आप सीधे बुकिंग पर लौटेंगे।'
-                  : "Create your free account — you'll go straight back to booking."}
+                {T.bookingNote}
               </p>
             </div>
           )}
@@ -188,7 +269,7 @@ function Register() {
             {/* Role Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                I am a...
+                {T.iAmA}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {/* Two buttons side by side — one for each role */}
@@ -204,7 +285,7 @@ function Register() {
                   // Dynamic classes: different styles based on which role is selected
                   // Template literal with ternary: `${condition ? 'classA' : 'classB'}`
                 >
-                  🙋 Patient
+                  🙋 {T.patient}
                 </button>
                 <button
                   type="button"
@@ -215,7 +296,7 @@ function Register() {
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  👨‍⚕️ Doctor
+                  👨‍⚕️ {T.doctor}
                 </button>
               </div>
             </div>
@@ -223,7 +304,7 @@ function Register() {
             {/* Name Field */}
             <div className="mb-4">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                {T.fullName}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">👤</span>
@@ -245,7 +326,7 @@ function Register() {
             {/* Email Field (optional for patients) */}
             <div className="mb-4">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address {formData.role === 'patient' && <span className="text-gray-400">(optional)</span>}
+                {T.emailLabel} {formData.role === 'patient' && <span className="text-gray-400">{T.optional}</span>}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">✉️</span>
@@ -266,7 +347,7 @@ function Register() {
             {/* Phone Number Field (always required for patients) */}
             <div className="mb-4">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number {formData.role === 'patient' && <span className="text-red-500">*</span>}
+                {T.phoneLabel} {formData.role === 'patient' && <span className="text-red-500">*</span>}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">📱</span>
@@ -279,31 +360,29 @@ function Register() {
                   maxLength={10}
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="9876543210 (10 digits, +91 added automatically)"
+                  placeholder={T.phonePh}
                   className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required={formData.role === 'patient'}
                   pattern={formData.role === 'patient' ? '\\d{10}' : undefined}
-                  title={formData.role === 'patient' ? 'Enter your 10-digit mobile number' : undefined}
+                  title={formData.role === 'patient' ? T.phoneTitle : undefined}
                 />
               </div>
               {formData.role === 'patient' && (
-                <p className="text-xs text-gray-500 mt-1">Required — you'll log in with this number. Email is optional. We'll add +91 automatically.</p>
+                <p className="text-xs text-gray-500 mt-1">{T.phoneHint}</p>
               )}
               {phoneTaken && (
                 <div role="alert" className="mt-3 rounded-2xl border-2 border-primary-300 bg-primary-50 p-4">
                   <p className="font-bold text-primary-900">
-                    ✓ {lang === 'hi' ? 'यह नंबर पहले से रजिस्टर है' : 'This number is already registered'}
+                    ✓ {T.takenTitle}
                   </p>
                   <p className="mt-1 text-sm text-primary-900">
-                    {lang === 'hi'
-                      ? 'आपका खाता पहले से है — नया बनाने की ज़रूरत नहीं। इसी नंबर से लॉग इन करें।'
-                      : 'You already have an account — no need to create a new one. Log in with this number.'}
+                    {T.takenText}
                   </p>
                   <button type="button" onClick={toLogin} className="mt-3 w-full py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold">
-                    {lang === 'hi' ? 'इसी नंबर से लॉग इन करें →' : 'Log in with this number →'}
+                    {T.takenBtn}
                   </button>
                   <Link to="/forgot-password" className="mt-2 block text-center text-sm font-medium text-primary-700 hover:underline">
-                    {lang === 'hi' ? 'पासवर्ड याद नहीं? नया बनाएं →' : "Don't remember the password? Reset it →"}
+                    {T.takenForgot}
                   </Link>
                 </div>
               )}
@@ -312,7 +391,7 @@ function Register() {
             {/* Password Field */}
             <div className="mb-4">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {T.passwordLabel}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">🔒</span>
@@ -323,7 +402,7 @@ function Register() {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="At least 6 characters"
+                  placeholder={T.passwordPh}
                   className="w-full pl-11 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required
                   minLength={6}
@@ -331,7 +410,7 @@ function Register() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? T.hidePw : T.showPw}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   <PasswordToggleIcon visible={showPassword} />
@@ -342,7 +421,7 @@ function Register() {
             {/* Confirm Password Field */}
             <div className="mb-6">
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
+                {T.confirmLabel}
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">🔒</span>
@@ -353,7 +432,7 @@ function Register() {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Re-enter your password"
+                  placeholder={T.confirmPh}
                   className="w-full pl-11 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-400 focus:bg-white outline-none transition"
                   required
                 />
@@ -367,15 +446,15 @@ function Register() {
               className="btn btn-primary w-full"
             >
               {isLoading && <Spinner />}
-              {isLoading ? 'Creating Account...' : `Register as ${formData.role === 'doctor' ? 'Doctor' : 'Patient'}`}
+              {isLoading ? T.creating : T.registerAs(formData.role === 'doctor')}
             </button>
           </form>
 
           {/* Link to login page */}
           <p className="text-center text-gray-600 mt-6">
-            Already have an account?{' '}
+            {T.haveAccount}{' '}
             <Link to="/login" state={{ from: returnTo, doctorName, phone: formData.phone, skipAsk: true }} className="text-primary-600 font-medium hover:underline">
-              Sign in here
+              {T.signInHere}
             </Link>
           </p>
         </div>

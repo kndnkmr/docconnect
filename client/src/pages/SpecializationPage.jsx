@@ -4,7 +4,6 @@ import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import { trackEvent } from '../components/Analytics';
-import LangToggle from '../components/LangToggle';
 import { dueDatePath, ovulationPath, vaccinePath, reportPath } from './tools/toolLinks';
 import { cityToSlug, slugToCityName, cityHeading, citySearchTitle, citySummary, cityGuide, cityFaqs, hoursSummary, nearbyCitySlugs, modesText } from '../utils/cityPage';
 import { formatDoctorName } from '../utils/formatName';
@@ -13,6 +12,7 @@ import { formatDoctorName } from '../utils/formatName';
 // (scripts/prerender.mjs) — see src/utils/cityPage.js. Specialty data:
 // ./specializationData.js (also imported by the build).
 import { specializationData, specializationHi } from './specializationData';
+import { useLang } from '../context/LangContext';
 
 // UI labels for the page chrome (headings, buttons). English + Hindi.
 const UI = {
@@ -63,7 +63,7 @@ function SpecializationPage() {
   // on the base (non-city) page, to build the "Find X in your city" links.
   const [cities, setCities] = useState([]);
 
-  const [lang, setLang] = useState(() => localStorage.getItem('promedicoz_lang') || 'en');
+  const { lang, setLang } = useLang(); // app-wide (top-bar switch)
   const ui = UI[lang] || UI.en;
 
   const data = specializationData[slug];
@@ -182,11 +182,6 @@ function SpecializationPage() {
       {/* Hero section */}
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
         <div className="container mx-auto px-4">
-          {/* Language toggle — top-right so a patient can switch EN/हिंदी on
-              specialization landing pages too (shares the site-wide choice). */}
-          <div className="flex justify-end mb-4">
-            <LangToggle lang={lang} onChange={setLang} />
-          </div>
           <div className="flex items-center gap-4 mb-4">
             <span className="text-4xl sm:text-5xl">{view.icon}</span>
             <div>

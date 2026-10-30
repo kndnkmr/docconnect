@@ -10,6 +10,22 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LangContext';
+
+// Fixed text (follows the app-wide language). The server's suspended/deleted
+// message is shown as it comes.
+const EXPIRED_TXT = {
+  en: {
+    expired: '🔒 Please log in again. Your work on this page is saved and will be right here after you log in.',
+    ok: 'OK',
+    login: 'Log in →',
+  },
+  hi: {
+    expired: '🔒 कृपया फिर से लॉग इन करें। इस पेज पर आपका भरा हुआ काम सुरक्षित है, लॉग इन के बाद यहीं मिलेगा।',
+    ok: 'ठीक है',
+    login: 'लॉग इन करें →',
+  },
+};
 
 const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
 
@@ -18,6 +34,8 @@ export default function SessionExpired() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, isAuthenticated } = useAuth();
+  const { lang } = useLang(); // app-wide (top-bar switch)
+  const T = EXPIRED_TXT[lang] || EXPIRED_TXT.en;
 
   useEffect(() => {
     const onExpired = (e) => setInfo((prev) => prev || { message: (e.detail && e.detail.message) || '' });
@@ -44,10 +62,10 @@ export default function SessionExpired() {
         <p className="text-sm text-red-900">
           {blocked
             ? info.message
-            : '🔒 Please log in again. Your work on this page is saved and will be right here after you log in.'}
+            : T.expired}
         </p>
         <button type="button" onClick={goLogin} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 whitespace-nowrap">
-          {blocked ? 'OK' : 'Log in →'}
+          {blocked ? T.ok : T.login}
         </button>
       </div>
     </div>
