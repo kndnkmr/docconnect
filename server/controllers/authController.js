@@ -15,6 +15,7 @@ const User = require('../models/User');
 const { getNextSequence } = require('../models/Counter');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
 const { sendEmail } = require('../utils/sendEmail');
+const { notifyAdminNewDoctor } = require('../utils/signupAlerts');
 const {
   ContactError, checkPhone, checkOptionalPhone, checkEmail, releaseFromDeletedAccounts,
 } = require('../utils/contactChecks');
@@ -203,6 +204,10 @@ const register = async (req, res) => {
         `
       });
     }
+
+    // Step 6b: Tell the admin a doctor joined (at once, in the background).
+    // New patients go into one daily list instead (utils/signupAlerts.js).
+    if (role === 'doctor') notifyAdminNewDoctor(user);
 
     // Step 7: Generate a token for the new user
     const token = generateToken(user._id);

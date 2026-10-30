@@ -230,6 +230,11 @@ connectWithRetry()
     const { runAdminEditDigest } = require('./utils/adminEditNotes');
     setInterval(() => runAdminEditDigest().catch((e) => console.error('[admin-edit-digest]', e.message)), 10 * 60 * 1000);
 
+    // Admin's daily "new patients today" email (~7 PM IST). New doctors are
+    // emailed at once from register. utils/signupAlerts.js.
+    const { runPatientSignupDigest } = require('./utils/signupAlerts');
+    setInterval(() => runPatientSignupDigest().catch((e) => console.error('[signup-digest]', e.message)), 10 * 60 * 1000);
+
     // Nightly encrypted database backup (~02:30 IST, catches up after a
     // restart; needs BACKUP_KEY + Cloudinary). See utils/backup.js.
     const { maybeRunNightly } = require('./utils/backup');

@@ -7,9 +7,10 @@ const assert = require('node:assert');
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-only-secret';
 const mail = require('../utils/sendEmail');
 let emailDone = false;
-let emailTo = '';
+const emailTo = [];
+process.env.ADMIN_NOTIFY_EMAIL = 'admin@example.com';
 // A slow email service: 3 s to "send".
-mail.sendEmail = ({ to }) => new Promise((r) => setTimeout(() => { emailDone = true; emailTo = to; r({ success: true }); }, 3000));
+mail.sendEmail = ({ to }) => new Promise((r) => setTimeout(() => { emailDone = true; emailTo.push(to); r({ success: true }); }, 3000));
 const User = require('../models/User');
 const { register } = require('../controllers/authController');
 
@@ -37,6 +38,7 @@ test('doctor registration answers without waiting for the email, in one write', 
   assert.ok(lookups.some((q) => q.email === 'asha@example.com'));
   assert.ok(lookups.some((q) => q.phone === '+919876543210'));
   await new Promise((r) => setTimeout(r, 3100));
-  assert.strictEqual(emailDone, true); // the email still goes out
-  assert.strictEqual(emailTo, 'Asha@Example.com');
+  assert.strictEqual(emailDone, true); // the emails still go out
+  // The doctor's verify email + the admin's "new doctor" alert.
+  assert.deepStrictEqual([...emailTo].sort(), ['Asha@Example.com', 'admin@example.com']);
 });

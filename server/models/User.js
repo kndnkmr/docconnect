@@ -393,6 +393,13 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
     default: null
   },
+  // When this new sign-up was included in the admin's daily "new patients"
+  // email (utils/signupAlerts.js). Marking each one means a server restart
+  // can never send the same person twice.
+  signupNotifiedAt: {
+    type: Date,
+    default: undefined
+  },
   // Last 20 changes an admin made to this account's details or family
   // members (who, when, which fields). Values are NOT copied here, only the
   // field names, so this never duplicates health data.

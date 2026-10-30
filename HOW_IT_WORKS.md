@@ -2033,6 +2033,15 @@ Replaces the older "Blog List Redesign" layout above.
 - The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
 - Tests: `server/tests/upiPay.test.js`.
 
+## Admin sign-up emails (`server/utils/signupAlerts.js`)
+
+Sent to `ADMIN_NOTIFY_EMAIL`, falling back to `ADMIN_EMAIL`, then `support@promedicoz.in` (same as the booking emails).
+- **New doctor:** one email right away from `register` (name, email, phone, what they still need to do). Sent in the background, so signup never waits for it.
+- **New patients:** one list a day, after 7 PM IST: name, Patient ID, when they joined, and ✅ Booked / ⏳ Not yet. The "Not yet" ones may need a hand (Admin → Help patient). No new patients means no email.
+- **Never twice, even after a restart:** each patient listed gets `signupNotifiedAt`. If the email fails to send, they aren't marked and appear the next evening. Only the last 72 hours are looked at, so older accounts never arrive as one big list.
+- Accounts made by the admin (`createdByAdmin`) are left out.
+- Tests: `server/tests/signupAlerts.test.js` and `registerSpeed.test.js` (doctor signup sends both the verify email and the admin alert without waiting).
+
 ## Privacy wording (keep it true)
 
 **Free tools** (Report Samjhao, due date, ovulation, vaccines, `/tools`) use one clear promise. Your details stay **on your phone**: they're never sent to ProMedicoz, never saved and never shared. Report Samjhao also says no other company or AI service sees the photo.
