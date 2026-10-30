@@ -33,7 +33,7 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
-import { paymentStage, buildUpiLink, isMobileDevice } from '../utils/paymentFlow';
+import { paymentStage } from '../utils/paymentFlow';
 import { readUpiFromImage, isValidUpiId, sameUpi } from '../utils/upiQr';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
@@ -1177,7 +1177,7 @@ function Dashboard() {
 
   // ---- Doctor: payments (UPI) ----
   // Read the UPI ID + account name from the doctor's QR (utils/upiQr.js), so
-  // patients get the one-tap "Pay with UPI app" button even if the doctor
+  // patients see "Pays: <name>" and a copyable UPI ID even if the doctor
   // never typed a UPI ID, and wrong pictures are caught at upload.
   const [qrRead, setQrRead] = useState(null); // { kind:'upi'|'other'|'none'|'error', upiId?, name? }
   const [qrUploading, setQrUploading] = useState(false);
@@ -1195,7 +1195,7 @@ function Dashboard() {
     if (String(profileData.upiId || '').trim()) return;
     upiAutoFilledRef.current = true;
     setProfileData((prev) => ({ ...prev, upiId: qrRead.upiId }));
-    toast.success(`We read your UPI ID from your QR code (${qrRead.upiId}) and saved it. Patients can now pay you in one tap.`, { duration: 7000 });
+    toast.success(`We read your UPI ID from your QR code (${qrRead.upiId}) and saved it. Patients will see it under your QR.`, { duration: 7000 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qrRead]);
 
@@ -1370,7 +1370,7 @@ function Dashboard() {
     {
       key: 'payment', done: paymentsReady,
       label: 'Set up payments: upload your UPI QR code',
-      hint: 'We read your UPI ID from it, so patients can pay you in one tap with your fee filled in. Typing your UPI ID works too.',
+      hint: 'Patients pay by scanning it. We also read your UPI ID from it, so it shows under the QR. Typing just your UPI ID works too: we draw a QR for you.',
       actionLabel: 'Add QR Code', action: () => goToTab('profile')
     }
   ] : [];
@@ -2256,7 +2256,7 @@ function Dashboard() {
               { key: 'googleReviewLink', label: '⭐ Google review link (optional)', placeholder: 'https://g.page/r/…/review', type: 'url', hint: 'Google Business Profile → "Ask for reviews" → copy the link. Patients who rate you on ProMedicoz are also offered "Rate on Google" — more Google reviews help you show up in Google Maps.' },
               { key: 'phone', label: 'Phone Number *', placeholder: '+91 9876543210', type: 'tel' },
               { key: 'whatsappNumber', label: 'WhatsApp Number (optional)', placeholder: '+91 9876543210', type: 'tel', hint: '⚠️ Public: if you add this, a "Message on WhatsApp" button appears on your public profile and any patient can message you directly. Leave blank to keep your WhatsApp private.' },
-              { key: 'upiId', label: 'UPI ID', placeholder: 'e.g., drname@okicici', hint: 'Filled in for you when you upload your UPI QR below. Patients\' "Pay with UPI app" button pays this ID with your fee filled in.' },
+              { key: 'upiId', label: 'UPI ID', placeholder: 'e.g., drname@okicici', hint: 'Filled in for you when you upload your UPI QR below. Shown to patients under your QR. No QR? We draw one from this ID.' },
             ].map(field => (
               <div key={field.key}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
@@ -2363,7 +2363,6 @@ function Dashboard() {
                 const qrUpi = qrRead && qrRead.kind === 'upi' ? qrRead : null;
                 const payUpi = typedOk ? typed : qrUpi ? qrUpi.upiId : '';
                 const mismatch = typedOk && qrUpi && !sameUpi(typed, qrUpi.upiId);
-                const checkLink = payUpi && isMobileDevice() ? buildUpiLink({ upiId: payUpi, doctorName: profileData.name || user?.name }) : '';
                 if (profileData.upiQrCode && qrRead && qrRead.kind === 'other') {
                   return (
                     <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800" role="alert">
@@ -2386,16 +2385,12 @@ function Dashboard() {
                     <div className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3 text-xs text-green-900">
                       <p className="font-semibold text-sm">✓ Payments ready</p>
                       <p className="mt-1">Patients will pay{qrUpi && qrUpi.name && sameUpi(qrUpi.upiId, payUpi) ? <> <strong>{qrUpi.name}</strong> ·</> : ''} <span className="font-mono break-all">{payUpi}</span></p>
-                      <p className="mt-1 text-green-800">They get a one-tap "Pay with UPI app" button with your fee filled in, and can save your QR to scan from their gallery.</p>
-                      {checkLink && (
-                        <a href={checkLink} className="mt-2 inline-block px-3 py-1.5 rounded-lg bg-white border border-green-300 font-semibold text-green-800 hover:bg-green-100">📱 Check it opens my UPI app</a>
-                      )}
-                      {checkLink && <p className="mt-1 text-[11px] text-green-800">It should show your own name. Then just go back, no money is sent.</p>}
+                      <p className="mt-1 text-green-800">They scan your QR in GPay / PhonePe / Paytm. Paying from the same phone? They can save it and pick it in Scan → Gallery.</p>
                     </div>
                     {mismatch && (
                       <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900" role="status">
                         <p className="font-semibold">⚠ Your QR pays <span className="font-mono">{qrUpi.upiId}</span>, but the UPI ID box says <span className="font-mono">{typed}</span></p>
-                        <p className="mt-1">Patients' one-tap button uses the UPI ID box. That's fine if both are your account (PhonePe, for example, gives one account several IDs). If not, use the QR's ID.</p>
+                        <p className="mt-1">Patients scan your QR, but the UPI ID shown under it comes from the box. That's fine if both are your account (PhonePe, for example, gives one account several IDs). If not, use the QR's ID.</p>
                         <button type="button" onClick={() => setProfileData((prev) => ({ ...prev, upiId: qrUpi.upiId }))} className="mt-2 px-3 py-1.5 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600">Use the QR's UPI ID</button>
                       </div>
                     )}

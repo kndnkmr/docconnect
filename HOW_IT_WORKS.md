@@ -2004,11 +2004,17 @@ Replaces the older "Blog List Redesign" layout above.
 - It tries the phone's own QR reader first (BarcodeDetector). Otherwise it uses `jsqr` 1.4.0, a lazy-loaded chunk of about 47 KB gz.
 - Cloudinary images allow this (CORS). All 15 live QRs were read in testing.
 
-**Patient pay box (`PaymentBox.jsx`):**
-- The UPI ID paid is the one the doctor typed. If there isn't one, it's the ID read from the QR.
-- It shows "Your UPI app will show the name: …" (the QR's account holder, often not the doctor's name), only when the QR and the paid ID are the same account.
-- "⬇ Save QR to gallery" (phones): iPhone gets the share sheet ("Save Image"); others get a normal download of the original PNG/JPG. It never leaves the page. Then: UPI app → Scan → Gallery.
-- A doctor with a UPI ID but no QR gets a QR drawn on the page (`qrcode.react`, fee and patient ID note included) for patients on a computer.
+**Patient pay box (`PaymentBox.jsx`): two steps, one main button each.** It's kept deliberately simple: patients must not be confused or do extra work.
+- **No tap-to-pay `upi://` button.** GPay/PhonePe often block a tapped link to a *personal* UPI ID as "suspicious" (it needs a registered merchant ID), while scanning the same QR works. A button that fails is the most confusing thing a patient can hit, so we don't show one. Don't add it back.
+- **Step 1, "Scan this QR in GPay / PhonePe / Paytm":** a big QR, loaded exactly as before (`getUploadUrl(doctor.upiQrCode)`, tap to enlarge).
+  - Under it: "Pays: <name>" (the QR's account holder, often not the doctor's own name; shown only when it's the same account as the UPI ID used).
+  - Phones also get one button, "Paying from this phone? ⬇ Save QR". iPhone opens the share sheet ("Save Image"); others get a normal download of the original PNG/JPG. It never leaves the page. Then: UPI app → Scan → Gallery.
+  - A small "Or pay to UPI ID … Copy" line.
+  - A doctor with only a UPI ID (no QR image) gets a QR drawn on the page (`qrcode.react`, fee and patient ID note included) on phone and computer, so step 1 always has a QR.
+- **Step 2, "✅ I've paid":** one button. Nothing is sent until the patient picks from the short sheet it opens: "📎 Choose screenshot" or "Skip — just tell the doctor".
+  - "No screenshot? Type the UPI reference number" reveals the box. It explains in plain words where to find the 12-digit number (UPI app history → "UPI transaction ID" / "Ref no.", or the bank SMS).
+- Waiting/proof stages are unchanged. "Show QR / pay again" reuses step 1.
+- The UPI ID used is the one the doctor typed; if there isn't one, it's the ID read from the QR.
 
 **Doctor profile (`Dashboard.jsx`):**
 - On QR upload the image is read first:
@@ -2016,8 +2022,8 @@ Replaces the older "Blog List Redesign" layout above.
   - If no QR is found, the doctor is asked "upload anyway?".
   - A UPI QR sends `upiId` along when the box is empty or invalid.
 - Old profiles with a QR but an empty UPI ID get it filled in once on opening the profile; autosave saves it and a toast says so.
-- A "✓ Payments ready" card shows who patients will pay, with "📱 Check it opens my UPI app" (no amount, so nothing is sent).
-- If the typed ID ≠ the QR's ID, an amber warning offers "Use the QR's UPI ID". It never auto-overwrites a typed ID, because PhonePe gives one account several handles.
+- A "✓ Payments ready" card shows who patients will pay. (No "open my UPI app" test button: tapped links are what UPI apps block.)
+- If the typed ID ≠ the QR's ID, an amber warning offers "Use the QR's UPI ID". Patients scan the QR, but the UPI ID shown under it comes from the box. It never auto-overwrites a typed ID, because PhonePe gives one account several handles.
 - The checklist's payment step is done with a QR or a valid UPI ID.
 
 **Admin → Manage doctor:** same QR check. `POST /admin/doctors/:id/image` takes an optional `upiId` and fills it only if the doctor has none; it's logged and the doctor is told.

@@ -3,8 +3,9 @@
 // ============================================
 // Every state has a way forward (see utils/paymentFlow.js + server
 // controllers/paymentController.js):
-//   pay     → one-tap UPI app button, QR (tap to enlarge), UPI ID copy,
-//             then "upload screenshot", "type UPI reference", or "I've paid"
+//   pay     → Step 1: scan the QR (save it if paying from this phone).
+//             Step 2: one "I've paid" button, then (only then) screenshot /
+//             skip / UPI reference number. Kept simple on purpose.
 //   waiting → said "I've paid" without proof: add screenshot / UTR,
 //             show QR again, or "I haven't paid yet"
 //   proof   → screenshot/UTR sent: view, replace, remind doctor, WhatsApp support
@@ -18,13 +19,14 @@
 //
 // Paying from the SAME phone that shows the QR (most patients) — you can't
 // scan your own screen. So:
-//   • The UPI ID is read from the doctor's QR image when they never typed
-//     one (utils/upiQr.js), so "Pay with UPI app" works for every doctor
-//     with a QR. We also show the account-holder name the UPI app will show
-//     (often not the doctor's own name), so the patient isn't put off by it.
-//   • "Save QR to gallery" → then Scan → Gallery in any UPI app.
-//   • A doctor with only a UPI ID (no QR image) gets a QR made on the page,
-//     with the fee filled in, for patients paying from a computer.
+//   • "Save QR" → then Scan → Gallery in any UPI app.
+//   • No tap-to-pay upi:// button: GPay/PhonePe often block it for
+//     personal UPI IDs ("suspicious"). Scanning a QR is accepted.
+//   • The UPI ID + account-holder name are read from the doctor's QR
+//     (utils/upiQr.js), so we can show "Pays: <name>" (often not the
+//     doctor's own name) and a copyable UPI ID.
+//   • A doctor with only a UPI ID (no QR image) gets a QR drawn on the
+//     page with the fee filled in, so step 1 always has a QR.
 
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -47,42 +49,49 @@ const TXT = {
     paidBadge: '✓ Payment Confirmed',
     done: 'Done',
     wentWrong: 'Something went wrong. Please try again.',
-    utrHelp: 'The UPI reference (UTR) is the 12-digit number shown in your UPI app after paying.',
     upiCopied: 'UPI ID copied',
     copyFailed: (id) => 'Could not copy. Please note it down: ' + id,
     chooseFile: 'Choose payment screenshot',
     uploading: 'Uploading…',
-    utrPlaceholder: '12-digit UPI reference',
-    utrAria: 'UPI reference number (UTR)',
     sending: 'Sending…',
     send: 'Send',
-    noScreenshot: 'No screenshot? Type the 12-digit UPI reference (UTR) instead',
-    payWithApp: (fee) => `📱 Pay Rs. ${fee} with UPI app`,
-    opensApps: 'Opens GPay / PhonePe / Paytm with the amount filled in',
-    payeeShows: 'Your UPI app will show the name:',
+    // ---- Step 1: scan the QR (the reliable way) ----
+    payTitle: (fee, dr) => `Pay Rs. ${fee || 'as discussed'} to Dr. ${dr}`,
+    step1: 'Scan this QR in GPay / PhonePe / Paytm',
+    payee: (name) => `Pays: ${name}`,
     payeeNote: "(the doctor's UPI account)",
-    noAppTitle: "App didn't open, or paying from this phone? Use the QR:",
-    saveQr: '⬇ Save QR to gallery',
+    saveQr: 'Paying from this phone? ⬇ Save QR',
     savingQr: 'Saving…',
     qrSaved: 'QR saved. Open your UPI app → Scan → 🖼 Gallery → pick it.',
-    saveSteps: 'Then in your UPI app: Scan → 🖼 Gallery → pick the saved QR',
-    scanWithPhone: 'On a computer? Scan this with your phone’s UPI app — the amount is filled in.',
-    madeQrAlt: (fee) => `UPI QR code to pay Rs. ${fee}`,
-    enlargeAria: 'Enlarge payment QR code',
-    qrAlt: 'UPI QR code',
-    tapEnlarge: '🔍 Tap QR to enlarge',
+    tapEnlarge: '🔍 Tap to enlarge',
+    copyUpiLine: 'Or pay to UPI ID',
     copy: 'Copy',
+    madeQrAlt: (fee) => `UPI QR code to pay Rs. ${fee}`,
+    scanOnComputer: "Scan with your phone's UPI app. The amount is already filled in.",
     noDetails: "The doctor hasn't added payment details yet. Please ask them in Chat, or contact support below.",
+    // enlarge overlay
+    qrAlt: 'UPI QR code',
+    enlargeAria: 'Enlarge payment QR code',
     qrDialogAria: 'Payment QR code',
     closeQrAria: 'Close QR code',
     payTo: (fee, dr) => `Pay Rs. ${fee} to Dr. ${dr}`,
-    longPress: 'On a phone? Long-press the QR to save it, then pick it from your UPI app\'s "scan from gallery".',
+    longPress: 'Long-press the QR to save it, then pick it in your UPI app\'s "scan from gallery".',
     doneBtn: 'Done',
-    payTitle: (fee, dr) => `Pay Rs. ${fee || 'as discussed'} to Dr. ${dr}`,
-    steps: 'Step 1: pay · Step 2: send the screenshot',
-    paidUpload: "📎 I've paid: upload screenshot",
+    // ---- Step 2: tell the doctor ----
+    step2: "Tell the doctor you've paid",
+    paid: "✅ I've paid",
+    paidSub: 'The doctor confirms it and your slot is locked.',
+    // proof sheet (opens after "I've paid")
+    proofTitle: 'Add your payment screenshot',
+    proofSub: 'It helps the doctor confirm faster. Optional.',
+    chooseShot: '📎 Choose screenshot',
+    skipProof: 'Skip — just tell the doctor',
     claimOk: 'Doctor notified. You can still add a screenshot.',
-    claim: "I've paid, just tell the doctor",
+    noScreenshot: 'No screenshot? Type the UPI reference number',
+    utrPlaceholder: 'e.g. 302912345678',
+    utrAria: 'UPI reference number',
+    utrHelp: 'Find it in your UPI app\'s history: tap the payment → "UPI transaction ID" or "Ref no." It\'s also in your bank\'s SMS. It is 12 digits.',
+    // ---- waiting / proof ----
     waitingTitle: '⏳ Waiting for the doctor to confirm your payment',
     waitingHint: 'Adding a screenshot helps the doctor confirm faster.',
     addPaymentShot: '📎 Add payment screenshot',
@@ -106,42 +115,46 @@ const TXT = {
     paidBadge: '✓ पेमेंट कन्फ़र्म हो गया',
     done: 'हो गया',
     wentWrong: 'कुछ गड़बड़ हो गई। कृपया फिर से कोशिश करें।',
-    utrHelp: 'UPI reference (UTR) वह 12 अंकों का नंबर है जो पेमेंट के बाद आपके UPI app में दिखता है।',
     upiCopied: 'UPI ID कॉपी हो गई',
     copyFailed: (id) => 'कॉपी नहीं हो पाया। कृपया इसे लिख लें: ' + id,
     chooseFile: 'पेमेंट का स्क्रीनशॉट चुनें',
     uploading: 'अपलोड हो रहा है…',
-    utrPlaceholder: '12 अंकों का UPI reference',
-    utrAria: 'UPI reference नंबर (UTR)',
     sending: 'भेजा जा रहा है…',
     send: 'भेजें',
-    noScreenshot: 'स्क्रीनशॉट नहीं है? उसकी जगह 12 अंकों का UPI reference (UTR) लिखें',
-    payWithApp: (fee) => `📱 UPI app से Rs. ${fee} भेजें`,
-    opensApps: 'GPay / PhonePe / Paytm खुलेगा, रकम पहले से भरी होगी',
-    payeeShows: 'आपके UPI app में यह नाम दिखेगा:',
+    // ---- पहला कदम: QR स्कैन करें ----
+    payTitle: (fee, dr) => (fee ? `Dr. ${dr} को Rs. ${fee} भेजें` : `Dr. ${dr} को तय की गई फ़ीस भेजें`),
+    step1: 'GPay / PhonePe / Paytm में यह QR स्कैन करें',
+    payee: (name) => `पैसे जाएँगे: ${name}`,
     payeeNote: '(डॉक्टर का UPI खाता)',
-    noAppTitle: 'App नहीं खुला, या इसी फ़ोन से पेमेंट कर रहे हैं? QR से करें:',
-    saveQr: '⬇ QR गैलरी में सेव करें',
+    saveQr: 'इसी फ़ोन से पेमेंट? ⬇ QR सेव करें',
     savingQr: 'सेव हो रहा है…',
     qrSaved: 'QR सेव हो गया। UPI app खोलें → Scan → 🖼 Gallery → QR चुनें।',
-    saveSteps: 'फिर UPI app में: Scan → 🖼 Gallery → सेव किया QR चुनें',
-    scanWithPhone: 'कंप्यूटर पर हैं? फ़ोन के UPI app से यह QR स्कैन करें — रकम पहले से भरी होगी।',
-    madeQrAlt: (fee) => `Rs. ${fee} भेजने का UPI QR code`,
-    enlargeAria: 'पेमेंट का QR code बड़ा करें',
-    qrAlt: 'UPI QR code',
-    tapEnlarge: '🔍 QR बड़ा करने के लिए दबाएँ',
+    tapEnlarge: '🔍 बड़ा करने के लिए दबाएँ',
+    copyUpiLine: 'या इस UPI ID पर भेजें',
     copy: 'कॉपी करें',
+    madeQrAlt: (fee) => `Rs. ${fee} भेजने का UPI QR code`,
+    scanOnComputer: 'फ़ोन के UPI app से स्कैन करें। रकम पहले से भरी होगी।',
     noDetails: 'डॉक्टर ने अभी पेमेंट की जानकारी नहीं डाली है। कृपया Chat में उनसे पूछें, या नीचे support से बात करें।',
+    qrAlt: 'UPI QR code',
+    enlargeAria: 'पेमेंट का QR code बड़ा करें',
     qrDialogAria: 'पेमेंट का QR code',
     closeQrAria: 'QR code बंद करें',
     payTo: (fee, dr) => `Dr. ${dr} को Rs. ${fee} भेजें`,
-    longPress: 'फ़ोन पर हैं? QR को दबाकर रखें और सेव करें, फिर अपने UPI app में "scan from gallery" से उसे चुनें।',
+    longPress: 'QR को दबाकर रखें और सेव करें, फिर अपने UPI app में "scan from gallery" से उसे चुनें।',
     doneBtn: 'ठीक है',
-    payTitle: (fee, dr) => (fee ? `Dr. ${dr} को Rs. ${fee} भेजें` : `Dr. ${dr} को तय की गई फ़ीस भेजें`),
-    steps: 'पहला: पेमेंट करें · दूसरा: स्क्रीनशॉट भेजें',
-    paidUpload: '📎 पेमेंट कर दिया: स्क्रीनशॉट अपलोड करें',
+    // ---- दूसरा कदम: डॉक्टर को बताएँ ----
+    step2: 'डॉक्टर को बताएँ कि आपने पेमेंट कर दिया',
+    paid: '✅ पेमेंट कर दिया',
+    paidSub: 'डॉक्टर कन्फ़र्म करेंगे और आपका स्लॉट पक्का हो जाएगा।',
+    proofTitle: 'पेमेंट का स्क्रीनशॉट जोड़ें',
+    proofSub: 'इससे डॉक्टर जल्दी कन्फ़र्म कर पाते हैं। ज़रूरी नहीं।',
+    chooseShot: '📎 स्क्रीनशॉट चुनें',
+    skipProof: 'छोड़ें — बस डॉक्टर को बता दें',
     claimOk: 'डॉक्टर को बता दिया गया। आप अभी भी स्क्रीनशॉट जोड़ सकते हैं।',
-    claim: 'पेमेंट कर दिया, बस डॉक्टर को बता दें',
+    noScreenshot: 'स्क्रीनशॉट नहीं है? UPI reference नंबर लिखें',
+    utrPlaceholder: 'जैसे 302912345678',
+    utrAria: 'UPI reference नंबर',
+    utrHelp: 'यह आपके UPI app की history में मिलेगा: पेमेंट पर दबाएँ → "UPI transaction ID" या "Ref no."। बैंक के SMS में भी होता है। यह 12 अंकों का होता है।',
     waitingTitle: '⏳ डॉक्टर के पेमेंट कन्फ़र्म करने का इंतज़ार है',
     waitingHint: 'स्क्रीनशॉट जोड़ने से डॉक्टर जल्दी कन्फ़र्म कर पाते हैं।',
     addPaymentShot: '📎 पेमेंट का स्क्रीनशॉट जोड़ें',
@@ -174,6 +187,7 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
   const [showUTR, setShowUTR] = useState(false);
   const [utr, setUtr] = useState('');
   const [showPayAgain, setShowPayAgain] = useState(false);
+  const [showProof, setShowProof] = useState(false); // step 2 sheet after "I've paid"
   const [now, setNow] = useState(Date.now());
   const { lang } = useLang();
   const t = TXT[lang === 'hi' ? 'hi' : 'en'];
@@ -219,10 +233,14 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
   const payUpi = typedUpi || (fromQr ? fromQr.upiId : '');
   // Name the UPI app will show — only when it's the same account we pay.
   const payeeName = fromQr && fromQr.name && sameUpi(fromQr.upiId, payUpi) ? fromQr.name : '';
-  const linkFor = () => buildUpiLink({ upiId: payUpi, doctorName: doctor.name, amount: fee, patientId: user?.patientId, date: apt.date });
-  const upiLink = isMobileDevice() && payUpi ? linkFor() : '';
-  // No QR image but a UPI ID: we draw a QR (with the fee) for computer users.
-  const madeQrValue = !doctor.upiQrCode && payUpi ? linkFor() : '';
+  // No QR image but a UPI ID: we draw a QR (with the fee + patient ID note)
+  // so step 1 always has something to scan. (We no longer show a tap-to-pay
+  // upi:// button: GPay/PhonePe often block it for personal UPI IDs, and a
+  // button that fails is the most confusing thing a patient can hit.)
+  const madeQrValue = !doctor.upiQrCode && payUpi
+    ? buildUpiLink({ upiId: payUpi, doctorName: doctor.name, amount: fee, patientId: user?.patientId, date: apt.date })
+    : '';
+  const onPhone = isMobileDevice();
 
   // Save the QR so the patient can pick it in Scan → Gallery. iPhone: share
   // sheet ("Save Image"). Others: a normal download (lands in the gallery /
@@ -321,17 +339,20 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
   );
 
   const utrForm = showUTR ? (
-    <div className="mt-2 flex gap-2">
-      <input
-        type="text" inputMode="numeric" autoComplete="off" maxLength={16}
-        value={utr} onChange={(e) => setUtr(e.target.value)}
-        placeholder={t.utrPlaceholder}
-        aria-label={t.utrAria}
-        className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-      />
-      <button type="button" onClick={sendUTR} disabled={!!busy} className="px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium disabled:opacity-60">
-        {busy === 'utr' ? t.sending : t.send}
-      </button>
+    <div className="mt-2">
+      <div className="flex gap-2">
+        <input
+          type="text" inputMode="numeric" autoComplete="off" maxLength={16}
+          value={utr} onChange={(e) => setUtr(e.target.value)}
+          placeholder={t.utrPlaceholder}
+          aria-label={t.utrAria}
+          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+        />
+        <button type="button" onClick={sendUTR} disabled={!!busy} className="px-3 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium disabled:opacity-60">
+          {busy === 'utr' ? t.sending : t.send}
+        </button>
+      </div>
+      <p className="mt-1 text-[11px] text-gray-600 leading-relaxed">{t.utrHelp}</p>
     </div>
   ) : (
     <button type="button" onClick={() => setShowUTR(true)} className="mt-2 text-xs text-primary-600 hover:underline">
@@ -339,68 +360,54 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
     </button>
   );
 
-  // QR + UPI app + UPI ID. Used in "pay" and in "Show QR / pay again".
-  const upiLine = payUpi && (
-    <p className="text-xs text-gray-700 mt-2">UPI ID: <span className="font-mono font-medium text-gray-900 break-all">{payUpi}</span>{' '}
-      <button type="button" onClick={copyUpi} className="text-primary-600 font-medium hover:underline">{t.copy}</button>
-    </p>
-  );
-  const payDetails = (
-    <div>
-      {upiLink && (
-        <>
-          <a href={upiLink} className="block w-full text-center px-4 py-3 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700">
-            {t.payWithApp(fee)}
-          </a>
-          <p className="text-[11px] text-gray-600 text-center mt-1">{t.opensApps}</p>
-        </>
-      )}
-      {payeeName && (
-        <div className="mt-2 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
-          <p className="text-[11px] text-green-800">✓ {t.payeeShows}</p>
-          <p className="text-sm font-bold text-green-900 break-words">{payeeName} <span className="text-[11px] font-normal text-green-800">{t.payeeNote}</span></p>
-        </div>
-      )}
+  // Step 1: the QR to scan (the way that always works). Also used by
+  // "Show QR / pay again" while waiting. The doctor's own QR image loads
+  // exactly as before (qrSrc = getUploadUrl(doctor.upiQrCode)).
+  const hasQr = !!doctor.upiQrCode || !!madeQrValue;
+  const payDetails = !hasQr && !payUpi ? (
+    <p className="text-sm text-orange-800">{t.noDetails}</p>
+  ) : (
+    <div className="text-center">
       {doctor.upiQrCode ? (
-        <>
-          {upiLink && <p className="text-xs font-semibold text-gray-700 mt-3 mb-2">{t.noAppTitle}</p>}
-          <div className={`flex items-start gap-3 ${upiLink ? '' : 'mt-1'}`}>
-            <button type="button" onClick={openQr} className="flex-shrink-0 rounded-lg border border-orange-200 bg-white p-1" aria-label={t.enlargeAria}>
-              <img src={qrSrc} alt={t.qrAlt} className="w-24 h-24 object-contain" />
-            </button>
-            <div className="min-w-0 flex-1 text-xs text-gray-600 leading-relaxed">
-              {isMobileDevice() ? (
-                <>
-                  <button type="button" onClick={saveQr} disabled={savingQr} className="w-full px-3 py-2 rounded-lg border border-indigo-200 bg-white text-indigo-700 text-sm font-semibold hover:bg-indigo-50 disabled:opacity-60">
-                    {savingQr ? t.savingQr : t.saveQr}
-                  </button>
-                  <p className="mt-1 text-[11px] text-gray-600">{t.saveSteps}</p>
-                </>
-              ) : (
-                <button type="button" onClick={openQr} className="text-primary-600 font-medium hover:underline">{t.tapEnlarge}</button>
-              )}
-            </div>
-          </div>
-          {upiLine}
-        </>
-      ) : payUpi ? (
-        <>
-          {madeQrValue && !isMobileDevice() && (
-            <div className="mt-2 flex items-center gap-3">
-              <div className="flex-shrink-0 rounded-lg border border-orange-200 bg-white p-2">
-                <Suspense fallback={<div className="w-24 h-24" />}>
-                  <MadeQr value={madeQrValue} size={96} level="M" title={t.madeQrAlt(fee)} />
-                </Suspense>
-              </div>
-              <p className="text-xs text-gray-600">{t.scanWithPhone}</p>
-            </div>
-          )}
-          {upiLine}
-        </>
-      ) : (
-        <p className="text-sm text-orange-800">{t.noDetails}</p>
+        <button type="button" onClick={openQr} className="mx-auto block rounded-xl border border-green-200 bg-white p-2" aria-label={t.enlargeAria}>
+          <img src={qrSrc} alt={t.qrAlt} className="w-44 h-44 object-contain" />
+        </button>
+      ) : madeQrValue ? (
+        <div className="mx-auto inline-block rounded-xl border border-green-200 bg-white p-3">
+          <Suspense fallback={<div className="w-44 h-44" />}>
+            <MadeQr value={madeQrValue} size={168} level="M" title={t.madeQrAlt(fee)} />
+          </Suspense>
+        </div>
+      ) : null}
+      {payeeName && (
+        <p className="mt-2 text-sm text-green-900">
+          <strong className="break-words">{t.payee(payeeName)}</strong>{' '}
+          <span className="text-[11px] text-green-800">{t.payeeNote}</span>
+        </p>
+      )}
+      {/* Paying from the same phone: you can't scan your own screen. */}
+      {onPhone && doctor.upiQrCode && (
+        <button type="button" onClick={saveQr} disabled={savingQr} className="mt-3 w-full px-3 py-2.5 rounded-lg border border-green-300 bg-white text-green-800 text-sm font-semibold hover:bg-green-50 disabled:opacity-60">
+          {savingQr ? t.savingQr : t.saveQr}
+        </button>
+      )}
+      {!onPhone && hasQr && (
+        <p className="mt-2 text-xs text-green-800">
+          {t.scanOnComputer}{doctor.upiQrCode && <> · <button type="button" onClick={openQr} className="text-primary-600 font-medium hover:underline">{t.tapEnlarge}</button></>}
+        </p>
+      )}
+      {payUpi && (
+        <p className="mt-2 text-[11px] text-gray-600">
+          {t.copyUpiLine} <span className="font-mono text-gray-800 break-all">{payUpi}</span>{' '}
+          <button type="button" onClick={copyUpi} className="text-primary-600 font-medium hover:underline">{t.copy}</button>
+        </p>
       )}
     </div>
+  );
+
+  // Step number badge.
+  const stepBadge = (n, color) => (
+    <span className={`flex-shrink-0 w-6 h-6 rounded-full ${color} text-white text-xs font-bold flex items-center justify-center`}>{n}</span>
   );
 
   const qrOverlay = qrOpen && doctor.upiQrCode && (
@@ -410,33 +417,61 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
         <p className="font-semibold text-gray-800">{t.payTo(fee, doctor.name)}</p>
         <img src={qrSrc} alt={t.qrAlt} className="w-full max-w-xs mx-auto my-3 rounded-lg border" />
         {payUpi && <p className="text-xs text-gray-600">UPI ID: <span className="font-mono">{payUpi}</span></p>}
-        {payeeName && <p className="text-xs text-green-800 mt-0.5">{t.payeeShows} <strong>{payeeName}</strong></p>}
+        {payeeName && <p className="text-xs text-green-800 mt-0.5"><strong>{t.payee(payeeName)}</strong></p>}
         <p className="text-[11px] text-gray-500 mt-1">{t.longPress}</p>
         <button type="button" onClick={closeQr} className="mt-3 w-full px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200">{t.doneBtn}</button>
       </div>
     </div>
   );
 
-  // ---- A: pay ----
+  // ---- A: pay — two steps, one main button each ----
   if (stage === 'pay') {
     return (
-      <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+      <div className="mt-3 space-y-3">
         {hiddenFileInput}
         {qrOverlay}
-        <p className="text-sm font-semibold text-orange-800">{t.payTitle(fee, doctor.name)}</p>
-        <p className="text-[11px] text-orange-700 mb-3">{t.steps}</p>
-        {payDetails}
-        <div className="border-t border-dashed border-orange-200 my-3" />
-        {uploadButton(t.paidUpload)}
-        {utrForm}
-        <div className="text-center mt-2">
-          <button
-            type="button" disabled={!!busy}
-            onClick={() => run('claim', () => appointmentAPI.notifyPayment(apt._id), t.claimOk)}
-            className="text-xs text-gray-600 underline hover:text-gray-800 disabled:opacity-60"
-          >
-            {busy === 'claim' ? t.sending : t.claim}
-          </button>
+        <p className="text-base font-bold text-gray-900">{t.payTitle(fee, doctor.name)}</p>
+
+        {/* Step 1: scan */}
+        <div className="p-3 bg-green-50 border border-green-200 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            {stepBadge(1, 'bg-green-600')}
+            <p className="text-sm font-semibold text-green-900">{t.step1}</p>
+          </div>
+          {payDetails}
+        </div>
+
+        {/* Step 2: tell the doctor (proof asked only after tapping) */}
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            {stepBadge(2, 'bg-primary-600')}
+            <p className="text-sm font-semibold text-blue-900">{showProof ? t.proofTitle : t.step2}</p>
+          </div>
+          {!showProof ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowProof(true)}
+                className="w-full px-4 py-3 bg-primary-600 text-white rounded-lg text-base font-bold hover:bg-primary-700"
+              >
+                {t.paid}
+              </button>
+              <p className="mt-1.5 text-[11px] text-blue-800 text-center">{t.paidSub}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-[11px] text-blue-800 mb-2">{t.proofSub}</p>
+              {uploadButton(t.chooseShot)}
+              <button
+                type="button" disabled={!!busy}
+                onClick={() => run('claim', () => appointmentAPI.notifyPayment(apt._id), t.claimOk)}
+                className="mt-2 w-full px-4 py-2.5 bg-white border border-gray-300 text-gray-800 rounded-lg text-sm font-semibold hover:bg-gray-50 disabled:opacity-60"
+              >
+                {busy === 'claim' ? t.sending : t.skipProof}
+              </button>
+              <div className="mt-1">{utrForm}</div>
+            </>
+          )}
         </div>
       </div>
     );
