@@ -31,14 +31,14 @@ export const TOOLS = [
 export const HUB_COPY = {
   en: {
     seoTitle: 'Free Health Tools — Blood Report, Due Date, Ovulation & Baby Vaccine Calculators',
-    seoDesc: 'Free, private health tools from ProMedicoz in English and Hindi: Report Samjhao (blood report explained), pregnancy due date calculator, ovulation & period calculator, and baby vaccination schedule. Nothing is stored.',
+    seoDesc: 'Free, private health tools from ProMedicoz in English and Hindi: Report Samjhao (blood report explained), pregnancy due date calculator, ovulation & period calculator, and baby vaccination schedule. Everything you enter stays on your phone.',
     title: 'Free health tools',
-    subtitle: 'Private · Hindi + English · nothing is saved',
-    privacy: 'All tools run on your phone. Nothing is stored or sent.',
+    subtitle: 'Free · Hindi + English · Your details stay on your phone',
+    privacy: 'All tools work right here on your phone. What you type or photograph is never sent to ProMedicoz and never shared with anyone.',
   },
   hi: {
     title: 'Free health tools',
-    subtitle: 'Private · Hindi + English · kuch bhi save nahi hota',
-    privacy: 'Saare tools aapke phone par chalte hain. Kuch bhi save ya send nahi hota.',
+    subtitle: 'Free · Hindi + English · Jaankari aapke phone par hi rehti hai',
+    privacy: 'Saare tools yahin aapke phone par chalte hain. Aap jo type karte hain ya photo lete hain, woh ProMedicoz ko nahi bheja jaata aur kisi ke saath share nahi hota.',
   },
 };

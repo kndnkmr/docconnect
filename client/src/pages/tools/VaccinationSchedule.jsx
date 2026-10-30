@@ -77,7 +77,7 @@ function VaccinationSchedule({ defaultLang }) {
     setResult(r);
     if (!r.error) {
       setTicked(loadTicks(dob));
-      trackEvent('tool_vaccine_calculate', { age_kind: r.age.kind });
+      trackEvent('tool_vaccine_calculate', {}); // no child details to analytics
     }
   };
 
@@ -174,7 +174,7 @@ function VaccinationSchedule({ defaultLang }) {
           <button type="submit" className="mt-5 w-full py-3.5 rounded-xl bg-teal-600 text-white font-semibold hover:bg-teal-700 active:scale-[0.99] transition">
             {t.calc}
           </button>
-          <p className="mt-3 text-xs text-gray-500 text-center">🔒 {t.privacy}</p>
+          <p className="mt-3 text-xs text-gray-600 text-center leading-relaxed">🔒 {t.privacy}</p>
         </form>
 
         <div aria-live="polite">

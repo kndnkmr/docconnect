@@ -133,10 +133,8 @@ function ReportSamjhao({ defaultLang }) {
       return { id, value, r: interpret(id, value, sex, reportRange) };
     }).filter((x) => x.r);
     setResults(list);
-    trackEvent('tool_report_explain', {
-      count: list.length, abnormal: list.filter((x) => x.r.level !== 'ok').length,
-      urgent: list.some((x) => x.r.urgent) ? 'yes' : 'no', source: fromPhoto ? 'photo' : 'typed',
-    });
+    // Only how the values were entered — never results (no health details to analytics).
+    trackEvent('tool_report_explain', { source: fromPhoto ? 'photo' : 'typed' });
     setTimeout(() => document.getElementById('report-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
@@ -239,16 +237,17 @@ function ReportSamjhao({ defaultLang }) {
                 className="w-full py-3 rounded-xl border-2 border-indigo-200 text-indigo-700 font-semibold hover:bg-indigo-50 transition">
                 {t.typeInstead}
               </button>
+              {/* Privacy first: people decide whether to take the photo here. */}
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl bg-green-50 border border-green-200 p-4">
+                  <p className="text-sm font-bold text-green-900">{t.photoPrivacyTitle}</p>
+                  <p className="mt-1.5 text-xs text-green-800 leading-relaxed">{t.photoPrivacy}</p>
+                </div>
                 <div className="rounded-xl bg-gray-50 border border-gray-100 p-4">
                   <p className="text-sm font-bold text-gray-800">{t.tipsTitle}</p>
                   <ul className="mt-1.5 text-xs text-gray-600 grid gap-1 list-disc pl-4">
                     {t.tips.map((tip) => <li key={tip}>{tip}</li>)}
                   </ul>
-                </div>
-                <div className="rounded-xl bg-green-50 border border-green-100 p-4">
-                  <p className="text-sm font-bold text-green-900">{t.photoPrivacyTitle}</p>
-                  <p className="mt-1.5 text-xs text-green-800">{t.photoPrivacy}</p>
                 </div>
               </div>
             </>
@@ -336,7 +335,7 @@ function ReportSamjhao({ defaultLang }) {
             <button type="submit" className="mt-4 w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 active:scale-[0.99] transition">
               {t.explain}
             </button>
-            <p className="mt-3 text-xs text-gray-500 text-center">🔒 {t.privacy}</p>
+            <p className="mt-3 text-xs text-gray-600 text-center leading-relaxed">🔒 {t.privacy}</p>
           </form>
         )}
 
@@ -385,7 +384,7 @@ function ReportSamjhao({ defaultLang }) {
                         {reason && <p className="mt-2 text-sm text-gray-800">{reason}</p>}
                         <Link
                           to={`/specialization/${specFor(id)}`}
-                          onClick={() => trackEvent('find_doctor_click', { source: 'tool_report', specialization: specFor(id), param: id })}
+                          onClick={() => trackEvent('find_doctor_click', { source: 'tool_report', specialization: specFor(id) })}
                           className="mt-3 inline-block text-sm font-semibold text-indigo-700 hover:underline"
                         >
                           {t.showDoctor(t.specNames[specFor(id)])}

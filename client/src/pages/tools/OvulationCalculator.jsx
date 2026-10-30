@@ -61,7 +61,7 @@ function OvulationCalculator({ defaultLang }) {
     const r = calculate(lmp, cycle, period, todayUTC());
     setResult(r);
     setMonthOffset(0);
-    if (!r.error) trackEvent('tool_ovulation_calculate', { cycle: r.cycle, late: r.late ? 'yes' : 'no' });
+    if (!r.error) trackEvent('tool_ovulation_calculate', {}); // no health details to analytics
   };
 
   const ok = result && !result.error;
@@ -166,7 +166,7 @@ function OvulationCalculator({ defaultLang }) {
           <button type="submit" className="mt-5 w-full py-3.5 rounded-xl bg-violet-600 text-white font-semibold hover:bg-violet-700 active:scale-[0.99] transition">
             {t.calc}
           </button>
-          <p className="mt-3 text-xs text-gray-500 text-center">🔒 {t.privacy}</p>
+          <p className="mt-3 text-xs text-gray-600 text-center leading-relaxed">🔒 {t.privacy}</p>
         </form>
 
         {/* Result */}

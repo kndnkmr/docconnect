@@ -725,7 +725,7 @@ function BlogArticle({ defaultLang = 'en' }) {
                 {lang === 'hi' && hasHindi ? 'Agla period aur fertile days jaanein' : 'Find your next period & fertile days'}
               </span>
               <span className="block text-xs text-violet-700">
-                {lang === 'hi' && hasHindi ? 'Free ovulation calculator · kuch bhi save nahi hota' : 'Free ovulation calculator · nothing is saved'}
+                {lang === 'hi' && hasHindi ? 'Free ovulation calculator · dates aapke phone par hi rehti hain' : 'Free ovulation calculator · your dates stay on your phone'}
               </span>
             </span>
             <span className="text-violet-700 font-semibold" aria-hidden="true">→</span>
@@ -745,7 +745,7 @@ function BlogArticle({ defaultLang = 'en' }) {
                 {lang === 'hi' && hasHindi ? 'Apni blood report samjhein' : 'Understand your blood report'}
               </span>
               <span className="block text-xs text-indigo-700">
-                {lang === 'hi' && hasHindi ? 'Photo lein ya values daalein · kuch upload nahi hota' : 'Take a photo or type values · nothing is uploaded'}
+                {lang === 'hi' && hasHindi ? 'Photo lein ya values daalein · report aapke phone se bahar nahi jaati' : 'Take a photo or type values · your report never leaves your phone'}
               </span>
             </span>
             <span className="text-indigo-700 font-semibold" aria-hidden="true">→</span>

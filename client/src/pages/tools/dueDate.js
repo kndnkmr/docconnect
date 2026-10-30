@@ -139,7 +139,7 @@ export const RELATED_ARTICLES = [
 export const COPY = {
   en: {
     seoTitle: 'Pregnancy Due Date Calculator — Free, in English & Hindi',
-    seoDesc: 'Free pregnancy due date calculator: enter the first day of your last period to see your estimated due date, how many weeks pregnant you are, and your trimester. Nothing is stored.',
+    seoDesc: 'Free pregnancy due date calculator: enter the first day of your last period to see your estimated due date, how many weeks pregnant you are, and your trimester. Your dates stay on your phone — ProMedicoz never sees or saves them.',
     kicker: 'ProMedicoz · Free tool',
     title: 'When is my baby due?',
     subtitle: 'Pregnancy due date calculator',
@@ -166,7 +166,7 @@ export const COPY = {
     shareMsg: (m, url) => `Happy news! 🎉 Our little one is expected in ${m} 👶\n\nFind your own due date — free, in English & Hindi:\n${url}`,
     copied: 'Message copied — paste it in WhatsApp!',
     safety: 'This is an estimate only. Your doctor confirms the date with an ultrasound. Please see a gynaecologist in the first trimester. If you have bleeding or severe pain, go to the nearest hospital straight away.',
-    privacy: 'Private: calculated on your phone. Nothing is stored or sent.',
+    privacy: 'Your dates stay on your phone. They are worked out right here and are never sent to ProMedicoz, never saved and never shared with anyone.',
     readMore: 'Read next',
     faqTitle: 'Frequently asked questions',
     howTitle: 'How the due date is calculated',
@@ -181,7 +181,7 @@ export const COPY = {
   },
   hi: {
     seoTitle: 'Meri Due Date Kab Hai? Pregnancy Due Date Calculator (Hindi)',
-    seoDesc: 'Free pregnancy due date calculator Hindi mein: aakhri period ka pehla din daalein aur jaanein anumaanit due date, pregnancy kitne hafte ki hai aur kaun si timaahi. Kuch bhi save nahi hota.',
+    seoDesc: 'Free pregnancy due date calculator Hindi mein: aakhri period ka pehla din daalein aur jaanein anumaanit due date, pregnancy kitne hafte ki hai aur kaun si timaahi. Aapki dates aapke phone par hi rehti hain.',
     kicker: 'ProMedicoz · Free tool',
     title: 'Meri due date kab hai? 🤰',
     subtitle: 'Pregnancy due date calculator — Hindi mein',
@@ -208,7 +208,7 @@ export const COPY = {
     shareMsg: (m, url) => `Khushkhabri! 🎉 Hamare nanhe mehmaan ${m} mein aane wale hain 👶\n\nAap bhi apni due date nikaalein — free, Hindi mein:\n${url}`,
     copied: 'Message copy ho gaya — WhatsApp mein paste karein!',
     safety: 'Yeh sirf anumaan hai. Sahi date doctor ultrasound se batate hain. Pehli timaahi mein gynaecologist se zaroor milein. Khoon aaye ya tez dard ho to turant nazdeeki hospital jaayein.',
-    privacy: 'Private: calculation aapke phone par hoti hai. Kuch bhi save ya send nahi hota.',
+    privacy: 'Aapki dates aapke phone par hi rehti hain. Hisaab yahin hota hai — ProMedicoz ko kuch nahi bheja jaata, kuch save nahi hota aur kisi ke saath share nahi hota.',
     readMore: 'Aage padhein',
     faqTitle: 'Aksar poochhe jaane wale sawaal',
     howTitle: 'Due date kaise nikaali jaati hai',

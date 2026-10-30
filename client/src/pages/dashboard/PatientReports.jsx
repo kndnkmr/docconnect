@@ -28,6 +28,7 @@ const REPORTS_TXT = {
     descLabel: 'Description (optional)',
     descPlaceholder: 'Any notes about this report',
     fileLabel: 'Upload File (PDF or Image)',
+    privacy: '🔒 Your report goes only to the doctor you pick, for your care. ProMedicoz never sells it or shares it with anyone else.',
     submit: 'Upload Report',
     emptyTitle: 'No reports uploaded',
     emptyText: 'Upload your test reports here so your doctor can review them.',
@@ -61,6 +62,7 @@ const REPORTS_TXT = {
     descLabel: 'जानकारी (ज़रूरी नहीं)',
     descPlaceholder: 'इस रिपोर्ट के बारे में कुछ बताना हो तो लिखें',
     fileLabel: 'फ़ाइल डालें (PDF या फ़ोटो)',
+    privacy: '🔒 आपकी रिपोर्ट सिर्फ़ आपके चुने हुए डॉक्टर को, आपके इलाज के लिए जाती है। ProMedicoz इसे न बेचता है, न किसी और से शेयर करता है।',
     submit: 'रिपोर्ट अपलोड करें',
     emptyTitle: 'अभी कोई रिपोर्ट अपलोड नहीं की',
     emptyText: 'अपनी जाँच की रिपोर्ट यहाँ अपलोड करें ताकि डॉक्टर उन्हें देख सकें।',
@@ -268,6 +270,7 @@ function PatientReports() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 required
               />
+              <p className="mt-2 text-xs text-gray-600">{t.privacy}</p>
             </div>
             <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
               {t.submit}

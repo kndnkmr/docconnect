@@ -1996,6 +1996,15 @@ Replaces the older "Blog List Redesign" layout above.
 - ⭐ Save, likes, reads, share buttons and tool links work as before.
 - Language follows the app switch; the article's own English / Hinglish toggle also flips the app.
 
+## Privacy wording (keep it true)
+
+**Free tools** (Report Samjhao, due date, ovulation, vaccines, `/tools`) use one clear promise. Your details stay **on your phone**: they're never sent to ProMedicoz, never saved and never shared. Report Samjhao also says no other company or AI service sees the photo.
+- This is literally true. Tool inputs never reach our server, and the photo reader's files are self-hosted (`/tesseract`).
+- Analytics events from the tools record only that the tool was used (photo vs typed for reports). They carry NO health details: no weeks pregnant, cycle length, results or child's age. Don't add them back, or the promise (and the privacy policy's "no health information to Google") becomes false.
+- Vaccine ticks ARE kept on the phone (localStorage), and the copy says so.
+
+**Account data** (medical info, visit reason, uploaded reports) does reach our server, and the admin panel can see medical info and visit reasons. So that copy says "used only for your care, ProMedicoz never sells it or shares it with anyone else". It must NOT say "only your doctor can see it". Reports: "goes only to the doctor you pick". This matches the privacy policy, section 3.
+
 ## Pending Cleanup (after the Oregon → Singapore move, Oct 2026)
 
 Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:

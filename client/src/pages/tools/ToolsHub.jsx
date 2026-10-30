@@ -55,7 +55,7 @@ function ToolsHub() {
             </li>
           ))}
         </ul>
-        <p className="mt-6 text-xs text-gray-500 text-center">🔒 {t.privacy}</p>
+        <p className="mt-6 text-xs text-gray-600 text-center leading-relaxed">🔒 {t.privacy}</p>
       </div>
     </div>
   );

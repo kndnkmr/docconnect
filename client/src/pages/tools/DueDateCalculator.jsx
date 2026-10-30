@@ -58,7 +58,7 @@ function DueDateCalculator({ defaultLang }) {
     e.preventDefault();
     const r = calculate(lmp, cycle, todayUTC());
     setResult(r);
-    if (!r.error) trackEvent('tool_due_date_calculate', { weeks: r.weeks, trimester: r.trimester });
+    if (!r.error) trackEvent('tool_due_date_calculate', {}); // no health details to analytics
   };
 
   const shareUrl = result && !result.error ? `${SITE}${TOOL_PATH}/${result.monthKey}` : `${SITE}${TOOL_PATH}`;
@@ -141,7 +141,7 @@ function DueDateCalculator({ defaultLang }) {
           <button type="submit" className="mt-5 w-full py-3.5 rounded-xl bg-pink-600 text-white font-semibold hover:bg-pink-700 active:scale-[0.99] transition">
             {t.calc}
           </button>
-          <p className="mt-3 text-xs text-gray-500 text-center">🔒 {t.privacy}</p>
+          <p className="mt-3 text-xs text-gray-600 text-center leading-relaxed">🔒 {t.privacy}</p>
         </form>
 
         {/* Result */}

@@ -19,7 +19,7 @@ const DEFAULT_POINTS = [
   { icon: '✅', title: 'Verified doctors', desc: 'Every doctor’s credentials are checked before they can consult.' },
   { icon: '🧾', title: 'Fair, honest fees', desc: 'Pay the doctor directly — no hidden platform commission.' },
   { icon: '📱', title: 'Video, phone or in-person', desc: 'Consult the way that suits you, from anywhere in India.' },
-  { icon: '🔒', title: 'Private & secure', desc: 'Your health information stays confidential.' },
+  { icon: '🔒', title: 'Private & secure', desc: 'Your health details are used only for your care. ProMedicoz never sells or shares them.' },
 ];
 
 function AuthLayout({ title, subtitle, children, points = DEFAULT_POINTS, side = 'left' }) {
