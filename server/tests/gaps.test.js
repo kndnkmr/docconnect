@@ -161,6 +161,35 @@ test('booking: reason length, consultation type and bookedFor are checked', asyn
   assert.strictEqual((await bookErr({ bookedFor: 'neighbour' })).status, 400);
 });
 
+test('booking: the note is optional — chips, or "Not specified", fill the reason', async () => {
+  // Chips only, no note
+  assert.strictEqual(await bookErr({ reason: '', symptoms: ['Fever', 'Cough'] }), null);
+  assert.strictEqual(created.reason, 'Fever, Cough');
+  // Nothing at all (field left out)
+  const { reason, ...noReason } = BODY; // eslint-disable-line no-unused-vars
+  await createBooking({ patientId: 'pat1', body: noReason });
+  assert.strictEqual(created.reason, 'Not specified');
+  // A typed note still wins, trimmed
+  assert.strictEqual(await bookErr({ reason: '  Pain for 3 days ', symptoms: ['Fever'] }), null);
+  assert.strictEqual(created.reason, 'Pain for 3 days');
+  // Pure helper
+  const { reasonFor } = require('../utils/booking');
+  assert.strictEqual(reasonFor('   ', []), 'Not specified');
+  assert.strictEqual(reasonFor(undefined, ['Headache']), 'Headache');
+});
+
+test('booking emails escape what people typed (names, reason)', () => {
+  const { esc } = require('../utils/sendEmail');
+  assert.strictEqual(esc('<script>x</script> & "Dr\'s"'), '&lt;script&gt;x&lt;/script&gt; &amp; &quot;Dr&#39;s&quot;');
+  assert.strictEqual(esc(undefined), '');
+  // No template puts a typed field into the HTML body unescaped.
+  const src = require('fs').readFileSync(require.resolve('../utils/sendEmail'), 'utf8');
+  const body = src.split('\n').filter((l) => !/^\s*const subject = /.test(l)).join('\n');
+  for (const f of ['patient.name', 'doctor.name', 'appointment.reason', 'doctor.specialization']) {
+    assert.ok(!body.includes('${' + f + '}'), `${f} must be wrapped in esc()`);
+  }
+});
+
 // ---------- Reschedule ----------
 test('reschedule: same slot rules as booking', async () => {
   Appointment.findById = () => q({ _id: 'a1', patient: 'pat1', doctor: 'doc1', status: 'confirmed' });

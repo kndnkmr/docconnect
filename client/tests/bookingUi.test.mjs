@@ -47,6 +47,7 @@ test('missing step is reported in page order', () => {
   assert.equal(missingStep(ok), null);
   assert.equal(missingStep({ ...ok, timeSlot: '' }), 'time');
   assert.equal(missingStep({ ...ok, bookedFor: 'family', familyMemberName: '' }), 'who');
-  assert.equal(missingStep({ ...ok, reason: '  ' }), 'reason');
+  assert.equal(missingStep({ ...ok, reason: '  ' }), null, 'no note needed');
+  assert.equal(missingStep({ ...ok, reason: undefined }), null);
   assert.equal(missingStep({ ...ok, consent: false }), 'consent');
 });

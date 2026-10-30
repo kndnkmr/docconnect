@@ -52,6 +52,9 @@ const sendEmail = async ({ to, subject, html }) => {
   }
 };
 
+// Escape text people typed (names, reason) before putting it in email HTML.
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 // ============================================
 // Email templates
 // ============================================
@@ -66,16 +69,16 @@ const sendAppointmentNotification = async (doctor, patient, appointment) => {
       </div>
       <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
         <h2 style="color: #1f2937; margin-top: 0;">New Appointment Request</h2>
-        <p style="color: #4b5563;">Hi Dr. ${doctor.name},</p>
+        <p style="color: #4b5563;">Hi Dr. ${esc(doctor.name)},</p>
         <p style="color: #4b5563;">A new appointment has been booked with you:</p>
         
         <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-          <p style="margin: 4px 0; color: #374151;"><strong>Patient:</strong> ${patient.name}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Patient:</strong> ${esc(patient.name)}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Phone:</strong> ${patient.phone || 'Not provided'}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Time:</strong> ${appointment.timeSlot}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Type:</strong> ${appointment.consultationType}</p>
-          <p style="margin: 4px 0; color: #374151;"><strong>Reason:</strong> ${appointment.reason}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Reason:</strong> ${esc(appointment.reason)}</p>
         </div>
 
         <p style="color: #4b5563;">Please log in to your dashboard to <strong>confirm</strong> or <strong>reject</strong> this appointment.</p>
@@ -109,11 +112,11 @@ const sendAppointmentConfirmation = async (patient, doctor, appointment) => {
         <h1 style="margin: 0; font-size: 20px;">✓ Appointment Confirmed</h1>
       </div>
       <div style="border: 1px solid #e5e7eb; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
-        <p style="color: #4b5563;">Hi ${patient.name},</p>
+        <p style="color: #4b5563;">Hi ${esc(patient.name)},</p>
         <p style="color: #4b5563;">Great news! Your appointment has been confirmed:</p>
         
         <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-          <p style="margin: 4px 0; color: #374151;"><strong>Doctor:</strong> Dr. ${doctor.name} (${doctor.specialization || 'General'})</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Doctor:</strong> Dr. ${esc(doctor.name)} (${doctor.specialization || 'General'})</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Time:</strong> ${appointment.timeSlot}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Type:</strong> ${appointment.consultationType}</p>
@@ -164,14 +167,14 @@ const sendAdminBookingNotification = async (doctor, patient, appointment) => {
         <p style="color: #4b5563;">A patient just booked an appointment. It is <strong>pending the doctor's confirmation</strong>. If the doctor doesn't confirm, you can confirm it on their behalf from the Admin dashboard.</p>
 
         <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-          <p style="margin: 4px 0; color: #374151;"><strong>Patient:</strong> ${patient.name}${patient.patientId ? ` (${patient.patientId})` : ''}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Patient:</strong> ${esc(patient.name)}${patient.patientId ? ` (${esc(patient.patientId)})` : ''}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Patient phone:</strong> ${patient.phone || 'Not provided'}</p>
-          <p style="margin: 4px 0; color: #374151;"><strong>Doctor:</strong> Dr. ${doctor.name}${doctor.specialization ? ` (${doctor.specialization})` : ''}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Doctor:</strong> Dr. ${esc(doctor.name)}${doctor.specialization ? ` (${esc(doctor.specialization)})` : ''}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Doctor phone:</strong> ${doctor.phone || 'Not provided'}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Time:</strong> ${appointment.timeSlot}</p>
           <p style="margin: 4px 0; color: #374151;"><strong>Type:</strong> ${appointment.consultationType}</p>
-          <p style="margin: 4px 0; color: #374151;"><strong>Reason:</strong> ${appointment.reason}</p>
+          <p style="margin: 4px 0; color: #374151;"><strong>Reason:</strong> ${esc(appointment.reason)}</p>
         </div>
 
         <a href="https://www.promedicoz.in/admin" style="display: inline-block; background: #0f172a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">
@@ -188,4 +191,4 @@ const sendAdminBookingNotification = async (doctor, patient, appointment) => {
   return await sendEmail({ to: ADMIN_NOTIFY_EMAIL, subject, html });
 };
 
-module.exports = { sendEmail, sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification };
+module.exports = { sendEmail, sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification, esc };

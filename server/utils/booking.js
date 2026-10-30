@@ -22,6 +22,15 @@ const { sendAppointmentNotification, sendAdminBookingNotification } = require('.
 const { slotProblem } = require('./slots');
 
 const MAX_REASON = 1000;
+
+// What the doctor sees as "Reason": the patient's note, else the symptom
+// chips they tapped ("Fever, Cough"), else "Not specified".
+function reasonFor(note, symptoms) {
+  const n = typeof note === 'string' ? note.trim() : '';
+  if (n) return n;
+  const chips = (symptoms || []).filter(Boolean).join(', ');
+  return chips || 'Not specified';
+}
 const CONSULT_TYPES = ['in-person', 'video', 'phone'];
 // Same visibility rule as the public doctor list (GET /api/doctors).
 const BOOKABLE_DOCTOR = { role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true }, isSuspended: { $ne: true } };
@@ -54,14 +63,16 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     originalAppointmentId, isFollowUp, consentGiven, symptoms,
   } = body || {};
 
-  // Step 1: Validate required fields
-  if (!doctorId || !date || !timeSlot || !reason) {
-    throw new BookingError(400, 'Please provide doctorId, date, timeSlot, and reason');
+  // Step 1: Validate required fields. The reason (patient's own note) is
+  // optional: many patients just tap symptom chips, or nothing. reasonFor()
+  // below fills it so doctors / emails never show a blank.
+  if (!doctorId || !date || !timeSlot) {
+    throw new BookingError(400, 'Please provide doctorId, date and timeSlot');
   }
-  if (typeof reason !== 'string' || !reason.trim()) {
-    throw new BookingError(400, 'Please describe the reason for the visit');
+  if (reason !== undefined && reason !== null && typeof reason !== 'string') {
+    throw new BookingError(400, 'Reason must be text');
   }
-  if (reason.length > MAX_REASON) {
+  if (reason && reason.length > MAX_REASON) {
     throw new BookingError(400, `Reason is too long (max ${MAX_REASON} characters)`);
   }
   if (consultationType !== undefined && consultationType !== '' && !CONSULT_TYPES.includes(consultationType)) {
@@ -196,7 +207,7 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     doctor: doctorId,
     date: new Date(date),
     timeSlot,
-    reason: reason.trim(),
+    reason: reasonFor(reason, cleanSymptoms),
     symptoms: cleanSymptoms,
     consultationType: mode,
     status: 'pending',
@@ -235,4 +246,4 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
   return { appointment, doctor, patient };
 }
 
-module.exports = { createBooking, BookingError, todayIST, BOOKABLE_DOCTOR };
+module.exports = { createBooking, BookingError, todayIST, BOOKABLE_DOCTOR, reasonFor };

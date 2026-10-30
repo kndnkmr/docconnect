@@ -101,11 +101,13 @@ export function symptomsFor(specialization) {
   return hit ? hit.list : GENERAL;
 }
 
-// What's still missing before booking (first one), or null.
-export function missingStep({ date, timeSlot, reason, consent, bookedFor, familyMemberName }) {
+// What's still missing before booking (first one), or null. The problem
+// step (symptom chips + note) is optional: many patients don't want to
+// write it, and the server fills the reason from the chips or "Not
+// specified".
+export function missingStep({ date, timeSlot, consent, bookedFor, familyMemberName }) {
   if (!date || !timeSlot) return 'time';
   if (bookedFor === 'family' && !familyMemberName) return 'who';
-  if (!String(reason || '').trim()) return 'reason';
   if (!consent) return 'consent';
   return null;
 }

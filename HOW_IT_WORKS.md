@@ -2033,6 +2033,15 @@ Replaces the older "Blog List Redesign" layout above.
 - The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
 - Tests: `server/tests/upiPay.test.js`.
 
+## Booking: the reason is optional
+
+Many patients didn't want to type a reason, and "Book" was blocked until they did. Now the whole "What's the problem?" step is optional:
+- The symptom chips stay. The free-text note is hidden behind "+ Add a note for the doctor (optional)" (it opens by itself if a draft or repeat booking already has text). The 🎤 mic still works.
+- The server (`server/utils/booking.js` → `reasonFor`) always stores a reason: the note, else the chips ("Fever, Cough"), else "Not specified". The database rule (reason required) is unchanged, so doctor screens, emails and old bookings never show a blank.
+- The admin "Book for a patient" form (`HelpPatient.jsx`) follows the same rule.
+- Booking emails now escape names and the reason before putting them in the HTML (`esc` in `server/utils/sendEmail.js`); subject lines stay plain text.
+- Tests: `server/tests/gaps.test.js`, `client/tests/bookingUi.test.mjs`.
+
 ## Admin sign-up emails (`server/utils/signupAlerts.js`)
 
 Sent to `ADMIN_NOTIFY_EMAIL`, falling back to `ADMIN_EMAIL`, then `support@promedicoz.in` (same as the booking emails).

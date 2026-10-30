@@ -84,7 +84,8 @@ const BOOKING_TXT = {
     step3: 'Reason for visit',
     symptomsLabel: 'Symptoms (optional)',
     symptomsHint: 'Select any that apply — helps your doctor at a glance. Used only for your care, never sold or shared.',
-    reasonLabel: 'Reason for Visit *',
+    reasonLabel: 'Note for the doctor (optional)',
+    addNote: '+ Add a note for the doctor (optional)',
     reasonPlaceholder: 'Briefly describe your symptoms or reason for the visit...',
     booking: 'Booking...',
     confirmBooking: 'Confirm Booking',
@@ -94,7 +95,7 @@ const BOOKING_TXT = {
     yrs: (n) => `${n} yrs`,
     when: 'When?',
     howWho: 'How & for whom?',
-    problem: "What's the problem?",
+    problem: "What's the problem? (optional)",
     earliest: (label) => `⚡ Earliest: ${label}`,
     today: 'Today',
     tomorrow: 'Tomorrow',
@@ -158,7 +159,8 @@ const BOOKING_TXT = {
     step3: 'आने का कारण',
     symptomsLabel: 'लक्षण (वैकल्पिक)',
     symptomsHint: 'जो भी लागू हों चुनें — इससे डॉक्टर को एक नज़र में मदद मिलती है। यह सिर्फ़ आपके इलाज के लिए है, न बेचा जाता है न शेयर किया जाता है।',
-    reasonLabel: 'आने का कारण *',
+    reasonLabel: 'डॉक्टर के लिए नोट (ज़रूरी नहीं)',
+    addNote: '+ डॉक्टर के लिए नोट जोड़ें (ज़रूरी नहीं)',
     reasonPlaceholder: 'अपने लक्षण या आने का कारण संक्षेप में बताएं...',
     booking: 'बुकिंग हो रही है...',
     confirmBooking: 'बुकिंग की पुष्टि करें',
@@ -168,7 +170,7 @@ const BOOKING_TXT = {
     yrs: (n) => `${n} साल`,
     when: 'कब?',
     howWho: 'कैसे और किसके लिए?',
-    problem: 'क्या परेशानी है?',
+    problem: 'क्या परेशानी है? (ज़रूरी नहीं)',
     earliest: (label) => `⚡ सबसे जल्दी: ${label}`,
     today: 'आज',
     tomorrow: 'कल',
@@ -239,6 +241,9 @@ function BookAppointment() {
   // Structured symptom tags — a fast-glance supplement to the free-text
   // "Reason for Visit" below, not a replacement for it.
   const [symptoms, setSymptoms] = useState([]);
+  // The note is optional and hidden behind "+ Add a note"; it shows by
+  // itself when there's already text (draft restored / repeat booking).
+  const [noteOpen, setNoteOpen] = useState(false);
   const toggleSymptom = (s) => {
     setSymptoms((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
   };
@@ -406,8 +411,9 @@ function BookAppointment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.date || !formData.timeSlot || !formData.reason) {
-      toast.error('Please fill in all required fields');
+    // The note is optional (the server fills it from the chips).
+    if (!formData.date || !formData.timeSlot) {
+      toast.error(t.missing.time);
       return;
     }
 
@@ -773,28 +779,34 @@ function BookAppointment() {
                 );
               })}
             </div>
-            <div>
-              <label htmlFor="book-reason" className="block text-sm font-semibold text-gray-800 mb-1">{t.reasonLabel}</label>
-              <div className="relative">
-                <textarea
-                  id="book-reason"
-                  value={formData.reason}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, reason: e.target.value }))}
-                  placeholder={t.reasonPh2}
-                  rows={3}
-                  className={`w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none ${voiceOk ? 'pr-14' : ''}`}
-                  required
-                />
-                {voiceOk && (
-                  <VoiceSearch
-                    lang={lang}
-                    hideHint
-                    onResult={(said) => setFormData((prev) => ({ ...prev, reason: prev.reason.trim() ? `${prev.reason.trim()} ${said}` : said }))}
+            {!(noteOpen || String(formData.reason || '').trim()) ? (
+              <button type="button" onClick={() => setNoteOpen(true)} className="text-sm font-medium text-primary-700 hover:underline">
+                {t.addNote}
+              </button>
+            ) : (
+              <div>
+                <label htmlFor="book-reason" className="block text-sm font-semibold text-gray-800 mb-1">{t.reasonLabel}</label>
+                <div className="relative">
+                  <textarea
+                    id="book-reason"
+                    value={formData.reason}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, reason: e.target.value }))}
+                    placeholder={t.reasonPh2}
+                    rows={3}
+                    autoFocus={noteOpen && !String(formData.reason || '').trim()}
+                    className={`w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none ${voiceOk ? 'pr-14' : ''}`}
                   />
-                )}
+                  {voiceOk && (
+                    <VoiceSearch
+                      lang={lang}
+                      hideHint
+                      onResult={(said) => setFormData((prev) => ({ ...prev, reason: prev.reason.trim() ? `${prev.reason.trim()} ${said}` : said }))}
+                    />
+                  )}
+                </div>
+                {voiceOk && <p className="text-xs text-gray-600 mt-1">{t.voiceHint}</p>}
               </div>
-              {voiceOk && <p className="text-xs text-gray-600 mt-1">{t.voiceHint}</p>}
-            </div>
+            )}
           </section>
 
           {/* Consent (bilingual: English + Hindi) */}

@@ -306,7 +306,7 @@ function BookTab({ patient, onBooked }) {
   }, [doctor, date]);
 
   const forName = forWho === 'self' ? patient.name : forWho;
-  const canBook = doctor && date && slot && reason.trim() && consent && !busy;
+  const canBook = doctor && date && slot && consent && !busy; // reason is optional (server fills "Not specified")
 
   const book = async () => {
     setBusy(true);
@@ -417,7 +417,7 @@ function BookTab({ patient, onBooked }) {
             </div>
           </div>
           <div>
-            <label className={label} htmlFor="bk-reason">Reason (the patient's words)</label>
+            <label className={label} htmlFor="bk-reason">Reason (optional, the patient's words)</label>
             <textarea id="bk-reason" rows={2} className={`${input} resize-none`} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Thyroid follow-up, tiredness" />
           </div>
           <label className="flex items-start gap-2 rounded-xl border-2 border-amber-300 bg-amber-50 p-3 cursor-pointer">
