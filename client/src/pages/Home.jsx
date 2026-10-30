@@ -886,7 +886,7 @@ function Home() {
                   <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
                   {/* Always bilingual — the whole point is a Hindi-speaking
                       patient can tap the right card instead of typing English. */}
-                  <p className="text-xs font-semibold text-gray-700 leading-tight">{item.symptom}</p>
+                  <p className="text-xs font-semibold text-gray-700 leading-tight break-words hyphens-auto">{item.symptom}</p>
                   <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
                 </Link>
               ))}

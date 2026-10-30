@@ -2082,7 +2082,7 @@ function Dashboard() {
                             href={`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 bg-white border border-green-500 text-green-700 rounded-lg text-sm hover:bg-green-50 whitespace-nowrap"
+                            className="px-4 py-2 bg-white border border-green-500 text-green-700 rounded-lg text-sm hover:bg-green-50 max-w-full text-center"
                             title="Optional — the appointment is already confirmed in the app and the patient is notified automatically. This just lets you also send them a WhatsApp note if you'd like."
                           >
                             📱 Also message on WhatsApp (optional)
