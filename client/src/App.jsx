@@ -49,6 +49,31 @@ import SpecializationPage from './pages/SpecializationPage';
 // article, see BlogArticle.jsx) — so blog pages stay light however many
 // articles we add.
 const BlogList = lazy(() => import('./pages/blog/BlogList'));
+
+// What shows for the moment a page's code (or an article's text) is still
+// arriving. Articles get a quiet outline of the page — title, a few lines,
+// in the same place the text will appear — so it reads as "arriving", not
+// "buffering". Everything else keeps the short "Loading…".
+function PageFallback() {
+  const { pathname } = useLocation();
+  if (/^\/blog\/[a-z0-9-]+(\/hi)?\/?$/.test(pathname)) {
+    return (
+      <div className="container mx-auto px-4 py-8" aria-busy="true" aria-live="polite">
+        <span className="sr-only">Loading article…</span>
+        <div className="max-w-3xl mx-auto animate-pulse" aria-hidden="true">
+          <div className="h-3 w-32 bg-gray-200 rounded mb-6" />
+          <div className="h-4 w-24 bg-primary-100 rounded mb-3" />
+          <div className="h-7 w-11/12 bg-gray-200 rounded mb-2" />
+          <div className="h-7 w-2/3 bg-gray-200 rounded mb-5" />
+          <div className="h-4 w-full bg-gray-100 rounded mb-2" />
+          <div className="h-4 w-5/6 bg-gray-100 rounded mb-8" />
+          {[0, 1, 2, 3, 4, 5].map((i) => <div key={i} className={`h-4 ${i % 3 === 2 ? 'w-4/6' : 'w-full'} bg-gray-100 rounded mb-3`} />)}
+        </div>
+      </div>
+    );
+  }
+  return <div className="flex-grow flex items-center justify-center py-20 text-gray-500">Loading…</div>;
+}
 const BlogArticle = lazy(() => import('./pages/blog/BlogArticle'));
 
 // Pages most visitors never open on their first visit are also loaded on
@@ -154,7 +179,7 @@ function App() {
         */}
         {/* Suspense boundary for lazy-loaded pages (e.g. the blog). Shows a
             tiny loader for the brief moment a page's chunk is fetched. */}
-        <Suspense fallback={<div className="flex-grow flex items-center justify-center py-20 text-gray-500">Loading…</div>}>
+        <Suspense fallback={<PageFallback />}>
         <Routes>
           {/* ---- Public Routes (anyone can access) ---- */}
           <Route path="/" element={<Home />} />

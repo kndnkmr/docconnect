@@ -46,7 +46,11 @@ import './index.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
-      <BrowserRouter>
+      {/* v7_startTransition: when a link opens a page whose code is still
+          downloading, keep the current page on screen until the new one is
+          ready, instead of flashing "Loading…" (was most visible opening
+          blog articles from Home / "More to read"). */}
+      <BrowserRouter future={{ v7_startTransition: true }}>
         <AuthProvider>
           <PwaProvider>
             <LangProvider>
@@ -58,6 +62,31 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </HelmetProvider>
   </React.StrictMode>
 );
+
+// ---- Blog articles: never wait in line ----
+// 1) Opened straight from a link (WhatsApp / Google): start loading this
+//    article now, while React starts up (the pre-built page already asked the
+//    browser for the files with <link rel="modulepreload">). By the time the
+//    article page draws, the text is ready — no "Loading…".
+// 2) Anywhere on the site (Home, "More to read", links inside articles):
+//    a finger touching / mouse hovering an article link starts its download.
+const ARTICLE_PATH = /^\/blog\/([a-z0-9-]+)(?:\/hi)?\/?$/;
+const prefetchSlug = (slug) => {
+  import('./pages/blog/articleBodies').then((m) => m.prefetchArticle(slug)).catch(() => {});
+};
+{
+  const m = ARTICLE_PATH.exec(window.location.pathname);
+  if (m) prefetchSlug(m[1]);
+  const early = (e) => {
+    const a = e.target && e.target.closest && e.target.closest('a[href^="/blog/"]');
+    if (!a) return;
+    const hit = ARTICLE_PATH.exec(a.getAttribute('href').split(/[?#]/)[0]);
+    if (hit) prefetchSlug(hit[1]);
+  };
+  document.addEventListener('pointerdown', early, { passive: true, capture: true });
+  document.addEventListener('mouseover', early, { passive: true });
+  document.addEventListener('focusin', early);
+}
 
 // ---- Missing page piece after a new deploy → reload once ----
 // Screens (dashboard tabs, chat, call…) load on demand. If a new version was

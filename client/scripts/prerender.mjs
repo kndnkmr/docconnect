@@ -24,7 +24,7 @@
 // prerendered here — they already get an X-Robots-Tag: noindex response header
 // from vercel.json.
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import { existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -1216,6 +1216,14 @@ function applyMeta(template, route) {
     replaceOnce('<html lang="en">', `<html lang="${esc(route.htmlLang)}">`, 'html-lang');
   }
 
+  // Start downloading this page's code + data together with the main app
+  // (see addArticlePreloads). crossorigin matches Vite's module script tag,
+  // so the browser reuses the download instead of fetching twice.
+  if (Array.isArray(route.preload) && route.preload.length) {
+    const tags = route.preload.map((f) => `<link rel="modulepreload" crossorigin href="/${esc(f)}" />`).join('\n    ');
+    html = html.replace('</head>', `    ${tags}\n  </head>`);
+  }
+
   // Page-specific structured data (Article / Breadcrumb / Physician).
   if (Array.isArray(route.jsonLd) && route.jsonLd.length) {
     html = html.replace('</head>', `    ${route.jsonLd.map(jsonLdTag).join('\n    ')}\n  </head>`);
@@ -1348,6 +1356,41 @@ async function pingIndexNow(routes) {
   }
 }
 
+// Opening an article link used to load in a chain: page → main app →
+// article-page code → the article's own file, each waiting for the one
+// before (~1 s of blank + "Loading…" on a phone). This lists the article
+// page's code (with what it imports) and the article's own file on each
+// pre-built article page, so they download in parallel with the main app.
+// Uses Vite's build manifest; deletes it afterwards so it isn't published.
+async function addArticlePreloads(routes) {
+  const manifestPath = join(DIST, '.vite', 'manifest.json');
+  if (!existsSync(manifestPath)) {
+    console.warn('[prerender] no build manifest — article pages will load without preload hints.');
+    return;
+  }
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  const entry = Object.values(manifest).find((m) => m.isEntry);
+  const skip = new Set([entry && entry.file, ...((entry && entry.imports) || []).map((k) => manifest[k] && manifest[k].file)]);
+  const filesFor = (key, out = new Set()) => {
+    const m = manifest[key];
+    if (!m || out.has(m.file)) return out;
+    if (!skip.has(m.file)) out.add(m.file);
+    for (const k of m.imports || []) filesFor(k, out);
+    return out;
+  };
+  const pageFiles = [...filesFor('src/pages/blog/BlogArticle.jsx'), ...filesFor('src/pages/blog/articleBodies.js')];
+  let n = 0;
+  for (const route of routes) {
+    const m = /^\/blog\/([a-z0-9-]+)(\/hi)?$/.exec(route.path || '');
+    if (!m) continue;
+    const own = manifest[`src/pages/blog/articles/${m[1]}.js`];
+    route.preload = [...new Set([...pageFiles, ...(own ? [own.file] : [])])];
+    n += 1;
+  }
+  console.log(`[prerender] Added preload hints to ${n} article pages (${pageFiles.length} shared files + the article's own).`);
+  await unlink(manifestPath).catch(() => {});
+}
+
 async function main() {
   if (!existsSync(TEMPLATE_PATH)) {
     console.error(`[prerender] dist/index.html not found at ${TEMPLATE_PATH}. Run "vite build" first.`);
@@ -1356,6 +1399,7 @@ async function main() {
 
   const template = await readFile(TEMPLATE_PATH, 'utf8');
   const routes = await buildRoutes();
+  await addArticlePreloads(routes);
 
   let written = 0;
   const missingByRoute = [];

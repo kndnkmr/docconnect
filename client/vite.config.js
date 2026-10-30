@@ -13,6 +13,14 @@ const TESSERACT_VERSION = JSON.parse(
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // dist/.vite/manifest.json: which file each page's code ended up in.
+    // scripts/prerender.mjs reads it to add <link rel="modulepreload"> for
+    // the article page + that article's file to each pre-built article page
+    // (so they download together with the main app instead of one after
+    // another), then deletes it.
+    manifest: true,
+  },
 
   define: {
     __TESSERACT_VERSION__: JSON.stringify(TESSERACT_VERSION),

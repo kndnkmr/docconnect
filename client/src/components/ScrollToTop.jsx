@@ -22,7 +22,10 @@ function ScrollToTop() {
   useEffect(() => {
     // 'auto' = instant jump (not smooth) — a navigation should feel like
     // landing at the top of a fresh page, not animating a long scroll.
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // 'instant', not 'auto': the page has CSS smooth scrolling (for in-page
+    // jumps), and 'auto' follows it, so every new page used to glide up
+    // from where you were for ~1 s before you could read it.
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pathname]);
 
   return null;

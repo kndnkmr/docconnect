@@ -36,7 +36,7 @@ function speechChunks(blocks) {
   }
   return out;
 }
-import { hasArticle, loadArticleBody, readyArticle, prefetchArticle } from './articleBodies';
+import { hasArticle, loadArticleBody, readyArticle, prefetchArticle, articleFailed, whenArticleSettles } from './articleBodies';
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
 import { trackEvent } from '../../components/Analytics';
@@ -237,6 +237,11 @@ function BlogArticle({ defaultLang = 'en' }) {
   // Does this article exist? Checked against the list of generated files, so
   // no other blog data has to be downloaded first.
   const meta = hasArticle(slug);
+  // Not downloaded yet: wait (Suspense) instead of drawing a half page with
+  // "Loading…". On a link, the current page stays on screen until this one
+  // is complete (router uses transitions); on a direct visit the app's page
+  // outline shows. A failed download falls through to "Couldn't load".
+  if (meta && !readyArticle(slug) && !articleFailed(slug)) throw whenArticleSettles(slug);
 
   // Load this article's body. `loaded` remembers which slug it belongs to, so
   // switching articles never shows the previous article's text. If the blog

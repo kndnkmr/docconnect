@@ -12,6 +12,7 @@
 const BODIES = import.meta.glob('./articles/*.js');
 const pending = new Map(); // slug → Promise<body|null>
 const ready = new Map();   // slug → body (already downloaded)
+const failed = new Set();  // slugs whose download failed (this page visit)
 
 export const hasArticle = (slug) => Boolean(BODIES[`./articles/${slug}.js`]);
 
@@ -23,12 +24,23 @@ export function loadArticleBody(slug) {
   if (pending.has(slug)) return pending.get(slug);
   const load = BODIES[`./articles/${slug}.js`];
   if (!load) return Promise.resolve(null);
+  failed.delete(slug);
   const p = load()
     .then((m) => { ready.set(slug, m.default); pending.delete(slug); return m.default; })
     // Failed (e.g. signal dropped): forget it so opening the article retries.
-    .catch((e) => { pending.delete(slug); throw e; });
+    .catch((e) => { pending.delete(slug); failed.add(slug); throw e; });
   pending.set(slug, p);
   return p;
+}
+
+export const articleFailed = (slug) => failed.has(slug);
+
+// For React Suspense: a promise that settles (never rejects) once the
+// article has downloaded or failed. BlogArticle "waits" on it, so a link
+// keeps the current page on screen until the new article is complete
+// (no "Loading…" flash), and a direct visit shows the outline instead.
+export function whenArticleSettles(slug) {
+  return loadArticleBody(slug).then(() => {}, () => {});
 }
 
 // The article page's own code (same file App.jsx lazy-loads; downloaded once).
