@@ -27,8 +27,10 @@ jobs:
     steps:
       - name: Website (promedicoz.in)
         run: |
+          # promedicoz.in forwards to www (HTTP 308) — check the real address
+          # and follow any forwarding (-L), so only a real outage fails.
           for i in 1 2 3; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -m 20 https://promedicoz.in/ || echo 000)
+            code=$(curl -sL -o /dev/null -w '%{http_code}' -m 20 https://www.promedicoz.in/ || echo 000)
             echo "Try $i: HTTP $code"
             [ "$code" = "200" ] && exit 0
             sleep 60
