@@ -2033,6 +2033,19 @@ Replaces the older "Blog List Redesign" layout above.
 - The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
 - Tests: `server/tests/upiPay.test.js`.
 
+## Chat on phones (`client/src/components/ChatBox.jsx`)
+
+- **No zoom on tap:** the type box uses 16 px text. iPhone zooms the page for anything smaller.
+- **Fits above the keyboard:** on phones (under 640 px wide) the chat is sized to `window.visualViewport` (the area the keyboard leaves). Newer Android Chrome and iPhone put the keyboard *over* the page, so a full-height chat used to get pushed up, with the header and messages sliding off the top. The latest message is kept in view when the keyboard opens or closes. The message list has `min-h-0` so a long chat scrolls instead of pushing the box off the screen.
+- **Box grows** from 1 to about 4 lines (120 px), then scrolls. The round ➤ button doesn't take focus, so the keyboard stays open after sending.
+- **Enter:** on a computer, Enter sends and Shift+Enter makes a new line. On a phone, Enter makes a new line and ➤ sends. It never sends during IME (Hindi keyboard) composition.
+- **Header:** who you're talking to (doctor: patient name, "for <family member>" if booked for family; patient: "Dr. <name>") and the appointment day, time and type. Dashboard passes `appointment` to ChatBox.
+- **Quick replies:** shown only while the box is empty. Tapping one fills the box; it's still sent with ➤.
+  - Patient (EN/HI): running late · ready, please call · thank you.
+  - Doctor (EN): joining now · upload your report in the Reports tab · take care.
+- **Long links** wrap inside the bubble.
+- Sending, real-time socket delivery and the 15 s backup refresh are unchanged.
+
 ## Booking: the reason is optional
 
 Many patients didn't want to type a reason, and "Book" was blocked until they did. Now the whole "What's the problem?" step is optional:

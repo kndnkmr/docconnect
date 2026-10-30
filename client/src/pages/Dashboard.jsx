@@ -2634,7 +2634,11 @@ function Dashboard() {
       {/* Chat Modal */}
       {chatAppointmentId && (
         <Suspense fallback={null}>
-          <ChatBox appointmentId={chatAppointmentId} onClose={() => setChatAppointmentId(null)} />
+          <ChatBox
+            appointmentId={chatAppointmentId}
+            appointment={appointments.find((a) => a._id === chatAppointmentId)}
+            onClose={() => setChatAppointmentId(null)}
+          />
         </Suspense>
       )}
 
