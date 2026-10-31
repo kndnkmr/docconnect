@@ -1,17 +1,21 @@
 import { Helmet } from 'react-helmet-async';
+import { seoTitle, seoDescription, SITE_NAME, DEFAULT_TITLE } from '../utils/seoText';
 
 // Reusable SEO component — sets unique title, description, and Open Graph tags per page
 function SEO({ title, description, path = '/', type = 'website', noindex = false }) {
-  const siteName = 'ProMedicoz';
+  const siteName = SITE_NAME;
   const baseUrl = 'https://www.promedicoz.in';
-  const fullTitle = title ? `${title} | ${siteName}` : `${siteName} - Find & Book Doctors Online`;
+  // Search title: brand only if it still fits (utils/seoText.js — the
+  // prerender uses the same rule). Share previews keep the full brand.
+  const searchTitle = seoTitle(title);
+  const fullTitle = title ? `${title} | ${siteName}` : DEFAULT_TITLE;
   const desc = description || 'Book doctor appointments online. Find specialists, choose time slots, video or in-person consultations across India.';
   const url = `${baseUrl}${path}`;
 
   return (
     <Helmet>
-      <title>{fullTitle}</title>
-      <meta name="description" content={desc} />
+      <title>{searchTitle}</title>
+      <meta name="description" content={seoDescription(desc)} />
       {/* Keep utility pages (login, register, dashboards) out of search results
           so they don't compete with or dilute the brand's real content pages. */}
       {noindex && <meta name="robots" content="noindex, follow" />}

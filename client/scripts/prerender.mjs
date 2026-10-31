@@ -30,6 +30,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { citySearchTitle, cityHeading, citySummary, cityGuide, cityFaqs, hoursSummary, nearbyCitySlugs, modesText } from "../src/utils/cityPage.js";
 import { formatDoctorName as appDoctorName } from "../src/utils/formatName.js";
+import { seoTitle, seoDescription } from "../src/utils/seoText.js";
 import { specializationData as SPEC_PAGE_DATA } from "../src/pages/specializationData.js";
 import { doctorSearchTitle, doctorSearchDescription, specialtySchema, openingHours, cleanCity, NEARBY_CITIES, specialtySearchLabel, doctorJsonLd as buildDoctorJsonLd } from "../src/utils/doctorSeo.js";
 
@@ -1109,14 +1110,17 @@ async function buildRoutes() {
 // a no-op — so we assert each critical replacement actually happened, failing
 // the build loudly rather than silently shipping wrong/stale meta.
 function applyMeta(template, route) {
-  const title = fullTitle(route.title);
+  // Search title + description follow the shared rules (src/utils/seoText.js,
+  // same as SEO.jsx): brand only if it fits, description trimmed at a word.
+  // Share previews keep the full branded title and full description.
+  const title = seoTitle(route.title);
   const desc = route.description || '';
   const url = `${SITE}${route.path}`;
   const eTitle = esc(title);
-  const eDesc = esc(desc);
+  const eDesc = esc(seoDescription(desc));
   // Social previews (og:/twitter:) may differ from the search title — doctor
   // pages show Hindi on WhatsApp but English to Google.
-  const eOgTitle = esc(route.ogTitle ? fullTitle(route.ogTitle) : title);
+  const eOgTitle = esc(fullTitle(route.ogTitle || route.title));
   const eOgDesc = esc(route.ogDescription || desc);
   const eUrl = esc(url);
 
