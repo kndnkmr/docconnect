@@ -28080,5 +28080,3419 @@ export const articles = [
       { type: 'paragraph', text: 'Ek chhote bacche ke bolna seekhte samay kuch stammering normal hai aur aksar guzar jaati hai — maa-baap jo sabse achhi cheez kar sakte hain wo hai sabr, shaant, aur warm rehna, aur dabaav hatana. Lekin ek **doctor, paediatrician, ya speech therapist** ko dikhaayein agar stammering lagbhag chhah mahine se zyada rahe, bigad rahi ho, visible effort ya tension ke saath aaye, aapke bacche ko upset kar rahi ho ya unhe baat karne se avoid karaa rahi ho, ya agar ek family history ho — jaldi speech therapy sach mein madad karti hai. Ek **online consultation** aapke bacche ki speech discuss karne, aashwaasan ya guidance lene, aur sahi support ki taraf ishaara hone ka ek achha pehla kadam hai. Maa-baap ke liye key sandesh: dabaav se zyada sabr, aur zaroorat hone par jaldi madad. (Childhood development milestones, autism, aur teenage/child health par hamaari guides dekhein.)' },
       { type: 'callout', variant: 'info', title: 'Sources par ek note', text: 'Yeh trusted public health aur speech-therapy guidance (NHS aur maani gayi stammering support resources) par aadhaarit general education hai. Yeh doctor ya speech aur language therapist ke aakalan ki jagah nahi le sakta. Content was rephrased for compliance with licensing restrictions.' },
     ]
+  },
+  {
+    "slug": "peripheral-neuropathy-burning-tingling-feet-causes-guide",
+    "title": "Burning, Tingling or Numb Feet: Is It Neuropathy?",
+    "description": "Pins and needles, burning soles or numb toes that won't go away? The real causes (diabetes, low B12 and more), the tests that find them, and when it's urgent.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "🦶",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Burning soles at night. Toes that feel like they're wrapped in cotton. \"Chiti chal rahi hai\" tingling that never fully goes away. These are classic signs of **peripheral neuropathy**, which means the long nerves to your feet and hands aren't working properly. It is very common in India, mostly because of diabetes and low vitamin B12. The good news: the cause can usually be found with simple blood tests, and catching it early protects your feet."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Tingling or burning in **both feet** that slowly creeps upward is most often from **diabetes** or **low vitamin B12**. Get sugar (HbA1c), B12 and thyroid checked. **Sudden** numbness on **one side** of the body, or weakness that spreads up both legs over hours to days, is an **emergency**."
+      },
+      {
+        "type": "heading",
+        "text": "How Neuropathy Usually Feels"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Both feet first**, often starting in the toes and slowly moving up. Hands may follow later (doctors call it the \"glove and stocking\" pattern)",
+          "**Burning, tingling, pins and needles**, or electric-shock jolts, often **worse at night**",
+          "**Numbness**: not feeling the floor properly, or slippers slipping off without you noticing",
+          "Feeling **unsteady in the dark** or on uneven ground",
+          "In some people, **cramps**, weak ankles, or very dry, cracked skin on the feet"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "The Common Causes (and the Test for Each)"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Cause",
+          "Why it happens",
+          "Test that finds it"
+        ],
+        "rows": [
+          [
+            "Diabetes",
+            "High sugar over years damages small nerves. The most common cause in India, sometimes found before diabetes itself is diagnosed",
+            "Fasting sugar, HbA1c"
+          ],
+          [
+            "Low vitamin B12",
+            "Common in vegetarians, people over 50, and people on metformin or acid-reducing tablets for a long time",
+            "Serum B12"
+          ],
+          [
+            "Underactive thyroid",
+            "Slows nerve repair",
+            "TSH"
+          ],
+          [
+            "Alcohol",
+            "Direct nerve damage plus poor nutrition",
+            "History, liver tests"
+          ],
+          [
+            "Kidney disease",
+            "Waste builds up in the blood",
+            "Creatinine, eGFR"
+          ],
+          [
+            "Some medicines",
+            "Certain TB medicines (isoniazid, usually given with vitamin B6 for this reason), some chemotherapy and others",
+            "Medicine review"
+          ],
+          [
+            "Infections",
+            "Leprosy (patchy numb skin, still seen in India), HIV",
+            "Skin check, specific tests"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Often one simple blood panel answers the question. If the cause still isn't clear, a **nerve conduction study** (a quick test of how fast signals travel along your nerves) helps a neurologist confirm it."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Brief tingling after sitting cross-legged or sleeping on an arm, gone in minutes",
+            "Nothing. That is pressure on a nerve, not neuropathy"
+          ],
+          [
+            "🟡 See a doctor this week",
+            "Tingling, burning or numbness in both feet lasting weeks, slowly spreading",
+            "Book a consultation and get sugar, B12 and thyroid tested"
+          ],
+          [
+            "🔴 Emergency now",
+            "Sudden numbness or weakness on one side, face drooping or slurred speech",
+            "Possible stroke. Go to the nearest emergency now"
+          ],
+          [
+            "🔴 Emergency now",
+            "Weakness rising up both legs over hours to days, trouble walking or breathing",
+            "Possible Guillain-Barré syndrome. Go to hospital the same day"
+          ],
+          [
+            "🔴 Urgent",
+            "A foot wound, blister or blackening you can't feel, or a wound that isn't healing",
+            "See a doctor the same day. Numb feet hide injuries"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Jhunjhuni is just weakness. A tonic will fix it.\"",
+            "Persistent tingling has a cause. Treating the cause (sugar, B12, thyroid) is what helps"
+          ],
+          [
+            "\"B12 injections cure every kind of neuropathy.\"",
+            "They help only when B12 is actually low. Test first"
+          ],
+          [
+            "\"Nothing can be done for nerve pain.\"",
+            "Controlling sugar slows damage, low B12 can be replaced, and doctors have specific nerve-pain medicines (ordinary painkillers often don't work)"
+          ],
+          [
+            "\"Walking barefoot is good for numb feet.\"",
+            "With numb feet it's risky. Wear soft, closed footwear, even at home"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Protect Your Feet Starting Today"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Look at your feet every night** (use a mirror or ask family) for cuts, blisters, colour changes",
+          "Test bath water with your **elbow**, not your foot. Numb feet burn easily",
+          "**Moisturise** cracks, but not between the toes",
+          "Well-fitting, soft footwear. Check inside shoes for stones before wearing them",
+          "Keep sugar in your target range, and limit alcohol"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**When it started**, and whether it is in one foot or both, and spreading or stable",
+          "**Your medicines**, especially metformin, acid tablets, and TB or cancer medicines",
+          "Whether you are **vegetarian**, and how much alcohol you drink",
+          "Any **recent reports**: sugar, HbA1c, B12, thyroid, kidney",
+          "Photos of any **foot wound** or skin patch"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** works well for the first step. A doctor can review your symptoms and reports, order the right blood tests, and tell you whether you need an in-person nerve examination. Persistent tingling isn't \"just age\", so it's worth finding the cause early. (See our guides on vitamin B12 deficiency, diabetic foot care, and stroke warning signs.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NIH/NINDS, American Diabetes Association). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Raat ko talvon mein jalan. Ungliyan jaise rui mein lipti hon. \"Chiti chal rahi hai\" jaisi jhunjhuni jo poori tarah jaati hi nahi. Yeh **peripheral neuropathy** ke aam sanket hain, yaani pairon aur haathon tak jaane wali lambi nason ka theek se kaam na karna. India mein yeh bahut common hai, zyadatar diabetes aur vitamin B12 ki kami ki wajah se. Achhi baat yeh hai ki wajah aksar simple blood test se mil jaati hai, aur jaldi pakadne se pairon ki suraksha hoti hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Dono pairon** mein jhunjhuni ya jalan jo dheere-dheere upar badhe, aksar **diabetes** ya **vitamin B12 ki kami** se hoti hai. Sugar (HbA1c), B12 aur thyroid check karayein. Shareer ke **ek taraf achanak** sunnpan, ya kamzori jo ghanton-dinon mein dono pairon mein upar chadhe, **emergency** hai."
+      },
+      {
+        "type": "heading",
+        "text": "Neuropathy Aksar Kaisi Lagti Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Pehle dono pair**, aksar ungliyon se shuru hokar dheere upar. Baad mein haath bhi (doctor ise \"glove and stocking\" pattern kehte hain)",
+          "**Jalan, jhunjhuni, sui chubhna**, ya current jaise jhatke, aksar **raat ko zyada**",
+          "**Sunnpan**: zameen theek se mehsoos na hona, ya chappal nikal jaana aur pata na chalna",
+          "**Andhere mein** ya oonchi-neechi zameen par **dagmagaana**",
+          "Kuch logon mein **cramps**, kamzor takhne, ya pairon ki bahut sookhi, phati twacha"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aam Wajahein (Aur Har Ek Ka Test)"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Kyun hota hai",
+          "Kaunsa test"
+        ],
+        "rows": [
+          [
+            "Diabetes",
+            "Saalon tak high sugar chhoti nason ko nuksaan pahunchata hai. India mein sabse aam wajah. Kabhi diabetes ka pata isi se chalta hai",
+            "Fasting sugar, HbA1c"
+          ],
+          [
+            "Vitamin B12 ki kami",
+            "Shakahariyon, 50+ umar walon, aur lambe samay se metformin ya acidity ki goli lene walon mein aam",
+            "Serum B12"
+          ],
+          [
+            "Thyroid kam hona",
+            "Nason ki marammat dheemi kar deta hai",
+            "TSH"
+          ],
+          [
+            "Sharaab",
+            "Nason ko seedha nuksaan aur poshan ki kami",
+            "History, liver test"
+          ],
+          [
+            "Kidney ki bimari",
+            "Khoon mein gandagi jama hoti hai",
+            "Creatinine, eGFR"
+          ],
+          [
+            "Kuch dawaiyan",
+            "TB ki kuch dawaiyan (isoniazid, isliye saath mein vitamin B6 di jaati hai), kuch chemotherapy aur anya",
+            "Dawaiyon ki jaanch"
+          ],
+          [
+            "Infection",
+            "Kusht rog/leprosy (sunn daag wali twacha, India mein ab bhi dikhta hai), HIV",
+            "Twacha jaanch, khaas test"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Aksar ek simple blood panel se jawaab mil jaata hai. Agar wajah phir bhi saaf na ho, to **nerve conduction study** (nason mein signal kitni tezi se chalta hai, iska chhota sa test) se neurologist pakka kar sakte hain."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Paalthi maar kar baithne ya haath par sone ke baad thodi der jhunjhuni, minton mein theek",
+            "Kuch nahi. Yeh nas par dabaav hai, neuropathy nahi"
+          ],
+          [
+            "🟡 Is hafte doctor ko dikhayein",
+            "Dono pairon mein hafton se jalan, jhunjhuni ya sunnpan, dheere badhta hua",
+            "Consultation book karein, sugar, B12 aur thyroid test karayein"
+          ],
+          [
+            "🔴 Abhi emergency",
+            "Ek taraf achanak sunnpan ya kamzori, chehra latakna ya bolne mein dikkat",
+            "Stroke ho sakta hai. Turant nazdeeki emergency jaayein"
+          ],
+          [
+            "🔴 Abhi emergency",
+            "Ghanton-dinon mein dono pairon mein upar chadhti kamzori, chalne ya saans lene mein dikkat",
+            "Guillain-Barré syndrome ho sakta hai. Usi din hospital jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Pair mein ghaav, chhala ya kaalapan jo mehsoos na ho, ya ghaav jo bhar na raha ho",
+            "Usi din doctor ko dikhayein. Sunn pair chot chhupa lete hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Jhunjhuni bas kamzori hai, tonic se theek ho jaayegi.\"",
+            "Lagatar jhunjhuni ki koi wajah hoti hai. Wajah (sugar, B12, thyroid) ka ilaaj hi madad karta hai"
+          ],
+          [
+            "\"B12 ke injection har neuropathy theek kar dete hain.\"",
+            "Sirf tab madad karte hain jab B12 sach mein kam ho. Pehle test karayein"
+          ],
+          [
+            "\"Nason ke dard ka koi ilaaj nahi.\"",
+            "Sugar control se nuksaan dheema hota hai, kam B12 poora kiya ja sakta hai, aur nason ke dard ki khaas dawaiyan hain (aam painkiller aksar kaam nahi karte)"
+          ],
+          [
+            "\"Sunn pairon ke liye nange pair chalna achha hai.\"",
+            "Sunn pairon mein yeh khatarnaak hai. Ghar mein bhi naram, band joote-chappal pehnein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aaj Se Apne Pairon Ki Hifaazat Karein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Har raat pair dekhein** (sheesha lein ya ghar walon se kahein): kat, chhale, rang badalna",
+          "Nahaane ka paani **kohni** se check karein, pair se nahi. Sunn pair aasaani se jal jaate hain",
+          "Daraaron par **moisturiser** lagayein, par ungliyon ke beech nahi",
+          "Sahi naap ke naram joote. Pehenne se pehle andar kankar check karein",
+          "Sugar target mein rakhein aur sharaab kam karein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Kab shuru hua**, ek pair mein ya dono mein, aur badh raha hai ya ek jaisa hai",
+          "**Aapki dawaiyan**, khaaskar metformin, acidity ki goli, TB ya cancer ki dawaiyan",
+          "Aap **shakahari** hain ya nahi, aur kitni sharaab peete hain",
+          "**Haal ki reports**: sugar, HbA1c, B12, thyroid, kidney",
+          "Pair ke kisi **ghaav** ya twacha ke daag ki photo"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pehle kadam ke liye **online consultation** achha rehta hai. Doctor aapke lakshan aur reports dekh kar sahi blood test likh sakte hain, aur bata sakte hain ki nason ki jaanch ke liye milna zaroori hai ya nahi. Lagatar jhunjhuni \"bas umar\" nahi hai, isliye wajah jaldi dhoondhna faaydemand hai. (Vitamin B12 ki kami, diabetic foot care aur stroke ke sanketon par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NIH/NINDS, American Diabetes Association) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "bells-palsy-sudden-face-weakness-one-side-guide",
+    "title": "Bell's Palsy: Sudden Weakness on One Side of the Face",
+    "description": "Drooping face or can't close one eye? How Bell's palsy differs from a stroke, why seeing a doctor within 72 hours matters, and how to protect your eye.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "6 min",
+    "image": "😐",
+    "content": [
+      {
+        "type": "intro",
+        "text": "You look in the mirror and one side of your face won't move. Your smile is lopsided, water dribbles from one corner of your mouth, and one eye won't close. It's frightening, and many families immediately fear a \"lakwa\" (stroke). Often the cause is **Bell's palsy**, a sudden but usually temporary weakness of the facial nerve. Most people recover well, **especially when treatment starts early**."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "**Any sudden face droop should be checked the same day.** Go to an emergency right away if there is also arm or leg weakness, slurred speech, confusion, or severe headache, because it could be a stroke. If it is Bell's palsy, medicine started **within 72 hours** improves recovery, so don't wait to \"see if it settles\"."
+      },
+      {
+        "type": "heading",
+        "text": "Bell's Palsy or Stroke? Key Differences"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Bell's palsy",
+          "Stroke"
+        ],
+        "rows": [
+          [
+            "Forehead",
+            "Usually **can't wrinkle the forehead** on the weak side",
+            "Forehead often still moves"
+          ],
+          [
+            "Eye",
+            "Can't close the eye fully on that side",
+            "Eye usually closes"
+          ],
+          [
+            "Arm and leg",
+            "Normal",
+            "Often weak or numb on the same side"
+          ],
+          [
+            "Speech",
+            "Words clear (lips may be clumsy)",
+            "Slurred, confused, or can't find words"
+          ],
+          [
+            "Onset",
+            "Over hours to 2–3 days, often noticed on waking",
+            "Sudden, within minutes"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Don't self-diagnose a stroke away",
+        "text": "This table helps you understand, not decide. Only a doctor's examination (sometimes with a brain scan) can tell them apart for sure. When in doubt, treat it as an emergency. With a stroke, minutes matter."
+      },
+      {
+        "type": "heading",
+        "text": "Other Signs of Bell's Palsy"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Pain **behind the ear** a day or two before",
+          "Changed **taste** on one side of the tongue",
+          "Sounds seem **louder** in one ear",
+          "A watery eye, or a dry eye that stings",
+          "Food collecting in the cheek, drooling"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "It's caused by **swelling of the facial nerve**, often after a viral infection. It's more common in pregnancy, diabetes, and after a cold. A painful **rash or blisters in or around the ear** with face weakness suggests a related condition (Ramsay Hunt syndrome) that needs antiviral treatment quickly."
+      },
+      {
+        "type": "heading",
+        "text": "The Eye Is the Priority"
+      },
+      {
+        "type": "paragraph",
+        "text": "When the eyelid can't close, the eye dries out and can get scratched. That damage can last longer than the palsy itself."
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Lubricating eye drops** in the day, and an eye gel or ointment at night (as your doctor advises)",
+          "At night, gently **tape the eyelid closed** or use an eye pad",
+          "**Glasses or sunglasses** outdoors against dust and wind",
+          "Get help quickly if the eye becomes **red, painful, or your vision blurs**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Recovery: What to Expect"
+      },
+      {
+        "type": "paragraph",
+        "text": "Most people start improving within **2–3 weeks**, and the majority recover fully within **3–6 months**. Early steroid medicine prescribed by a doctor helps. Gentle facial exercises shown by a doctor or physiotherapist can help as movement returns. If there is no improvement at all after 3 weeks, go back to your doctor."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"AC ki thandi hawa lagne se chehra tedha ho gaya.\"",
+            "There's no good evidence that cold air causes it. It's nerve swelling, usually after a virus"
+          ],
+          [
+            "\"Every face droop is lakwa (stroke).\"",
+            "Many are Bell's palsy, but because some are strokes, every one needs urgent checking"
+          ],
+          [
+            "\"Massage, hot oil or chewing gum will fix it fast.\"",
+            "They don't speed recovery. Early medicine and eye care matter most. Avoid strong rubbing"
+          ],
+          [
+            "\"It's permanent.\"",
+            "Most people recover fully, particularly with early treatment"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Exact time** you first noticed it (this matters for the 72-hour window)",
+          "Whether your **arm, leg or speech** are affected at all",
+          "Ear pain, ear rash, or recent cold or fever",
+          "Pregnancy, diabetes, or high blood pressure",
+          "A short **video** of you raising your eyebrows, closing your eyes and smiling"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "If there are **no** stroke signs, an **online video consultation** can be a quick way to be assessed the same day and start treatment within the window. The doctor will tell you if you need to be seen in person. Seek emergency care immediately for any stroke warning signs. (See our stroke FAST guide and our headache guides.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NINDS, American Academy of Neurology). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Aap sheesha dekhte hain aur chehre ka ek hissa hil hi nahi raha. Muskaan tedhi hai, muh ke ek kone se paani tapakta hai, aur ek aankh band nahi hoti. Yeh darawna hai, aur kai parivaar turant \"lakwa\" (stroke) se darte hain. Aksar wajah **Bell's palsy** hoti hai, yaani chehre ki nas ki achanak lekin aamtaur par kuch samay ki kamzori. Zyadatar log achhe se theek ho jaate hain, **khaaskar jab ilaaj jaldi shuru ho**."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Chehra achanak latke to usi din dikhayein.** Agar saath mein haath ya pair mein kamzori, bolne mein dikkat, uljhan, ya tez sir dard ho, to turant emergency jaayein, kyunki yeh stroke ho sakta hai. Agar Bell's palsy hai, to **72 ghante ke andar** shuru ki gayi dawa se recovery behtar hoti hai, isliye \"apne aap theek hoga\" soch kar intezaar na karein."
+      },
+      {
+        "type": "heading",
+        "text": "Bell's Palsy Ya Stroke? Mukhya Fark"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Bell's palsy",
+          "Stroke"
+        ],
+        "rows": [
+          [
+            "Maatha",
+            "Kamzor taraf aksar **maathe par silvat nahi aati**",
+            "Maatha aksar hil jaata hai"
+          ],
+          [
+            "Aankh",
+            "Us taraf aankh poori band nahi hoti",
+            "Aankh aamtaur par band ho jaati hai"
+          ],
+          [
+            "Haath aur pair",
+            "Normal",
+            "Usi taraf aksar kamzor ya sunn"
+          ],
+          [
+            "Bolna",
+            "Shabd saaf (honth thode ajeeb)",
+            "Ladkhadaata, uljha hua, ya shabd nahi milte"
+          ],
+          [
+            "Shuruaat",
+            "Ghanton se 2–3 din mein, aksar subah uthte hi pata chalta hai",
+            "Achanak, minton mein"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Khud se stroke ko na naaren",
+        "text": "Yeh table samajhne ke liye hai, faisla karne ke liye nahi. Sirf doctor ki jaanch (kabhi brain scan ke saath) pakka fark bata sakti hai. Shak ho to emergency maanein. Stroke mein har minute keemti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Bell's Palsy Ke Anya Sanket"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Ek-do din pehle **kaan ke peechhe dard**",
+          "Jeebh ke ek taraf **swaad badalna**",
+          "Ek kaan mein awaaz **zyada tez** lagna",
+          "Aankh se paani aana, ya sookhi aankh mein chubhan",
+          "Gaal mein khaana phansna, laar tapakna"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Yeh **chehre ki nas mein soojan** se hota hai, aksar kisi viral infection ke baad. Pregnancy, diabetes aur sardi-zukaam ke baad zyada hota hai. Chehre ki kamzori ke saath **kaan mein ya aas-paas dard bhare daane/chhale** ho to yeh ek related condition (Ramsay Hunt syndrome) ho sakti hai, jismein jaldi antiviral dawa chahiye."
+      },
+      {
+        "type": "heading",
+        "text": "Sabse Pehle Aankh Ki Hifaazat"
+      },
+      {
+        "type": "paragraph",
+        "text": "Jab palak band nahi hoti, to aankh sookh jaati hai aur usmein kharonch aa sakti hai. Yeh nuksaan palsy se bhi lamba chal sakta hai."
+      },
+      {
+        "type": "list",
+        "items": [
+          "Din mein **lubricating eye drops**, aur raat ko eye gel ya ointment (doctor ki salaah se)",
+          "Raat ko palak ko halke se **tape se band** karein ya eye pad lagayein",
+          "Baahar dhool aur hawa se bachne ke liye **chashma ya dhoop ka chashma**",
+          "Aankh **laal ho, dard ho, ya dhundhla dikhe** to turant madad lein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Recovery: Kya Ummeed Rakhein"
+      },
+      {
+        "type": "paragraph",
+        "text": "Zyadatar logon mein **2–3 hafte** mein sudhaar shuru hota hai, aur zyadatar **3–6 mahine** mein poori tarah theek ho jaate hain. Doctor ki di hui shuruaati steroid dawa madad karti hai. Harkat lautne par doctor ya physiotherapist ki bataayi halki chehre ki exercise madad kar sakti hai. Agar 3 hafte baad bilkul sudhaar na ho, to doctor ko dobara dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"AC ki thandi hawa lagne se chehra tedha ho gaya.\"",
+            "Thandi hawa se hone ka koi pakka saboot nahi. Yeh nas ki soojan hai, aksar virus ke baad"
+          ],
+          [
+            "\"Har latka chehra lakwa (stroke) hai.\"",
+            "Kai Bell's palsy hote hain, lekin kuch stroke hote hain, isliye har ek ki turant jaanch zaroori hai"
+          ],
+          [
+            "\"Maalish, garam tel ya chewing gum se jaldi theek hoga.\"",
+            "Inse recovery tez nahi hoti. Jaldi dawa aur aankh ki dekhbhaal sabse zaroori hain. Zor se ragadna na karein"
+          ],
+          [
+            "\"Yeh hamesha ke liye hai.\"",
+            "Zyadatar log poori tarah theek ho jaate hain, khaaskar jaldi ilaaj se"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Pehli baar **kab dikha, sahi samay** (72 ghante ki window ke liye zaroori)",
+          "**Haath, pair ya bolne** par koi asar hai ya nahi",
+          "Kaan mein dard, kaan par daane, ya haal mein sardi ya bukhaar",
+          "Pregnancy, diabetes, ya high BP",
+          "Bhaunhen uthaate, aankhen band karte aur muskuraate hue aapka ek chhota **video**"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Agar stroke ke **koi** sanket nahi hain, to **online video consultation** se usi din jaanch aur window ke andar ilaaj shuru karna aasaan ho sakta hai. Doctor bataayenge ki milna zaroori hai ya nahi. Stroke ke kisi bhi sanket par turant emergency jaayein. (Hamaari stroke FAST guide aur sir dard ki guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NINDS, American Academy of Neurology) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "tension-headache-stress-headache-relief-guide",
+    "title": "Tension Headache: The \"Tight Band\" Headache and How to Ease It",
+    "description": "A dull, pressing headache like a tight band around your head? Why tension headaches happen, a 10-minute relief routine, the painkiller trap, and warning signs.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "6 min",
+    "image": "🧠",
+    "content": [
+      {
+        "type": "intro",
+        "text": "By evening your head feels heavy, as if someone tied a tight band around it. It isn't throbbing and you aren't vomiting. It's just a dull, pressing ache that makes everything harder. That's a **tension-type headache**, the most common headache in the world. It's rarely dangerous, but when it comes often it wears you down. Here's how to recognise it, ease it, and stop it coming back."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "A tension headache is a **dull, pressing ache on both sides** of the head, often with tight neck and shoulders. Water, food, a screen break, neck stretches and rest usually help. If you need painkillers on **more than 2–3 days a week**, see a doctor, because the tablets themselves can start causing headaches."
+      },
+      {
+        "type": "heading",
+        "text": "Which Headache Is It?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Tension headache",
+          "Migraine",
+          "Cluster headache"
+        ],
+        "rows": [
+          [
+            "Feels like",
+            "Pressing, tight band",
+            "Throbbing, pulsing",
+            "Stabbing, boring, severe"
+          ],
+          [
+            "Where",
+            "Both sides, forehead, back of head",
+            "Often one side",
+            "Around one eye"
+          ],
+          [
+            "Nausea, light sensitivity",
+            "Usually not",
+            "Common",
+            "Watery eye, blocked nose on that side"
+          ],
+          [
+            "Daily activity",
+            "Can carry on, with effort",
+            "Often have to lie down",
+            "Restless, pacing"
+          ],
+          [
+            "Lasts",
+            "30 minutes to a few days",
+            "4 hours to 3 days",
+            "15 minutes to 3 hours, often daily in bouts"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Common Triggers in Daily Life"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Long hours on a phone or laptop**, with the neck bent forward",
+          "**Skipped meals** and **not drinking enough water**, especially in heat or while fasting",
+          "**Poor or short sleep**",
+          "**Stress**, deadlines, exams, tension at home",
+          "**Tea or coffee withdrawal**: missing your usual cup can bring on a headache",
+          "Squinting from **uncorrected eyesight** or glare"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "A 10-Minute Relief Routine"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Drink a full glass of water**, and eat something if you've skipped a meal",
+          "**Step away from the screen.** Look at something far away for a minute",
+          "**Neck and shoulder release.** Slowly roll your shoulders back 10 times, then gently tilt each ear towards the shoulder, holding 15 seconds",
+          "**Warm compress** on the neck and shoulders, or a warm shower",
+          "**Slow breathing**: in for 4 counts, out for 6, for 2 minutes",
+          "If you still need it, **one dose of a simple painkiller** as directed on the pack (ask a pharmacist if you have other conditions)"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "The painkiller trap",
+        "text": "Taking headache tablets on many days, roughly **more than 10–15 days a month**, can cause **medication-overuse headache**, a daily headache driven by the tablets themselves. If you're in this cycle, don't just stop suddenly. A doctor can help you break it safely and start prevention."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Occasional pressing headache, eased by rest, water or a single painkiller",
+            "Self-care, and watch your triggers"
+          ],
+          [
+            "🟡 See a doctor",
+            "Headaches several days a week, needing tablets often, or a new pattern of headaches",
+            "Book a consultation for prevention and a check-up"
+          ],
+          [
+            "🔴 Emergency now",
+            "Sudden, severe \"worst-ever\" headache that peaks within a minute",
+            "Go to an emergency immediately"
+          ],
+          [
+            "🔴 Emergency now",
+            "Headache with fever and stiff neck, confusion, weakness, slurred speech, fits, or after a head injury",
+            "Go to an emergency immediately"
+          ],
+          [
+            "🔴 Urgent",
+            "New headache after age 50, worse lying down or on waking with vomiting, or steadily getting worse over weeks",
+            "See a doctor within a day or two"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Every headache means high BP.\"",
+            "Most headaches aren't from BP. But if you have high BP, check it during a headache, because very high BP can cause one"
+          ],
+          [
+            "\"Headache means I need glasses.\"",
+            "Sometimes, but most tension headaches come from posture, stress, sleep and skipped meals. An eye test is reasonable if you squint or headaches come after reading"
+          ],
+          [
+            "\"Balm and a tight cloth are the only cure.\"",
+            "They can soothe, but water, food, breaks, sleep and treating stress prevent the next one"
+          ],
+          [
+            "\"Daily headache is just my nature.\"",
+            "Frequent headaches can be prevented. A doctor can help, sometimes with a daily preventive medicine"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Preventing the Next One"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Keep **regular meal and sleep times**",
+          "Every 30–45 minutes on a screen, take a **2-minute break**. Raise the screen to eye level",
+          "Drink water through the day (urine should be pale yellow)",
+          "Keep your tea or coffee **amount steady**, without big jumps up or down",
+          "**Move daily**: a 20–30 minute walk lowers headache frequency for many people",
+          "Notice stress early. Short breathing breaks help more than you'd expect"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**How many headache days** in the last month (a simple calendar works)",
+          "**How many days you took painkillers**, and which ones",
+          "Where it hurts, what it feels like, and how long it lasts",
+          "Sleep, screen time, tea or coffee, meals",
+          "Your **BP readings** if you have high BP"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Frequent tension headaches are well suited to an **online consultation**. A doctor can confirm the type, check for warning signs, help you break a painkiller cycle, and suggest prevention. (See our guides on migraine vs headache, migraine triggers, and better sleep.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NIH, International Headache Society). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Shaam tak sir bhaari lagta hai, jaise kisi ne kas kar patti baandh di ho. Dhad-dhad nahi karta, ulti bhi nahi hoti. Bas ek halka, dabaata hua dard jo har kaam mushkil bana deta hai. Yeh **tension-type headache** hai, duniya ka sabse aam sir dard. Yeh shayad hi khatarnaak hota hai, lekin baar-baar ho to thaka deta hai. Yahan jaaniye ise kaise pehchaanein, kaise kam karein, aur dobara hone se kaise rokein."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Tension headache sir ke **dono taraf halka, dabaata dard** hai, aksar gardan aur kandhon ki akdan ke saath. Paani, khaana, screen se break, gardan ki stretching aur aaram aksar madad karte hain. Agar **hafte mein 2–3 din se zyada** painkiller lena pade, to doctor ko dikhayein, kyunki goliyan khud sir dard karne lagti hain."
+      },
+      {
+        "type": "heading",
+        "text": "Yeh Kaunsa Sir Dard Hai?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Tension headache",
+          "Migraine",
+          "Cluster headache"
+        ],
+        "rows": [
+          [
+            "Kaisa lagta hai",
+            "Dabaata hua, kasi patti jaisa",
+            "Dhad-dhad, dhadakta hua",
+            "Chubhta, tez, bahut zyada"
+          ],
+          [
+            "Kahan",
+            "Dono taraf, maatha, sir ka peechhla hissa",
+            "Aksar ek taraf",
+            "Ek aankh ke aas-paas"
+          ],
+          [
+            "Ji machalna, roshni se dikkat",
+            "Aamtaur par nahi",
+            "Aam hai",
+            "Us taraf aankh se paani, naak band"
+          ],
+          [
+            "Rozmarra ka kaam",
+            "Mushkil se, par chal jaata hai",
+            "Aksar letna padta hai",
+            "Bechaini, idhar-udhar chalna"
+          ],
+          [
+            "Kitni der",
+            "30 minute se kuch din",
+            "4 ghante se 3 din",
+            "15 minute se 3 ghante, aksar dauron mein roz"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Rozmarra Ke Aam Triggers"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Phone ya laptop par lambe ghante**, gardan aage jhuki hui",
+          "**Khaana chhodna** aur **kam paani peena**, khaaskar garmi mein ya vrat mein",
+          "**Kam ya kharaab neend**",
+          "**Tanaav**, deadline, exam, ghar ka tension",
+          "**Chai ya coffee na milna**: roz ka cup chhootne se sir dard ho sakta hai",
+          "**Bina chashme** ke aankhen sikodna ya chakachaundh"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "10 Minute Ka Raahat Routine"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Ek poora gilaas paani piyein**, aur khaana chhoota ho to kuch kha lein",
+          "**Screen se door hon.** Ek minute door kisi cheez ko dekhein",
+          "**Gardan aur kandhe dheele karein.** Kandhon ko dheere 10 baar peechhe ghumayein, phir har kaan ko halke se kandhe ki taraf jhukaayein, 15 second rokein",
+          "Gardan aur kandhon par **garam sek**, ya garam paani se nahaana",
+          "**Dheemi saans**: 4 gintee tak andar, 6 tak baahar, 2 minute",
+          "Phir bhi zaroorat ho to pack par likhe anusaar **simple painkiller ki ek dose** (koi aur bimari ho to pharmacist se poochhein)"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Painkiller ka jaal",
+        "text": "Bahut dinon tak, lagbhag **mahine mein 10–15 din se zyada**, sir dard ki goli lene se **medication-overuse headache** ho sakta hai, yaani goliyon ki wajah se roz ka sir dard. Agar aap is chakra mein hain, to achanak band na karein. Doctor ise surakshit tareeke se todne aur bachaav shuru karne mein madad kar sakte hain."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Kabhi-kabhi dabaata sir dard, aaram, paani ya ek painkiller se theek",
+            "Khud dekhbhaal, aur triggers par nazar"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Hafte mein kai din sir dard, baar-baar goli, ya sir dard ka naya pattern",
+            "Bachaav aur jaanch ke liye consultation book karein"
+          ],
+          [
+            "🔴 Abhi emergency",
+            "Achanak, bahut tez \"zindagi ka sabse bura\" sir dard jo ek minute mein charam par pahunche",
+            "Turant emergency jaayein"
+          ],
+          [
+            "🔴 Abhi emergency",
+            "Sir dard ke saath bukhaar aur akdi gardan, uljhan, kamzori, ladkhadaati zubaan, daura, ya sir par chot ke baad",
+            "Turant emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "50 ki umar ke baad naya sir dard, letne par ya subah ulti ke saath zyada, ya hafton mein badhta hua",
+            "Ek-do din mein doctor ko dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Har sir dard ka matlab high BP.\"",
+            "Zyadatar sir dard BP se nahi hote. Lekin agar aapko high BP hai, to sir dard mein BP check karein, kyunki bahut high BP se sir dard ho sakta hai"
+          ],
+          [
+            "\"Sir dard hai to chashma chahiye.\"",
+            "Kabhi-kabhi, lekin zyadatar tension headache posture, tanaav, neend aur chhoote khaane se hote hain. Aankhen sikodte hain ya padhne ke baad dard hota hai to eye test karayein"
+          ],
+          [
+            "\"Balm aur kasa kapda hi ilaaj hai.\"",
+            "Inse aaram mil sakta hai, lekin paani, khaana, break, neend aur tanaav ka ilaaj agla dard rokte hain"
+          ],
+          [
+            "\"Roz ka sir dard to meri aadat hai.\"",
+            "Baar-baar ka sir dard roka ja sakta hai. Doctor madad kar sakte hain, kabhi roz ki bachaav wali dawa se"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Agla Sir Dard Kaise Rokein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Khaane aur sone ka samay** niyamit rakhein",
+          "Screen par har 30–45 minute mein **2 minute ka break**. Screen aankhon ki seedh mein rakhein",
+          "Din bhar paani piyein (peshaab halka peela ho)",
+          "Chai ya coffee ki **maatra ek jaisi** rakhein, achanak kam-zyada na karein",
+          "**Roz chalein**: 20–30 minute ki walk se kai logon mein sir dard kam hota hai",
+          "Tanaav jaldi pehchaanein. Saans ke chhote break ummeed se zyada kaam karte hain"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Pichhle mahine **kitne din sir dard** hua (simple calendar kaafi hai)",
+          "**Kitne din painkiller** liya, aur kaunsa",
+          "Kahan dard hota hai, kaisa lagta hai, kitni der rehta hai",
+          "Neend, screen time, chai ya coffee, khaana",
+          "High BP hai to **BP readings**"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Baar-baar ke tension headache ke liye **online consultation** achha rehta hai. Doctor type pakka kar sakte hain, khatre ke sanket dekh sakte hain, painkiller ka chakra todne mein madad kar sakte hain, aur bachaav bata sakte hain. (Migraine vs headache, migraine triggers aur achhi neend par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NIH, International Headache Society) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "spotting-bleeding-between-periods-causes-guide",
+    "title": "Spotting or Bleeding Between Periods: Causes and When to Worry",
+    "description": "Spotting between periods? The common harmless reasons, the ones that need a check (after sex, after menopause, in pregnancy), and what to track.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "🩸",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A few drops of blood or brown spotting when your period isn't due can be unsettling, and many women quietly wonder whether it's \"something serious\" without asking anyone. Most often it has a simple, harmless explanation, like ovulation or a change in pills. But some kinds of bleeding should always be checked. This guide helps you tell them apart and know exactly what to note for your doctor."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "One-off light spotting mid-cycle or after starting or changing pills is often harmless. **See a gynaecologist** if it keeps happening, comes **after sex**, happens **after menopause**, or comes with pain, fever or bad-smelling discharge. If you **might be pregnant** and have pain or heavy bleeding, seek urgent care."
+      },
+      {
+        "type": "heading",
+        "text": "First: Could You Be Pregnant?"
+      },
+      {
+        "type": "paragraph",
+        "text": "If you're sexually active, a **home pregnancy test** is a sensible first step. Light spotting can happen early in pregnancy, but bleeding with **one-sided lower tummy pain, shoulder-tip pain or dizziness** could be an ectopic pregnancy, which is an emergency. (See our guide on bleeding in early pregnancy.)"
+      },
+      {
+        "type": "heading",
+        "text": "Common Causes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Cause",
+          "Typical picture",
+          "Usually needs"
+        ],
+        "rows": [
+          [
+            "Ovulation spotting",
+            "Light pink or brown spotting mid-cycle (about 2 weeks before your period), lasts 1–2 days",
+            "Nothing, if it's occasional"
+          ],
+          [
+            "Hormonal pills, injection, implant or IUD",
+            "Spotting in the first 3 months of starting or changing, or after missed pills",
+            "Usually settles. Check with your doctor if it continues"
+          ],
+          [
+            "Emergency contraceptive pill",
+            "Spotting or an early or late period after taking it",
+            "A pregnancy test if your period is over a week late"
+          ],
+          [
+            "PCOS, thyroid, stress, weight change",
+            "Irregular cycles with unpredictable bleeding",
+            "Check-up and blood tests"
+          ],
+          [
+            "Infection (including STIs)",
+            "Spotting with discharge, pain, burning or bleeding after sex",
+            "Examination and treatment"
+          ],
+          [
+            "Cervical polyp or ectropion",
+            "Bleeding after sex or an internal examination",
+            "Cervix examination"
+          ],
+          [
+            "Fibroids or uterine polyps",
+            "Heavy periods plus bleeding in between",
+            "Ultrasound"
+          ],
+          [
+            "Perimenopause (40s)",
+            "Cycles become irregular, with spotting",
+            "Check-up to rule out other causes"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Two kinds of bleeding to never ignore",
+        "text": "**Bleeding after sex** and **any bleeding after menopause** (12 months or more without a period) should always be checked by a doctor. Most often the cause is simple and treatable, but these are also the early signs of cervical or womb cancer, which are very curable when found early."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Often fine",
+            "One-off light spotting mid-cycle, or in the first months of new pills",
+            "Note it on a calendar, and watch"
+          ],
+          [
+            "🟡 See a doctor",
+            "Spotting for 2–3 cycles in a row, after sex, with discharge or pelvic pain, or irregular cycles",
+            "Book a gynaecology consultation"
+          ],
+          [
+            "🟡 See a doctor soon",
+            "Any bleeding after menopause",
+            "Book within days. Don't wait for it to repeat"
+          ],
+          [
+            "🔴 Urgent",
+            "Possible pregnancy with pain or bleeding, soaking a pad every hour, dizziness or fainting",
+            "Go to an emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Spotting means weakness. Eat dates and it'll stop.\"",
+            "Spotting has a cause, such as hormones, pills, infection or the cervix. Diet won't fix the cause"
+          ],
+          [
+            "\"It's just light bleeding, so it's nothing.\"",
+            "Light bleeding after sex or after menopause still needs a check"
+          ],
+          [
+            "\"Only married women need a gynaecologist.\"",
+            "Anyone with bleeding problems can and should see one. Your privacy is respected"
+          ],
+          [
+            "\"A Pap test is only for older women.\"",
+            "Cervical screening is recommended from your mid-20s to 30s onwards. Ask your doctor when to start"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Dates** of your last 3 periods and of each spotting episode",
+          "**Colour and amount** (spots on underwear, panty-liner, pad)",
+          "Whether it comes **after sex**, and any pain, discharge or fever",
+          "Pills, injections, IUD, or the emergency pill in the last month",
+          "Your **pregnancy test result**, if relevant"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a gynaecologist is a comfortable, private first step. The doctor can understand the pattern, tell you which tests you need (often an ultrasound or swab), and whether an in-person examination is required. (See our guides on irregular periods, PCOS, and cervical cancer screening.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, WHO). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Jab period ka samay na ho aur kuch boondein khoon ya bhoori spotting dikhe, to man ghabra jaata hai. Kai auratein chupchaap sochti rehti hain ki \"kuch serious to nahi\", aur kisi se poochhti nahi. Aksar iski simple aur bematlab wajah hoti hai, jaise ovulation ya goliyon mein badlaav. Lekin kuch tarah ki bleeding hamesha check karani chahiye. Yeh guide aapko fark samajhne aur doctor ke liye kya note karna hai, yeh jaanne mein madad karegi."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Cycle ke beech ek baar halki spotting, ya goliyan shuru ya badalne ke baad spotting, aksar bematlab hoti hai. **Gynaecologist ko dikhayein** agar baar-baar ho, **sex ke baad** ho, **menopause ke baad** ho, ya dard, bukhaar ya badboodaar discharge ke saath ho. Agar aap **pregnant ho sakti hain** aur dard ya zyada bleeding hai, to turant dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Pehle: Kya Aap Pregnant Ho Sakti Hain?"
+      },
+      {
+        "type": "paragraph",
+        "text": "Agar aap sexually active hain, to **ghar par pregnancy test** pehla sahi kadam hai. Pregnancy ki shuruaat mein halki spotting ho sakti hai, lekin **pet ke neeche ek taraf dard, kandhe ke kone mein dard ya chakkar** ke saath bleeding ectopic pregnancy ho sakti hai, jo emergency hai. (Shuruaati pregnancy mein bleeding par hamaari guide dekhein.)"
+      },
+      {
+        "type": "heading",
+        "text": "Aam Wajahein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Aam tasveer",
+          "Aamtaur par kya chahiye"
+        ],
+        "rows": [
+          [
+            "Ovulation spotting",
+            "Cycle ke beech (period se lagbhag 2 hafte pehle) halki gulaabi ya bhoori spotting, 1–2 din",
+            "Kabhi-kabhi ho to kuch nahi"
+          ],
+          [
+            "Hormonal goli, injection, implant ya IUD",
+            "Shuru karne ya badalne ke pehle 3 mahine mein, ya goli chhootne par spotting",
+            "Aksar theek ho jaata hai. Chalta rahe to doctor se poochhein"
+          ],
+          [
+            "Emergency contraceptive goli",
+            "Lene ke baad spotting, ya period jaldi ya der se",
+            "Period ek hafte se zyada late ho to pregnancy test"
+          ],
+          [
+            "PCOS, thyroid, tanaav, vazan badalna",
+            "Anaiyamit cycle aur kabhi bhi bleeding",
+            "Jaanch aur blood test"
+          ],
+          [
+            "Infection (STI samet)",
+            "Discharge, dard, jalan, ya sex ke baad bleeding ke saath spotting",
+            "Jaanch aur ilaaj"
+          ],
+          [
+            "Cervix ka polyp ya ectropion",
+            "Sex ya andar ki jaanch ke baad bleeding",
+            "Cervix ki jaanch"
+          ],
+          [
+            "Fibroids ya bachchedaani ke polyp",
+            "Zyada periods aur beech mein bhi bleeding",
+            "Ultrasound"
+          ],
+          [
+            "Perimenopause (40 ki umar)",
+            "Cycle anaiyamit, saath mein spotting",
+            "Doosri wajahein hataane ke liye jaanch"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Do tarah ki bleeding ko kabhi na taalein",
+        "text": "**Sex ke baad bleeding** aur **menopause ke baad koi bhi bleeding** (12 mahine ya zyada period na aane ke baad) hamesha doctor se check karayein. Aksar wajah simple aur ilaaj yogya hoti hai, lekin yahi cervix ya bachchedaani ke cancer ke shuruaati sanket bhi hote hain, jo jaldi pakadne par achhe se theek ho jaate hain."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Cycle ke beech ek baar halki spotting, ya nayi goliyon ke shuruaati mahine",
+            "Calendar par note karein aur dekhti rahein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Lagatar 2–3 cycle spotting, sex ke baad, discharge ya pelvis dard ke saath, ya anaiyamit cycle",
+            "Gynaecology consultation book karein"
+          ],
+          [
+            "🟡 Jaldi dikhayein",
+            "Menopause ke baad koi bhi bleeding",
+            "Kuch dinon mein book karein. Dobara hone ka intezaar na karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Pregnancy ho sakti hai aur dard ya bleeding, har ghante pad bhar jaana, chakkar ya behoshi",
+            "Emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Spotting kamzori hai. Khajoor khao, ruk jaayegi.\"",
+            "Spotting ki wajah hoti hai, jaise hormone, goli, infection ya cervix. Khaane se wajah theek nahi hoti"
+          ],
+          [
+            "\"Bas halki bleeding hai, kuch nahi.\"",
+            "Sex ke baad ya menopause ke baad halki bleeding bhi jaanch maangti hai"
+          ],
+          [
+            "\"Gynaecologist sirf shaadishuda auraton ke liye hai.\"",
+            "Bleeding ki dikkat wali koi bhi aurat dikha sakti hai aur dikhaana chahiye. Aapki privacy ka dhyaan rakha jaata hai"
+          ],
+          [
+            "\"Pap test sirf badi umar ki auraton ke liye.\"",
+            "Cervical screening 25–30 ki umar se shuru karne ki salaah di jaati hai. Doctor se poochhein kab shuru karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Pichhle 3 periods aur har spotting ki **taareekhein**",
+          "**Rang aur maatra** (underwear par daag, panty-liner, pad)",
+          "Kya yeh **sex ke baad** hoti hai, aur koi dard, discharge ya bukhaar",
+          "Pichhle mahine goli, injection, IUD ya emergency goli",
+          "Zaroori ho to **pregnancy test ka result**"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Gynaecologist se **online consultation** ek aaraamdeh aur private pehla kadam hai. Doctor pattern samajh kar bata sakti hain ki kaunse test chahiye (aksar ultrasound ya swab), aur kya milkar jaanch zaroori hai. (Anaiyamit periods, PCOS aur cervical cancer screening par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, WHO) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "morning-sickness-nausea-vomiting-pregnancy-relief-guide",
+    "title": "Morning Sickness: Nausea and Vomiting in Pregnancy, and What Actually Helps",
+    "description": "Sick all day in early pregnancy? When it starts and ends, food and smell tricks that work, safe medicine, and signs it's become too much.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "🤰",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"Morning\" sickness is a misleading name. For many women it lasts all day: the smell of tadka from the kitchen, brushing your teeth, even the thought of food can set it off. It affects up to **7 in 10 pregnant women**, usually in the first 3 months. It's exhausting, but in most cases it's a normal part of early pregnancy, and there's a lot you can do to feel better."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Nausea usually starts around **week 6**, is worst around **weeks 8–12**, and eases by **weeks 14–20**. Small frequent dry snacks, ginger, sipping fluids between meals and avoiding strong smells help. If you **can't keep any fluids down for a day**, pass very little dark urine, or feel faint, see a doctor the same day."
+      },
+      {
+        "type": "heading",
+        "text": "Food Tricks That Work"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Eat before you get up.** Keep a few dry crackers, rusk, khakhra or roasted chana by the bed and nibble before standing",
+          "**Small amounts every 2–3 hours.** An empty stomach makes nausea worse",
+          "Choose **plain, dry, cold or room-temperature foods**: they smell less (curd rice, poha, idli, toast, fruit)",
+          "Add **protein** with each snack (paneer, curd, egg, peanuts), which keeps nausea steadier for many women",
+          "**Ginger** in tea, a ginger candy or a small piece of fresh ginger can ease nausea",
+          "**Sip fluids between meals** rather than with them: water, nimbu paani, coconut water, ORS"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Smell and Daily-Life Tricks"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Ask someone else to do the **tadka** and frying for a few weeks, and open windows while cooking",
+          "Rinse your mouth after vomiting, and wait **30 minutes before brushing** (it protects tooth enamel)",
+          "If the **iron tablet** worsens nausea, ask your doctor about taking it at night or switching the type. Don't stop it on your own",
+          "Rest when you can. Tiredness makes nausea worse",
+          "Some women find **acupressure wrist bands** helpful"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Medicine Is an Option"
+      },
+      {
+        "type": "paragraph",
+        "text": "If home measures aren't enough, **doctors have anti-nausea medicines that are considered safe in pregnancy**. Don't suffer in silence thinking \"all medicine harms the baby\". Equally, don't take medicines from a chemist or a relative without your doctor's advice. Ask at your antenatal visit or book a consultation."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Nausea and some vomiting, but you keep fluids and some food down and pass urine normally",
+            "Home tips, and mention it at your next check-up"
+          ],
+          [
+            "🟡 See a doctor",
+            "Vomiting several times a day, struggling to eat, losing weight, or it's affecting work and daily life",
+            "Book a consultation. Medicine can help"
+          ],
+          [
+            "🔴 Same day",
+            "Can't keep fluids down for 24 hours, very little or dark urine, dizziness or fainting",
+            "This could be hyperemesis gravidarum, which needs drips and medicine. Go to hospital"
+          ],
+          [
+            "🔴 Urgent",
+            "Blood in vomit, severe tummy pain, fever, or nausea starting for the first time after 12 weeks",
+            "See a doctor urgently. It may be a different cause"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Severe vomiting means it's a boy (or a girl).\"",
+            "Nausea doesn't predict the baby's sex"
+          ],
+          [
+            "\"If I vomit, my baby isn't getting food.\"",
+            "In ordinary morning sickness the baby is fine. Your body's stores cover early needs. Severe, ongoing vomiting needs treatment for you"
+          ],
+          [
+            "\"No sickness means something is wrong.\"",
+            "Many healthy pregnancies have little or no nausea"
+          ],
+          [
+            "\"Every medicine is harmful in pregnancy.\"",
+            "Some anti-nausea medicines are well studied and considered safe. Your doctor will choose one"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**How many weeks** pregnant you are (from your last period or scan)",
+          "**Times you vomited** in the last 24 hours, and whether fluids stay down",
+          "**Urine**: how often and what colour",
+          "Any weight loss, dizziness, pain or fever",
+          "Medicines and supplements you take (iron, folic acid, others)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** is a convenient way to get advice without travelling while you feel unwell. A gynaecologist can suggest safe medicine and tell you if you need fluids in hospital. (See our guides on early pregnancy signs, pregnancy diet and antenatal check-ups.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Morning\" sickness naam galat hai. Kai auraton ko din bhar rehti hai: rasoi se tadke ki khushboo, brush karna, khaane ke khayaal se bhi ji machalne lagta hai. Yeh **10 mein se 7 pregnant auraton** tak ko hoti hai, aamtaur par pehle 3 mahine. Yeh thaka dene wali hai, lekin zyadatar mamlon mein shuruaati pregnancy ka normal hissa hai, aur behtar mehsoos karne ke liye bahut kuch kiya ja sakta hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Ji machalna aamtaur par **hafta 6** ke aas-paas shuru hota hai, **hafte 8–12** mein sabse zyada, aur **hafte 14–20** tak kam ho jaata hai. Thoda-thoda sookha naashta, adrak, khaane ke beech ghoont-ghoont paani aur tez gandh se bachna madad karta hai. Agar **ek din tak koi bhi paani na tike**, bahut kam gehra peshaab ho, ya chakkar aaye, to usi din doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Khaane Ki Tricks Jo Kaam Karti Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Uthne se pehle kuch khaayein.** Bistar ke paas sookhe biscuit, rusk, khakhra ya bhuna chana rakhein aur khade hone se pehle kha lein",
+          "**Har 2–3 ghante thoda-thoda.** Khaali pet ji zyada machlata hai",
+          "**Saada, sookha, thanda ya kamre ke taapmaan ka khaana** chunein: inki gandh kam hoti hai (dahi chawal, poha, idli, toast, phal)",
+          "Har naashte mein **protein** jodein (paneer, dahi, anda, moongphali), kai auraton mein isse ji kam machalta hai",
+          "Chai mein **adrak**, adrak ki toffee ya taaze adrak ka chhota tukda madad kar sakta hai",
+          "Khaane ke saath nahi, **khaane ke beech ghoont-ghoont** piyein: paani, nimbu paani, nariyal paani, ORS"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Gandh Aur Rozmarra Ki Tricks"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Kuch hafton ke liye **tadka** aur talna kisi aur se karwayein, aur pakaate samay khidkiyan kholein",
+          "Ulti ke baad kulla karein aur **brush karne se pehle 30 minute** rukein (daanton ki parat bachti hai)",
+          "Agar **iron ki goli** se ji zyada machle, to doctor se raat ko lene ya type badalne ke baare mein poochhein. Khud band na karein",
+          "Jab ho sake aaram karein. Thakaan se ji zyada machlata hai",
+          "Kuch auraton ko **acupressure wrist band** se madad milti hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Dawa Bhi Ek Vikalp Hai"
+      },
+      {
+        "type": "paragraph",
+        "text": "Agar ghar ke upaay kaafi na hon, to **doctor ke paas aisi dawaiyan hain jo pregnancy mein surakshit maani jaati hain**. \"Har dawa bachche ko nuksaan karti hai\" soch kar chupchaap na sahein. Saath hi, chemist ya rishtedaar ki di dawa doctor ki salaah ke bina na lein. Antenatal visit par poochhein ya consultation book karein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Ji machalna aur kuch ulti, lekin paani aur thoda khaana tik jaata hai, peshaab normal",
+            "Ghar ke upaay, aur agli jaanch par batayein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Din mein kai baar ulti, khaana mushkil, vazan ghatna, ya kaam aur rozmarra par asar",
+            "Consultation book karein. Dawa madad kar sakti hai"
+          ],
+          [
+            "🔴 Usi din",
+            "24 ghante koi paani na tikna, bahut kam ya gehra peshaab, chakkar ya behoshi",
+            "Yeh hyperemesis gravidarum ho sakta hai, jismein drip aur dawa chahiye. Hospital jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Ulti mein khoon, pet mein tez dard, bukhaar, ya 12 hafte ke baad pehli baar ji machalna",
+            "Turant doctor ko dikhayein. Wajah kuch aur ho sakti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Zyada ulti matlab ladka (ya ladki) hai.\"",
+            "Ji machalne se bachche ka ling pata nahi chalta"
+          ],
+          [
+            "\"Ulti hoti hai to bachche ko khaana nahi mil raha.\"",
+            "Aam morning sickness mein bachcha theek rehta hai. Shuruaati zaroorat aapke shareer ke bhandaar se poori hoti hai. Tez, lagatar ulti mein aapko ilaaj chahiye"
+          ],
+          [
+            "\"Ulti nahi hoti to kuch gadbad hai.\"",
+            "Kai swasth pregnancy mein ji kam ya bilkul nahi machlata"
+          ],
+          [
+            "\"Pregnancy mein har dawa nuksaandeh hai.\"",
+            "Ji machalne ki kuch dawaiyan achhi tarah study ki gayi hain aur surakshit maani jaati hain. Doctor sahi dawa chunenge"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Aap **kitne hafte** pregnant hain (pichhle period ya scan se)",
+          "Pichhle 24 ghante mein **kitni baar ulti**, aur paani tikta hai ya nahi",
+          "**Peshaab**: kitni baar aur kis rang ka",
+          "Koi vazan ghatna, chakkar, dard ya bukhaar",
+          "Aapki dawaiyan aur supplements (iron, folic acid, anya)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Tabiyat kharaab hone par bina safar kiye salaah lene ke liye **online consultation** aasaan tareeka hai. Gynaecologist surakshit dawa bata sakti hain aur yeh bhi ki hospital mein drip ki zaroorat hai ya nahi. (Shuruaati pregnancy ke sanket, pregnancy diet aur antenatal jaanch par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "bleeding-in-early-pregnancy-miscarriage-signs-guide",
+    "title": "Bleeding in Early Pregnancy: Is It a Miscarriage? What to Do",
+    "description": "Bleeding in the first 12 weeks? Why it often isn't a miscarriage, the emergency signs of ectopic pregnancy, what tests to expect, and support.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "🌸",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Seeing blood when you're pregnant is one of the most frightening moments there is. Take a breath: **bleeding in the first 12 weeks is common**. It happens in roughly **1 in 4 pregnancies**, and many of those go on to be completely healthy. Sometimes it is a sign of miscarriage, and sometimes of an ectopic pregnancy that needs urgent care. This guide explains what to do now, what tests to expect, and what is (and isn't) your fault."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "**Contact a doctor the same day** for any bleeding in pregnancy. **Go to an emergency now** if you have heavy bleeding (soaking a pad an hour for 2 hours), severe or one-sided tummy pain, shoulder-tip pain, dizziness or fainting, or fever. Tell the doctor your **blood group**: if you are Rh-negative you may need an injection."
+      },
+      {
+        "type": "heading",
+        "text": "Possible Reasons for Bleeding"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Reason",
+          "What it usually looks like",
+          "How common"
+        ],
+        "rows": [
+          [
+            "Implantation bleeding",
+            "Light pink or brown spotting around the time a period would be due",
+            "Common, harmless"
+          ],
+          [
+            "Sensitive cervix",
+            "Light spotting after sex or an internal examination",
+            "Common, usually harmless"
+          ],
+          [
+            "Subchorionic haematoma",
+            "A small collection of blood near the pregnancy, seen on scan, causing spotting",
+            "Fairly common, often settles"
+          ],
+          [
+            "Miscarriage",
+            "Bleeding that gets heavier, with period-like cramps, sometimes passing clots or tissue",
+            "About 10–20% of known pregnancies"
+          ],
+          [
+            "Ectopic pregnancy",
+            "Pregnancy growing outside the womb, with one-sided pain, light or dark bleeding, shoulder-tip pain, dizziness",
+            "About 1–2 in 100. An emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Tests to Expect"
+      },
+      {
+        "type": "list",
+        "items": [
+          "An **ultrasound scan**, often an internal (transvaginal) scan in early weeks, which gives a clearer view",
+          "A **blood hCG test**, sometimes repeated after 48 hours to see how levels change",
+          "**Blood group** check, and an **anti-D injection** if you are Rh-negative",
+          "Sometimes it's too early to be sure. A repeat scan in 7–14 days is common, and the wait is hard but normal"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟡 Same day",
+            "Light spotting, no pain or mild cramps",
+            "Call your doctor or book a consultation today. Rest and use pads, not tampons"
+          ],
+          [
+            "🔴 Emergency",
+            "Heavy bleeding, large clots, cramps worse than a period",
+            "Go to an emergency"
+          ],
+          [
+            "🔴 Emergency",
+            "One-sided or severe pain, shoulder-tip pain, dizziness or fainting, even with little bleeding",
+            "Possible ectopic pregnancy. Go to an emergency now"
+          ],
+          [
+            "🔴 Urgent",
+            "Fever, chills, or bad-smelling discharge after bleeding",
+            "See a doctor urgently (possible infection)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "If It Is a Miscarriage: It Was Not Your Fault"
+      },
+      {
+        "type": "paragraph",
+        "text": "Most early miscarriages happen because of a **chromosome problem** in the developing pregnancy, something no one could have caused or prevented. Women are often told, or tell themselves, that it happened because of something they did. It almost never is."
+      },
+      {
+        "type": "table",
+        "headers": [
+          "What people blame",
+          "The fact"
+        ],
+        "rows": [
+          [
+            "Lifting things, housework, working, travel",
+            "Normal daily activity does not cause miscarriage"
+          ],
+          [
+            "Sex, exercise",
+            "Does not cause miscarriage in a normal pregnancy"
+          ],
+          [
+            "Eating papaya, pineapple, \"garam\" foods",
+            "Normal amounts of these foods are not a cause"
+          ],
+          [
+            "A fight, stress, a scare",
+            "Everyday stress does not cause miscarriage"
+          ],
+          [
+            "\"Nazar\" or bad luck",
+            "Miscarriage is a medical event, not a curse"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Your doctor will explain the options: letting it complete naturally, medicine, or a small procedure, depending on your situation. Afterwards, **periods usually return in 4–6 weeks**. One miscarriage does not mean you can't have a healthy pregnancy. Most women go on to have one. After **3 or more** miscarriages, doctors usually recommend specific tests."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Grief is real",
+        "text": "Feeling sad, numb, angry or guilty is normal, for partners too. You don't need to \"move on\" quickly. Talk to someone you trust. If low mood lasts weeks or you feel hopeless, please tell your doctor. Support helps. In India, you can also call the Tele-MANAS helpline: **14416**."
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Weeks of pregnancy** (date of last period, or scan date)",
+          "**When bleeding started**, the colour, and how many pads in the last few hours",
+          "Any **pain** (where, how bad), dizziness, or fever",
+          "Your **blood group** if known, and any previous scan report",
+          "Past pregnancies, and whether you have had an ectopic pregnancy"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "For **light spotting without pain**, an **online consultation** can help you understand what's happening and arrange the right scan and blood tests quickly. A gynaecologist will tell you if you need to come in. For any emergency sign above, go to the nearest hospital first. (See our guides on early pregnancy signs, pregnancy scans and antenatal check-ups.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists, Tele-MANAS). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Pregnancy mein khoon dekhna sabse darawne palon mein se ek hai. Ek gehri saans lein: **pehle 12 hafton mein bleeding aam hai**. Lagbhag **4 mein se 1 pregnancy** mein hoti hai, aur inmein se kai poori tarah swasth rehti hain. Kabhi yeh miscarriage ka sanket hota hai, aur kabhi ectopic pregnancy ka jismein turant ilaaj chahiye. Yeh guide batati hai ki abhi kya karein, kaunse test honge, aur kya aapki galti hai (aur kya nahi)."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Pregnancy mein kisi bhi bleeding par **usi din doctor se sampark karein**. **Abhi emergency jaayein** agar zyada bleeding ho (2 ghante tak har ghante pad bhar jaaye), pet mein tez ya ek taraf dard, kandhe ke kone mein dard, chakkar ya behoshi, ya bukhaar. Doctor ko apna **blood group** batayein: Rh-negative hain to injection ki zaroorat ho sakti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Bleeding Ki Sambhav Wajahein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Aamtaur par kaisi dikhti hai",
+          "Kitni aam"
+        ],
+        "rows": [
+          [
+            "Implantation bleeding",
+            "Period ke samay ke aas-paas halki gulaabi ya bhoori spotting",
+            "Aam, bematlab"
+          ],
+          [
+            "Sensitive cervix",
+            "Sex ya andar ki jaanch ke baad halki spotting",
+            "Aam, aksar bematlab"
+          ],
+          [
+            "Subchorionic haematoma",
+            "Pregnancy ke paas khoon ka chhota jamaav, scan mein dikhta hai, spotting karta hai",
+            "Kaafi aam, aksar theek ho jaata hai"
+          ],
+          [
+            "Miscarriage",
+            "Badhti bleeding, period jaise marod, kabhi thakke ya tissue nikalna",
+            "Pata chali pregnancy mein lagbhag 10–20%"
+          ],
+          [
+            "Ectopic pregnancy",
+            "Bachchedaani ke baahar pregnancy, ek taraf dard, halki ya gehri bleeding, kandhe ke kone mein dard, chakkar",
+            "Lagbhag 100 mein 1–2. Emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kaunse Test Honge"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Ultrasound scan**, shuruaati hafton mein aksar andar se (transvaginal), jisse saaf dikhta hai",
+          "**Blood hCG test**, kabhi 48 ghante baad dobara, yeh dekhne ke liye ki level kaise badal raha hai",
+          "**Blood group** jaanch, aur Rh-negative hone par **anti-D injection**",
+          "Kabhi abhi pakka kehna jaldi hota hai. 7–14 din mein dobara scan aam hai. Intezaar mushkil hai, par normal hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟡 Usi din",
+            "Halki spotting, dard nahi ya halka marod",
+            "Aaj doctor ko call karein ya consultation book karein. Aaram karein, tampon nahi, pad lein"
+          ],
+          [
+            "🔴 Emergency",
+            "Zyada bleeding, bade thakke, period se zyada marod",
+            "Emergency jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Ek taraf ya tez dard, kandhe ke kone mein dard, chakkar ya behoshi, chaahe bleeding kam ho",
+            "Ectopic pregnancy ho sakti hai. Abhi emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bleeding ke baad bukhaar, kaanpna, ya badboodaar discharge",
+            "Turant doctor ko dikhayein (infection ho sakta hai)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Agar Miscarriage Hai: Yeh Aapki Galti Nahi Thi"
+      },
+      {
+        "type": "paragraph",
+        "text": "Zyadatar shuruaati miscarriage badhti pregnancy mein **chromosome ki gadbad** se hote hain, jise na koi kar sakta tha na rok sakta tha. Auraton se aksar kaha jaata hai, ya woh khud sochti hain, ki unki kisi galti se hua. Lagbhag kabhi aisa nahi hota."
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Log kise dosh dete hain",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "Saamaan uthaana, ghar ka kaam, naukri, safar",
+            "Normal rozmarra ke kaam se miscarriage nahi hota"
+          ],
+          [
+            "Sex, exercise",
+            "Normal pregnancy mein miscarriage nahi karte"
+          ],
+          [
+            "Papita, ananaas, \"garam\" cheezein khaana",
+            "In cheezon ki normal maatra wajah nahi hai"
+          ],
+          [
+            "Jhagda, tanaav, dar",
+            "Rozmarra ka tanaav miscarriage nahi karta"
+          ],
+          [
+            "\"Nazar\" ya badkismati",
+            "Miscarriage ek medical ghatna hai, shraap nahi"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Aapki sthiti ke hisaab se doctor vikalp samjhaayengi: apne aap poora hone dena, dawa, ya chhoti procedure. Baad mein **period aamtaur par 4–6 hafte mein laut aata hai**. Ek miscarriage ka matlab yeh nahi ki swasth pregnancy nahi hogi. Zyadatar auraton ki hoti hai. **3 ya zyada** miscarriage ke baad doctor aamtaur par khaas test ki salaah dete hain."
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Dukh asli hai",
+        "text": "Udaas, sunn, gussa ya apraadh-bodh mehsoos karna normal hai, partner ke liye bhi. Jaldi \"aage badhne\" ki zaroorat nahi. Kisi bharosemand se baat karein. Agar udaasi hafton tak rahe ya niraasha lage, to doctor ko zaroor batayein. Sahaara madad karta hai. India mein Tele-MANAS helpline par bhi call kar sakti hain: **14416**."
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pregnancy ke hafte** (pichhle period ki taareekh, ya scan ki taareekh)",
+          "**Bleeding kab shuru hui**, rang, aur pichhle kuch ghanton mein kitne pad",
+          "Koi **dard** (kahan, kitna), chakkar, ya bukhaar",
+          "Pata ho to **blood group**, aur pichhli scan report",
+          "Pichhli pregnancy, aur kya pehle kabhi ectopic pregnancy hui hai"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "**Bina dard ki halki spotting** mein **online consultation** se samajhne aur sahi scan va blood test jaldi karwaane mein madad mil sakti hai. Gynaecologist bataayengi ki aana zaroori hai ya nahi. Upar ke kisi bhi emergency sanket mein pehle nazdeeki hospital jaayein. (Shuruaati pregnancy ke sanket, pregnancy scan aur antenatal jaanch par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists, Tele-MANAS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "colic-baby-crying-a-lot-why-how-to-soothe-guide",
+    "title": "Colic: Why Your Baby Cries for Hours, and How to Soothe Them",
+    "description": "Baby cries for hours every evening? What colic is, a step-by-step soothing plan, why gripe water and ghutti aren't needed, and signs it's not colic.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "👶",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Every evening around the same time, your healthy, well-fed baby starts crying and won't stop. They pull up their legs, go red in the face, and nothing seems to help for hours. Grandparents suggest ghutti, neighbours suggest \"nazar\". This is very likely **colic**, and it is common, temporary and **not a sign that you're doing anything wrong**. Here's how to get through it, and how to spot when crying means something else."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Colic is long bouts of crying (often **3+ hours a day**, usually in the evening) in a baby who is otherwise **healthy, feeding and growing well**. It starts around **2–3 weeks**, peaks around **6 weeks**, and usually eases by **3–4 months**. A **baby under 3 months with fever (38°C or more)** needs a doctor urgently. That isn't colic."
+      },
+      {
+        "type": "heading",
+        "text": "Is It Colic? The Pattern"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Crying spells at **about the same time daily**, often late afternoon or evening",
+          "Intense crying that can look like pain: fists clenched, legs pulled up, red face",
+          "Hard to soothe, but the baby **feeds well, gains weight**, and is calm at other times",
+          "No fever, no vomiting of green fluid, no blood in stool"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "A Step-by-Step Soothing Plan"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Check the basics**: hungry? Wet nappy? Too hot or cold? (One more layer than you're wearing is enough)",
+          "**Burp** during and after feeds, and keep the baby upright for 10–15 minutes after",
+          "**Hold close**, skin to skin if you can, and gently sway or rock",
+          "**Shush and white noise**: a fan, a \"shhh\" sound close to the ear, or soft repetitive sounds",
+          "**Swaddle** snugly around the arms but loose at the hips, and only until the baby starts trying to roll",
+          "**Motion**: a slow walk with the baby in a pram or carrier, or a gentle car ride",
+          "**Warm bath** or a gentle tummy massage (clockwise) when the baby is calm",
+          "If nothing works, **it's okay to put the baby down safely** in the cot and take a 10-minute break"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Never shake a baby",
+        "text": "When crying goes on and on, anyone can feel overwhelmed. That is normal. But **shaking a baby, even briefly, can cause serious brain injury**. If you feel frustrated, put the baby down safely on their back in the cot, step out, breathe, and call someone to take over. Tell everyone who cares for your baby this too."
+      },
+      {
+        "type": "heading",
+        "text": "About Ghutti, Gripe Water and Home Remedies"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Common advice",
+          "What we know"
+        ],
+        "rows": [
+          [
+            "Janam ghutti or gripe water",
+            "There's no good evidence they help colic, and under 6 months babies should get **only breast milk or formula**, not other liquids"
+          ],
+          [
+            "Honey on the tongue (gutti)",
+            "**Never under 1 year**. Honey can cause infant botulism, a serious illness"
+          ],
+          [
+            "Water or tea for \"gas\"",
+            "Not needed under 6 months. It can fill the tummy and reduce feeding"
+          ],
+          [
+            "Hing (asafoetida) paste on the tummy",
+            "Unproven, and it can irritate delicate skin. Don't put anything in the baby's mouth"
+          ],
+          [
+            "Stop breastfeeding",
+            "Don't. Colic isn't caused by breast milk. Only change your diet or the formula on a doctor's advice"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Likely colic",
+            "Evening crying spells, but feeding, weeing and gaining weight well",
+            "Soothing plan, and mention it at the next check-up"
+          ],
+          [
+            "🟡 See a doctor",
+            "Crying is getting worse, frequent vomiting after feeds, poor weight gain, or you're struggling to cope",
+            "Book a consultation. Reflux or feeding issues can be checked"
+          ],
+          [
+            "🔴 Urgent",
+            "Fever 38°C or more under 3 months, green or forceful vomit, blood in stool, swollen hard tummy",
+            "Go to a doctor or emergency now"
+          ],
+          [
+            "🔴 Urgent",
+            "Weak, high-pitched or moaning cry, floppy or very sleepy, breathing fast or with effort, fewer wet nappies",
+            "Go to a doctor or emergency now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby's **age** and birth weight, and any recent weight",
+          "**When the crying happens**, and how long it lasts",
+          "**Feeds**: breast or formula, how often, and whether there is vomiting",
+          "**Wet nappies** per day and what the stool looks like",
+          "A short **video** of a crying spell can help the doctor a lot"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician is a good way to rule out other causes and get a plan, without taking a crying baby out. The doctor will tell you if the baby needs to be examined. And remember: colic passes. (See our guides on newborn concerns, your baby's first year, and fever in children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Academy of Pediatrics, WHO). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Har shaam lagbhag ek hi samay aapka swasth, pet bhara bachcha rona shuru karta hai aur rukta nahi. Pair upar kheenchta hai, chehra laal ho jaata hai, aur ghanton tak kuch kaam nahi karta. Daadi-naani ghutti batati hain, padosi \"nazar\". Bahut mumkin hai yeh **colic** ho, jo aam hai, kuch samay ka hai, aur **iska matlab yeh nahi ki aap kuch galat kar rahe hain**. Yahan jaaniye ise kaise sambhaalein, aur kab rona kisi aur baat ka sanket hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Colic ek aise bachche ka lamba rona hai (aksar **din mein 3+ ghante**, aamtaur par shaam ko) jo baaki samay **swasth hai, achhe se peeta hai aur badh raha hai**. Yeh lagbhag **2–3 hafte** mein shuru hota hai, **6 hafte** ke aas-paas sabse zyada, aur aamtaur par **3–4 mahine** tak kam ho jaata hai. **3 mahine se chhote bachche ko bukhaar (38°C ya zyada)** ho to turant doctor ko dikhayein. Yeh colic nahi hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kya Yeh Colic Hai? Pattern Dekhein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Rone ke daure **roz lagbhag ek hi samay**, aksar dopahar baad ya shaam",
+          "Tez rona jo dard jaisa lage: muththi bandh, pair upar, chehra laal",
+          "Chup karana mushkil, lekin bachcha **achhe se peeta hai, vazan badhta hai**, aur baaki samay shaant rehta hai",
+          "Bukhaar nahi, hari ulti nahi, potty mein khoon nahi"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Chup Karaane Ka Step-by-Step Plan"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Basic cheezein check karein**: bhookh? Geela nappy? Zyada garmi ya thand? (Aapse ek layer zyada kapda kaafi hai)",
+          "Doodh pilaate samay aur baad mein **dakaar dilaayein**, aur 10–15 minute seedha pakde rakhein",
+          "**Seene se lagaayein**, ho sake to skin to skin, aur halke se jhulaayein",
+          "**Shhh aur white noise**: pankha, kaan ke paas \"shhh\" ki awaaz, ya naram baar-baar ki awaaz",
+          "Haathon ke aas-paas kas kar, lekin kamar par dheela **swaddle** karein, aur sirf tab tak jab tak bachcha palatne ki koshish na kare",
+          "**Harkat**: pram ya carrier mein dheemi walk, ya halki car ki sawaari",
+          "Shaant hone par **garam paani se nahlaana** ya pet ki halki maalish (ghadi ki disha mein)",
+          "Kuch kaam na kare to **bachche ko surakshit cot mein litaa kar** 10 minute ka break lena theek hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Bachche ko kabhi na jhatkein",
+        "text": "Jab rona rukta hi nahi, to koi bhi pareshaan ho sakta hai. Yeh normal hai. Lekin **bachche ko jhatakna, thodi der bhi, dimaag ko gambhir chot pahuncha sakta hai**. Gussa aaye to bachche ko cot mein peeth ke bal surakshit litaayein, baahar jaayein, saans lein, aur kisi ko bula lein. Bachche ki dekhbhaal karne wale har vyakti ko yeh batayein."
+      },
+      {
+        "type": "heading",
+        "text": "Ghutti, Gripe Water Aur Gharelu Nuskhe"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Aam salaah",
+          "Hum kya jaante hain"
+        ],
+        "rows": [
+          [
+            "Janam ghutti ya gripe water",
+            "Colic mein madad ka koi achha saboot nahi, aur 6 mahine se pehle bachche ko **sirf maa ka doodh ya formula** milna chahiye, koi aur cheez nahi"
+          ],
+          [
+            "Jeebh par shahad (gutti)",
+            "**1 saal se pehle kabhi nahi**. Shahad se infant botulism ho sakta hai, jo gambhir bimari hai"
+          ],
+          [
+            "\"Gas\" ke liye paani ya chai",
+            "6 mahine se pehle zaroorat nahi. Pet bhar jaata hai aur doodh kam peeta hai"
+          ],
+          [
+            "Pet par hing ka lep",
+            "Saabit nahi, aur naazuk twacha ko jala sakta hai. Bachche ke muh mein kuch na daalein"
+          ],
+          [
+            "Maa ka doodh band karna",
+            "Na karein. Colic maa ke doodh se nahi hota. Doctor ki salaah par hi apna khaana ya formula badlein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Shayad colic",
+            "Shaam ke rone ke daure, lekin achhe se peena, peshaab aur vazan badhna",
+            "Chup karaane ka plan, aur agli jaanch par batayein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Rona badh raha hai, doodh ke baad baar-baar ulti, vazan kam badhna, ya aap sambhaal nahi pa rahe",
+            "Consultation book karein. Reflux ya doodh pilaane ki dikkat check ho sakti hai"
+          ],
+          [
+            "🔴 Urgent",
+            "3 mahine se chhote ko 38°C ya zyada bukhaar, hari ya zor ki ulti, potty mein khoon, phoola sakht pet",
+            "Abhi doctor ya emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Kamzor, patli ya karaahti awaaz mein rona, dheela ya bahut neend mein, tez ya mushkil saans, kam geele nappy",
+            "Abhi doctor ya emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar**, janam ka vazan, aur haal ka vazan",
+          "**Rona kab hota hai**, aur kitni der",
+          "**Doodh**: maa ka ya formula, kitni baar, aur ulti hoti hai ya nahi",
+          "Din mein kitne **geele nappy**, aur potty kaisi hai",
+          "Rone ke daure ka chhota **video** doctor ki bahut madad karta hai"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Rote bachche ko baahar le jaaye bina doosri wajahein hataane aur plan paane ke liye pediatrician se **online consultation** achha tareeka hai. Doctor bataayenge ki jaanch ke liye milna zaroori hai ya nahi. Aur yaad rakhein: colic guzar jaata hai. (Newborn ki chintaon, bachche ke pehle saal aur bachchon mein bukhaar par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Academy of Pediatrics, WHO) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "diaper-rash-nappy-rash-baby-care-guide",
+    "title": "Diaper Rash: How to Heal It Fast and Stop It Coming Back",
+    "description": "Red, sore skin under the nappy? The 4-step routine that heals most diaper rash, the creams to avoid (especially steroid mixes), and how to spot a yeast rash.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-10-31",
+    "readTime": "6 min",
+    "image": "🧷",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Almost every baby gets diaper rash at some point: red, sore, sometimes shiny skin under the nappy that makes changes painful. It isn't a sign of poor care. It's simply what happens when delicate skin stays in contact with wetness and stool. The good news is that most rashes improve within **2–3 days** with the right routine. Here's exactly what to do, and which popular creams to keep away from."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "**Change often, clean gently with water, let the skin air-dry, and apply a thick barrier cream** (zinc oxide or petroleum jelly) at every change. If it hasn't improved in **3 days**, has bright red spots spreading into the folds, blisters or pus, or comes with fever, see a doctor."
+      },
+      {
+        "type": "heading",
+        "text": "The 4-Step Routine That Heals Most Rashes"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Change more often**, as soon as the nappy is wet or dirty, including once at night if the rash is bad",
+          "**Clean gently** with lukewarm water and soft cotton or cloth. Avoid scented wipes and soap on the sore area. Pat, don't rub",
+          "**Air time**: leave the nappy off for 10–15 minutes a few times a day on a washable sheet",
+          "**Thick barrier cream** (zinc oxide or petroleum jelly) like icing on a cake, at every change. You don't need to wipe all of it off each time"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Kind of Rash Is It?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Type",
+          "How it looks",
+          "What helps"
+        ],
+        "rows": [
+          [
+            "Irritant rash (most common)",
+            "Red, sore skin on the bum, thighs and genitals, but the **skin folds are often spared**",
+            "The 4-step routine"
+          ],
+          [
+            "Yeast (candida) rash",
+            "Bright red, **in the folds too**, with small red dots spreading at the edges. Often after antibiotics or a rash lasting over 3 days",
+            "Anti-fungal cream from a doctor"
+          ],
+          [
+            "Allergy or reaction",
+            "Starts after a new wipe, nappy brand, detergent or cream",
+            "Stop the new product"
+          ],
+          [
+            "Infected rash",
+            "Yellow crusts, pus spots, blisters, open sores",
+            "Needs a doctor"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Creams and Habits to Avoid"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Avoid",
+          "Why"
+        ],
+        "rows": [
+          [
+            "**Combination creams with steroids** (often sold as all-in-one \"skin creams\" with an antifungal, an antibiotic and a steroid together)",
+            "Steroids can thin a baby's skin and worsen fungal rashes. Use only if a doctor prescribes them, for a short time"
+          ],
+          [
+            "**Talc or powder**",
+            "It can be breathed in, and it clumps in the folds when wet"
+          ],
+          [
+            "**Scented wipes, soaps, bubble bath**",
+            "Fragrance irritates sore skin"
+          ],
+          [
+            "Tight nappies and plastic pants",
+            "They trap moisture and heat"
+          ],
+          [
+            "Home remedies like turmeric paste or toothpaste",
+            "They can sting or irritate. Plain barrier cream works better"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Cloth nappies?",
+        "text": "They're fine. Change them often, wash with a mild, unscented detergent, rinse well, and dry in the sun if you can. Avoid fabric softener."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Mild redness, the baby is otherwise well",
+            "The 4-step routine for 2–3 days"
+          ],
+          [
+            "🟡 See a doctor",
+            "No better after 3 days, red dots in the folds, or the rash keeps coming back",
+            "Book a consultation. It may be yeast"
+          ],
+          [
+            "🔴 See a doctor today",
+            "Blisters, pus, open or bleeding sores, or the rash spreading beyond the nappy area",
+            "See a doctor the same day"
+          ],
+          [
+            "🔴 Urgent",
+            "Rash with fever, the baby is unusually sleepy or not feeding, or very young (under 6 weeks) and unwell",
+            "Go to a doctor urgently"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Clear photos** of the rash in good light (including the folds)",
+          "When it started, and what you've tried (creams, by name)",
+          "Any recent **antibiotics**, diarrhoea or new products",
+          "Nappy type (disposable or cloth) and how often it's changed",
+          "Whether the baby has a fever or is feeding normally"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Diaper rash is ideal for an **online consultation**: a pediatrician can usually tell the type from clear photos and suggest the right cream, saving a trip with a sore, unhappy baby. (See our guides on newborn concerns and your baby's first year.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Academy of Pediatrics, American Academy of Dermatology). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Lagbhag har bachche ko kabhi na kabhi diaper rash hota hai: nappy ke neeche laal, dukhti, kabhi chamakti twacha, jisse nappy badalna dardnaak ho jaata hai. Yeh kharaab dekhbhaal ka sanket nahi hai. Naazuk twacha jab geelepan aur potty ke sampark mein rehti hai, to aisa hota hai. Achhi baat yeh hai ki sahi routine se zyadatar rash **2–3 din** mein theek hone lagte hain. Yahan jaaniye theek kya karna hai, aur kaunsi mashhoor creams se door rehna hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Jaldi-jaldi badlein, paani se halke saaf karein, twacha ko hawa mein sookhne dein, aur har baar moti barrier cream** (zinc oxide ya petroleum jelly) lagayein. Agar **3 din** mein sudhaar na ho, silvaton tak phailte chamakdaar laal daane hon, chhale ya mawaad ho, ya bukhaar ho, to doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "4 Step Ka Routine Jo Zyadatar Rash Theek Karta Hai"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Zyada baar badlein**, jaise hi nappy geela ya ganda ho, rash zyada ho to raat mein bhi ek baar",
+          "**Halke se saaf karein**: gunguna paani aur naram rui ya kapda. Dukhti jagah par khushboo wale wipes aur saabun na lagayein. Ragdein nahi, thapthapaayein",
+          "**Hawa ka samay**: din mein kuch baar 10–15 minute dhulne wali chaadar par bina nappy ke rakhein",
+          "Har baar **moti barrier cream** (zinc oxide ya petroleum jelly), cake par icing jaisi. Har baar poori pochhne ki zaroorat nahi"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Yeh Kaunsa Rash Hai?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Type",
+          "Kaisa dikhta hai",
+          "Kya madad karta hai"
+        ],
+        "rows": [
+          [
+            "Irritant rash (sabse aam)",
+            "Kulhon, jaanghon aur gupt-ang par laal dukhti twacha, lekin **silvatein aksar bachi rehti hain**",
+            "4 step ka routine"
+          ],
+          [
+            "Yeast (candida) rash",
+            "Chamakdaar laal, **silvaton mein bhi**, kinaaron par chhote laal daane phailte hue. Aksar antibiotic ke baad ya 3 din se zyada chale rash mein",
+            "Doctor ki anti-fungal cream"
+          ],
+          [
+            "Allergy ya reaction",
+            "Naye wipe, nappy brand, detergent ya cream ke baad shuru",
+            "Naya product band karein"
+          ],
+          [
+            "Infected rash",
+            "Peeli papdi, mawaad ke daane, chhale, khule ghaav",
+            "Doctor zaroori"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kin Creams Aur Aadaton Se Bachein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Bachein",
+          "Kyun"
+        ],
+        "rows": [
+          [
+            "**Steroid wali combination creams** (aksar antifungal, antibiotic aur steroid ek saath wali \"sab-mein-ek\" skin cream ke roop mein bikti hain)",
+            "Steroid bachche ki twacha patli kar sakte hain aur fungal rash badha sakte hain. Sirf doctor likhein to, kam samay ke liye"
+          ],
+          [
+            "**Talc ya powder**",
+            "Saans mein ja sakta hai, aur geela hone par silvaton mein jam jaata hai"
+          ],
+          [
+            "**Khushboo wale wipes, saabun, bubble bath**",
+            "Khushboo dukhti twacha ko chubhti hai"
+          ],
+          [
+            "Tight nappy aur plastic pant",
+            "Nami aur garmi band kar dete hain"
+          ],
+          [
+            "Haldi ka lep ya toothpaste jaise nuskhe",
+            "Jalan ya chubhan kar sakte hain. Saada barrier cream behtar hai"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Kapde ke nappy?",
+        "text": "Theek hain. Jaldi-jaldi badlein, halke bina khushboo ke detergent se dhoyein, achhe se khangaalein, aur ho sake to dhoop mein sukhaayein. Fabric softener na lagayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Halki laali, bachcha baaki theek",
+            "2–3 din 4 step ka routine"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "3 din mein sudhaar nahi, silvaton mein laal daane, ya rash baar-baar lautna",
+            "Consultation book karein. Yeast ho sakta hai"
+          ],
+          [
+            "🔴 Aaj doctor ko dikhayein",
+            "Chhale, mawaad, khule ya khoon wale ghaav, ya nappy se baahar phailta rash",
+            "Usi din doctor ko dikhayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Rash ke saath bukhaar, bachcha asaamaanya roop se neend mein ya doodh nahi pee raha, ya bahut chhota (6 hafte se kam) aur bimaar",
+            "Turant doctor ke paas jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Achhi roshni mein rash ki **saaf photos** (silvatein bhi)",
+          "Kab shuru hua, aur kya lagaaya (creams ke naam)",
+          "Haal mein koi **antibiotic**, dast ya naya product",
+          "Nappy ka type (disposable ya kapde ka) aur kitni baar badla jaata hai",
+          "Bachche ko bukhaar hai ya nahi, aur doodh normal pee raha hai ya nahi"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Diaper rash ke liye **online consultation** bahut achha hai: pediatrician aksar saaf photos se type pehchaan kar sahi cream bata sakte hain, aur dukhte, pareshaan bachche ke saath safar bach jaata hai. (Newborn ki chintaon aur bachche ke pehle saal par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Academy of Pediatrics, American Academy of Dermatology) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "starting-solid-foods-baby-6-months-first-foods-guide",
+    "title": "Starting Solids at 6 Months: First Foods, a Simple Plan, and What to Avoid",
+    "description": "Is your baby ready for solid food? Readiness signs, Indian first foods (khichdi, ragi, dal), a month-by-month plan, foods to avoid before 1 year, and choking safety.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-10-31",
+    "readTime": "8 min",
+    "image": "🥣",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Somewhere around 6 months, breast milk or formula alone stops being enough, especially for **iron**. Starting solids (often marked with **annaprashan**) is exciting, but it comes with a flood of advice: \"start with dal ka paani\", \"give biscuits\", \"add a little salt for taste\". Here's a clear, practical plan based on what paediatric guidance actually recommends, using everyday Indian foods."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Start solids at **about 6 months**, when your baby can sit with support and shows interest. Begin with **thick, iron-rich mashes** (dal-rice khichdi, ragi porridge, mashed vegetables and fruit), not thin \"water\" feeds. Keep breastfeeding. **No honey, added salt or sugar, or whole nuts before 1 year.**"
+      },
+      {
+        "type": "heading",
+        "text": "Is My Baby Ready?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Can **sit up with a little support** and hold the head steady",
+          "Shows **interest in food**: watching you eat, reaching, opening the mouth",
+          "Has **lost the tongue-thrust reflex** (doesn't automatically push food out with the tongue)",
+          "Usually around **6 months**. Not before 4 months. Premature babies may need adjusted timing, so ask your doctor"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "First Foods That Work Well"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Khichdi** (rice and moong dal, cooked very soft and mashed), with a few drops of ghee",
+          "**Ragi (nachni) porridge**: rich in calcium, cooked in water or the baby's usual milk",
+          "**Mashed vegetables**: pumpkin, carrot, potato, sweet potato, bottle gourd (lauki), spinach mixed in",
+          "**Mashed fruit**: banana, ripe papaya, stewed apple or pear, chikoo",
+          "**Iron-rich foods early**: dal, well-cooked mashed egg yolk then whole egg, mashed rajma or chana, and finely minced chicken or fish for non-vegetarian families",
+          "Thick **curd** (dahi) is fine from 6 months"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Thin \"dal ka paani\" or \"chawal ka paani\" is not a good first food",
+        "text": "These are mostly water, with very little energy, protein or iron, and they fill a small tummy. Give the **thick dal and rice mashed together** instead. The texture should drop off a spoon slowly, not run like water."
+      },
+      {
+        "type": "heading",
+        "text": "A Simple Month-by-Month Plan"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Age",
+          "Texture",
+          "How much and how often",
+          "Examples"
+        ],
+        "rows": [
+          [
+            "6 months",
+            "Smooth, thick mash",
+            "2–3 teaspoons, 1–2 times a day, increasing slowly",
+            "Khichdi, ragi porridge, mashed banana, pumpkin"
+          ],
+          [
+            "7–8 months",
+            "Lumpy mash, soft pieces",
+            "A few tablespoons, 2–3 meals a day",
+            "Mashed dal-roti, upma, idli soaked in dal, egg, soft paneer"
+          ],
+          [
+            "9–11 months",
+            "Finely chopped, finger foods",
+            "3 meals and 1–2 snacks",
+            "Soft roti pieces, steamed vegetable sticks, soft fruit pieces, poha"
+          ],
+          [
+            "12 months",
+            "Family food, mashed or chopped",
+            "3 meals and 2 snacks",
+            "Most family food, less spicy, without extra salt"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Keep **breastfeeding on demand** alongside solids, ideally up to 2 years and beyond. Introduce **one new food every 2–3 days** so you can spot any reaction. Common allergy foods like **egg and peanut** (as a smooth paste mixed into food, never whole) can be introduced from around 6 months. If your baby has severe eczema or a known allergy, ask your doctor first."
+      },
+      {
+        "type": "heading",
+        "text": "Foods to Avoid Before 1 Year"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Avoid",
+          "Why"
+        ],
+        "rows": [
+          [
+            "**Honey**",
+            "Risk of infant botulism, a serious illness"
+          ],
+          [
+            "**Added salt, sugar, masala packets, biscuits, namkeen**",
+            "Baby kidneys can't handle much salt, and sugar builds a sweet habit"
+          ],
+          [
+            "**Cow's or buffalo milk as the main drink**",
+            "Low in iron. Small amounts in cooking are fine"
+          ],
+          [
+            "**Fruit juice, tea, soft drinks**",
+            "No nutritional benefit, and they harm teeth"
+          ],
+          [
+            "**Whole nuts, whole grapes, popcorn, hard raw vegetables**",
+            "Choking hazards. Grind nuts, and quarter grapes lengthwise"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Choking safety",
+        "text": "Always feed your baby **sitting upright** and **stay with them**. **Gagging** (coughing, red face, pushing food forward) is a normal part of learning. **Choking** is silent: the baby can't cry, cough or breathe. Learn infant first aid (back blows and chest thrusts) before starting solids."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Give water and ghutti before 6 months.\"",
+            "Under 6 months, breast milk or formula meets all needs, even in summer"
+          ],
+          [
+            "\"Start with dal ka paani, it's easy to digest.\"",
+            "It's too watery to nourish. A thick, mashed dal-rice is better"
+          ],
+          [
+            "\"Babies need salt and sugar for taste.\"",
+            "Babies don't need them. Natural flavours of food are enough"
+          ],
+          [
+            "\"A chubby baby means a healthy baby.\"",
+            "Steady growth along their own curve matters more than size"
+          ],
+          [
+            "\"Bottle-feed porridge so they eat more.\"",
+            "Spoon-feed or let them self-feed. Bottles with porridge risk overfeeding and choking"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby's **age**, current **weight**, and growth chart if you have it",
+          "What and how much the baby eats now, and breastfeeding or formula",
+          "Any **reaction** to a food (rash, vomiting, swelling)",
+          "Any eczema, allergies in the family, or a premature birth",
+          "Your specific worries: refusal, constipation, slow weight gain"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician is a great way to get a personalised feeding plan for your baby's age, growth and family food habits. (See our guides on fussy eaters, your baby's first year, and childhood vaccines.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, Indian Academy of Pediatrics, NHS, American Academy of Pediatrics). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Lagbhag 6 mahine par sirf maa ka doodh ya formula kaafi nahi rehta, khaaskar **iron** ke liye. Pehla khaana shuru karna (aksar **annaprashan** ke saath) khushi ka mauka hai, lekin saath mein salaahon ki baadh aati hai: \"dal ka paani se shuru karo\", \"biscuit do\", \"swaad ke liye thoda namak daalo\". Yahan rozmarra ke Indian khaane ke saath, bachchon ki guidance par aadhaarit ek saaf, practical plan hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Lagbhag 6 mahine** par khaana shuru karein, jab bachcha thode sahaare se baith sake aur dilchaspi dikhaaye. Patle \"paani wale\" khaane se nahi, **gaadhe, iron se bharpoor mash** se shuru karein (dal-chawal ki khichdi, ragi daliya, masle sabzi aur phal). Maa ka doodh jaari rakhein. **1 saal se pehle shahad, upar se namak ya cheeni, ya saabut meve nahi.**"
+      },
+      {
+        "type": "heading",
+        "text": "Kya Mera Bachcha Taiyaar Hai?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Thode sahaare se baith** leta hai aur sir sambhaal leta hai",
+          "**Khaane mein dilchaspi**: aapko khaate dekhna, haath badhaana, muh kholna",
+          "**Jeebh se dhakelna band** (khaana apne aap jeebh se baahar nahi dhakelta)",
+          "Aamtaur par **6 mahine** ke aas-paas. 4 mahine se pehle nahi. Samay se pehle janme bachche ke liye samay alag ho sakta hai, doctor se poochhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Pehle Khaane Jo Achhe Rehte Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Khichdi** (chawal aur moong dal, bahut naram paka kar masli hui), kuch boond ghee ke saath",
+          "**Ragi (nachni) daliya**: calcium se bharpoor, paani ya bachche ke roz ke doodh mein paka hua",
+          "**Masli sabzi**: kaddu, gaajar, aaloo, shakarkand, lauki, saath mein palak",
+          "**Masle phal**: kela, paka papita, ubla seb ya naashpati, cheeku",
+          "**Jaldi iron wale khaane**: dal, achhe se paki masli ande ki zardi phir poora anda, masla rajma ya chana, aur maansahari parivaaron ke liye baarik kati chicken ya machhli",
+          "Gaadha **dahi** 6 mahine se theek hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Patla \"dal ka paani\" ya \"chawal ka paani\" achha pehla khaana nahi",
+        "text": "Inmein zyadatar paani hota hai, energy, protein ya iron bahut kam, aur yeh chhota pet bhar dete hain. Iske bajaaye **gaadhi dal aur chawal saath masal kar** dein. Khaana chammach se dheere girna chahiye, paani jaisa behna nahi."
+      },
+      {
+        "type": "heading",
+        "text": "Mahine-Dar-Mahine Aasaan Plan"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Umar",
+          "Banavat",
+          "Kitna aur kitni baar",
+          "Udaaharan"
+        ],
+        "rows": [
+          [
+            "6 mahine",
+            "Chikna, gaadha mash",
+            "2–3 chammach, din mein 1–2 baar, dheere badhaayein",
+            "Khichdi, ragi daliya, masla kela, kaddu"
+          ],
+          [
+            "7–8 mahine",
+            "Gaanthon wala mash, naram tukde",
+            "Kuch bade chammach, din mein 2–3 baar",
+            "Masli dal-roti, upma, dal mein bheegi idli, anda, naram paneer"
+          ],
+          [
+            "9–11 mahine",
+            "Baarik kata, haath se khaane wala",
+            "3 meal aur 1–2 naashte",
+            "Naram roti ke tukde, ubli sabzi ki stick, naram phal ke tukde, poha"
+          ],
+          [
+            "12 mahine",
+            "Ghar ka khaana, masla ya kata",
+            "3 meal aur 2 naashte",
+            "Zyadatar ghar ka khaana, kam teekha, bina extra namak"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Khaane ke saath **maa ka doodh maang par** jaari rakhein, behtar hai 2 saal aur usse aage tak. **Har 2–3 din mein ek naya khaana** shuru karein taaki kisi reaction ka pata chale. Allergy wale aam khaane jaise **anda aur moongphali** (chikne paste ke roop mein khaane mein mila kar, kabhi saabut nahi) lagbhag 6 mahine se shuru kiye ja sakte hain. Agar bachche ko tez eczema ya pata allergy ho, to pehle doctor se poochhein."
+      },
+      {
+        "type": "heading",
+        "text": "1 Saal Se Pehle Kya Na Dein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Na dein",
+          "Kyun"
+        ],
+        "rows": [
+          [
+            "**Shahad**",
+            "Infant botulism ka khatra, jo gambhir bimari hai"
+          ],
+          [
+            "**Upar se namak, cheeni, masala packet, biscuit, namkeen**",
+            "Bachche ki kidney zyada namak nahi sambhaal sakti, aur cheeni meethe ki aadat daalti hai"
+          ],
+          [
+            "**Gaay ya bhains ka doodh mukhya peene ke liye**",
+            "Iron kam. Khaana pakaane mein thoda theek hai"
+          ],
+          [
+            "**Phalon ka juice, chai, cold drink**",
+            "Koi poshan faayda nahi, aur daanton ko nuksaan"
+          ],
+          [
+            "**Saabut meve, saabut angoor, popcorn, sakht kachchi sabzi**",
+            "Gale mein atakne ka khatra. Meve pees lein, angoor lambaai mein chaar tukde karein"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Gale mein atakne se suraksha",
+        "text": "Hamesha bachche ko **seedha bitha kar** khilaayein aur **saath rahein**. **Ubkaai** (khaansi, laal chehra, khaana aage dhakelna) seekhne ka normal hissa hai. **Choking** chupchaap hoti hai: bachcha ro, khaans ya saans nahi le paata. Khaana shuru karne se pehle bachche ka first aid (peeth par thapki aur seene par dabaav) seekh lein."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"6 mahine se pehle paani aur ghutti do.\"",
+            "6 mahine se pehle maa ka doodh ya formula saari zaroorat poori karta hai, garmi mein bhi"
+          ],
+          [
+            "\"Dal ka paani se shuru karo, aasaani se pachta hai.\"",
+            "Itna patla hai ki poshan nahi deta. Gaadhi masli dal-chawal behtar hai"
+          ],
+          [
+            "\"Bachchon ko swaad ke liye namak-cheeni chahiye.\"",
+            "Bachchon ko inki zaroorat nahi. Khaane ka apna swaad kaafi hai"
+          ],
+          [
+            "\"Gol-matol bachcha matlab swasth bachcha.\"",
+            "Aakaar se zyada apni growth curve par lagatar badhna zaroori hai"
+          ],
+          [
+            "\"Bottle mein daliya do taaki zyada khaaye.\"",
+            "Chammach se khilaayein ya khud khaane dein. Bottle mein daliya se zyada khaane aur atakne ka khatra"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar**, abhi ka **vazan**, aur ho to growth chart",
+          "Ab kya aur kitna khaata hai, aur maa ka doodh ya formula",
+          "Kisi khaane se **reaction** (daane, ulti, soojan)",
+          "Koi eczema, parivaar mein allergy, ya samay se pehle janm",
+          "Aapki khaas chinta: mana karna, kabz, dheere vazan badhna"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Bachche ki umar, growth aur parivaar ke khaane ke hisaab se personal feeding plan ke liye pediatrician se **online consultation** bahut achha tareeka hai. (Nakhre wale khaane, bachche ke pehle saal aur bachchon ke teekon par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, Indian Academy of Pediatrics, NHS, American Academy of Pediatrics) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "body-ache-all-over-causes-when-to-worry-guide",
+    "title": "Body Ache All Over: Common Causes and When It Needs a Doctor",
+    "description": "Aching all over? The usual causes (viral fever, dengue, low vitamin D, thyroid), why to avoid ibuprofen when dengue is possible, and warning signs.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-10-31",
+    "readTime": "7 min",
+    "image": "🤒",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"Poora badan toot raha hai.\" Most of us have said it: every muscle aches, you feel heavy and drained, and you just want to lie down. Usually it's your body fighting a virus or recovering from a hard day, and it passes in a few days. But body ache can also be an early sign of dengue, a vitamin deficiency, or a thyroid problem. Here's how to tell what's likely, what helps, and when to get checked."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Body ache with fever is most often **viral**, and rest, fluids and **paracetamol** help. During dengue season (July–November), **avoid ibuprofen, aspirin and other NSAID painkillers** until dengue is ruled out, as they increase bleeding risk. Aches lasting **more than 2 weeks** without a clear reason deserve a check-up and simple blood tests."
+      },
+      {
+        "type": "heading",
+        "text": "With Fever or Without? A Quick Guide"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Likely causes",
+          "Clues"
+        ],
+        "rows": [
+          [
+            "**With fever**",
+            "Viral fever and flu, dengue, chikungunya, malaria, typhoid, COVID",
+            "Dengue: high fever, pain behind the eyes, rash. Chikungunya: severe joint pain. Malaria: fever with chills that comes and goes"
+          ],
+          [
+            "**Without fever, short-lived**",
+            "Hard exercise or physical work, poor sleep, dehydration, long travel",
+            "Started after a clear trigger, and gets better in 1–3 days"
+          ],
+          [
+            "**Without fever, for weeks**",
+            "Low vitamin D, low B12, anaemia, underactive thyroid, stress and depression, some medicines (like statins), fibromyalgia",
+            "Tiredness, low mood, feeling cold, weakness. Simple blood tests usually find it"
+          ],
+          [
+            "**With joint swelling or morning stiffness**",
+            "Rheumatoid arthritis and other inflammatory conditions",
+            "Stiffness over an hour in the morning, swollen joints. Needs a doctor"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Helps at Home"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Rest**. Your body needs energy to fight infection",
+          "**Plenty of fluids**: water, ORS, coconut water, soups, nimbu paani. Urine should stay pale",
+          "**Paracetamol** as directed on the pack for fever and pain (don't exceed the daily limit, and be careful with combination cold medicines that also contain paracetamol)",
+          "A **warm shower** or warm compress for sore muscles",
+          "Light, easy food: khichdi, dal, fruits, curd",
+          "Once you're better, **gentle stretching and walking** ease leftover stiffness"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Why \"just take a strong painkiller\" can be risky",
+        "text": "In dengue, **ibuprofen, diclofenac, aspirin and similar NSAIDs** can increase the risk of bleeding. Many popular \"body pain\" combination tablets contain them. If you have fever during dengue season, **stick to paracetamol** until a doctor or a test rules dengue out."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Aches with a mild fever or after exertion, improving in 2–3 days",
+            "Rest, fluids, paracetamol"
+          ],
+          [
+            "🟡 See a doctor",
+            "Fever lasting over 2–3 days, or aches lasting over 2 weeks, or with tiredness, weight loss, or joint swelling",
+            "Book a consultation and blood tests (CBC, and others as advised)"
+          ],
+          [
+            "🔴 Urgent",
+            "Fever with bleeding gums or nose, red spots on the skin, black stools, severe tummy pain, repeated vomiting, or extreme weakness",
+            "Possible severe dengue. Go to hospital"
+          ],
+          [
+            "🔴 Urgent",
+            "Severe muscle pain with very dark (cola-coloured) urine after extreme exercise or heat",
+            "Possible muscle breakdown (rhabdomyolysis). Go to hospital"
+          ],
+          [
+            "🔴 Emergency",
+            "Aches with a stiff neck and headache, confusion, chest pain or breathlessness",
+            "Go to an emergency now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Tests Doctors Commonly Use"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**CBC (complete blood count)**: infection clues, platelets, anaemia",
+          "**Dengue NS1 or antibody test**, **malaria test**, **typhoid test** in fever, depending on the days of fever and season",
+          "**Vitamin D, vitamin B12, TSH (thyroid)** for long-lasting aches",
+          "**ESR or CRP** for inflammation, and others such as uric acid or rheumatoid factor if joints are involved"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"A drip will make body ache go away faster.\"",
+            "Most people do fine drinking fluids. A drip is only needed if you can't keep fluids down or are dehydrated"
+          ],
+          [
+            "\"An injection works better than tablets.\"",
+            "For most body aches, tablets work just as well and are safer"
+          ],
+          [
+            "\"Body ache means you need a multivitamin.\"",
+            "Only if a test shows a deficiency. Random supplements often aren't needed"
+          ],
+          [
+            "\"Antibiotics will clear it up.\"",
+            "Most fevers with body ache are viral. Antibiotics don't help viruses"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**How many days** of aches, and of fever (with temperature readings)",
+          "Other symptoms: rash, joint pain, cough, loose motions, vomiting, urine colour",
+          "**Medicines taken** so far (names and doses)",
+          "Anyone at home or nearby with **dengue or fever**, and recent travel",
+          "Any reports done (CBC, dengue, malaria)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Body ache is a common reason for an **online consultation**. A general physician can judge whether it's likely viral, which tests make sense on which day of fever, and which warning signs to watch for at home. (See our guides on viral fever, dengue warning signs, vitamin D deficiency and chikungunya.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, NHS, National Centre for Vector Borne Diseases Control (India)). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Poora badan toot raha hai.\" Hum sabne kabhi na kabhi yeh kaha hai: har maaspeshi dukhti hai, shareer bhaari aur thaka lagta hai, aur bas let jaane ka man karta hai. Aksar yeh shareer ka kisi virus se ladna ya bhaari din ke baad theek hona hota hai, aur kuch din mein chala jaata hai. Lekin badan dard dengue, vitamin ki kami ya thyroid ki dikkat ka shuruaati sanket bhi ho sakta hai. Yahan jaaniye kya zyada mumkin hai, kya madad karta hai, aur kab jaanch karaayein."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Bukhaar ke saath badan dard aksar **viral** hota hai, aur aaram, paani aur **paracetamol** madad karte hain. Dengue ke mausam (July–November) mein, dengue ki sambhaavna hatne tak **ibuprofen, aspirin aur doosre NSAID painkiller na lein**, inse bleeding ka khatra badhta hai. Bina saaf wajah ke **2 hafte se zyada** dard rahe to jaanch aur simple blood test zaroori hain."
+      },
+      {
+        "type": "heading",
+        "text": "Bukhaar Ke Saath Ya Bina? Ek Quick Guide"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Sambhav wajahein",
+          "Sanket"
+        ],
+        "rows": [
+          [
+            "**Bukhaar ke saath**",
+            "Viral bukhaar aur flu, dengue, chikungunya, malaria, typhoid, COVID",
+            "Dengue: tez bukhaar, aankhon ke peechhe dard, daane. Chikungunya: jodon mein tez dard. Malaria: kanpkanpi ke saath aata-jaata bukhaar"
+          ],
+          [
+            "**Bina bukhaar, kam samay ka**",
+            "Bhaari exercise ya mehnat, kam neend, paani ki kami, lamba safar",
+            "Saaf wajah ke baad shuru, aur 1–3 din mein behtar"
+          ],
+          [
+            "**Bina bukhaar, hafton tak**",
+            "Vitamin D ki kami, B12 ki kami, khoon ki kami, thyroid kam, tanaav aur depression, kuch dawaiyan (jaise statin), fibromyalgia",
+            "Thakaan, udaasi, thand lagna, kamzori. Simple blood test se aksar pata chalta hai"
+          ],
+          [
+            "**Jodon mein soojan ya subah akdan**",
+            "Rheumatoid arthritis aur doosri soojan wali bimariyan",
+            "Subah ek ghante se zyada akdan, soojhe jod. Doctor zaroori"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ghar Par Kya Madad Karta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Aaram**. Infection se ladne ke liye shareer ko energy chahiye",
+          "**Khoob paani**: paani, ORS, nariyal paani, soup, nimbu paani. Peshaab halka rahe",
+          "Bukhaar aur dard ke liye pack par likhe anusaar **paracetamol** (din ki seema paar na karein, aur paracetamol wali sardi ki combination dawaon se saavdhaan rahein)",
+          "Dukhti maanspeshiyon ke liye **garam paani se nahaana** ya garam sek",
+          "Halka, aasaan khaana: khichdi, dal, phal, dahi",
+          "Theek hone ke baad **halki stretching aur walk** bachi akdan kam karti hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "\"Bas tez painkiller le lo\" kyun khatarnaak ho sakta hai",
+        "text": "Dengue mein **ibuprofen, diclofenac, aspirin aur aisi NSAID** dawaiyan bleeding ka khatra badha sakti hain. \"Body pain\" ki kai mashhoor combination goliyon mein yeh hoti hain. Dengue ke mausam mein bukhaar ho to, doctor ya test se dengue hatne tak **sirf paracetamol** lein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Halke bukhaar ya mehnat ke baad dard, 2–3 din mein behtar",
+            "Aaram, paani, paracetamol"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "2–3 din se zyada bukhaar, ya 2 hafte se zyada dard, ya thakaan, vazan ghatna, ya jodon mein soojan ke saath",
+            "Consultation aur blood test (CBC, aur salaah ke anusaar anya) book karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bukhaar ke saath masoodon ya naak se khoon, twacha par laal daane, kaali potty, pet mein tez dard, baar-baar ulti, ya bahut zyada kamzori",
+            "Gambhir dengue ho sakta hai. Hospital jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bahut zyada exercise ya garmi ke baad tez maanspeshi dard aur bahut gehra (cola jaisa) peshaab",
+            "Maanspeshiyon ka tootna (rhabdomyolysis) ho sakta hai. Hospital jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Dard ke saath akdi gardan aur sir dard, uljhan, seene mein dard ya saans phoolna",
+            "Abhi emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Doctor Aksar Kaunse Test Karaate Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**CBC (complete blood count)**: infection ke sanket, platelets, khoon ki kami",
+          "Bukhaar mein, din aur mausam ke hisaab se **dengue NS1 ya antibody test**, **malaria test**, **typhoid test**",
+          "Lambe dard mein **vitamin D, vitamin B12, TSH (thyroid)**",
+          "Soojan ke liye **ESR ya CRP**, aur jod shaamil hon to uric acid ya rheumatoid factor jaise anya"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Drip lagwaane se badan dard jaldi jaayega.\"",
+            "Zyadatar log paani peekar theek ho jaate hain. Drip tabhi chahiye jab paani na tike ya paani ki kami ho"
+          ],
+          [
+            "\"Injection goli se zyada kaam karta hai.\"",
+            "Zyadatar badan dard mein goli utni hi kaam karti hai aur zyada surakshit hai"
+          ],
+          [
+            "\"Badan dard matlab multivitamin chahiye.\"",
+            "Sirf tab jab test mein kami dikhe. Bina soche supplements aksar zaroori nahi"
+          ],
+          [
+            "\"Antibiotic se theek ho jaayega.\"",
+            "Badan dard wale zyadatar bukhaar viral hote hain. Antibiotic virus par kaam nahi karti"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Dard aur bukhaar **kitne din** se (taapmaan ki readings ke saath)",
+          "Anya lakshan: daane, jodon mein dard, khaansi, dast, ulti, peshaab ka rang",
+          "Ab tak **li gayi dawaiyan** (naam aur dose)",
+          "Ghar ya aas-paas kisi ko **dengue ya bukhaar**, aur haal ka safar",
+          "Koi report (CBC, dengue, malaria)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Badan dard **online consultation** ki ek aam wajah hai. General physician andaaza laga sakte hain ki yeh viral hai ya nahi, bukhaar ke kis din kaunsa test sahi hai, aur ghar par kin khatre ke sanketon par nazar rakhein. (Viral bukhaar, dengue ke khatre ke sanket, vitamin D ki kami aur chikungunya par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, NHS, National Centre for Vector Borne Diseases Control (India)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
   }
 ];
