@@ -59,6 +59,16 @@ const CATEGORIES = [
   { key: 'general', en: 'General & Wellness', hi: 'सामान्य स्वास्थ्य', icon: '🩺', specs: ['General Physician'] },
 ];
 const catOf = (spec) => CATEGORIES.find((c) => c.specs && c.specs.includes(spec));
+// Topic tabs on the blog page: just the specialties ProMedicoz has doctors
+// for, so they fit on one screen (no sideways scrolling). Every other topic
+// is still under "All" and in search; cards keep their own topic label
+// (CATEGORIES above).
+const TOPIC_TABS = [
+  CATEGORIES.find((c) => c.key === 'all'),
+  CATEGORIES.find((c) => c.key === 'women'),
+  { ...CATEGORIES.find((c) => c.key === 'general'), en: 'General Physician', hi: 'सामान्य चिकित्सक' },
+  CATEGORIES.find((c) => c.key === 'brain'),
+];
 
 // Popular fallback before any read counts exist.
 const START_HERE_SLUGS = ['why-preventive-health-checkups-matter', 'silent-signs-high-blood-sugar', 'high-bp-the-silent-killer', 'stop-googling-symptoms-do-this-instead'];
@@ -115,7 +125,7 @@ function BlogList() {
 
   const sorted = useMemo(() => [...articles].sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate)), []);
   const q = query.trim();
-  const active = CATEGORIES.find((c) => c.key === category) || CATEGORIES[0];
+  const active = TOPIC_TABS.find((c) => c.key === category) || TOPIC_TABS[0];
   const list = useMemo(() => {
     const base = q ? searchArticles(sorted, q, titlesHi || {}) : sorted;
     return active.specs ? base.filter((a) => active.specs.includes(a.specialization)) : base;
@@ -223,11 +233,11 @@ function BlogList() {
       </div>
 
       <div className="container mx-auto px-4 pb-10 max-w-3xl">
-        {/* Topics: one swipeable row */}
-        <div className="-mx-4 px-4 py-3 flex gap-2 overflow-x-auto snap-x" role="tablist" aria-label="Topics">
-          {CATEGORIES.map((c) => (
+        {/* Topics: 4 tabs that fit the screen (2×2 on phones, one row wider). */}
+        <div className="py-3 grid grid-cols-2 sm:grid-cols-4 gap-2" role="tablist" aria-label="Topics">
+          {TOPIC_TABS.map((c) => (
             <button key={c.key} type="button" role="tab" aria-selected={category === c.key} onClick={() => setCategory(c.key)}
-              className={`snap-start flex-shrink-0 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors ${category === c.key ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-gray-300 text-gray-800 hover:border-primary-400'}`}>
+              className={`w-full px-2 py-2 rounded-full text-[13px] sm:text-sm font-medium border truncate transition-colors ${category === c.key ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-gray-300 text-gray-800 hover:border-primary-400'}`}>
               <span aria-hidden="true">{c.icon}</span> {hi ? c.hi : c.en}
             </button>
           ))}
