@@ -11,7 +11,7 @@
 // In React (SPA), clicking a link just SWAPS the component shown — no reload!
 // This makes navigation instant and smooth.
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 // lazy + Suspense = load a page's code only when it's first visited
 // (code-splitting), instead of shipping it in the initial bundle.
 
@@ -36,6 +36,15 @@ import SessionExpired from './components/SessionExpired';
 import WhatsAppButton from './components/WhatsAppButton';
 import BottomNav from './components/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
+import { dropPrerenderedLd } from './utils/prerenderLd';
+
+// Once you leave the page that was opened, its pre-built structured data is
+// about the old page — remove it (utils/prerenderLd.js).
+function PrerenderLdCleanup() {
+  const { pathname } = useLocation();
+  useEffect(() => { dropPrerenderedLd(pathname); }, [pathname]);
+  return null;
+}
 import Analytics from './components/Analytics';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -156,6 +165,7 @@ function App() {
           this automatically — otherwise a page opened from a link clicked at
           the bottom of another page starts scrolled to the bottom). */}
       <ScrollToTop />
+      <PrerenderLdCleanup />
 
       {/* Sends a GA4 page_view on every route change — essential for a SPA,
           otherwise only the first page a visitor lands on gets counted (see

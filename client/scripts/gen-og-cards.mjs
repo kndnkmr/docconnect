@@ -14,7 +14,8 @@
 // COMMITTED, so Vercel just serves them — no image rendering runs on Vercel.
 //
 // WHEN TO RE-RUN: only when categories/colours/branding change. Run locally:
-//   node scripts/gen-og-cards.mjs
+//   node scripts/gen-og-cards.mjs                 (all cards)
+//   node scripts/gen-og-cards.mjs microbiologist  (only the cards named)
 // (Requires `rsvg-convert`, e.g. `brew install librsvg`.) It is NOT part of the
 // Vercel build, by design — the committed PNGs are the build output.
 
@@ -54,6 +55,7 @@ const CARDS = {
   'dentist':           { label: 'दंत चिकित्सक',           tagline: 'दांत व मसूड़ों की देखभाल',             from: '#475569', to: '#1e293b' },
   'urologist':         { label: 'मूत्र रोग विशेषज्ञ',     tagline: 'गुर्दा, मूत्र व प्रोस्टेट',            from: '#0891b2', to: '#155e75' },
   'physiotherapist':   { label: 'फिजियोथेरेपिस्ट',        tagline: 'चलना-फिरना, दर्द व रिकवरी',            from: '#ea580c', to: '#9a3412' },
+  'microbiologist':    { label: 'माइक्रोबायोलॉजिस्ट',     tagline: 'संक्रमण, जांच व सही दवा',              from: '#7c3aed', to: '#4c1d95' },
   'nephrologist':      { label: 'गुर्दा रोग विशेषज्ञ',    tagline: 'गुर्दे की देखभाल',                     from: '#0891b2', to: '#155e75' },
   // Generic fallback card used when an article's specialty has no card.
   'default':           { label: 'ProMedicoz हेल्थ',       tagline: 'भारत के लिए विशेषज्ञ स्वास्थ्य लेख',     from: '#2563eb', to: '#1e3a8a' },
@@ -117,7 +119,9 @@ async function main() {
   await mkdir(OUT_DIR, { recursive: true });
 
   let count = 0;
+  const only = process.argv.slice(2);
   for (const [slug, card] of Object.entries(CARDS)) {
+    if (only.length && !only.includes(slug)) continue;
     const svg = cardSvg(card);
     const svgPath = join(OUT_DIR, `${slug}.svg`);
     const pngPath = join(OUT_DIR, `${slug}.png`);

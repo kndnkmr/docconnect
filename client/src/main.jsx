@@ -37,6 +37,9 @@ import { LangProvider } from './context/LangContext.jsx';
 // it, so every "Get the App" entry point offers the same one-tap install.
 
 import './index.css';
+// Records which page was opened and what structured data it came with, at
+// start-up (before any navigation) — see utils/prerenderLd.js.
+import './utils/prerenderLd';
 // Import our global styles (Tailwind CSS directives)
 
 // ---- Render the app ----

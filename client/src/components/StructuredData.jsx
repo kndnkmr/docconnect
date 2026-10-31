@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import { doctorJsonLd } from '../utils/doctorSeo';
+import { pageHasPrerenderedLd } from '../utils/prerenderLd';
 
 // Structured Data component — adds JSON-LD Schema.org markup
 // This helps Google understand what ProMedicoz is and show rich snippets
@@ -38,11 +40,15 @@ export function WebsiteSchema() {
 }
 
 export function DoctorSchema({ doctor }) {
+  const { pathname } = useLocation();
   if (!doctor) return null;
 
   // Identical to what the build bakes into the HTML (same @id, /dr/ URL,
   // city, hours, specialty) — one consistent doctor entity for Google.
   if (!doctor.slug) return null;
+  // Opened straight on the pre-built page: it already has this data — don't
+  // add a second copy (utils/prerenderLd.js).
+  if (pageHasPrerenderedLd('Physician', pathname)) return null;
   const data = doctorJsonLd(doctor);
 
   return (

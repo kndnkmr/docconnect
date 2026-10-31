@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import { pageHasPrerenderedLd } from '../utils/prerenderLd';
 import { doctorAPI, getUploadUrl } from '../services/api';
 import SEO from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
@@ -55,6 +56,7 @@ const UI = {
 };
 
 function SpecializationPage() {
+  const { pathname: routerPath } = useLocation();
   const { slug, city: citySlug } = useParams();
   const cityName = citySlug ? slugToCityName(citySlug) : '';
   const [doctors, setDoctors] = useState([]);
@@ -174,9 +176,10 @@ function SpecializationPage() {
           : `Consult top ${data.title.toLowerCase()} doctors online on ProMedicoz. ${data.description} Book video, phone or in-person consultation.`}
         path={cityName ? `/specialization/${slug}/${citySlug}` : `/specialization/${slug}`}
       />
+      {/* Skip what the pre-built page already provides (utils/prerenderLd.js). */}
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        {breadcrumbSchema && <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>}
+        {!pageHasPrerenderedLd('FAQPage', routerPath) && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
+        {breadcrumbSchema && !pageHasPrerenderedLd('BreadcrumbList', routerPath) && <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>}
       </Helmet>
 
       {/* Hero section */}

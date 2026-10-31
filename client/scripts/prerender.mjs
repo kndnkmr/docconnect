@@ -31,6 +31,8 @@ import { dirname, join } from 'node:path';
 import { citySearchTitle, cityHeading, citySummary, cityGuide, cityFaqs, hoursSummary, nearbyCitySlugs, modesText } from "../src/utils/cityPage.js";
 import { formatDoctorName as appDoctorName } from "../src/utils/formatName.js";
 import { seoTitle, seoDescription } from "../src/utils/seoText.js";
+import { doctorExtras } from "../src/utils/doctorPageExtras.js";
+import { specialtyArticles as SPECIALTY_ARTICLES } from "../src/pages/blog/specialtyArticles.js";
 import { specializationData as SPEC_PAGE_DATA } from "../src/pages/specializationData.js";
 import { doctorSearchTitle, doctorSearchDescription, specialtySchema, openingHours, cleanCity, NEARBY_CITIES, specialtySearchLabel, doctorJsonLd as buildDoctorJsonLd } from "../src/utils/doctorSeo.js";
 
@@ -260,8 +262,11 @@ function blocksToHtml(blocks) {
 
 // Safe JSON for an inline <script type="application/ld+json"> — escape '<' so a
 // stray "</script>" inside data can never break out of the tag.
+// data-pmz="page": lets the app tell this page-specific data apart, so it
+// doesn't add a second copy on the page that was opened, and removes it once
+// you move to another page (src/utils/prerenderLd.js).
 function jsonLdTag(obj) {
-  return `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
+  return `<script type="application/ld+json" data-pmz="page">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 }
 
 // Fetch helper with a timeout (Render free tier can cold-start slowly). Returns
@@ -292,14 +297,32 @@ function doctorBodyHtml(d) {
   if (Number(d.consultationFee) > 0) facts.push(`<li>Consultation fee: Rs. ${escText(d.consultationFee)}</li>`);
   if (Array.isArray(d.consultationModes) && d.consultationModes.length) facts.push(`<li>Consultation: ${escText(d.consultationModes.join(', '))}</li>`);
   if (Array.isArray(d.languagesSpoken) && d.languagesSpoken.length) facts.push(`<li>Speaks: ${escText(d.languagesSpoken.join(', '))}</li>`);
+  // Same extra content the page shows (src/utils/doctorPageExtras.js).
+  const x = doctorExtras(d, 'en');
+  const about = String(d.bio || '').trim() || x.about;
+  const articles = (x.specialtyArticlesKey && SPECIALTY_ARTICLES[x.specialtyArticlesKey]) || [];
   return (
     `<article><h1>${escText(name)} — ${escText(spec)}</h1>` +
-    (d.bio ? `<p>${escText(d.bio)}</p>` : '') +
+    (about ? `<p>${escText(about)}</p>` : '') +
     (facts.length ? `<ul>${facts.join('')}</ul>` : '') +
     (d.clinicAddress ? `<p>Clinic: ${escText(d.clinicAddress)}</p>` : '') +
+    (x.hours ? `<h2>Consultation hours</h2><p>${escText(x.hours)}</p>` : '') +
+    (x.reasons.length ? `<h2>${escText(x.reasonsTitle)}</h2><ul>${x.reasons.map((r) => `<li>${escText(r)}</li>`).join('')}</ul>` : '') +
+    (x.faqs.length ? `<h2>Questions patients ask</h2>${x.faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` : '') +
+    (articles.length ? `<h2>Health articles</h2><ul>${articles.map((a) => `<li><a href="/blog/${escText(a.slug)}">${escText(a.title)}</a></li>`).join('')}</ul>` : '') +
     `<p>Book an appointment with ${escText(name)} on ProMedicoz — video, phone, or in person. Pay the doctor directly, no commission.</p>` +
-    `<p><a href="/doctors">Find more doctors</a></p></article>`
+    `<p>${x.specSlug ? `<a href="/specialization/${escText(x.specSlug)}">All ${escText(x.specTitle)} doctors</a> · ` : ''}<a href="/doctors">Find more doctors</a></p></article>`
   );
+}
+// "Questions patients ask" as FAQ structured data (same Q&A as the page).
+function doctorFaqLd(d) {
+  const x = doctorExtras(d, 'en');
+  if (!x.faqs.length) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: x.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  };
 }
 
 // Physician structured data: shared with the app — see src/utils/doctorSeo.js.
@@ -807,11 +830,25 @@ async function attachListingBodies(routes, articles, specializationData) {
     const docs = ((list && list.doctors) || []).filter((x) => x && x.slug && x.name);
     const related = latest.filter((a) => (OG_CARD_SLUGS[a.specialization] || '') === slug).slice(0, 20);
     const cities = cityLinksFor(slug);
+    // Conditions + FAQs: the same sections SpecializationPage shows (they
+    // were missing from this copy, leaving some pages at 35–145 words).
+    const page = SPEC_PAGE_DATA[slug] || {};
+    const conditions = Array.isArray(page.conditions) ? page.conditions : [];
+    const faqs = Array.isArray(page.faqs) ? page.faqs : [];
+    if (faqs.length) {
+      r.jsonLd = [...(r.jsonLd || []), {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      }];
+    }
     r.bodyHtml =
       `<main><h1>Best ${escText(d.title)} Doctors Online</h1><p>${escText(d.description)}</p>` +
+      (conditions.length ? `<h2>Common Conditions Treated</h2><ul>${conditions.map((c) => `<li>${escText(c)}</li>`).join('')}</ul>` : '') +
       (docs.length ? `<h2>${escText(d.title)} doctors</h2><ul>${docs.map(doctorLine).join('')}</ul>` : '') +
       (cities.length ? `<h2>Find a ${escText(d.title.toLowerCase())} in your city</h2><ul>${cities.map((c) => linkItem(c.path, c.title.replace(/ - Book Appointment$/, ''))).join('')}</ul>` : '') +
       (related.length ? `<h2>Related health articles</h2><ul>${related.map((a) => linkItem(`/blog/${a.slug}`, a.title)).join('')}</ul>` : '') +
+      (faqs.length ? `<h2>Frequently Asked Questions</h2>${faqs.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` : '') +
       `</main>`;
   }
 }
@@ -854,7 +891,7 @@ async function fetchDoctorRoutes() {
         // ("Dr Pooja Singh gynaecologist Bhilai") is high-intent, and /dr/:slug
         // is the doctor's canonical page (the app's SEO tag uses this path too).
         bodyHtml: doctorBodyHtml(d),
-        jsonLd: [doctorJsonLd(d)],
+        jsonLd: [doctorJsonLd(d), doctorFaqLd(d)].filter(Boolean),
       });
     }
     console.log(`[prerender] Fetched ${routes.length} doctor pages for /dr/:slug.`);
@@ -904,6 +941,8 @@ const SPECIALIZATIONS = {
   'ophthalmologist': { title: 'Ophthalmologist', description: 'Ophthalmologists diagnose and treat eye conditions — from blurry vision and eye infections to cataract and glaucoma.' },
   'urologist': { title: 'Urologist', description: 'Urologists treat conditions of the urinary tract, kidneys, bladder, and prostate, including kidney stones and urinary infections.' },
   'nephrologist': { title: 'Nephrologist', description: 'Nephrologists treat kidney diseases, including chronic kidney disease, kidney problems from diabetes and high blood pressure, and dialysis care.' },
+  // Same title/description as the app's page (src/pages/specializationData.js).
+  'microbiologist': { title: SPEC_PAGE_DATA.microbiologist.title, description: SPEC_PAGE_DATA.microbiologist.description },
   'physiotherapist': { title: 'Physiotherapist', description: 'Physiotherapists help you recover movement and reduce pain through exercise, posture correction, and therapy — for back pain, injuries, and after surgery.' },
 };
 
@@ -1044,6 +1083,9 @@ async function buildRoutes() {
     // Added: topics with many articles but no landing page until now.
     'gastroenterologist', 'pulmonologist', 'endocrinologist', 'ophthalmologist',
     'urologist', 'nephrologist', 'physiotherapist',
+    // Has a doctor ("Microbiology" matches via the server's synonyms), and
+    // doctor pages link to their specialty page.
+    'microbiologist',
   ];
   for (const slug of specSlugs) {
     const d = specializationData[slug];

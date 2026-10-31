@@ -21,6 +21,8 @@ import { doctorSearchTitle, doctorSearchDescription } from '../utils/doctorSeo';
 import { trackEvent } from '../components/Analytics';
 import toast from 'react-hot-toast';
 import { useLang } from '../context/LangContext';
+import { doctorExtras } from '../utils/doctorPageExtras';
+import { specialtyArticles } from './blog/specialtyArticles';
 
 // Patient-facing → bilingual via shared promedicoz_lang. Only fixed labels
 // translate; doctor-entered content (name, specialization, bio, address,
@@ -315,6 +317,14 @@ function DoctorProfile({ clinicMode = false }) {
       </div>
     );
   }
+
+  // Extra factual content (utils/doctorPageExtras.js — same text Google gets
+  // from the prerender): an "about" from their details when they haven't
+  // written a bio, hours, common reasons for the specialty, questions
+  // patients ask, and a few health articles.
+  const extras = doctorExtras(doctor, lang === 'hi' ? 'hi' : 'en');
+  const aboutText = (doctor.bio || '').trim() || extras.about;
+  const relatedArticles = (extras.specialtyArticlesKey && specialtyArticles[extras.specialtyArticlesKey]) || [];
 
   return (
     <div>
@@ -621,18 +631,18 @@ function DoctorProfile({ clinicMode = false }) {
         </div>
 
         {/* ---- Details Section ---- */}
-        {(doctor.bio || doctor.clinicAddress) && (
+        {(aboutText || doctor.clinicAddress) && (
         <div className="border-t p-6 md:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* About — soft card with an accent icon heading instead of a bare
                 text header, so the section reads as a designed block. */}
-            {doctor.bio && (
+            {aboutText && (
               <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
                 <h2 className="flex items-center gap-2 text-base font-bold text-gray-800 mb-2.5">
                   <span className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center text-lg flex-shrink-0" aria-hidden="true">👤</span>
                   {t.about}
                 </h2>
-                <p className="text-gray-600 leading-relaxed text-sm">{doctor.bio}</p>
+                <p className="text-gray-600 leading-relaxed text-sm">{aboutText}</p>
               </div>
             )}
 
@@ -785,6 +795,71 @@ function DoctorProfile({ clinicMode = false }) {
             </div>
           )}
         </div>
+
+        {/* ---- More about this doctor (factual; same text Google reads) ---- */}
+        {(extras.hours || extras.reasons.length > 0 || extras.faqs.length > 0 || relatedArticles.length > 0) && (
+        <div className="border-t p-6 md:p-8 space-y-7">
+          {extras.hours && (
+            <section aria-labelledby="dp-hours">
+              <h2 id="dp-hours" className="text-base font-bold text-gray-800 mb-1.5">🕐 {lang === 'hi' ? 'परामर्श का समय' : 'Consultation hours'}</h2>
+              <p className="text-sm text-gray-700">{extras.hours}</p>
+            </section>
+          )}
+
+          {extras.reasons.length > 0 && (
+            <section aria-labelledby="dp-reasons">
+              <h2 id="dp-reasons" className="text-base font-bold text-gray-800 mb-2.5">{extras.reasonsTitle}</h2>
+              <ul className="flex flex-wrap gap-2">
+                {extras.reasons.map((r) => (
+                  <li key={r} className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-800 text-sm">{r}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {extras.faqs.length > 0 && (
+            <section aria-labelledby="dp-faq">
+              <h2 id="dp-faq" className="text-base font-bold text-gray-800 mb-2">{lang === 'hi' ? 'मरीज़ अक्सर पूछते हैं' : 'Questions patients ask'}</h2>
+              <div className="divide-y divide-gray-100 border border-gray-100 rounded-2xl">
+                {extras.faqs.map((f) => (
+                  <details key={f.q} className="group px-4 py-3">
+                    <summary className="cursor-pointer list-none flex items-start justify-between gap-3 text-sm font-semibold text-gray-800">
+                      <span>{f.q}</span>
+                      <span className="text-gray-400 group-open:rotate-45 transition-transform text-lg leading-none" aria-hidden="true">+</span>
+                    </summary>
+                    <p className="mt-2 text-sm text-gray-600 leading-relaxed">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {relatedArticles.length > 0 && (
+            <section aria-labelledby="dp-articles">
+              <h2 id="dp-articles" className="text-base font-bold text-gray-800 mb-2">📚 {lang === 'hi' ? 'सेहत की जानकारी' : 'Health articles'}</h2>
+              <ul className="space-y-1.5">
+                {relatedArticles.map((a) => (
+                  <li key={a.slug}>
+                    <Link to={lang === 'hi' && a.titleHi ? `/blog/${a.slug}/hi` : `/blog/${a.slug}`} className="text-sm text-primary-700 hover:underline">
+                      {lang === 'hi' && a.titleHi ? a.titleHi : a.title} →
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <p className="text-sm">
+            {extras.specSlug && (
+              <Link to={`/specialization/${extras.specSlug}`} className="text-primary-700 hover:underline">
+                {lang === 'hi' ? `सभी ${extras.specTitle} डॉक्टर →` : `All ${extras.specTitle} doctors →`}
+              </Link>
+            )}
+            {extras.specSlug && <span className="text-gray-300 mx-2" aria-hidden="true">·</span>}
+            <Link to="/doctors" className="text-primary-700 hover:underline">{lang === 'hi' ? 'और डॉक्टर खोजें →' : 'Find more doctors →'}</Link>
+          </p>
+        </div>
+        )}
       </div>
       {/* ---- Right column: sticky booking card (desktop only) ----
           Keeps fee, live availability, quick-pick slots and the primary Book

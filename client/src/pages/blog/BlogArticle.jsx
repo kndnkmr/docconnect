@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import { pageHasPrerenderedLd } from '../../utils/prerenderLd';
 import SEO from '../../components/SEO';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
@@ -233,6 +234,7 @@ function renderBlock(block, idx, ctx) {
 // and 'hi' for the /blog/:slug/hi route, which opens the Hinglish version
 // directly so it can be indexed for Hindi searches.
 function BlogArticle({ defaultLang = 'en' }) {
+  const { pathname: routerPath } = useLocation();
   const { slug } = useParams();
   // Does this article exist? Checked against the list of generated files, so
   // no other blog data has to be downloaded first.
@@ -615,9 +617,13 @@ function BlogArticle({ defaultLang = 'en' }) {
         path={isHindiPage ? `/blog/${slug}/hi` : `/blog/${slug}`}
         type="article"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
-      </Helmet>
+      {/* The pre-built page already has richer Article data; don't add a
+          second copy on the page that was opened (utils/prerenderLd.js). */}
+      {!pageHasPrerenderedLd('Article', routerPath) && (
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+        </Helmet>
+      )}
 
       <div className="max-w-3xl mx-auto">
         <Link to="/blog" className="text-primary-600 hover:underline text-sm mb-6 inline-block">← Back to all articles</Link>
