@@ -159,6 +159,8 @@ export const doctorAPI = {
   // Get distinct cities that have active doctors (optionally within a
   // specialization) — powers the "Find [specialization] in your city" links
   getCities: (params) => API.get('/doctors/cities', { params }),
+  // Live doctors per specialty — puts specialties with doctors first.
+  specialtyCounts: () => API.get('/doctors/specialty-counts'),
 
   // Get single doctor by ID
   getById: (id) => API.get(`/doctors/${id}`),

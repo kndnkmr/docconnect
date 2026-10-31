@@ -14,6 +14,7 @@ import { formatDoctorName } from '../../utils/formatName';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../../utils/languages';
 import { googleReviewLinkOk } from '../../utils/profileAutosave';
 import { readUpiFromImage } from '../../utils/upiQr';
+import { profileChecklist, draftBio, lookupLinks, GOOD_BIO } from '../../utils/profileHelper';
 
 const input = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none';
 // Same look without forcing full width (for fields on one row).
@@ -244,6 +245,51 @@ function LogTab({ doctor }) {
   );
 }
 
+// ---------------- Profile helper (top of the Profile tab) ----------------
+// "Profile strength X/9" + what's missing (tap to jump there) + look-ups in
+// a new tab. Uses the form as typed, so it updates while the admin edits.
+const JUMP = {
+  qualification: 'md-qualification', experience: 'md-experience', registration: 'md-medicalRegistrationNo',
+  bio: 'md-bio', clinic: 'md-clinicAddress', fee: 'md-consultationFee', review: 'md-googleReviewLink', languages: 'md-languages',
+};
+function ProfileHelper({ doctor, form, onTab }) {
+  const now = { ...doctor, ...form };
+  const { score, total, missing } = profileChecklist(now);
+  const jump = (it) => {
+    if (it.tab) { onTab(it.tab); return; }
+    const el = document.getElementById(JUMP[it.key]);
+    if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (el.focus) el.focus({ preventScroll: true }); }
+  };
+  const tone = score >= 8 ? 'bg-green-500' : score >= 6 ? 'bg-amber-500' : 'bg-red-500';
+  return (
+    <section className="rounded-xl border border-teal-100 bg-teal-50/60 p-3 sm:p-4" aria-label="Profile strength">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-gray-800">Profile strength <span className="tabular-nums">{score}/{total}</span>{score === total ? ' 🎉' : ''}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {lookupLinks(now).map((l) => (
+            <a key={l.key} href={l.href} target="_blank" rel="noopener noreferrer" title={l.title}
+              className="px-2.5 py-1 rounded-full bg-white border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50">{l.label} ↗</a>
+          ))}
+        </div>
+      </div>
+      <div className="mt-2 h-1.5 rounded-full bg-white overflow-hidden" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={score} aria-label="Profile strength">
+        <div className={`h-full ${tone} transition-all`} style={{ width: `${(score / total) * 100}%` }} />
+      </div>
+      {missing.length > 0 ? (
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          <span className="text-xs text-gray-700">Missing:</span>
+          {missing.map((it) => (
+            <button key={it.key} type="button" onClick={() => jump(it)} className="px-2 py-0.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs hover:bg-amber-50">＋ {it.label}</button>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 text-xs text-green-800">Everything a patient looks for is filled in.</p>
+      )}
+      <p className="mt-2 text-[11px] text-gray-600">Look-ups open in a new tab. Check facts there (Maps also has their review link), confirm with the doctor, then fill them in here.</p>
+    </section>
+  );
+}
+
 // ---------------- Main window ----------------
 export default function ManageDoctor({ doctorId, onClose, onChanged }) {
   const [doctor, setDoctor] = useState(null);
@@ -328,6 +374,7 @@ export default function ManageDoctor({ doctorId, onClose, onChanged }) {
 
       {tab === 'profile' && (
         <div className="space-y-4">
+          <ProfileHelper doctor={doctor} form={form} onTab={setTab} />
           <div className="grid sm:grid-cols-2 gap-3">
             {PROFILE_FIELDS.map((f) => <Field key={f.key} f={f} value={form[f.key]} onChange={(v) => set(f.key, v)} error={changes[f.key] !== undefined || f.key === 'name' ? errors[f.key] : ''} />)}
           </div>
@@ -345,7 +392,7 @@ export default function ManageDoctor({ doctorId, onClose, onChanged }) {
           </div>
           <div>
             <span className={labelCls}>Languages they consult in</span>
-            <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+            <div id="md-languages" tabIndex={-1} className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto outline-none">
               {SPOKEN_LANGUAGE_OPTIONS.map((o) => {
                 const on = form.languagesSpoken.includes(o.value);
                 return (
@@ -357,7 +404,23 @@ export default function ManageDoctor({ doctorId, onClose, onChanged }) {
           </div>
           <div>
             <label htmlFor="md-bio" className={labelCls}>Bio (3–4 lines on what they treat helps Google + patients)</label>
-            <textarea id="md-bio" rows={4} value={form.bio} onChange={(e) => set('bio', e.target.value)} className={input} />
+            {/* ✨ Draft from their own details + what the specialty covers
+                (utils/profileHelper.js). Never saved by itself. */}
+            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+              <span className="text-xs text-gray-700">✨ Write a draft from their details:</span>
+              {[['warm', 'Warm'], ['short', 'Short'], ['hi', 'हिंदी']].map(([k, l]) => (
+                <button key={k} type="button" onClick={() => {
+                  const text = draftBio({ ...doctor, ...form }, k === 'hi' ? { lang: 'hi' } : { tone: k });
+                  if (form.bio.trim() && form.bio.trim() !== text && !window.confirm('Replace the current bio with this draft? (Undo brings back the saved one until you press Save.)')) return;
+                  set('bio', text);
+                }} className="px-2.5 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-800 text-xs font-medium hover:bg-violet-100">{l}</button>
+              ))}
+            </div>
+            <textarea id="md-bio" rows={5} value={form.bio} onChange={(e) => set('bio', e.target.value)} className={input} />
+            <p className="text-[11px] text-gray-600 mt-1">
+              <span className={form.bio.trim().length >= GOOD_BIO ? 'text-green-700' : ''}>{form.bio.trim().length} letters{form.bio.trim().length < GOOD_BIO ? ` (aim for ${GOOD_BIO}+)` : ' ✓'}</span>
+              {' · '}Drafts use only what's filled in above plus what their specialty usually covers. Read it, fix anything, check with the doctor, then Save.
+            </p>
           </div>
         </div>
       )}

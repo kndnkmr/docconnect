@@ -2171,3 +2171,19 @@ Optional, low risk. Do on or after **4 Nov 2026** if everything has been fine:
 
 All use your Google/GitHub account for login — no separate passwords to remember.
 
+
+## Specialties with doctors first (no "No doctors found" dead ends)
+
+- `GET /api/doctors/specialty-counts` returns live doctors per specialty (`server/utils/specialtyCounts.js`). It uses the same visibility rules and synonym matching as the doctor list, so a count above 0 means that list really has doctors. Cached 30 s and cleared on any change.
+- Client: `client/src/utils/specialtyAvailability.js` (pure, tested) and the `useSpecialtyCounts` hook (one request per page load; last answer saved for a week so returning visitors see the right order at once).
+- Home: popular chips show only specialties with doctors. "Most consulted" shows the top 4. "All specialities" tiles with doctors come first; the rest sit under "Coming soon" (still tappable).
+- Empty specialty → closest one with doctors (skin, ENT, heart, stomach… → General Physician; mental health → GP, then Neurologist) plus a "🔔 Notify me" WhatsApp button. This applies on `/doctors?specialization=`, `/specialization/<slug>` (shows 3 doctors who can help now; city pages show the same specialty online), the home search suggestion and blog "Find a …" buttons.
+- Nothing is hard-coded: when the first Dermatologist goes live, Skin moves up by itself. If the counts can't be loaded, every page behaves exactly as before.
+
+## Admin: help thin doctor profiles look good
+
+- Manage doctor → Profile tab: "Profile strength X/9" (photo, specialty & degree, experience, registration no., bio 150+ letters, city & clinic, languages, fee & consult types, Google review link). Tap a missing item to jump to it.
+- Look-up buttons open Google, Google Maps (clinic + review link) and the NMC register in a new tab. Nothing is copied automatically.
+- "✨ Write a draft" (Warm / Short / हिंदी) writes a bio only from the doctor's own details plus what their specialty usually covers. It is never saved by itself: read, fix, check with the doctor, Save.
+- Users tab: a "📝 Page x/9" badge on every doctor, and a "📝 Needs a better page" filter (under 7/9, weakest first).
+- Code: `client/src/utils/profileHelper.js` (tests: `client/tests/profileHelper.test.mjs`).

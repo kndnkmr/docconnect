@@ -14,6 +14,8 @@ import { formatDoctorName } from '../utils/formatName';
 // ./specializationData.js (also imported by the build).
 import { specializationData, specializationHi } from './specializationData';
 import { useLang } from '../context/LangContext';
+import useSpecialtyCounts from '../utils/useSpecialtyCounts';
+import { fallbackFor, hasDoctors, slugForName, notifyMeText, pluralSpec } from '../utils/specialtyAvailability';
 
 // UI labels for the page chrome (headings, buttons). English + Hindi.
 const UI = {
@@ -34,6 +36,12 @@ const UI = {
     ctaTitle: (s) => `Need a ${s} consultation?`,
     ctaText: 'Book an appointment in under 2 minutes. Video, phone, or in-person.',
     ctaBtn: (s) => `Find ${s} Doctors`,
+    soonTitle: (s) => `${pluralSpec(s)} are joining ProMedicoz soon`,
+    soonCityTitle: (s, city) => `No ${s} in ${city} yet`,
+    altIntro: (alt) => `Meanwhile, these ${pluralSpec(alt)} can see you now and guide you on next steps:`,
+    altCityIntro: (s) => `These ${pluralSpec(s)} consult online (video or phone):`,
+    seeAllAlt: (alt) => `See all ${pluralSpec(alt)} →`,
+    notifyMe: '🔔 Notify me on WhatsApp',
   },
   hi: {
     conditionsTitle: 'आमतौर पर इलाज की जाने वाली समस्याएं',
@@ -52,6 +60,12 @@ const UI = {
     ctaTitle: (s) => `${s} परामर्श चाहिए?`,
     ctaText: '2 मिनट से भी कम में अपॉइंटमेंट बुक करें। वीडियो, फोन या क्लिनिक पर।',
     ctaBtn: (s) => `${s} डॉक्टर खोजें`,
+    soonTitle: (s) => `${s} जल्द ProMedicoz पर जुड़ रहे हैं`,
+    soonCityTitle: (s, city) => `${city} में अभी कोई ${s} नहीं`,
+    altIntro: (alt) => `तब तक ये ${alt} अभी आपको देख सकते हैं और आगे का रास्ता बताएंगे:`,
+    altCityIntro: (s) => `ये ${s} ऑनलाइन (वीडियो या फ़ोन) परामर्श देते हैं:`,
+    seeAllAlt: (alt) => `सभी ${alt} देखें →`,
+    notifyMe: '🔔 WhatsApp पर बताएं',
   },
 };
 
@@ -114,6 +128,22 @@ function SpecializationPage() {
     fetchDoctors();
   }, [slug, specName, cityName]);
 
+  // No doctors here → show doctors who CAN help now, instead of a dead end:
+  // on a city page, this specialty's doctors elsewhere (online); otherwise
+  // the closest specialty that has doctors (Skin → General Physician).
+  const specCounts = useSpecialtyCounts();
+  const [alt, setAlt] = useState(null); // { spec, doctors }
+  useEffect(() => {
+    if (loading || doctors.length) { setAlt(null); return undefined; }
+    const altSpec = cityName && hasDoctors(specName, specCounts) ? specName : fallbackFor(specName, specCounts);
+    if (!altSpec) { setAlt(null); return undefined; }
+    let cancelled = false;
+    doctorAPI.getAll({ specialization: altSpec, limit: 3 })
+      .then((r) => { if (!cancelled) setAlt({ spec: altSpec, doctors: r.data.doctors || [] }); })
+      .catch(() => { if (!cancelled) setAlt(null); });
+    return () => { cancelled = true; };
+  }, [loading, doctors.length, specName, cityName, specCounts]);
+
   useEffect(() => {
     // Only need the city cross-links on the base specialization page.
     if (citySlug) { setCities([]); return; }
@@ -121,6 +151,46 @@ function SpecializationPage() {
       .then((res) => setCities(res.data.cities || []))
       .catch(() => setCities([]));
   }, [slug, specName, citySlug]);
+
+  const renderDoctorCard = (doc) => {
+    const hours = hoursSummary(doc.availability, lang);
+    const modes = (doc.consultationModes || []);
+    return (
+    <Link key={doc._id} to={doc.slug ? `/dr/${doc.slug}` : `/doctors/${doc._id}`} className="group card-lift bg-white rounded-2xl p-5 shadow-sm block border border-gray-100">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center text-xl flex-shrink-0 overflow-hidden border-2 border-primary-50">
+          {doc.profilePhoto ? <img src={getUploadUrl(doc.profilePhoto, { width: 120 })} alt={formatDoctorName(doc.name)} className="w-14 h-14 rounded-full object-cover" /> : '🧑‍⚕️'}
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-bold text-gray-800 truncate">{formatDoctorName(doc.name)}</h3>
+          {doc.specialization && <p className="text-sm text-gray-700 truncate">{doc.specialization.trim()}</p>}
+          <p className="text-xs text-gray-500">
+            {[doc.qualification && doc.qualification.trim(), `${doc.experience || 0} ${ui.yrsExp}`, doc.city && doc.city.trim()].filter(Boolean).join(' · ')}
+          </p>
+        </div>
+      </div>
+      {modes.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {modes.map((m) => (
+            <span key={m} className="px-2 py-0.5 rounded-full bg-green-50 text-green-800 text-xs font-medium">
+              {m === 'in-person' ? '🏥' : m === 'phone' ? '📞' : '📹'} {modesText([m], lang)}
+            </span>
+          ))}
+        </div>
+      )}
+      {Array.isArray(doc.languagesSpoken) && doc.languagesSpoken.length > 0 && (
+        <p className="text-xs text-gray-600">🗣 {doc.languagesSpoken.join(', ')}</p>
+      )}
+      {hours && <p className="text-xs text-gray-600 mt-0.5">🕐 {hours}</p>}
+      {doc.consultationFee > 0 && (
+        <p className="text-sm text-gray-600 mt-2">{ui.consultation}: <span className="font-bold text-gray-800">Rs. {doc.consultationFee}</span></p>
+      )}
+      <span className="inline-flex items-center gap-1 text-primary-700 text-sm font-semibold mt-3 group-hover:gap-1.5 transition-all">
+        {ui.bookAppointment}
+      </span>
+    </Link>
+    );
+  };
 
   if (!data) {
     return (
@@ -335,6 +405,39 @@ function SpecializationPage() {
           </h2>
           {loading ? (
             <p className="text-gray-500">{ui.loadingDoctors}</p>
+          ) : doctors.length === 0 && alt && alt.doctors.length > 0 ? (
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
+              <p className="text-lg font-semibold text-gray-800">
+                <span aria-hidden="true">🌱 </span>
+                {cityName ? ui.soonCityTitle(view.title, cityName) : ui.soonTitle(view.title)}
+              </p>
+              <p className="text-gray-600 text-sm mt-1 mb-4">
+                {alt.spec === specName ? ui.altCityIntro(view.title) : ui.altIntro(alt.spec)}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {alt.doctors.map(renderDoctorCard)}
+              </div>
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mt-5">
+                <Link
+                  to={slugForName(alt.spec) && alt.spec !== specName ? `/specialization/${slugForName(alt.spec)}` : `/doctors?specialization=${encodeURIComponent(alt.spec)}`}
+                  onClick={() => trackEvent('find_doctor_click', { source: 'specialization_fallback', specialization: alt.spec, from_specialization: specName })}
+                  className="text-primary-700 font-semibold hover:underline"
+                >
+                  {ui.seeAllAlt(alt.spec)}
+                </Link>
+                <a
+                  href={`https://wa.me/919997019900?text=${encodeURIComponent(notifyMeText(view.title, cityName))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 rounded-lg border border-green-300 bg-green-50 text-green-800 text-sm font-medium hover:bg-green-100 transition-colors"
+                >
+                  {ui.notifyMe}
+                </a>
+                <Link to="/register?role=doctor" className="text-sm text-gray-600 hover:underline">
+                  {ui.areYou(view.title)}
+                </Link>
+              </div>
+            </div>
           ) : doctors.length === 0 ? (
             <div className="bg-white rounded-xl p-8 text-center">
               <p className="text-gray-600 mb-4">
@@ -346,47 +449,12 @@ function SpecializationPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {doctors.map((doc) => {
-                const hours = hoursSummary(doc.availability, lang);
-                const modes = (doc.consultationModes || []);
-                return (
-                <Link key={doc._id} to={doc.slug ? `/dr/${doc.slug}` : `/doctors/${doc._id}`} className="group card-lift bg-white rounded-2xl p-5 shadow-sm block border border-gray-100">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center text-xl flex-shrink-0 overflow-hidden border-2 border-primary-50">
-                      {doc.profilePhoto ? <img src={getUploadUrl(doc.profilePhoto, { width: 120 })} alt={formatDoctorName(doc.name)} className="w-14 h-14 rounded-full object-cover" /> : '🧑‍⚕️'}
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-bold text-gray-800 truncate">{formatDoctorName(doc.name)}</h3>
-                      {doc.specialization && <p className="text-sm text-gray-700 truncate">{doc.specialization.trim()}</p>}
-                      <p className="text-xs text-gray-500">
-                        {[doc.qualification && doc.qualification.trim(), `${doc.experience || 0} ${ui.yrsExp}`, doc.city && doc.city.trim()].filter(Boolean).join(' · ')}
-                      </p>
-                    </div>
-                  </div>
-                  {modes.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-2">
-                      {modes.map((m) => (
-                        <span key={m} className="px-2 py-0.5 rounded-full bg-green-50 text-green-800 text-xs font-medium">
-                          {m === 'in-person' ? '🏥' : m === 'phone' ? '📞' : '📹'} {modesText([m], lang)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {Array.isArray(doc.languagesSpoken) && doc.languagesSpoken.length > 0 && (
-                    <p className="text-xs text-gray-600">🗣 {doc.languagesSpoken.join(', ')}</p>
-                  )}
-                  {hours && <p className="text-xs text-gray-600 mt-0.5">🕐 {hours}</p>}
-                  {doc.consultationFee > 0 && (
-                    <p className="text-sm text-gray-600 mt-2">{ui.consultation}: <span className="font-bold text-gray-800">Rs. {doc.consultationFee}</span></p>
-                  )}
-                  <span className="inline-flex items-center gap-1 text-primary-700 text-sm font-semibold mt-3 group-hover:gap-1.5 transition-all">
-                    {ui.bookAppointment}
-                  </span>
-                </Link>
-                );
-              })}
+              {doctors.map(renderDoctorCard)}
             </div>
           )}
+          {/* "View all" — not when the list above is empty (the "who can help
+              now" box already links to the right list). */}
+          {!(doctors.length === 0 && alt && alt.doctors.length > 0) && (
           <div className="text-center mt-6">
             <Link
               to={`/doctors?specialization=${encodeURIComponent(specName)}`}
@@ -401,6 +469,7 @@ function SpecializationPage() {
               {ui.viewAll(view.title)}
             </Link>
           </div>
+          )}
         </div>
       </section>
 

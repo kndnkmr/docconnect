@@ -18,6 +18,7 @@ const NewDoctorModal = lazy(() => import('./admin/ManageDoctor').then((m) => ({ 
 import { articleMeta } from './blog/blogMeta';
 import toast from 'react-hot-toast';
 import BackupsCard from './admin/BackupsCard';
+import { profileChecklist, needsBetterPage } from '../utils/profileHelper';
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('stats');
@@ -29,6 +30,9 @@ function AdminDashboard() {
   // Filters
   const [userRoleFilter, setUserRoleFilter] = useState('');
   const [userSearch, setUserSearch] = useState('');
+  // "📝 Needs a better page": doctors whose public page still looks thin
+  // (profile strength under 7/9), weakest first — fix them in Manage doctor.
+  const [thinPagesOnly, setThinPagesOnly] = useState(false);
   const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('');
   // Appointment search (Patient ID / name / phone) + payment filter + paging.
   const [appointmentSearch, setAppointmentSearch] = useState('');
@@ -1121,7 +1125,7 @@ function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-md p-4 mb-6 flex flex-col sm:flex-row gap-3">
             <select
               value={userRoleFilter}
-              onChange={(e) => setUserRoleFilter(e.target.value)}
+              onChange={(e) => { setUserRoleFilter(e.target.value); if (e.target.value !== 'doctor') setThinPagesOnly(false); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
             >
               <option value="">All Roles</option>
@@ -1129,6 +1133,15 @@ function AdminDashboard() {
               <option value="patient">Patients</option>
               <option value="admin">Admins</option>
             </select>
+            <button
+              type="button"
+              aria-pressed={thinPagesOnly}
+              onClick={() => { const on = !thinPagesOnly; setThinPagesOnly(on); if (on && userRoleFilter !== 'doctor') setUserRoleFilter('doctor'); }}
+              title="Doctors whose public page still looks thin (profile strength under 7/9)"
+              className={`px-3 py-2 rounded-lg border text-sm font-medium whitespace-nowrap ${thinPagesOnly ? 'bg-amber-100 border-amber-400 text-amber-900' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+            >
+              📝 Needs a better page{thinPagesOnly ? ' ✓' : ''}
+            </button>
             <form onSubmit={handleSearchUsers} className="flex gap-2 flex-grow">
               <input
                 type="text"
@@ -1175,7 +1188,19 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {users.map((user) => (
+                  {thinPagesOnly && (
+                    <tr><td colSpan={8} className="px-4 py-2 text-xs text-amber-900 bg-amber-50">
+                      {(() => {
+                        const n = users.filter((u) => u.role === 'doctor' && !u.isDeleted && needsBetterPage(u)).length;
+                        return n ? `${n} doctor page${n === 1 ? '' : 's'} to improve, weakest first. Tap "Page x/9" to open Manage doctor.` : 'Every doctor page looks good. 🎉';
+                      })()}
+                    </td></tr>
+                  )}
+                  {(thinPagesOnly
+                    ? users.filter((u) => u.role === 'doctor' && !u.isDeleted && needsBetterPage(u))
+                      .sort((a, b) => profileChecklist(a).score - profileChecklist(b).score)
+                    : users
+                  ).map((user) => (
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm">
                         {/* Click the name to open the full detail drill-down. */}
@@ -1223,6 +1248,17 @@ function AdminDashboard() {
                           )}
                           {/* Doctor onboarding completeness — surfaces WHY a
                               doctor isn't yet visible/bookable to patients. */}
+                          {/* Page strength — tap to fix it in Manage doctor. */}
+                          {user.role === 'doctor' && !user.isDeleted && (() => {
+                            const c = profileChecklist(user);
+                            return (
+                              <button type="button" onClick={() => setManageDoctorId(user._id)}
+                                title={c.missing.length ? `Missing: ${c.missing.map((m) => m.label).join(', ')}` : 'Page looks complete'}
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${c.score >= 7 ? 'bg-green-50 text-green-800' : 'bg-amber-100 text-amber-900'} hover:underline`}>
+                                📝 Page {c.score}/{c.total}
+                              </button>
+                            );
+                          })()}
                           {user.role === 'doctor' && !user.isDeleted && (() => {
                             const missing = getDoctorMissingSteps(user);
                             if (missing.length === 0) {

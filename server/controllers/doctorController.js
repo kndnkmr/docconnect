@@ -15,6 +15,7 @@ const Appointment = require('../models/Appointment');
 const Review = require('../models/Review');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
 const { getSpecializationSynonyms } = require('../utils/specializationSynonyms');
+const { countBySpecialty } = require('../utils/specialtyCounts');
 const { formatIndianPhone } = require('../utils/formatPhone');
 const { uploadFile } = require('../utils/uploadFile');
 const { checkPhone, checkOptionalPhone, ContactError, releaseFromDeletedAccounts } = require('../utils/contactChecks');
@@ -830,9 +831,35 @@ const getMyStats = async (req, res) => {
 };
 
 // ---- Export all controller functions ----
+
+// ============================================
+// GET SPECIALTY COUNTS - Public
+// ============================================
+// Endpoint: GET /api/doctors/specialty-counts
+// { counts: { Gynaecologist: 8, 'General Physician': 4, Dermatologist: 0, … } }
+// Same visibility rules and matching as the doctor list, so the website can
+// put specialties with doctors first and never send a patient to an empty
+// list. See utils/specialtyCounts.js.
+const getSpecialtyCounts = async (req, res) => {
+  try {
+    const rows = await User.aggregate([
+      { $match: {
+        role: 'doctor', isVerified: { $ne: false }, isDeleted: { $ne: true }, isSuspended: { $ne: true },
+        specialization: { $nin: [null, ''] },
+      } },
+      { $group: { _id: '$specialization', count: { $sum: 1 } } },
+    ]);
+    res.json({ counts: countBySpecialty(rows.map((r) => ({ specialization: r._id, count: r.count }))) });
+  } catch (error) {
+    console.error('Get specialty counts error:', error.message);
+    res.status(500).json({ message: 'Error fetching specialty counts' });
+  }
+};
+
 module.exports = {
   getAllDoctors,
   getDoctorCities,
+  getSpecialtyCounts,
   getDoctorById,
   getDoctorBySlug,
   trackLinkBooking,

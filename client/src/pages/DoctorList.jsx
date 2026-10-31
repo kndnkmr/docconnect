@@ -19,6 +19,8 @@ import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { formatDoctorName } from '../utils/formatName';
 import toast from 'react-hot-toast';
 import { useLang } from '../context/LangContext';
+import useSpecialtyCounts from '../utils/useSpecialtyCounts';
+import { splitByDoctors, orderByDoctors, fallbackFor, countFor, notifyMeText, pluralSpec } from '../utils/specialtyAvailability';
 
 // Patient-facing page → bilingual (English / हिंदी) for the fixed UI labels,
 // using the shared 'promedicoz_lang' choice. Doctor-entered content (names,
@@ -52,6 +54,12 @@ const TXT = {
     chatWhatsApp: '💬 Chat with us on WhatsApp',
     chatHint: "Tell us your concern — we'll connect you with the right specialist",
     browseAll: '← Browse all available doctors',
+    soonTitle: (s) => `${pluralSpec(s)} are joining soon`,
+    soonMsg: (alt) => `Meanwhile, a ${alt} can see you now, help with most everyday problems and guide you on next steps.`,
+    seeAlt: (alt, n) => `See ${pluralSpec(alt)}${n ? ` (${n})` : ''} →`,
+    notifyMe: '🔔 Notify me on WhatsApp',
+    notifyHint: "We'll message you when one joins.",
+    soonChip: 'soon', moreSoon: 'Coming soon:',
   },
   hi: {
     headerTitle: 'डॉक्टर खोजें',
@@ -81,6 +89,12 @@ const TXT = {
     chatWhatsApp: '💬 WhatsApp पर हमसे बात करें',
     chatHint: 'हमें अपनी समस्या बताएं — हम आपको सही विशेषज्ञ से जोड़ेंगे',
     browseAll: '← सभी उपलब्ध डॉक्टर देखें',
+    soonTitle: (s) => `${s} जल्द जुड़ रहे हैं`,
+    soonMsg: (alt) => `तब तक ${alt} अभी आपको देख सकते हैं, ज़्यादातर आम समस्याओं में मदद करेंगे और आगे का रास्ता बताएंगे।`,
+    seeAlt: (alt, n) => `${alt} देखें${n ? ` (${n})` : ''} →`,
+    notifyMe: '🔔 WhatsApp पर बताएं',
+    notifyHint: 'जैसे ही कोई जुड़ेंगे, हम आपको मैसेज करेंगे।',
+    soonChip: 'जल्द', moreSoon: 'जल्द आ रहे हैं:',
   },
 };
 
@@ -116,6 +130,12 @@ function DoctorList() {
   const [consultationMode, setConsultationMode] = useState('');
   const [language, setLanguage] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  // What the shown results were searched for (the input can change before
+  // the next search) — the empty state talks about THIS.
+  const [lastQuery, setLastQuery] = useState({ spec: urlSpecialization, city: '' });
+  // Live doctors per specialty → specialties with doctors first, and a
+  // "who can help now" offer instead of a dead-end empty list.
+  const specCounts = useSpecialtyCounts();
 
   // List of common specializations (for smart suggestions)
   const specializations = [
@@ -130,7 +150,9 @@ function DoctorList() {
 
   // Smart/fuzzy matching function
   // Handles misspellings like "Gyeacologist" → suggests "Gynaecologist"
-  const getSmartSuggestions = (input) => {
+  // Suggestions: specialties that have doctors first.
+  const getSmartSuggestions = (input) => orderByDoctors(matchSuggestions(input), specCounts);
+  const matchSuggestions = (input) => {
     if (!input || input.length < 2) return [];
     const lower = input.toLowerCase();
 
@@ -164,15 +186,18 @@ function DoctorList() {
   // ---- Fetch doctors from API ----
   // This function is called on page load and when filters change
 
-  const fetchDoctors = async (page = 1) => {
+  // specOverride: the specialization from a new URL (state may not have
+  // caught up yet when the URL changes while this page is open).
+  const fetchDoctors = async (page = 1, specOverride) => {
     setLoading(true);
+    const spec = specOverride !== undefined ? specOverride : searchSpecialization;
     try {
       // Build query parameters
       const params = { page, limit: 9 };
       // limit: 9 = show 9 doctors per page (fits nicely in a 3-column grid)
 
       if (searchName) params.name = searchName;
-      if (searchSpecialization) params.specialization = searchSpecialization;
+      if (spec) params.specialization = spec;
       if (maxFee) params.maxFee = maxFee;
       if (availableToday) params.availableToday = 'true';
       if (city) params.city = city;
@@ -184,6 +209,7 @@ function DoctorList() {
 
       setDoctors(response.data.doctors);
       setPagination(response.data.pagination);
+      setLastQuery({ spec, city });
 
     } catch (error) {
       toast.error('Failed to load doctors');
@@ -195,7 +221,11 @@ function DoctorList() {
 
   // ---- useEffect: Fetch on first load (or when URL param changes) ----
   useEffect(() => {
-    fetchDoctors();
+    // Keep the box in step with the URL (e.g. tapping "See General
+    // Physicians" from the empty state, or the browser back button).
+    setSearchSpecialization(urlSpecialization);
+    fetchDoctors(1, urlSpecialization);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlSpecialization]);
   // Empty dependency array [] = run ONCE when component mounts (loads)
   // Without [], it would run on every re-render (infinite loop!)
@@ -364,8 +394,10 @@ function DoctorList() {
           availability.
         </p>
         <h2 className="text-lg font-semibold text-gray-800 mt-6 mb-3">Browse doctors by specialty</h2>
-        <div className="flex flex-wrap gap-2">
-          {[
+        {(() => {
+          // Specialties with doctors first; the rest stay linked (useful
+          // pages for readers and Google) but marked "soon".
+          const { live, soon } = splitByDoctors([
             { slug: 'general-physician', label: 'General Physician' },
             { slug: 'gynaecologist', label: 'Gynaecologist' },
             { slug: 'dermatologist', label: 'Dermatologist' },
@@ -376,16 +408,37 @@ function DoctorList() {
             { slug: 'psychiatrist', label: 'Psychiatrist' },
             { slug: 'ent-specialist', label: 'ENT Specialist' },
             { slug: 'dentist', label: 'Dentist' },
-          ].map((s) => (
-            <Link
-              key={s.slug}
-              to={`/specialization/${s.slug}`}
-              className="px-3.5 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors"
-            >
-              {s.label}
-            </Link>
-          ))}
-        </div>
+          ], specCounts, (x) => x.label);
+          return (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {live.map((s) => (
+                  <Link
+                    key={s.slug}
+                    to={`/specialization/${s.slug}`}
+                    className="px-3.5 py-1.5 rounded-full text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors"
+                  >
+                    {s.label}
+                  </Link>
+                ))}
+              </div>
+              {soon.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                  <span className="text-xs text-gray-500">{t.moreSoon}</span>
+                  {soon.map((s) => (
+                    <Link
+                      key={s.slug}
+                      to={`/specialization/${s.slug}`}
+                      className="px-3 py-1 rounded-full text-xs text-gray-600 bg-gray-50 border border-dashed border-gray-300 hover:bg-white transition-colors"
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          );
+        })()}
       </section>
 
       {/* ---- Results ---- */}
@@ -417,9 +470,40 @@ function DoctorList() {
         // which specialists/cities to recruit next), and offer a real
         // alternative instead of a dead end.
         (() => {
+          const qSpec = lastQuery.spec;
+          const qCity = lastQuery.city;
+          // A specialty with no doctors yet → offer the closest one that has
+          // doctors (Skin → General Physician) + "Notify me". Not a dead end.
+          const alt = qSpec ? fallbackFor(qSpec, specCounts) : null;
+          if (alt) {
+            return (
+              <div className="text-center py-10">
+                <div className="text-5xl mb-4" aria-hidden="true">🌱</div>
+                <h3 className="text-xl font-semibold text-gray-800">{t.soonTitle(qSpec)}</h3>
+                <p className="text-gray-600 mt-2 max-w-md mx-auto">{t.soonMsg(alt)}</p>
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Link
+                    to={`/doctors?specialization=${encodeURIComponent(alt)}`}
+                    className="btn btn-primary px-6"
+                  >
+                    {t.seeAlt(alt, countFor(alt, specCounts))}
+                  </Link>
+                  <a
+                    href={`https://wa.me/919997019900?text=${encodeURIComponent(notifyMeText(qSpec, qCity))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-5 py-2.5 rounded-lg border border-green-300 bg-green-50 text-green-800 font-medium hover:bg-green-100 transition-colors"
+                  >
+                    {t.notifyMe}
+                  </a>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">{t.notifyHint}</p>
+              </div>
+            );
+          }
           const parts = [];
-          if (searchSpecialization) parts.push(searchSpecialization);
-          if (city) parts.push(`in ${city}`);
+          if (qSpec) parts.push(qSpec);
+          if (qCity) parts.push(`in ${qCity}`);
           const searchedFor = parts.join(' ');
           const waMessage = searchedFor
             ? `Hi ProMedicoz, I'm looking for a ${searchedFor} but couldn't find one on the site. Can you help?`
@@ -432,7 +516,7 @@ function DoctorList() {
               </h3>
               <p className="text-gray-500 mt-2">
                 {searchedFor
-                  ? t.noResultsMsgSpec(searchSpecialization)
+                  ? t.noResultsMsgSpec(qSpec)
                   : t.noResultsMsgGeneric}
               </p>
 

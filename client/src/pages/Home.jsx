@@ -12,6 +12,8 @@ import { formatDoctorName } from '../utils/formatName';
 import VoiceSearch, { isVoiceSupported } from '../components/VoiceSearch';
 import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath, isReportQuery, reportPath } from './tools/toolLinks';
 import { useLang } from '../context/LangContext';
+import useSpecialtyCounts from '../utils/useSpecialtyCounts';
+import { splitByDoctors, fallbackFor } from '../utils/specialtyAvailability';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -87,6 +89,9 @@ const TXT = {
     specSubtitle: "Tap your concern — we'll show the right specialists",
     specMostConsulted: 'Most consulted',
     specAll: 'All specialities',
+    specSoon: 'Coming soon',
+    specSoonNote: 'Doctors joining soon. Tap one to see who can help you now.',
+    suggestedInstead: (spec) => `no ${spec} on ProMedicoz yet`,
     browseAll: '🔍 Browse All Specializations →',
     howHeading: 'How ProMedicoz Works',
     howSubtitle: 'From search to consultation — in about 2 minutes',
@@ -165,6 +170,9 @@ const TXT = {
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
     specMostConsulted: 'सबसे ज़्यादा परामर्श',
     specAll: 'सभी विशेषज्ञताएं',
+    specSoon: 'जल्द आ रहे हैं',
+    specSoonNote: 'इनके डॉक्टर जल्द जुड़ेंगे। टैप करें — देखें अभी कौन मदद कर सकता है।',
+    suggestedInstead: (spec) => `${spec} अभी ProMedicoz पर नहीं हैं`,
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
     howHeading: 'ProMedicoz कैसे काम करता है',
     howSubtitle: 'खोज से परामर्श तक — लगभग 2 मिनट में',
@@ -338,6 +346,49 @@ const SPEC_LABEL_HI = {
   'Pulmonologist': 'फेफड़ा रोग विशेषज्ञ',
 };
 
+// ---- Specialties on the home page ----
+// Order comes from LIVE doctor counts (utils/specialtyAvailability.js):
+// specialties with doctors first, most doctors first; the rest show as
+// "Coming soon" (still tappable: their page offers who can help now). The
+// written order below is only the starting order before counts arrive.
+// Featured "Most consulted" cards: the top 4 that have doctors.
+const FEATURED_SPECS = [
+  { en: "Women's health", hi: 'महिला स्वास्थ्य', note: { en: 'Pregnancy · PCOS · periods · fertility', hi: 'गर्भावस्था · PCOS · मासिक · प्रजनन' }, icon: '🌸', slug: 'gynaecologist', spec: 'Gynaecologist', card: 'from-pink-50 to-rose-50 border-pink-100 hover:border-pink-300', badge: 'bg-pink-500', noteColor: 'text-pink-700' },
+  { en: 'General Physician', hi: 'सामान्य चिकित्सक', note: { en: 'Fever · cough · body pain · checkups', hi: 'बुखार · खांसी · दर्द · जांच' }, icon: '🩺', slug: 'general-physician', spec: 'General Physician', card: 'from-blue-50 to-sky-50 border-blue-100 hover:border-blue-300', badge: 'bg-primary-600', noteColor: 'text-primary-700' },
+  { en: 'Child health', hi: 'बच्चों का स्वास्थ्य', note: { en: 'Newborn · vaccination · fever', hi: 'नवजात · टीकाकरण · बुखार' }, icon: '🧸', slug: 'pediatrician', spec: 'Pediatrician', card: 'from-amber-50 to-orange-50 border-amber-100 hover:border-amber-300', badge: 'bg-amber-500', noteColor: 'text-amber-700' },
+  { en: 'Brain & nerves', hi: 'दिमाग़ व नसें', note: { en: 'Headache · migraine · fits · numbness', hi: 'सिरदर्द · माइग्रेन · दौरा · झुनझुनी' }, icon: '🧠', slug: 'neurologist', spec: 'Neurologist', card: 'from-violet-50 to-purple-50 border-violet-100 hover:border-violet-300', badge: 'bg-violet-500', noteColor: 'text-violet-700' },
+  { en: 'Skin & hair', hi: 'त्वचा व बाल', note: { en: 'Acne · hair fall · rashes', hi: 'मुहांसे · बाल झड़ना · दाने' }, icon: '✨', slug: 'dermatologist', spec: 'Dermatologist', card: 'from-amber-50 to-yellow-50 border-amber-100 hover:border-amber-300', badge: 'bg-amber-500', noteColor: 'text-amber-700' },
+  { en: 'Heart & BP', hi: 'हृदय व BP', note: { en: 'BP · chest pain · cholesterol', hi: 'BP · सीने में दर्द · कोलेस्ट्रॉल' }, icon: '❤️', slug: 'cardiologist', spec: 'Cardiologist', card: 'from-red-50 to-rose-50 border-red-100 hover:border-red-300', badge: 'bg-red-500', noteColor: 'text-red-700' },
+];
+
+// "All specialities" tiles (symptom-first labels, always bilingual).
+const SPEC_TILES = [
+  { symptom: 'Periods / Pregnancy', hi: 'मासिक / गर्भावस्था', icon: '🌸', specialization: 'Gynaecologist', slug: 'gynaecologist', tint: 'bg-pink-100' },
+  { symptom: 'Fever / Cold', hi: 'बुखार / सर्दी', icon: '🤒', specialization: 'General Physician', slug: 'general-physician', tint: 'bg-sky-100' },
+  { symptom: 'Child care', hi: 'बच्चों की देखभाल', icon: '🧸', specialization: 'Pediatrician', slug: 'pediatrician', tint: 'bg-amber-100' },
+  { symptom: 'Headache', hi: 'सिरदर्द', icon: '🤕', specialization: 'Neurologist', slug: 'neurologist', tint: 'bg-violet-100' },
+  { symptom: 'Skin / Hair', hi: 'त्वचा / बाल', icon: '🧴', specialization: 'Dermatologist', slug: 'dermatologist', tint: 'bg-amber-100' },
+  { symptom: 'Heart / BP', hi: 'हृदय / रक्तचाप', icon: '❤️', specialization: 'Cardiologist', slug: 'cardiologist', tint: 'bg-red-100' },
+  { symptom: 'Bone / Joint', hi: 'हड्डी / जोड़', icon: '🦴', specialization: 'Orthopedic', slug: 'orthopedic', tint: 'bg-emerald-100' },
+  { symptom: 'Dental', hi: 'दंत / दांत', icon: '🦷', specialization: 'Dentist', slug: 'dentist', tint: 'bg-cyan-100' },
+  { symptom: 'Eye / Vision', hi: 'आँख / दृष्टि', icon: '👁️', specialization: 'Ophthalmologist', slug: 'ophthalmologist', tint: 'bg-sky-100' },
+  { symptom: 'Mental Health', hi: 'मानसिक स्वास्थ्य', icon: '🧠', specialization: 'Psychiatrist', slug: 'psychiatrist', tint: 'bg-purple-100' },
+  { symptom: 'Ear / Nose', hi: 'कान / नाक', icon: '👂', specialization: 'ENT Specialist', slug: 'ent-specialist', tint: 'bg-orange-100' },
+  { symptom: 'Stomach', hi: 'पेट', icon: '🤢', specialization: 'Gastroenterologist', slug: 'gastroenterologist', tint: 'bg-yellow-100' },
+  { symptom: 'Lungs', hi: 'फेफड़े', icon: '🫁', specialization: 'Pulmonologist', slug: 'pulmonologist', tint: 'bg-teal-100' },
+  { symptom: 'Kidney / Urine', hi: 'किडनी / मूत्र', icon: '💧', specialization: 'Urologist', slug: 'urologist', tint: 'bg-blue-100' },
+  { symptom: 'Diabetes', hi: 'मधुमेह', icon: '💉', specialization: 'Endocrinologist', slug: 'endocrinologist', tint: 'bg-rose-100' },
+  { symptom: 'Cancer', hi: 'कैंसर', icon: '🎗️', specialization: 'Oncologist', tint: 'bg-pink-100' },
+  { symptom: 'Kidney Disease', hi: 'गुर्दा रोग', icon: '🫘', specialization: 'Nephrologist', slug: 'nephrologist', tint: 'bg-indigo-100' },
+  { symptom: 'Arthritis', hi: 'गठिया', icon: '🖐️', specialization: 'Rheumatologist', tint: 'bg-lime-100' },
+  { symptom: 'Surgery', hi: 'सर्जरी', icon: '🔪', specialization: 'Surgeon', tint: 'bg-slate-100' },
+  { symptom: 'Physiotherapy', hi: 'फिजियोथेरेपी', icon: '🏃', specialization: 'Physiotherapist', slug: 'physiotherapist', tint: 'bg-green-100' },
+  { symptom: 'Sexual Health', hi: 'यौन स्वास्थ्य', icon: '🔒', specialization: 'Sexologist', tint: 'bg-fuchsia-100' },
+  { symptom: 'Homeopathy', hi: 'होम्योपैथी', icon: '🌿', specialization: 'Homeopathy', tint: 'bg-emerald-100' },
+  { symptom: 'Ayurveda', hi: 'आयुर्वेद', icon: '🍃', specialization: 'Ayurveda', tint: 'bg-lime-100' },
+  { symptom: 'Diet / Nutrition', hi: 'आहार / पोषण', icon: '🥗', specialization: 'Dietitian', tint: 'bg-teal-100' },
+];
+
 function Home() {
   const { isAuthenticated } = useAuth();
   const { canInstall, promptInstall } = usePwa();
@@ -444,6 +495,12 @@ function Home() {
     return () => { cancelled = true; };
   }, []);
 
+  // Live doctors per specialty (null until known — then nothing changes).
+  const specCounts = useSpecialtyCounts();
+  // Where the search sends the patient: the matched specialty, or — when it
+  // has no doctors yet — the closest one that does (Skin → General Physician).
+  const routedSpec = (spec) => fallbackFor(spec, specCounts) || spec;
+
   const getSpecializationFromSymptom = (input) => {
     const lower = input.toLowerCase().trim();
     for (const entry of SYMPTOM_MAPPING) {
@@ -459,13 +516,20 @@ function Home() {
   // into a specialty. Gynaecologist + General Physician lead (the platform's
   // focus). Each `spec` is a real specialization the backend/synonyms match,
   // so a tap lands on a populated doctor list. Labels are bilingual.
-  const quickPicks = [
+  // Only specialties that HAVE doctors are shown (once live counts are
+  // known), most doctors first — a tap never lands on "No doctors found".
+  const quickPicks = splitByDoctors([
     { en: "Women's health", hi: 'महिला स्वास्थ्य', emoji: '🌸', spec: 'Gynaecologist' },
     { en: 'General Physician', hi: 'सामान्य चिकित्सक', emoji: '🩺', spec: 'General Physician' },
-    { en: 'Skin & hair', hi: 'त्वचा व बाल', emoji: '✨', spec: 'Dermatologist' },
     { en: 'Child care', hi: 'बाल रोग', emoji: '🧸', spec: 'Pediatrician' },
     { en: 'Neurologist', hi: 'न्यूरोलॉजिस्ट', emoji: '🧠', spec: 'Neurologist' },
-  ];
+    { en: 'Skin & hair', hi: 'त्वचा व बाल', emoji: '✨', spec: 'Dermatologist' },
+    { en: 'Heart & BP', hi: 'हृदय व BP', emoji: '❤️', spec: 'Cardiologist' },
+  ], specCounts, (q) => q.spec).live.slice(0, 5);
+  // "Most consulted": the top 4 specialties with doctors.
+  const featured = splitByDoctors(FEATURED_SPECS, specCounts, (f) => f.spec).live.slice(0, 4);
+  // All tiles: with doctors first, the rest under "Coming soon".
+  const tiles = splitByDoctors(SPEC_TILES, specCounts, (x) => x.specialization);
 
   return (
     <div className="flex-grow flex flex-col">
@@ -587,10 +651,12 @@ function Home() {
                 // backend). For a Hindi user, show its Hindi label so the
                 // suggestion reads naturally in their language.
                 const matchedSpec = getSpecializationFromSymptom(symptomSearch);
-                const display = lang === 'hi' ? (SPEC_LABEL_HI[matchedSpec] || matchedSpec) : matchedSpec;
+                const goSpec = routedSpec(matchedSpec);
+                const label = (sp) => (lang === 'hi' ? (SPEC_LABEL_HI[sp] || sp) : sp);
                 return (
                   <p className="text-xs text-gray-500 mt-2 px-1">
-                    {t.suggested}: <span className="font-semibold text-primary-700">{display}</span>
+                    {t.suggested}: <span className="font-semibold text-primary-700">{label(goSpec)}</span>
+                    {goSpec !== matchedSpec && <span className="text-gray-500"> ({t.suggestedInstead(label(matchedSpec))})</span>}
                   </p>
                 );
               })()}
@@ -662,11 +728,11 @@ function Home() {
 
               <Link
                 to={symptomSearch
-                  ? `/doctors?specialization=${encodeURIComponent(getSpecializationFromSymptom(symptomSearch))}`
+                  ? `/doctors?specialization=${encodeURIComponent(routedSpec(getSpecializationFromSymptom(symptomSearch)))}`
                   : '/doctors'}
                 onClick={() => trackEvent('find_doctor_click', {
                   source: 'home_hero_search',
-                  specialization: symptomSearch ? getSpecializationFromSymptom(symptomSearch) : 'none',
+                  specialization: symptomSearch ? routedSpec(getSpecializationFromSymptom(symptomSearch)) : 'none',
                   had_symptom: symptomSearch ? 'yes' : 'no',
                 })}
                 className="mt-3 w-full inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-5 py-3.5 rounded-xl text-sm sm:text-base font-semibold shadow-sm transition-all duration-200 hover:bg-primary-700 hover:shadow-md active:scale-[0.99]"
@@ -824,12 +890,8 @@ function Home() {
               <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
               <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specMostConsulted}</h3>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { en: "Women's health", hi: 'महिला स्वास्थ्य', note: { en: 'Pregnancy · PCOS · periods · fertility', hi: 'गर्भावस्था · PCOS · मासिक · प्रजनन' }, icon: '🌸', slug: 'gynaecologist', spec: 'Gynaecologist', card: 'from-pink-50 to-rose-50 border-pink-100 hover:border-pink-300', badge: 'bg-pink-500', noteColor: 'text-pink-700' },
-                { en: 'General Physician', hi: 'सामान्य चिकित्सक', note: { en: 'Fever · cough · body pain · checkups', hi: 'बुखार · खांसी · दर्द · जांच' }, icon: '🩺', slug: 'general-physician', spec: 'General Physician', card: 'from-blue-50 to-sky-50 border-blue-100 hover:border-blue-300', badge: 'bg-primary-600', noteColor: 'text-primary-700' },
-                { en: 'Child health', hi: 'बच्चों का स्वास्थ्य', note: { en: 'Newborn · vaccination · fever', hi: 'नवजात · टीकाकरण · बुखार' }, icon: '🧸', slug: 'pediatrician', spec: 'Pediatrician', card: 'from-amber-50 to-orange-50 border-amber-100 hover:border-amber-300', badge: 'bg-amber-500', noteColor: 'text-amber-700' },
-              ].map((f) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {featured.map((f) => (
                 <Link
                   key={f.spec}
                   to={`/specialization/${f.slug}`}
@@ -848,49 +910,58 @@ function Home() {
             </div>
           </div>
 
-          {/* ---- All specialities — colour-tinted compact grid ---- */}
+          {/* ---- All specialities — colour-tinted compact grid ----
+              Tiles with doctors first; specialties still onboarding doctors
+              sit below under "Coming soon" (greyed, but still tappable — their
+              page shows who can help now, e.g. a General Physician). */}
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
-              <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specAll}</h3>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-              {[
-                { symptom: 'Headache', hi: 'सिरदर्द', icon: '🤕', specialization: 'Neurologist', slug: 'neurologist', tint: 'bg-violet-100' },
-                { symptom: 'Skin / Hair', hi: 'त्वचा / बाल', icon: '🧴', specialization: 'Dermatologist', slug: 'dermatologist', tint: 'bg-amber-100' },
-                { symptom: 'Heart / BP', hi: 'हृदय / रक्तचाप', icon: '❤️', specialization: 'Cardiologist', slug: 'cardiologist', tint: 'bg-red-100' },
-                { symptom: 'Bone / Joint', hi: 'हड्डी / जोड़', icon: '🦴', specialization: 'Orthopedic', slug: 'orthopedic', tint: 'bg-emerald-100' },
-                { symptom: 'Dental', hi: 'दंत / दांत', icon: '🦷', specialization: 'Dentist', slug: 'dentist', tint: 'bg-cyan-100' },
-                { symptom: 'Eye / Vision', hi: 'आँख / दृष्टि', icon: '👁️', specialization: 'Ophthalmologist', tint: 'bg-sky-100' },
-                { symptom: 'Mental Health', hi: 'मानसिक स्वास्थ्य', icon: '🧠', specialization: 'Psychiatrist', slug: 'psychiatrist', tint: 'bg-purple-100' },
-                { symptom: 'Ear / Nose', hi: 'कान / नाक', icon: '👂', specialization: 'ENT Specialist', slug: 'ent-specialist', tint: 'bg-orange-100' },
-                { symptom: 'Stomach', hi: 'पेट', icon: '🤢', specialization: 'Gastroenterologist', tint: 'bg-yellow-100' },
-                { symptom: 'Lungs', hi: 'फेफड़े', icon: '🫁', specialization: 'Pulmonologist', tint: 'bg-teal-100' },
-                { symptom: 'Kidney / Urine', hi: 'किडनी / मूत्र', icon: '💧', specialization: 'Urologist', tint: 'bg-blue-100' },
-                { symptom: 'Diabetes', hi: 'मधुमेह', icon: '💉', specialization: 'Endocrinologist', tint: 'bg-rose-100' },
-                { symptom: 'Cancer', hi: 'कैंसर', icon: '🎗️', specialization: 'Oncologist', tint: 'bg-pink-100' },
-                { symptom: 'Kidney Disease', hi: 'गुर्दा रोग', icon: '🫘', specialization: 'Nephrologist', tint: 'bg-indigo-100' },
-                { symptom: 'Arthritis', hi: 'गठिया', icon: '🖐️', specialization: 'Rheumatologist', tint: 'bg-lime-100' },
-                { symptom: 'Surgery', hi: 'सर्जरी', icon: '🔪', specialization: 'Surgeon', tint: 'bg-slate-100' },
-                { symptom: 'Physiotherapy', hi: 'फिजियोथेरेपी', icon: '🏃', specialization: 'Physiotherapist', tint: 'bg-green-100' },
-                { symptom: 'Sexual Health', hi: 'यौन स्वास्थ्य', icon: '🔒', specialization: 'Sexologist', tint: 'bg-fuchsia-100' },
-                { symptom: 'Homeopathy', hi: 'होम्योपैथी', icon: '🌿', specialization: 'Homeopathy', tint: 'bg-emerald-100' },
-                { symptom: 'Ayurveda', hi: 'आयुर्वेद', icon: '🍃', specialization: 'Ayurveda', tint: 'bg-lime-100' },
-                { symptom: 'Diet / Nutrition', hi: 'आहार / पोषण', icon: '🥗', specialization: 'Dietitian', tint: 'bg-teal-100' },
-              ].map((item, idx) => (
-                <Link
-                  key={idx}
-                  to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                  className="card-lift group bg-white p-3 rounded-xl text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40"
-                >
-                  <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
-                  {/* Always bilingual — the whole point is a Hindi-speaking
-                      patient can tap the right card instead of typing English. */}
-                  <p className="text-xs font-semibold text-gray-700 leading-tight break-words hyphens-auto">{item.symptom}</p>
-                  <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
-                </Link>
-              ))}
-            </div>
+            {tiles.live.length > 0 && (
+              <>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specAll}</h3>
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                  {tiles.live.map((item) => (
+                    <Link
+                      key={item.symptom}
+                      to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                      className="card-lift group bg-white p-3 rounded-xl text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40"
+                    >
+                      <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
+                      {/* Always bilingual — the whole point is a Hindi-speaking
+                          patient can tap the right card instead of typing English. */}
+                      <p className="text-xs font-semibold text-gray-700 leading-tight break-words hyphens-auto">{item.symptom}</p>
+                      <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+            {tiles.soon.length > 0 && (
+              <div className={tiles.live.length > 0 ? 'mt-7' : ''}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-1 h-4 rounded-full bg-gray-300" aria-hidden="true"></span>
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">{t.specSoon}</h3>
+                </div>
+                <p className="text-xs text-gray-500 mb-3">{t.specSoonNote}</p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                  {tiles.soon.map((item) => (
+                    <Link
+                      key={item.symptom}
+                      to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                      onClick={() => trackEvent('find_doctor_click', { source: 'home_spec_soon', specialization: item.specialization, had_symptom: 'no' })}
+                      className="group bg-gray-50 p-3 rounded-xl text-center border border-dashed border-gray-200 hover:border-gray-300 hover:bg-white transition-colors"
+                    >
+                      <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gray-100 text-2xl mb-1.5 grayscale opacity-70" aria-hidden="true">{item.icon}</span>
+                      <p className="text-xs font-semibold text-gray-600 leading-tight break-words hyphens-auto">{item.symptom}</p>
+                      <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
+                      <span className="sr-only"> ({t.specSoon})</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* See all link */}

@@ -37,6 +37,8 @@ function speechChunks(blocks) {
   }
   return out;
 }
+import useSpecialtyCounts from '../../utils/useSpecialtyCounts';
+import { fallbackFor } from '../../utils/specialtyAvailability';
 import { hasArticle, loadArticleBody, readyArticle, prefetchArticle, articleFailed, whenArticleSettles } from './articleBodies';
 import { blogViewAPI } from '../../services/api';
 import { INTERNAL_LINKS } from './linkMap';
@@ -235,6 +237,9 @@ function renderBlock(block, idx, ctx) {
 // directly so it can be indexed for Hindi searches.
 function BlogArticle({ defaultLang = 'en' }) {
   const { pathname: routerPath } = useLocation();
+  // Live doctors per specialty: the "Talk to a …" buttons go to a specialty
+  // that HAS doctors (no Dermatologist yet → General Physician).
+  const specCounts = useSpecialtyCounts();
   const { slug } = useParams();
   // Does this article exist? Checked against the list of generated files, so
   // no other blog data has to be downloaded first.
@@ -603,7 +608,10 @@ function BlogArticle({ defaultLang = 'en' }) {
   };
 
   const toolBtn = 'inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm font-medium transition-colors';
-  const doctorsLink = `/doctors?specialization=${encodeURIComponent(article.specialization)}`;
+  // The specialty the "find a doctor" buttons offer (see specCounts above).
+  const ctaSpec = fallbackFor(article.specialization, specCounts) || article.specialization;
+  const ctaSwapped = ctaSpec !== article.specialization;
+  const doctorsLink = `/doctors?specialization=${encodeURIComponent(ctaSpec)}`;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -822,16 +830,20 @@ function BlogArticle({ defaultLang = 'en' }) {
             fuller CTA card remains at the end of the article. */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3">
           <span className="text-sm text-gray-700">
-            {lang === 'hi' && hasHindi
-              ? `${article.specialization} se baat karni hai? ProMedicoz par online ya in-person consult karein.`
-              : `Want to consult a ${article.specialization.toLowerCase()}? Talk to a verified one on ProMedicoz — online or in person.`}
+            {ctaSwapped
+              ? (lang === 'hi' && hasHindi
+                ? `Is baare mein doctor se baat karni hai? ProMedicoz par ek verified ${ctaSpec.toLowerCase()} abhi madad kar sakte hain — online ya in-person.`
+                : `Want to talk to a doctor about this? A verified ${ctaSpec.toLowerCase()} on ProMedicoz can help you now — online or in person.`)
+              : (lang === 'hi' && hasHindi
+                ? `${ctaSpec} se baat karni hai? ProMedicoz par online ya in-person consult karein.`
+                : `Want to consult a ${ctaSpec.toLowerCase()}? Talk to a verified one on ProMedicoz — online or in person.`)}
           </span>
           <Link
-            to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
-            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'top' })}
+            to={doctorsLink}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: ctaSpec, cta_position: 'top' })}
             className="btn btn-primary flex-shrink-0 px-4"
           >
-            {lang === 'hi' && hasHindi ? `${article.specialization} dhoondhein` : `Find a ${article.specialization}`}
+            {lang === 'hi' && hasHindi ? `${ctaSpec} dhoondhein` : `Find a ${ctaSpec}`}
           </Link>
         </div>
 
@@ -848,20 +860,20 @@ function BlogArticle({ defaultLang = 'en' }) {
         <div ref={endCtaRef} className="mt-10 p-6 bg-primary-50 border border-primary-200 rounded-xl text-center">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             {lang === 'hi' && hasHindi
-              ? `${article.specialization} consultation chahiye?`
-              : `Need a ${article.specialization} consultation?`}
+              ? `${ctaSpec} consultation chahiye?`
+              : `Need a ${ctaSpec} consultation?`}
           </h3>
           <p className="text-gray-600 text-sm mb-4">
             {lang === 'hi' && hasHindi
-              ? `ProMedicoz par ek verified ${article.specialization.toLowerCase()} se appointment book karein. Video, phone, ya in-person.`
-              : `Book an appointment with a verified ${article.specialization.toLowerCase()} on ProMedicoz. Video, phone, or in-person.`}
+              ? `ProMedicoz par ek verified ${ctaSpec.toLowerCase()} se appointment book karein. Video, phone, ya in-person.`
+              : `Book an appointment with a verified ${ctaSpec.toLowerCase()} on ProMedicoz. Video, phone, or in-person.`}
           </p>
           <Link
-            to={`/doctors?specialization=${encodeURIComponent(article.specialization)}`}
-            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'bottom' })}
+            to={doctorsLink}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: ctaSpec, cta_position: 'bottom' })}
             className="btn btn-primary"
           >
-            {lang === 'hi' && hasHindi ? `${article.specialization} Doctors Dhoondhein` : `Find ${article.specialization} Doctors`}
+            {lang === 'hi' && hasHindi ? `${ctaSpec} Doctors Dhoondhein` : `Find ${ctaSpec} Doctors`}
           </Link>
         </div>
 
@@ -969,12 +981,12 @@ function BlogArticle({ defaultLang = 'en' }) {
           <span className="text-xl" aria-hidden="true">🩺</span>
           <span className="flex-1 min-w-0 leading-tight">
             <span className="block text-[11px] text-gray-500">{hiUi ? 'Online baat karein' : 'Talk to a'}</span>
-            <span className="block text-sm font-semibold text-gray-800 truncate">{article.specialization}</span>
+            <span className="block text-sm font-semibold text-gray-800 truncate">{ctaSpec}</span>
           </span>
           <Link
             to={doctorsLink}
             tabIndex={showSticky ? 0 : -1}
-            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: article.specialization, cta_position: 'sticky' })}
+            onClick={() => trackEvent('find_doctor_click', { article_slug: slug, specialization: ctaSpec, cta_position: 'sticky' })}
             className="flex-shrink-0 rounded-xl bg-primary-600 text-white text-sm font-semibold px-3 py-2 hover:bg-primary-700"
           >
             {hiUi ? 'Doctor dekhein' : 'See doctors'}

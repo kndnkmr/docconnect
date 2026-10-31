@@ -20,6 +20,7 @@ const { cachePublic } = require('../utils/publicCache');
 const {
   getAllDoctors,
   getDoctorCities,
+  getSpecialtyCounts,
   getDoctorById,
   getDoctorBySlug,
   trackLinkBooking,
@@ -62,6 +63,11 @@ router.get('/', cachePublic(), getAllDoctors);
 // MUST be declared before the '/:id' route below, otherwise Express would
 // treat "cities" as a doctor id.
 router.get('/cities', cachePublic(5 * 60 * 1000), getDoctorCities);
+
+// GET /api/doctors/specialty-counts
+// Live doctors per specialty (same matching as the list) — the website puts
+// specialties with doctors first. Before '/:id' for the same reason.
+router.get('/specialty-counts', cachePublic(), getSpecialtyCounts);
 
 // GET /api/doctors/me/stats
 // The logged-in doctor's own "Promote Me" numbers (consultations, earnings,
