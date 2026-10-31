@@ -1051,7 +1051,19 @@ function Dashboard() {
   };
 
   // ---- Doctor: Update appointment status ----
+  // One action per appointment at a time: a quick double tap on Confirm /
+  // Complete used to send two requests (the second failing with a confusing
+  // red error). Reject asks first — a cancelled booking can't be undone.
+  const [statusBusy, setStatusBusy] = useState(null); // appointment id
   const handleStatusUpdate = async (appointmentId, newStatus, meetingLink) => {
+    if (statusBusy) return;
+    if (newStatus === 'cancelled') {
+      const apt = appointments.find((a) => a._id === appointmentId);
+      const who = apt?.patient?.name ? ` with ${apt.patient.name}` : '';
+      const paid = ['paid', 'patient_claimed'].includes(apt?.paymentStatus) && !apt?.isFollowUp;
+      if (!window.confirm(`Reject this appointment${who}?\n\nThe patient will be told, and this can't be undone.${paid ? '\n\nThey have paid, so please arrange a refund.' : ''}`)) return;
+    }
+    setStatusBusy(appointmentId);
     try {
       let data = { status: newStatus };
       if (meetingLink) data.meetingLink = meetingLink;
@@ -1061,6 +1073,21 @@ function Dashboard() {
       if (isDoctor) fetchPendingCount();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update status');
+    } finally {
+      setStatusBusy(null);
+    }
+  };
+  const handleMarkPaid = async (appointmentId) => {
+    if (statusBusy) return;
+    setStatusBusy(appointmentId);
+    try {
+      await appointmentAPI.markPayment(appointmentId);
+      toast.success('Payment marked as received');
+      fetchAppointments();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not mark the payment. Please try again.');
+    } finally {
+      setStatusBusy(null);
     }
   };
 
@@ -1281,7 +1308,15 @@ function Dashboard() {
     }
   };
 
-  const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  // Appointment days are stored as midnight UTC of the (Indian) day, so show
+  // them in UTC — in the phone's own time zone they slid to the previous day
+  // anywhere west of UTC (family abroad booking for parents). Real moments
+  // (when a prescription was written) are shown in Indian time instead.
+  // Patients in Hindi mode get Hindi month/day names.
+  const dateLocale = isPatient && _lang === 'hi' ? 'hi-IN' : 'en-US';
+  const formatDate = (dateString) => new Date(dateString).toLocaleDateString(dateLocale, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const formatMoment = (d) => new Date(d).toLocaleDateString(dateLocale, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
+  const aptOrWritten = (aptDate, createdAt) => (aptDate ? formatDate(aptDate) : formatMoment(createdAt));
 
   // True only if the appointment date is TODAY (compared in IST, matching booking logic).
   const isAppointmentToday = (dateString) => {
@@ -1316,6 +1351,16 @@ function Dashboard() {
     if (ap === 'PM' && h !== 12) h += 12;
     if (ap === 'AM' && h === 12) h = 0;
     return h * 60 + min;
+  };
+
+  // Has the appointment started yet (Indian time)? Past days: yes. Today:
+  // once the slot's start time is reached. Unparseable slots: yes (as before).
+  const hasStarted = (apt) => {
+    const aptDay = new Date(apt.date).toISOString().slice(0, 10);
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    if (aptDay !== todayIST) return aptDay < todayIST;
+    const start = parseSlotTime((apt.timeSlot || '').split('-')[0]);
+    return start == null || getISTNowMinutes() >= start;
   };
 
   // The call can only be joined during the booked time slot (with a small grace
@@ -1994,7 +2039,7 @@ function Dashboard() {
                           <p className="text-sm font-semibold text-purple-800">
                             {pt.rxReady(apt.prescriptionInfo.medicineCount)}
                             {apt.followUpDeadline && new Date(apt.followUpDeadline) > new Date() && (
-                              <span className="font-normal">{pt.freeFollowUpTill(new Date(apt.followUpDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }))}</span>
+                              <span className="font-normal">{pt.freeFollowUpTill(new Date(apt.followUpDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }))}</span>
                             )}
                           </p>
                           <button type="button" onClick={() => goToTab('prescriptions')} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700">
@@ -2113,12 +2158,12 @@ function Dashboard() {
                       {/* Doctor actions — sequential: Confirm → Mark Paid → Join Call + Mark Complete → Prescription */}
                       {isDoctor && apt.status === 'pending' && (
                         <>
-                          <button onClick={() => handleStatusUpdate(apt._id, 'confirmed')} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">Confirm</button>
-                          <button onClick={() => handleStatusUpdate(apt._id, 'cancelled')} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">Reject</button>
+                          <button onClick={() => handleStatusUpdate(apt._id, 'confirmed')} disabled={statusBusy === apt._id} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'Confirm'}</button>
+                          <button onClick={() => handleStatusUpdate(apt._id, 'cancelled')} disabled={statusBusy === apt._id} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 disabled:opacity-60">Reject</button>
                         </>
                       )}
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
-                        <button onClick={async () => { await appointmentAPI.markPayment(apt._id); toast.success('Payment marked as received'); fetchAppointments(); }} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600">Mark Paid</button>
+                        <button onClick={() => handleMarkPaid(apt._id)} disabled={statusBusy === apt._id} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'Mark Paid'}</button>
                       )}
                       {/* Optional: message the patient the confirmation directly on
                           WhatsApp (free, manual — opens WhatsApp with a pre-filled
@@ -2127,7 +2172,7 @@ function Dashboard() {
                           patients more reliably than email/push. */}
                       {isDoctor && apt.status === 'confirmed' && apt.patient?.phone && (() => {
                         const digits = (apt.patient.phone || '').replace(/\D/g, '');
-                        const dateStr = new Date(apt.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+                        const dateStr = new Date(apt.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
                         const modeLabel = apt.consultationType === 'in-person' ? 'in-person at the clinic' : `by ${apt.consultationType} call`;
                         const msg =
                           `Hello ${apt.patient.name || ''}, this is Dr. ${user?.name} from ProMedicoz.\n\n` +
@@ -2156,7 +2201,10 @@ function Dashboard() {
                           {apt.consultationType !== 'in-person' && isAppointmentToday(apt.date) && !isWithinCallWindow(apt) && (
                             <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-lg">Call opens at slot time ({apt.timeSlot})</span>
                           )}
-                          <button onClick={() => handleStatusUpdate(apt._id, 'completed')} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">Mark Complete</button>
+                          {/* Only once the consultation has started (server checks too). */}
+                          {hasStarted(apt) && (
+                            <button onClick={() => handleStatusUpdate(apt._id, 'completed')} disabled={statusBusy === apt._id} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'Mark Complete'}</button>
+                          )}
                         </>
                       )}
                       {isDoctor && apt.status === 'completed' && <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600">{hasPrescription ? 'Update Prescription' : 'Write Prescription'}</button>}
@@ -2446,7 +2494,7 @@ function Dashboard() {
                           {p.patient?.patientId && <span className="text-xs text-gray-400 font-mono ml-2">{p.patient.patientId}</span>}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {p.appointment?.date ? formatDate(p.appointment.date) : formatDate(p.createdAt)}
+                          {aptOrWritten(p.appointment?.date, p.createdAt)}
                           {p.appointment?.timeSlot && ` • ${p.appointment.timeSlot}`}
                         </p>
                       </div>
@@ -2514,7 +2562,7 @@ function Dashboard() {
         description={pt.rateDesc}
         fields={[
           { name: 'rating', label: pt.rateLabel, type: 'number', min: 1, max: 5, required: true, placeholder: '5' },
-          { name: 'comment', label: pt.reviewLabel, type: 'textarea', placeholder: pt.reviewPh }
+          { name: 'comment', label: pt.reviewLabel, type: 'textarea', placeholder: pt.reviewPh, maxLength: 500 }
         ]}
         submitText={pt.submitReview}
         cancelText={pt.modalCancel}
@@ -2588,7 +2636,7 @@ function Dashboard() {
                 <div className="space-y-2">
                   {previousRx.map((p) => (
                     <div key={p._id} className="text-xs text-gray-700 border-b border-gray-100 pb-1.5 last:border-0 last:pb-0">
-                      <span className="font-medium">{formatDate(p.appointment?.date || p.createdAt)}</span> — {p.diagnosis}
+                      <span className="font-medium">{aptOrWritten(p.appointment?.date, p.createdAt)}</span> — {p.diagnosis}
                       {p.medicines?.length > 0 && (
                         <div className="text-gray-500">💊 {p.medicines.map((m) => m.name).join(', ')}</div>
                       )}
@@ -2607,7 +2655,7 @@ function Dashboard() {
                       onChange={setValue}
                       suggestions={doctorPrescriptions.flatMap((p) => (p.medicines || []).map((m) => m.name))}
                       lastRx={previousRx[0]?.medicines?.length
-                        ? { label: formatDate(previousRx[0].appointment?.date || previousRx[0].createdAt).replace(/^\w+, /, ''), rows: medicinesToRows(previousRx[0].medicines) }
+                        ? { label: aptOrWritten(previousRx[0].appointment?.date, previousRx[0].createdAt).replace(/^\w+, /, ''), rows: medicinesToRows(previousRx[0].medicines) }
                         : null}
                     />
                   </Suspense>

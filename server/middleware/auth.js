@@ -72,6 +72,13 @@ const protect = async (req, res, next) => {
         message: 'This account has been suspended. Contact support@promedicoz.in if you believe this is a mistake.'
       });
     }
+    // Step 4c: Password was reset after this token was issued → log in again
+    // (a reset signs out every other device).
+    if (req.user.passwordChangedAt && decoded.iat * 1000 < new Date(req.user.passwordChangedAt).getTime()) {
+      return res.status(401).json({
+        message: 'Your password was changed. Please log in again.'
+      });
+    }
 
     // All good — continue to the route handler.
     return next();

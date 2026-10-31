@@ -393,6 +393,13 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
     default: null
   },
+  // When the password was last reset. Login tokens issued BEFORE this stop
+  // working (middleware/auth.js), so a reset logs out every other device —
+  // the point of resetting after "someone else may be using my account".
+  passwordChangedAt: {
+    type: Date,
+    default: undefined
+  },
   // When this new sign-up was included in the admin's daily "new patients"
   // email (utils/signupAlerts.js). Marking each one means a server restart
   // can never send the same person twice.

@@ -23,6 +23,20 @@ const { slotProblem } = require('./slots');
 
 const MAX_REASON = 1000;
 
+// A free follow-up's VISIT must be on or before the "free follow-up till"
+// day the patient is shown (IST). Booking used to check only that the
+// request was made in time, so a visit could be booked (or later
+// rescheduled) for weeks after the window and still be free.
+function followUpDateOk(visitDate, deadline) {
+  if (!deadline) return false;
+  const v = new Date(visitDate);
+  if (isNaN(v.getTime())) return false;
+  const visitDay = v.toISOString().slice(0, 10); // stored as UTC midnight of the IST day
+  const lastDay = new Date(deadline).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+  return visitDay <= lastDay;
+}
+const followUpDayLabel = (deadline) => new Date(deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+
 // What the doctor sees as "Reason": the patient's note, else the symptom
 // chips they tapped ("Fever, Cough"), else "Not specified".
 function reasonFor(note, symptoms) {
@@ -181,6 +195,9 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
       || new Date() > new Date(originalApt.followUpDeadline))) {
       throw new BookingError(400, 'Free follow-up period has expired. Please book a regular appointment.');
     }
+    if (isFollowUp && !followUpDateOk(date, originalApt.followUpDeadline)) {
+      throw new BookingError(400, `Your free follow-up is valid till ${followUpDayLabel(originalApt.followUpDeadline)}. Please pick a day on or before that, or book a regular appointment.`);
+    }
     // One free follow-up per visit. A cancelled one doesn't count, so the
     // patient can rebook it while the window is still open.
     if (isFollowUp) {
@@ -246,4 +263,4 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
   return { appointment, doctor, patient };
 }
 
-module.exports = { createBooking, BookingError, todayIST, BOOKABLE_DOCTOR, reasonFor };
+module.exports = { createBooking, BookingError, todayIST, BOOKABLE_DOCTOR, reasonFor, followUpDateOk, followUpDayLabel };

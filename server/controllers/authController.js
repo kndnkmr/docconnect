@@ -16,6 +16,12 @@ const { getNextSequence } = require('../models/Counter');
 const { formatIndianPhone, isValidIndianPhone } = require('../utils/formatPhone');
 const { sendEmail } = require('../utils/sendEmail');
 const { notifyAdminNewDoctor } = require('../utils/signupAlerts');
+
+// The reset link is only ever put in the reply on a developer's own machine
+// (NODE_ENV=development and not on Render, which sets RENDER). Before, it was
+// included whenever NODE_ENV wasn't exactly "production" — a host without
+// that setting would hand anyone a reset link for any email/phone.
+const exposeResetLink = () => process.env.NODE_ENV === 'development' && !process.env.RENDER;
 const {
   ContactError, checkPhone, checkOptionalPhone, checkEmail, releaseFromDeletedAccounts,
 } = require('../utils/contactChecks');
@@ -510,7 +516,7 @@ const forgotPassword = async (req, res) => {
       console.log(`[password-reset] link for ${user.email}: ${resetUrl} (expires 30 min)`);
       return res.json({
         message: genericMessage,
-        ...(process.env.NODE_ENV !== 'production' && { resetToken, resetUrl })
+        ...(exposeResetLink() && { resetToken, resetUrl })
       });
     }
 
@@ -522,7 +528,7 @@ const forgotPassword = async (req, res) => {
     return res.json({
       message: 'This account has no email on file, so we can\'t send a reset link automatically. Please contact us on WhatsApp and we\'ll help you regain access.',
       noEmailOnFile: true,
-      ...(process.env.NODE_ENV !== 'production' && { resetToken, resetUrl })
+      ...(exposeResetLink() && { resetToken, resetUrl })
     });
 
   } catch (error) {
@@ -582,6 +588,10 @@ const resetPassword = async (req, res) => {
     // Clear the reset token fields (one-time use)
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
+    // Sign out every other device (middleware/auth.js). 1 s in the past: a
+    // token's issue time is in whole seconds, so the new login token issued
+    // just below always counts as newer than this.
+    user.passwordChangedAt = new Date(Date.now() - 1000);
 
     await user.save();
     // This triggers the password hashing pre-save hook

@@ -235,7 +235,7 @@ function BookingConfirmation() {
             )}
           </div>
           <div className="p-5 space-y-3 text-sm">
-            <Row icon="📅" label={t.date} value={new Date(view.date).toLocaleDateString(t.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
+            <Row icon="📅" label={t.date} value={new Date(view.date).toLocaleDateString(t.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })} />
             <Row icon="🕐" label={t.timeSlot} value={view.timeSlot} />
             <Row icon="💬" label={t.type} value={t.types[view.consultationType] || view.consultationType} />
             {view.reason && <Row icon="📝" label={t.reason} value={view.reason} />}

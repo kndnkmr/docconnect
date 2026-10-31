@@ -423,13 +423,12 @@ function BookAppointment() {
       return;
     }
 
-    // Check date is in the future
-    const selectedDate = new Date(formData.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (selectedDate < today) {
-      toast.error('Please select a future date');
+    // Not a past day — compared as Indian calendar days (YYYY-MM-DD), like the
+    // server. Comparing Date objects mixed UTC midnight with the phone's own
+    // midnight, so on phones outside India "today" counted as past.
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    if (String(formData.date).slice(0, 10) < todayIST) {
+      toast.error(lang === 'hi' ? 'कृपया आज या आगे की तारीख चुनें' : 'Please select today or a future date');
       return;
     }
 

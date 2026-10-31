@@ -19,8 +19,8 @@ const Prescription = require('../models/Prescription');
 const { sendAppointmentNotification, sendAppointmentConfirmation, sendAdminBookingNotification } = require('../utils/sendEmail');
 const { sendPushToUser, RING_PUSH_OPTS } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
-const { createBooking, BookingError, BOOKABLE_DOCTOR } = require('../utils/booking');
-const { slotProblem } = require('../utils/slots');
+const { createBooking, BookingError, BOOKABLE_DOCTOR, followUpDateOk, followUpDayLabel } = require('../utils/booking');
+const { slotProblem, slotWindowMs } = require('../utils/slots');
 const { appointmentChanged } = require('../utils/live');
 
 // Free-text caps (stop unbounded payloads being stored).
@@ -330,8 +330,24 @@ const updateAppointmentStatus = async (req, res) => {
       }
     }
 
+    // "Complete" only once the consultation has started (one mis-tap on a
+    // future booking used to close the patient's call window and send them a
+    // "rate your doctor" request). Unparseable old slots aren't blocked.
+    if (status === 'completed') {
+      const w = slotWindowMs(appointment.date, appointment.timeSlot);
+      if (w && Date.now() < w.start) {
+        const day = new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+        return res.status(400).json({ message: `This appointment is on ${day} at ${appointment.timeSlot}. You can mark it complete once it has started.` });
+      }
+    }
+
     // Update ONLY the fields that should change — protect timeSlot and date
+    const statusBefore = appointment.status;
     appointment.status = status;
+    if (status === 'cancelled') {
+      const why = typeof req.body.cancellationReason === 'string' ? req.body.cancellationReason.trim().slice(0, MAX_CANCEL_REASON) : '';
+      appointment.cancellationReason = why || (statusBefore === 'pending' ? 'Declined by the doctor' : 'Cancelled by the doctor');
+    }
     // Stamp when it became completed, so the review-request job can wait a few
     // hours before nudging the patient to rate (and only for genuinely-finished
     // consults). Set once; don't overwrite if somehow re-marked.
@@ -367,7 +383,7 @@ const updateAppointmentStatus = async (req, res) => {
       // page at the Pay step (not a generic dashboard).
       const fee = Number(appointment.doctor.consultationFee) || 0;
       const payDue = fee > 0 && (!appointment.paymentStatus || appointment.paymentStatus === 'pending');
-      const when = `${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}`;
+      const when = `${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' })} at ${appointment.timeSlot}`;
       sendPushToUser(appointment.patient._id, {
         title: payDue ? `✅ Dr. ${appointment.doctor.name} confirmed — pay Rs. ${fee}` : 'Appointment confirmed',
         body: payDue
@@ -377,10 +393,17 @@ const updateAppointmentStatus = async (req, res) => {
         tag: `appointment-${appointment._id}`
       });
     } else if (status === 'cancelled') {
+      // Say what actually happened: a pending request was declined, or a
+      // confirmed (maybe paid) appointment was cancelled — and if money was
+      // involved, where to get it sorted.
+      const day = new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+      const paidish = ['paid', 'patient_claimed'].includes(appointment.paymentStatus) && !appointment.isFollowUp;
       sendPushToUser(appointment.patient._id, {
-        title: 'Appointment cancelled',
-        body: `Dr. ${appointment.doctor.name} was unable to confirm your appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}.`,
-        url: '/dashboard',
+        title: statusBefore === 'pending' ? 'Appointment not confirmed' : 'Appointment cancelled by the doctor',
+        body: statusBefore === 'pending'
+          ? `Dr. ${appointment.doctor.name} couldn't take your appointment on ${day}. Please pick another time or doctor.`
+          : `Dr. ${appointment.doctor.name} had to cancel your appointment on ${day} at ${appointment.timeSlot}.${paidish ? ' You paid for it — tap for help with a refund.' : ' Please book another time.'}`,
+        url: paidish ? '/cancellation-refund' : '/dashboard',
         tag: `appointment-${appointment._id}`
       });
     }
@@ -443,7 +466,7 @@ const cancelAppointment = async (req, res) => {
     // Let the doctor know instantly, without waiting for them to check the dashboard.
     sendPushToUser(appointment.doctor, {
       title: 'Appointment cancelled',
-      body: `${req.user.name} cancelled their appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} at ${appointment.timeSlot}.`,
+      body: `${req.user.name} cancelled their appointment on ${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' })} at ${appointment.timeSlot}.`,
       url: '/dashboard',
       tag: `appointment-${appointment._id}`
     });
@@ -498,6 +521,14 @@ const rescheduleAppointment = async (req, res) => {
       return res.status(400).json({
         message: `Cannot reschedule an appointment that is already ${appointment.status}`
       });
+    }
+
+    // A free follow-up can only move within its free window.
+    if (appointment.isFollowUp && appointment.originalAppointment) {
+      const orig = await Appointment.findById(appointment.originalAppointment).select('followUpDeadline');
+      if (orig && orig.followUpDeadline && !followUpDateOk(date, orig.followUpDeadline)) {
+        return res.status(400).json({ message: `Your free follow-up is valid till ${followUpDayLabel(orig.followUpDeadline)}. Please pick a day on or before that.` });
+      }
     }
 
     // Same doctor as the original (reschedule ≠ switching doctors), and they
@@ -564,7 +595,7 @@ const rescheduleAppointment = async (req, res) => {
 
     appointmentChanged(req, appointment, { rescheduled: true });
     // Notify the doctor: it moved and needs re-confirmation (push + email).
-    const newDateLabel = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    const newDateLabel = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
     sendPushToUser(appointment.doctor._id ? appointment.doctor._id : appointment.doctor, {
       title: 'Appointment rescheduled',
       body: `${req.user.name} moved their appointment to ${newDateLabel} at ${timeSlot}. Please re-confirm.`,
@@ -866,6 +897,11 @@ const getVideoToken = async (req, res) => {
 
     if (!isDoctor && !isPatient) {
       return res.status(403).json({ message: 'Not authorized for this appointment' });
+    }
+    // Only a live appointment gets a call room (a cancelled or not-yet-
+    // confirmed one used to still open it during the original slot).
+    if (!['confirmed', 'completed'].includes(appointment.status)) {
+      return res.status(403).json({ message: appointment.status === 'cancelled' ? 'This appointment was cancelled.' : 'The doctor hasn\'t confirmed this appointment yet.' });
     }
 
     // Strict rule: only allow joining during the booked time slot (+ grace window)

@@ -172,14 +172,20 @@ export function PromptModal({
               {field.type === 'custom' ? (
                 field.render(values[field.name], (v) => handleChange(field.name, v))
               ) : field.type === 'textarea' ? (
-                <textarea
-                  value={values[field.name] || ''}
-                  onChange={(e) => handleChange(field.name, e.target.value)}
-                  placeholder={field.placeholder || ''}
-                  required={field.required}
-                  rows={field.rows || 3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none text-sm"
-                />
+                <>
+                  <textarea
+                    value={values[field.name] || ''}
+                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    placeholder={field.placeholder || ''}
+                    required={field.required}
+                    rows={field.rows || 3}
+                    maxLength={field.maxLength || undefined}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none text-sm"
+                  />
+                  {field.maxLength && (
+                    <p className="text-[11px] text-gray-500 text-right mt-0.5" aria-live="polite">{String(values[field.name] || '').length}/{field.maxLength}</p>
+                  )}
+                </>
               ) : field.type === 'select' ? (
                 <select
                   value={values[field.name] || ''}

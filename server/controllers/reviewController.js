@@ -5,6 +5,8 @@
 const Review = require('../models/Review');
 const Appointment = require('../models/Appointment');
 
+const MAX_REVIEW = 500; // same as the Review model
+
 // ============================================
 // CREATE REVIEW - Patient rates after completed appointment
 // ============================================
@@ -19,8 +21,17 @@ const createReview = async (req, res) => {
       return res.status(400).json({ message: 'Appointment ID and rating are required' });
     }
 
-    if (rating < 1 || rating > 5) {
+    // Whole stars 1–5 only; comment up to 500 characters (the model's limit —
+    // a longer one used to fail with a vague "Error submitting review").
+    const stars = Number(rating);
+    if (!Number.isInteger(stars) || stars < 1 || stars > 5) {
       return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+    if (comment !== undefined && comment !== null && typeof comment !== 'string') {
+      return res.status(400).json({ message: 'Review must be text' });
+    }
+    if (comment && comment.trim().length > MAX_REVIEW) {
+      return res.status(400).json({ message: `Your review is ${comment.trim().length} characters. Please keep it under ${MAX_REVIEW}.` });
     }
 
     // Verify appointment exists, is completed, and belongs to this patient
@@ -48,8 +59,8 @@ const createReview = async (req, res) => {
       patient: req.user._id,
       doctor: appointment.doctor,
       appointment: appointmentId,
-      rating,
-      comment: comment || ''
+      rating: stars,
+      comment: (comment || '').trim()
     });
 
     res.status(201).json({

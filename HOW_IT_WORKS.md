@@ -2039,6 +2039,28 @@ Replaces the older "Blog List Redesign" layout above.
 - The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
 - Tests: `server/tests/upiPay.test.js`.
 
+## Fixes from the Oct 2026 review (tests: `server/tests/bugfixes.test.js`)
+
+- **Doctor buttons (`Dashboard.jsx`):**
+  - Reject asks first. A cancelled booking can't be undone, and the prompt mentions a refund if the patient paid.
+  - Confirm, Reject, Complete and Mark Paid are disabled while saving (one request per appointment at a time).
+  - Mark Paid shows an error if it fails.
+- **Mark Complete only after the consultation starts:** the button (`hasStarted`) and the server (`updateAppointmentStatus`, via `slotWindowMs`) both enforce it.
+- **Doctor cancel:**
+  - Stores a reason ("Declined by the doctor" or "Cancelled by the doctor", or `cancellationReason` if sent).
+  - The patient's notification says what happened: "couldn't take your appointment" for a pending request, "had to cancel" for a confirmed one.
+  - If they paid, it adds "tap for help with a refund", opening `/cancellation-refund`.
+- **A password reset signs out every other device:** `User.passwordChangedAt` is set on reset (1 s in the past, so the new login token is newer), and `middleware/auth.js` refuses tokens issued before it.
+- **The reset link is never in the API reply** unless `NODE_ENV=development` and not on Render (`RENDER` unset). It used to be included whenever NODE_ENV wasn't exactly "production".
+- **Free follow-ups:** the VISIT must be on or before the "free follow-up till" day (IST), both when booking (`utils/booking.js` → `followUpDateOk`) and when rescheduling. Before, only the booking *request* had to be in time.
+- **Reviews:** whole stars 1–5. A comment over 500 characters gets a clear message; the box stops at 500 and shows a counter (`Modal` textarea `maxLength`).
+- **Call room:** only for confirmed or completed appointments (`getVideoToken`).
+- **Dates:**
+  - Appointment days are stored as midnight UTC of the Indian day, so they're shown with `timeZone: 'UTC'`: dashboard cards, prescriptions, the booking page, the doctor's WhatsApp note and server notifications. Phones outside India used to show the previous day.
+  - Real moments (prescription written, follow-up deadline) are shown in `Asia/Kolkata`.
+  - The booking page's "past day" check compares Indian calendar days (it used to block today for phones outside India).
+  - Patient dashboard dates are in Hindi in Hindi mode.
+
 ## Chat on phones (`client/src/components/ChatBox.jsx`)
 
 - **No zoom on tap:** the type box uses 16 px text. iPhone zooms the page for anything smaller.

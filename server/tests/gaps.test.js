@@ -137,7 +137,7 @@ test('booking: follow-up from someone else\'s appointment is refused', async () 
 });
 
 test('booking: valid follow-up is free (paid) and linked', async () => {
-  original = { patient: 'pat1', doctor: 'doc1', status: 'completed', followUpDeadline: new Date(Date.now() + 86400000) };
+  original = { patient: 'pat1', doctor: 'doc1', status: 'completed', followUpDeadline: new Date("2099-01-10T00:00:00Z") /* window covers the 2099-01-01 visit */ };
   await createBooking({ patientId: 'pat1', body: { ...BODY, isFollowUp: true, originalAppointmentId: 'o1' } });
   assert.strictEqual(created.paymentStatus, 'paid');
   assert.strictEqual(created.originalAppointment, 'o1');
@@ -412,7 +412,7 @@ test('booking: only a consultation type the doctor offers; default = first offer
 
 // ---------- One free follow-up per visit ----------
 test('booking: only one free follow-up per visit; a cancelled one frees it again', async () => {
-  original = { _id: 'o1', patient: 'pat1', doctor: 'doc1', status: 'completed', followUpDeadline: new Date(Date.now() + 86400000) };
+  original = { _id: 'o1', patient: 'pat1', doctor: 'doc1', status: 'completed', followUpDeadline: new Date("2099-01-10T00:00:00Z") /* window covers the 2099-01-01 visit */ };
   let usedQuery = null;
   let existingFollowUp = { _id: 'f1' };
   Appointment.findOne = (query) => {
