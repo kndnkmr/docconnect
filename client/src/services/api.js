@@ -201,6 +201,9 @@ export const appointmentAPI = {
 
   // Get single appointment
   getById: (id) => API.get(`/appointments/${id}`),
+  // Doctor: "Did these patients come?" (server/utils/attendance.js)
+  attendanceDue: () => API.get('/appointments/attendance-due'),
+  markNoShow: (id) => API.put(`/appointments/${id}/no-show`),
 
   // Update status (doctor only)
   updateStatus: (id, data) => API.put(`/appointments/${id}/status`, data),

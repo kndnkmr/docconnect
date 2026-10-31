@@ -353,6 +353,7 @@ const updateAppointmentStatus = async (req, res) => {
     // consults). Set once; don't overwrite if somehow re-marked.
     if (status === 'completed' && !appointment.completedAt) {
       appointment.completedAt = new Date();
+      appointment.completedBy = 'doctor';
     }
     if (notes) {
       appointment.notes = notes;

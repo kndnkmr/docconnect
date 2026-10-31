@@ -217,6 +217,12 @@ connectWithRetry()
     // reviewRequestSentAt so nobody gets asked twice.
     setInterval(sendReviewRequests, 60 * 1000);
 
+    // "Did the patient come?": completes visits after the doctor joined the
+    // call, asks the doctor about the rest, completes paid ones after 3 days
+    // (so rating requests actually go out). utils/attendance.js.
+    const { runAttendance } = require('./utils/attendance');
+    setInterval(() => runAttendance().catch((e) => console.error('[attendance]', e.message)), 10 * 60 * 1000);
+
     // Unconfirmed payments: nudge the doctor at 3h, alert admin at 24h, once
     // each per claim (see utils/paymentFollowUp.js). Every 10 minutes.
     setInterval(runPaymentFollowUp, 10 * 60 * 1000);

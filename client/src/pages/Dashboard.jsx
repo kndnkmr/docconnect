@@ -1077,6 +1077,45 @@ function Dashboard() {
       setStatusBusy(null);
     }
   };
+  // ---- Doctor: "Did these patients come?" (server/utils/attendance.js) ----
+  // Visits only count as done once completed — that's what sends the
+  // patient's rating request — and doctors rarely tapped "Mark Complete".
+  const [attendanceDue, setAttendanceDue] = useState([]);
+  const fetchAttendanceDue = async () => {
+    try {
+      const { data } = await appointmentAPI.attendanceDue();
+      setAttendanceDue(Array.isArray(data.appointments) ? data.appointments : []);
+    } catch { /* the card just stays hidden */ }
+  };
+  useEffect(() => {
+    if (!isDoctor) return;
+    fetchAttendanceDue();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDoctor]);
+  // Opened from the "Did your patients come?" notification → show the card.
+  useEffect(() => {
+    if (searchParams.get('attendance') === '1' && attendanceDue.length) {
+      setTimeout(() => document.getElementById('attendance-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attendanceDue.length]);
+  const answerAttendance = async (apt, came) => {
+    if (statusBusy) return;
+    if (!came && !window.confirm(`Mark ${apt.patient?.name || 'this patient'} as didn't come?\n\nThe appointment will be closed as "Did not attend". This can't be undone.`)) return;
+    setStatusBusy(apt._id);
+    try {
+      if (came) await appointmentAPI.updateStatus(apt._id, { status: 'completed' });
+      else await appointmentAPI.markNoShow(apt._id);
+      toast.success(came ? 'Marked as done. The patient will be asked to rate the visit.' : 'Marked as didn\'t come.');
+      setAttendanceDue((list) => list.filter((a) => a._id !== apt._id));
+      fetchAppointments();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not save. Please try again.');
+    } finally {
+      setStatusBusy(null);
+    }
+  };
+
   const handleMarkPaid = async (appointmentId) => {
     if (statusBusy) return;
     setStatusBusy(appointmentId);
@@ -1629,6 +1668,40 @@ function Dashboard() {
 
       {/* Notification Banner — shown on every tab, so the CTA must actually
           switch to Appointments rather than assume it's already showing */}
+      {/* "Did these patients come?" — one tap each closes the visit (and,
+          if they came, sends the patient a rating request). */}
+      {isDoctor && attendanceDue.length > 0 && (
+        <div id="attendance-card" className="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-xl scroll-mt-24">
+          <p className="font-semibold text-indigo-900">🩺 Did {attendanceDue.length === 1 ? 'this patient' : 'these patients'} come?</p>
+          <p className="text-sm text-indigo-800 mt-0.5">One tap each. Patients who came are asked to rate the visit, which helps you show up higher.</p>
+          <ul className="mt-3 space-y-2">
+            {attendanceDue.map((a) => {
+              const day = new Date(a.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+              const auto = a.autoCompletesAt ? new Date(a.autoCompletesAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' }) : '';
+              return (
+                <li key={a._id} className="bg-white rounded-lg border border-indigo-100 p-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 break-words">
+                      {a.patient?.name || 'Patient'}{a.bookedFor === 'family' && a.familyMemberName ? ` (for ${a.familyMemberName})` : ''}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {day} · {(a.timeSlot || '').split(' - ')[0]} · {a.consultationType === 'video' ? '📹 Video' : a.consultationType === 'phone' ? '📞 Phone' : '🏥 Clinic'}
+                    </p>
+                    {auto && <p className="text-[11px] text-gray-500 mt-0.5">No answer by {auto}? It's marked as came.</p>}
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => answerAttendance(a, true)} disabled={statusBusy === a._id}
+                      className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 disabled:opacity-60">✅ Came</button>
+                    <button type="button" onClick={() => answerAttendance(a, false)} disabled={statusBusy === a._id}
+                      className="px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 disabled:opacity-60">✗ Didn't come</button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       {isDoctor && pendingCount > 0 && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">

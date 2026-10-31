@@ -2039,6 +2039,18 @@ Replaces the older "Blog List Redesign" layout above.
 - The doctor's own photo/QR upload refuses non-images. PDFs used to slip through the shared filter.
 - Tests: `server/tests/upiPay.test.js`.
 
+## "Did the patient come?" — visits get completed (`server/utils/attendance.js`)
+
+**Why:** everything after a visit (the patient's rating request 3 h later, the "X consultations" count, ranking by rating) waits for status `completed`, and no doctor had ever tapped "Mark Complete" (0 completed visits as of Oct 2026).
+
+A job runs every 10 min over confirmed visits whose slot ended **in the last 14 days** (older visits are left alone, so patients don't get late rating requests):
+- **Video/phone and the doctor joined the call** (a `CallLog` exists, created only when the doctor joins): completed 1 hour after the slot ends (`completedBy: 'auto-call'`).
+- **Otherwise the doctor is asked once:** a "Did your patients come?" notification at 9 AM–9 PM IST (`attendanceNudgedAt`). The dashboard card "Did these patients come? ✅ Came / ✗ Didn't come" shows the same list (`GET /api/appointments/attendance-due`).
+  - ✅ completes the visit (`completedBy: 'doctor'`).
+  - ✗ `PUT /:id/no-show`, after a confirm prompt, closes it as cancelled, "Did not attend", `noShow: true`. The patient isn't notified or asked to rate.
+- **No answer 3 days after the slot and the visit is PAID** (doctor confirmed payment): completed (`completedBy: 'auto-3days'`). Unpaid visits with no call are never auto-completed, since they probably didn't happen.
+- Tests: `server/tests/attendance.test.js`.
+
 ## SEO (Oct 2026)
 
 - **Titles and descriptions** (`src/utils/seoText.js`, used by `SEO.jsx` and the prerender):

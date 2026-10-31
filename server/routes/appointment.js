@@ -65,6 +65,12 @@ router.get('/my', getMyAppointments);
 // MUST be defined BEFORE '/:id' so it isn't captured as an appointment id
 router.get('/incoming-calls', getIncomingCalls);
 
+// ---- DOCTOR: "Did these patients come?" (utils/attendance.js) ----
+// Also before '/:id'.
+const { getAttendanceDue, markNoShow } = require('../controllers/attendanceController');
+router.get('/attendance-due', authorize('doctor'), getAttendanceDue);
+router.put('/:id/no-show', authorize('doctor'), markNoShow);
+
 // ---- BOTH: View single appointment ----
 // GET /api/appointments/:id
 // Both can view, but controller checks they're involved in the appointment

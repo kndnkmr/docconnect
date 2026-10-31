@@ -270,6 +270,25 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  // Who/what marked it complete (utils/attendance.js): the doctor, or the
+  // app — 'auto-call' (the doctor joined the video/phone call) or
+  // 'auto-3days' (paid visit, doctor didn't answer "Did they come?").
+  completedBy: {
+    type: String,
+    enum: ['', 'doctor', 'auto-call', 'auto-3days'],
+    default: ''
+  },
+  // Doctor said the patient didn't come (appointment is then cancelled,
+  // reason "Did not attend"; the patient is not asked to rate).
+  noShow: {
+    type: Boolean,
+    default: false
+  },
+  // When the doctor was asked "Did this patient come?" (once per visit).
+  attendanceNudgedAt: {
+    type: Date,
+    default: null
+  },
 
   // Set the first (and only) time the "please rate your consultation" push has
   // been sent for this appointment (server/utils/reviewRequest.js), so that
