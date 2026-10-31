@@ -2174,7 +2174,7 @@ All use your Google/GitHub account for login — no separate passwords to rememb
 
 ## Specialties with doctors first (no "No doctors found" dead ends)
 
-- `GET /api/doctors/specialty-counts` returns live doctors per specialty (`server/utils/specialtyCounts.js`). It uses the same visibility rules and synonym matching as the doctor list, so a count above 0 means that list really has doctors. Cached 30 s and cleared on any change.
+- `GET /api/doctors/specialty-counts` returns live doctors per specialty (`server/utils/specialtyCounts.js`). It uses the same visibility rules and synonym matching as the doctor list (the name must start a word, so "Urologist" no longer matches "Neurologist"), so a count above 0 means that list really has doctors. Cached 30 s and cleared on any change.
 - Client: `client/src/utils/specialtyAvailability.js` (pure, tested) and the `useSpecialtyCounts` hook (one request per page load; last answer saved for a week so returning visitors see the right order at once).
 - Home: popular chips show only specialties with doctors. "Most consulted" shows the top 4. "All specialities" tiles with doctors come first; the rest sit under "Coming soon" (still tappable).
 - Empty specialty → closest one with doctors (skin, ENT, heart, stomach… → General Physician; mental health → GP, then Neurologist) plus a "🔔 Notify me" WhatsApp button. This applies on `/doctors?specialization=`, `/specialization/<slug>` (shows 3 doctors who can help now; city pages show the same specialty online), the home search suggestion and blog "Find a …" buttons.

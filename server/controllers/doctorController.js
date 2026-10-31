@@ -13,7 +13,7 @@
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const Review = require('../models/Review');
-const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
+const { safeContainsRegex, specialtyRegex, getPagination } = require('../utils/queryHelpers');
 const { getSpecializationSynonyms } = require('../utils/specializationSynonyms');
 const { countBySpecialty } = require('../utils/specialtyCounts');
 const { formatIndianPhone } = require('../utils/formatPhone');
@@ -252,9 +252,9 @@ const getAllDoctors = async (req, res) => {
       // this is just the single original term, so behaviour is unchanged.
       const synonyms = getSpecializationSynonyms(req.query.specialization);
       if (synonyms.length > 1) {
-        filter.specialization = { $in: synonyms.map((s) => safeContainsRegex(s)) };
+        filter.specialization = { $in: synonyms.map((s) => specialtyRegex(s)) };
       } else {
-        filter.specialization = safeContainsRegex(req.query.specialization);
+        filter.specialization = specialtyRegex(req.query.specialization);
       }
     }
 
@@ -386,8 +386,8 @@ const getDoctorCities = async (req, res) => {
       // the "find in your city" counts stay consistent with the doctor list.
       const synonyms = getSpecializationSynonyms(req.query.specialization);
       match.specialization = synonyms.length > 1
-        ? { $in: synonyms.map((s) => safeContainsRegex(s)) }
-        : safeContainsRegex(req.query.specialization);
+        ? { $in: synonyms.map((s) => specialtyRegex(s)) }
+        : specialtyRegex(req.query.specialization);
     }
 
     const rows = await User.aggregate([

@@ -7,11 +7,12 @@
 //
 // Counting uses EXACTLY the same matching as the doctor list
 // (getAllDoctors): the specialty name and its synonyms, as a
-// case-insensitive "contains" match on the doctor's own specialty text.
+// case-insensitive match at the start of a word in the doctor's own
+// specialty text (utils/queryHelpers.js specialtyRegex).
 // So a count of 0 here means the list for that specialty would be empty,
 // and a count > 0 means tapping it shows doctors.
 const { getSpecializationSynonyms } = require('./specializationSynonyms');
-const { safeContainsRegex } = require('./queryHelpers');
+const { specialtyRegex } = require('./queryHelpers');
 
 // Every specialty name the website links to or suggests.
 const SPECIALTY_NAMES = [
@@ -29,7 +30,7 @@ const SPECIALTY_NAMES = [
 function countBySpecialty(rows, names = SPECIALTY_NAMES) {
   const out = {};
   for (const name of names) {
-    const tests = getSpecializationSynonyms(name).map((s) => safeContainsRegex(s));
+    const tests = getSpecializationSynonyms(name).map((s) => specialtyRegex(s));
     out[name] = rows.reduce((n, r) => (
       r && r.specialization && tests.some((re) => re.test(r.specialization)) ? n + (Number(r.count) || 0) : n
     ), 0);

@@ -31,6 +31,18 @@ test('synonyms and spellings count towards the specialty (like the list)', () =>
   assert.strictEqual(c.Pediatrician, 1);
 });
 
+test('a specialty only matches at the start of a word (Urologist ≠ Neurologist)', () => {
+  const { specialtyRegex } = require('../utils/queryHelpers');
+  assert.strictEqual(countBySpecialty([{ specialization: 'Neurologist', count: 2 }]).Urologist, 0);
+  assert.ok(specialtyRegex('Urologist').test('Urologist, Andrologist'));
+  assert.ok(!specialtyRegex('Urologist').test('Neurologist'));
+  assert.ok(specialtyRegex('cardio').test('Cardiologist'));
+  assert.ok(specialtyRegex('gynaecologist').test('Obstetrician and Gynaecologist'));
+  assert.ok(specialtyRegex('Physician').test('General Physician'));
+  assert.ok(specialtyRegex('(gyn').test('x (gyn)'), 'odd input still safe');
+  assert.ok(!specialtyRegex('.*').test('Neurologist'), 'input stays literal');
+});
+
 test('specialties without doctors are 0, every known name is present', () => {
   const c = countBySpecialty(rows);
   assert.strictEqual(c.Dermatologist, 0);

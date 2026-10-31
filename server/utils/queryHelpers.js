@@ -17,6 +17,15 @@ const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // Build a case-insensitive "contains" RegExp from user input, safely.
 const safeContainsRegex = (input) => new RegExp(escapeRegex(input), 'i');
 
+// Specialty search: case-insensitive, but the term must START a word, so
+// "Urologist" no longer matches "neUROLOGIST" (and "Dermatology" doesn't
+// leak into unrelated words). "cardio" still finds "Cardiologist",
+// "Gynaecologist" still finds "Obstetrician and Gynaecologist".
+const specialtyRegex = (input) => {
+  const t = String(input).trim();
+  const e = escapeRegex(t);
+  return new RegExp(/^\w/.test(t) ? `\\b${e}` : e, 'i');
+};
 // Parse page/limit from query params with sane bounds.
 // - page: always at least 1
 // - limit: at least 1, capped at maxLimit (default 100)
@@ -27,4 +36,4 @@ const getPagination = (req, { defaultLimit = 20, maxLimit = 100 } = {}) => {
   return { page, limit, skip };
 };
 
-module.exports = { escapeRegex, safeContainsRegex, getPagination };
+module.exports = { escapeRegex, safeContainsRegex, specialtyRegex, getPagination };
