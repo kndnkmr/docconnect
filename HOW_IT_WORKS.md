@@ -2187,3 +2187,14 @@ All use your Google/GitHub account for login — no separate passwords to rememb
 - "✨ Write a draft" (Warm / Short / हिंदी) writes a bio only from the doctor's own details plus what their specialty usually covers. It is never saved by itself: read, fix, check with the doctor, Save.
 - Users tab: a "📝 Page x/9" badge on every doctor, and a "📝 Needs a better page" filter (under 7/9, weakest first).
 - Code: `client/src/utils/profileHelper.js` (tests: `client/tests/profileHelper.test.mjs`).
+
+## iPhone "Add to Home Screen" guide
+
+- Apple gives websites no one-tap install (no `beforeinstallprompt`), so iPhone/iPad users get a guide instead. Android/desktop are unchanged: every piece checks `iosEnv.ios` / `iosInstallable` first.
+- `client/src/utils/iosInstall.js` (tested in `tests/iosInstall.test.mjs`) detects iPhone/iPad (including iPadOS that reports "Mac"), the browser (Safari/Chrome/Firefox/Edge) and in-app browsers (Instagram, Facebook, WhatsApp, LINE, Snapchat, LinkedIn, X, TikTok, Pinterest).
+- `client/src/components/IosInstall.jsx`:
+  - `IosInstallSheet`: the 3 taps with a looping animation (still image with "reduce motion"). Opened from every Install / Get App button on iPhone.
+  - Inside an in-app browser: "Open in Safari" (`x-safari-https://…`, which only some apps honour) plus "Copy link" and plain steps.
+  - `IosAlertsCard`: "Get alerts on your iPhone" on the booking-done page and the dashboard (patients and doctors), shown only where iPhone can't turn on alerts yet. "Maybe later" hides it for 7 days.
+  - `/install` on iPhone shows only the iPhone steps, plus an "in Instagram's browser" strip.
+- Home Screen icon: `public/icons/apple-touch-icon-180.png` (full square, no transparent corners, which iPhone would fill with black).

@@ -34,6 +34,7 @@ import { usePwa } from './context/PwaContext';
 import Navbar from './components/Navbar';
 import SessionExpired from './components/SessionExpired';
 import WhatsAppButton from './components/WhatsAppButton';
+import { IosInstallSheet } from './components/IosInstall';
 import BottomNav from './components/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
 import { dropPrerenderedLd } from './utils/prerenderLd';
@@ -445,6 +446,8 @@ function App() {
       {/* Floating WhatsApp button — shown to guests only (hidden once
           logged in; the component itself checks auth) */}
       <WhatsAppButton />
+      {/* iPhone-only "Add to Home Screen" guide (renders nothing elsewhere). */}
+      <IosInstallSheet />
 
       {/* Bottom navigation — mobile only */}
       <BottomNav />

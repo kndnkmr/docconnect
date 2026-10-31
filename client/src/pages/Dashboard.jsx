@@ -12,6 +12,7 @@ import { getUploadUrl } from '../services/api';
 import { getSocket } from '../services/socket';
 import { SPOKEN_LANGUAGE_OPTIONS } from '../utils/languages';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
+import { IosAlertsCard } from '../components/IosInstall';
 import { ConfirmModal, PromptModal } from '../components/Modal';
 import { rowsToMedicines, medicinesToRows } from '../utils/rxRows';
 import { useLang } from '../context/LangContext';
@@ -1515,6 +1516,9 @@ function Dashboard() {
 
       {/* Push notification nudge — works for everyone, including patients
           who registered with phone only (no email on file) */}
+      {/* iPhone Safari can't turn on alerts until ProMedicoz is on the Home
+          Screen: show the 3-tap guide card there (nothing on Android). */}
+      {!isPushSupported() && <IosAlertsCard who={isDoctor ? 'doctor' : 'patient'} className="mb-6" />}
       {showPushNudge && (
         <div className="mb-6 p-4 sm:p-5 bg-gradient-to-r from-indigo-600 to-primary-700 text-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start sm:items-center gap-3">

@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { enablePushNotifications, getPushPermission, isPushSupported } from '../services/push';
+import { IosAlertsCard } from '../components/IosInstall';
 import { appointmentAPI } from '../services/api';
 import { getSocket } from '../services/socket';
 import { useAuth } from '../context/AuthContext';
@@ -268,6 +269,9 @@ function BookingConfirmation() {
           </div>
         )}
 
+        {/* iPhone (not on Home Screen yet): alerts need the Home Screen icon,
+            so offer the 3-tap guide instead. Renders nothing on Android. */}
+        {!isPushSupported() && s === 'confirming' && <IosAlertsCard who="patient" className="mb-6" />}
         {/* Alerts opt-in — most useful while waiting for the doctor. */}
         {notifyState !== 'hidden' && s === 'confirming' && (
           <div className="bg-primary-50 border border-primary-200 rounded-xl p-5 mb-6">

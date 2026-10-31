@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import SEO from '../components/SEO';
 import { usePwa } from '../context/PwaContext';
+import { IosInstallSteps, InAppBrowserBar } from '../components/IosInstall';
 import toast from 'react-hot-toast';
 import { useLang } from '../context/LangContext';
 
@@ -104,7 +105,7 @@ function InstallApp() {
   // via usePwa() — so this page, the navbar, and the Home strip all offer the
   // same one-tap install. iOS/Safari never fires the prompt (canInstall stays
   // false), so those users follow the manual "Add to Home Screen" steps below.
-  const { canInstall, isInstalled, promptInstall } = usePwa();
+  const { canInstall, isInstalled, promptInstall, iosEnv } = usePwa();
 
   const handleInstall = async () => {
     const accepted = await promptInstall();
@@ -172,6 +173,8 @@ function InstallApp() {
     <div>
       <SEO title="Get the App — Install & Share ProMedicoz" description="Install ProMedicoz on your phone for one-tap access, and share it with family and friends. Works on Android and iPhone." path="/install" />
 
+      {/* iPhone in-app browsers (Instagram, Facebook…) only. */}
+      <InAppBrowserBar />
       {/* Gradient header band + language toggle */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-8 pb-16 text-center">
@@ -201,6 +204,15 @@ function InstallApp() {
                   </button>
                 )}
 
+                {/* iPhone/iPad: only the iPhone guide (animated, browser-aware,
+                    "Open in Safari" inside Instagram/Facebook…). Everyone else
+                    sees exactly what they saw before. */}
+                {iosEnv.ios ? (
+                  <>
+                    <p className="font-semibold text-gray-800 text-sm mb-2">{t.iosTitle}</p>
+                    <IosInstallSteps />
+                  </>
+                ) : (<>
                 <div className="mb-5">
                   <p className="font-semibold text-gray-800 text-sm mb-2">{t.androidTitle}</p>
                   <ol className="space-y-2">
@@ -225,6 +237,7 @@ function InstallApp() {
                   </ol>
                 </div>
 
+                </>)}
                 <p className="text-xs text-gray-400 mt-4">{t.installNote}</p>
               </>
             )}

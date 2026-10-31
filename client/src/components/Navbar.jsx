@@ -21,7 +21,7 @@ import { useLang } from '../context/LangContext';
 
 function Navbar() {
   const { user, isAuthenticated, isDoctor, isPatient, logout } = useAuth();
-  const { canInstall, promptInstall } = usePwa();
+  const { canInstall, promptInstall, iosInstallable, openIosGuide } = usePwa();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
@@ -120,6 +120,11 @@ function Navbar() {
                     className="flex items-center gap-1.5 border border-green-600 text-green-700 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:bg-green-50 hover:-translate-y-0.5"
                   >
                     📲 {tr('Install App', 'ऐप इंस्टॉल करें')}
+                  </button>
+                ) : iosInstallable ? (
+                  // iPhone/iPad: no install prompt exists → the 3-tap guide.
+                  <button onClick={openIosGuide} className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
+                    📲 {tr('Get App', 'ऐप पाएं')}
                   </button>
                 ) : (
                   <Link to="/install" className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50/70 transition-colors">
@@ -228,6 +233,10 @@ function Navbar() {
               {canInstall ? (
                 <button onClick={handleInstall} className="flex items-center gap-2 text-left text-green-700 font-medium hover:bg-green-50 rounded-lg px-3 py-2.5 transition-colors">
                   📲 {tr('Install App (1 tap)', 'ऐप इंस्टॉल करें (1 टैप)')}
+                </button>
+              ) : iosInstallable ? (
+                <button onClick={() => { setIsMobileMenuOpen(false); openIosGuide(); }} className="flex items-center gap-2 text-left text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors">
+                  📲 {tr('Add to Home Screen', 'Home Screen पर जोड़ें')}
                 </button>
               ) : (
                 <Link to="/install" className="flex items-center gap-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50/70 rounded-lg px-3 py-2.5 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>

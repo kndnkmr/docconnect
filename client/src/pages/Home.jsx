@@ -391,7 +391,7 @@ const SPEC_TILES = [
 
 function Home() {
   const { isAuthenticated } = useAuth();
-  const { canInstall, promptInstall } = usePwa();
+  const { canInstall, promptInstall, iosInstallable, openIosGuide } = usePwa();
   const navigate = useNavigate();
   const [symptomSearch, setSymptomSearch] = useState('');
   // Voice search mic shows only on browsers with speech recognition.
@@ -581,6 +581,14 @@ function Home() {
               {canInstall ? (
                 <button
                   onClick={promptInstall}
+                  className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
+                >
+                  📲 {lang === 'hi' ? 'इंस्टॉल' : 'Install'}
+                </button>
+              ) : iosInstallable ? (
+                // iPhone: the 3-tap "Add to Home Screen" guide.
+                <button
+                  onClick={openIosGuide}
                   className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   📲 {lang === 'hi' ? 'इंस्टॉल' : 'Install'}
@@ -1035,6 +1043,8 @@ function Home() {
                 <p className="text-gray-500 text-xs mb-3">{t.installCardSub}</p>
                 {canInstall ? (
                   <button onClick={promptInstall} className="w-full btn btn-primary whitespace-nowrap">{t.installCardBtn}</button>
+                ) : iosInstallable ? (
+                  <button onClick={openIosGuide} className="w-full btn btn-primary whitespace-nowrap">{t.installCardBtn}</button>
                 ) : (
                   <Link to="/install" className="w-full btn btn-primary whitespace-nowrap justify-center">{t.installCardBtnAlt}</Link>
                 )}

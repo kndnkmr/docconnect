@@ -17,15 +17,28 @@
 // (which the /install page already shows).
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { currentInstallEnv, wantsIosGuide } from '../utils/iosInstall';
 
 const PwaContext = createContext({
   canInstall: false,
   isInstalled: false,
   promptInstall: async () => false,
+  // iPhone/iPad only (see utils/iosInstall.js). On Android/desktop
+  // iosEnv.ios is false and iosInstallable is false, so nothing changes.
+  iosEnv: { ios: false, inApp: null, browser: 'other', installed: false },
+  iosInstallable: false,
+  iosGuideOpen: false,
+  openIosGuide: () => {},
+  closeIosGuide: () => {},
 });
 
 export function PwaProvider({ children }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  // iPhone: no install prompt exists, so a guide sheet (IosInstallSheet).
+  const [iosEnv] = useState(() => currentInstallEnv());
+  const [iosGuideOpen, setIosGuideOpen] = useState(false);
+  const openIosGuide = useCallback(() => setIosGuideOpen(true), []);
+  const closeIosGuide = useCallback(() => setIosGuideOpen(false), []);
   const [isInstalled, setIsInstalled] = useState(
     typeof window !== 'undefined' &&
       window.matchMedia &&
@@ -71,6 +84,11 @@ export function PwaProvider({ children }) {
     canInstall: !!deferredPrompt && !isInstalled,
     isInstalled,
     promptInstall,
+    iosEnv,
+    iosInstallable: wantsIosGuide(iosEnv) && !isInstalled,
+    iosGuideOpen,
+    openIosGuide,
+    closeIosGuide,
   };
 
   return <PwaContext.Provider value={value}>{children}</PwaContext.Provider>;
