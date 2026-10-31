@@ -13,7 +13,7 @@ import VoiceSearch, { isVoiceSupported } from '../components/VoiceSearch';
 import { isPregnancyQuery, dueDatePath, isCycleQuery, ovulationPath, isVaccineQuery, vaccinePath, isReportQuery, reportPath } from './tools/toolLinks';
 import { useLang } from '../context/LangContext';
 import useSpecialtyCounts from '../utils/useSpecialtyCounts';
-import { splitByDoctors, fallbackFor } from '../utils/specialtyAvailability';
+import { splitByDoctors, orderByDoctors, fallbackFor } from '../utils/specialtyAvailability';
 // NOTE: blogData is NOT imported statically here — that would pull the entire
 // ~210 KB of article content into the main app bundle just for the daily-tip
 // card. Instead we load it dynamically after mount (see useEffect below), so
@@ -89,8 +89,6 @@ const TXT = {
     specSubtitle: "Tap your concern — we'll show the right specialists",
     specMostConsulted: 'Most consulted',
     specAll: 'All specialities',
-    specSoon: 'Coming soon',
-    specSoonNote: 'Doctors joining soon. Tap one to see who can help you now.',
     suggestedInstead: (spec) => `no ${spec} on ProMedicoz yet`,
     browseAll: '🔍 Browse All Specializations →',
     howHeading: 'How ProMedicoz Works',
@@ -170,8 +168,6 @@ const TXT = {
     specSubtitle: 'अपनी समस्या चुनें — हम सही विशेषज्ञ दिखाएंगे',
     specMostConsulted: 'सबसे ज़्यादा परामर्श',
     specAll: 'सभी विशेषज्ञताएं',
-    specSoon: 'जल्द आ रहे हैं',
-    specSoonNote: 'इनके डॉक्टर जल्द जुड़ेंगे। टैप करें — देखें अभी कौन मदद कर सकता है।',
     suggestedInstead: (spec) => `${spec} अभी ProMedicoz पर नहीं हैं`,
     browseAll: '🔍 सभी विशेषज्ञताएं देखें →',
     howHeading: 'ProMedicoz कैसे काम करता है',
@@ -348,9 +344,9 @@ const SPEC_LABEL_HI = {
 
 // ---- Specialties on the home page ----
 // Order comes from LIVE doctor counts (utils/specialtyAvailability.js):
-// specialties with doctors first, most doctors first; the rest show as
-// "Coming soon" (still tappable: their page offers who can help now). The
-// written order below is only the starting order before counts arrive.
+// specialties with doctors first, most doctors first, then the rest — all
+// shown normally (a specialty with no doctor yet says so on its own page,
+// with who can help now). The written order below is only the starting order before counts arrive.
 // Featured "Most consulted" cards: the top 4 that have doctors.
 const FEATURED_SPECS = [
   { en: "Women's health", hi: 'महिला स्वास्थ्य', note: { en: 'Pregnancy · PCOS · periods · fertility', hi: 'गर्भावस्था · PCOS · मासिक · प्रजनन' }, icon: '🌸', slug: 'gynaecologist', spec: 'Gynaecologist', card: 'from-pink-50 to-rose-50 border-pink-100 hover:border-pink-300', badge: 'bg-pink-500', noteColor: 'text-pink-700' },
@@ -528,8 +524,8 @@ function Home() {
   ], specCounts, (q) => q.spec).live.slice(0, 5);
   // "Most consulted": the top 4 specialties with doctors.
   const featured = splitByDoctors(FEATURED_SPECS, specCounts, (f) => f.spec).live.slice(0, 4);
-  // All tiles: with doctors first, the rest under "Coming soon".
-  const tiles = splitByDoctors(SPEC_TILES, specCounts, (x) => x.specialization);
+  // All tiles in one grid: specialties with doctors first, then the rest.
+  const tiles = orderByDoctors(SPEC_TILES, specCounts, (x) => x.specialization);
 
   return (
     <div className="flex-grow flex flex-col">
@@ -919,57 +915,30 @@ function Home() {
           </div>
 
           {/* ---- All specialities — colour-tinted compact grid ----
-              Tiles with doctors first; specialties still onboarding doctors
-              sit below under "Coming soon" (greyed, but still tappable — their
-              page shows who can help now, e.g. a General Physician). */}
+              One normal grid: specialties with doctors first, then the rest.
+              No "coming soon" here (it made the home page look empty) — a
+              specialty with no doctor yet says so on its own page, with who
+              can help now. */}
           <div className="max-w-5xl mx-auto">
-            {tiles.live.length > 0 && (
-              <>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
-                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specAll}</h3>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                  {tiles.live.map((item) => (
-                    <Link
-                      key={item.symptom}
-                      to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                      className="card-lift group bg-white p-3 rounded-xl text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40"
-                    >
-                      <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
-                      {/* Always bilingual — the whole point is a Hindi-speaking
-                          patient can tap the right card instead of typing English. */}
-                      <p className="text-xs font-semibold text-gray-700 leading-tight break-words hyphens-auto">{item.symptom}</p>
-                      <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
-                    </Link>
-                  ))}
-                </div>
-              </>
-            )}
-            {tiles.soon.length > 0 && (
-              <div className={tiles.live.length > 0 ? 'mt-7' : ''}>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-1 h-4 rounded-full bg-gray-300" aria-hidden="true"></span>
-                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">{t.specSoon}</h3>
-                </div>
-                <p className="text-xs text-gray-500 mb-3">{t.specSoonNote}</p>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                  {tiles.soon.map((item) => (
-                    <Link
-                      key={item.symptom}
-                      to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
-                      onClick={() => trackEvent('find_doctor_click', { source: 'home_spec_soon', specialization: item.specialization, had_symptom: 'no' })}
-                      className="group bg-gray-50 p-3 rounded-xl text-center border border-dashed border-gray-200 hover:border-gray-300 hover:bg-white transition-colors"
-                    >
-                      <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gray-100 text-2xl mb-1.5 grayscale opacity-70" aria-hidden="true">{item.icon}</span>
-                      <p className="text-xs font-semibold text-gray-600 leading-tight break-words hyphens-auto">{item.symptom}</p>
-                      <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
-                      <span className="sr-only"> ({t.specSoon})</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1 h-4 rounded-full bg-primary-600" aria-hidden="true"></span>
+              <h3 className="text-xs font-bold uppercase tracking-wide text-gray-600">{t.specAll}</h3>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              {tiles.map((item) => (
+                <Link
+                  key={item.symptom}
+                  to={item.slug ? `/specialization/${item.slug}` : `/doctors?specialization=${encodeURIComponent(item.specialization)}`}
+                  className="card-lift group bg-white p-3 rounded-xl text-center border border-gray-100 hover:border-primary-200 hover:bg-primary-50/40"
+                >
+                  <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${item.tint} text-2xl mb-1.5 transition-transform group-hover:scale-105`} aria-hidden="true">{item.icon}</span>
+                  {/* Always bilingual — the whole point is a Hindi-speaking
+                      patient can tap the right card instead of typing English. */}
+                  <p className="text-xs font-semibold text-gray-700 leading-tight break-words hyphens-auto">{item.symptom}</p>
+                  <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{item.hi}</p>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* See all link */}
