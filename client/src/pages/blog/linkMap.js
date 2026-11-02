@@ -119,4 +119,17 @@ export const INTERNAL_LINKS = {
   'starting solids': 'starting-solid-foods-baby-6-months-first-foods-guide',
   'first foods': 'starting-solid-foods-baby-6-months-first-foods-guide',
   'body ache': 'body-ache-all-over-causes-when-to-worry-guide',
+  // Added Nov 2026 (second batch)
+  'pcos diet': 'pcos-diet-indian-food-plan-what-to-eat-guide',
+  'breastfeeding': 'breastfeeding-problems-latch-sore-nipples-low-milk-guide',
+  'mastitis': 'breastfeeding-problems-latch-sore-nipples-low-milk-guide',
+  'late period': 'period-late-not-pregnant-reasons-guide',
+  'essential tremor': 'shaking-hands-tremor-causes-when-to-worry-guide',
+  'shaking hands': 'shaking-hands-tremor-causes-when-to-worry-guide',
+  'trigeminal neuralgia': 'trigeminal-neuralgia-electric-shock-face-pain-guide',
+  'brain fog': 'brain-fog-forgetfulness-poor-concentration-causes-guide',
+  'deworming': 'worms-in-children-deworming-signs-prevention-guide',
+  'threadworms': 'worms-in-children-deworming-signs-prevention-guide',
+  'safe sleep': 'baby-sleep-how-much-safe-sleep-routine-guide',
+  'unexplained weight loss': 'losing-weight-without-trying-causes-when-to-worry-guide',
 };

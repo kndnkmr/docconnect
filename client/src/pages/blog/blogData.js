@@ -31494,5 +31494,3659 @@ export const articles = [
         "text": "Yeh trusted public health guidance (WHO, NHS, National Centre for Vector Borne Diseases Control (India)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
       }
     ]
+  },
+  {
+    "slug": "pcos-diet-indian-food-plan-what-to-eat-guide",
+    "title": "PCOS Diet With Indian Food: What to Eat, What to Limit, and a Simple Day Plan",
+    "description": "No magic PCOS diet exists, but food really helps. A realistic Indian plate, smart swaps, a sample day, myths about dairy and carbs, and when to see a gynaecologist.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "8 min",
+    "image": "🥗",
+    "content": [
+      {
+        "type": "intro",
+        "text": "If you have PCOS, you've probably been told to \"lose weight\" and \"avoid sugar\", and then been left to figure out the rest. The internet doesn't help, with each site banning a different food. The truth is simpler: **there is no single PCOS diet**, but how you eat makes a real difference to periods, skin, weight and long-term health, because PCOS is closely linked to **insulin resistance**. Here's a realistic plan using everyday Indian food."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Build each meal as **half vegetables, a quarter protein, a quarter whole grains**. Choose fibre-rich, less refined foods, cut down sugary drinks and sweets, and move daily. If you are overweight, losing even **5–10% of your weight** often makes periods more regular. Diet supports PCOS treatment but doesn't replace a gynaecologist's care."
+      },
+      {
+        "type": "heading",
+        "text": "Why Food Matters in PCOS"
+      },
+      {
+        "type": "paragraph",
+        "text": "In many women with PCOS the body doesn't respond well to **insulin**, so it makes more of it. High insulin pushes the ovaries to make more male-type hormones, which drives irregular periods, acne, facial hair and weight gain around the tummy. Meals that raise blood sugar slowly keep insulin steadier. That's the whole idea behind a \"PCOS diet\", and it helps **thin women with PCOS too**."
+      },
+      {
+        "type": "heading",
+        "text": "The PCOS Plate"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Part of plate",
+          "What to choose",
+          "Indian examples"
+        ],
+        "rows": [
+          [
+            "½ Vegetables",
+            "Non-starchy, colourful, cooked or raw",
+            "Palak, methi, lauki, tinda, bhindi, cauliflower, beans, salad, cucumber"
+          ],
+          [
+            "¼ Protein",
+            "At every meal, including breakfast",
+            "Dal, chana, rajma, paneer, curd, eggs, chicken, fish, sprouts, tofu"
+          ],
+          [
+            "¼ Whole grains",
+            "Less refined, more fibre, smaller portion",
+            "Multigrain or bajra/jowar roti, brown or hand-pounded rice, oats, dalia, millets"
+          ],
+          [
+            "A little fat",
+            "For taste and fullness",
+            "A spoon of ghee or oil, a few nuts or seeds"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Smart Swaps"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Instead of",
+          "Try"
+        ],
+        "rows": [
+          [
+            "White bread, maida biscuits",
+            "Multigrain roti, roasted chana, a handful of nuts"
+          ],
+          [
+            "Sweet chai with 2 spoons of sugar",
+            "Less sugar, step by step, or plain tea"
+          ],
+          [
+            "Fruit juice, cold drinks",
+            "Whole fruit, nimbu paani without sugar, buttermilk"
+          ],
+          [
+            "A big plate of rice alone",
+            "A smaller portion of rice with plenty of dal and sabzi"
+          ],
+          [
+            "Fried namkeen at 5 pm",
+            "Sprout chaat, roasted makhana, curd with fruit"
+          ],
+          [
+            "Skipping breakfast, then a heavy lunch",
+            "A protein breakfast: besan chilla, eggs, paneer paratha with less oil"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "A Sample Day"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Morning**: water, and tea with less sugar",
+          "**Breakfast**: 2 moong dal or besan chillas with mint chutney, or vegetable poha with peanuts and a bowl of curd",
+          "**Mid-morning**: 1 fruit (guava, apple, orange, papaya)",
+          "**Lunch**: 2 small multigrain rotis, dal, a big portion of sabzi, salad, curd",
+          "**Evening**: roasted chana or sprout chaat with tea",
+          "**Dinner (early, lighter)**: vegetable khichdi with extra dal, or grilled paneer or fish with sabzi",
+          "**Move**: a 30-minute walk, ideally including 10 minutes after a main meal"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Exercise counts as much as food",
+        "text": "Muscles use sugar without needing as much insulin. Aim for about **150 minutes of activity a week** (brisk walking, cycling, dancing, yoga), plus **strength exercises twice a week** (squats, wall push-ups, resistance bands). Even a 10-minute walk after meals helps."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"You must give up all carbs and roti forever.\"",
+            "You need fewer refined carbs, not zero. Whole grains in sensible portions are fine"
+          ],
+          [
+            "\"Milk and dairy cause PCOS.\"",
+            "There's no good evidence of this. Curd and paneer are useful protein. Change only if your doctor suggests it"
+          ],
+          [
+            "\"Thin women can't have PCOS.\"",
+            "Many women with PCOS are a normal weight. Insulin resistance can still be present"
+          ],
+          [
+            "\"Spearmint tea or seeds will cure PCOS.\"",
+            "No food cures PCOS. Some may help a little, but they don't replace treatment"
+          ],
+          [
+            "\"Crash diets are the fastest fix.\"",
+            "They usually rebound and can disturb periods further. Slow, steady changes last"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Manageable",
+            "Irregular but present periods, mild acne, following diet and exercise",
+            "Keep going, and have yearly check-ups"
+          ],
+          [
+            "🟡 See a gynaecologist",
+            "No period for 3 months, heavy facial hair or acne, trying to conceive, or weight rising despite effort",
+            "Book a consultation. Treatment options exist"
+          ],
+          [
+            "🟡 Get tested",
+            "Thirst, frequent urination, dark velvety skin on the neck",
+            "Sugar tests (HbA1c). PCOS raises diabetes risk"
+          ],
+          [
+            "🔴 Urgent",
+            "Very heavy bleeding with dizziness, or severe pelvic pain",
+            "See a doctor the same day"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Dates of your last 3–6 periods**",
+          "Your **weight** and waist size, and how they have changed",
+          "Acne, hair growth or hair thinning",
+          "A typical day of food and activity",
+          "Any reports: ultrasound, sugar, thyroid, hormones"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a gynaecologist is a comfortable way to review your cycle, reports and goals (regular periods, skin, weight or pregnancy) and get a plan that combines food, activity and, if needed, medicine. (See our guides on PCOS and irregular periods, irregular cycles, and trying to conceive.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, International PCOS Guideline, WHO). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Agar aapko PCOS hai, to shayad aapse \"vazan kam karo\" aur \"meetha band karo\" kaha gaya hoga, aur baaki aap par chhod diya gaya. Internet bhi madad nahi karta, har site alag cheez mana karti hai. Sach simple hai: **koi ek PCOS diet nahi hai**, lekin aap kaise khaati hain isse periods, twacha, vazan aur aage ki sehat par sach mein fark padta hai, kyunki PCOS **insulin resistance** se juda hai. Yahan rozmarra ke Indian khaane ke saath ek practical plan hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Har khaane ko **aadha sabzi, chauthai protein, chauthai saabut anaaj** banayein. Fibre wala, kam refined khaana chunein, meethe drinks aur mithaai kam karein, aur roz chalein. Agar vazan zyada hai, to sirf **5–10% vazan kam** karne se aksar periods niyamit hone lagte hain. Diet PCOS ke ilaaj ka saath deti hai, par gynaecologist ki dekhbhaal ki jagah nahi leti."
+      },
+      {
+        "type": "heading",
+        "text": "PCOS Mein Khaana Kyun Zaroori Hai"
+      },
+      {
+        "type": "paragraph",
+        "text": "PCOS wali kai auraton mein shareer **insulin** par theek se react nahi karta, isliye zyada insulin banata hai. Zyada insulin ovaries ko zyada male-type hormone banane ko dhakelta hai, jisse anaiyamit periods, muhase, chehre par baal aur pet par vazan badhta hai. Jo khaana sugar dheere badhata hai, woh insulin ko sthir rakhta hai. \"PCOS diet\" ka yahi poora idea hai, aur yeh **patli PCOS wali auraton ke liye bhi** madadgaar hai."
+      },
+      {
+        "type": "heading",
+        "text": "PCOS Plate"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Plate ka hissa",
+          "Kya chunein",
+          "Indian udaaharan"
+        ],
+        "rows": [
+          [
+            "½ Sabzi",
+            "Kam starch wali, rangeen, paki ya kachchi",
+            "Palak, methi, lauki, tinda, bhindi, gobhi, beans, salad, kheera"
+          ],
+          [
+            "¼ Protein",
+            "Har khaane mein, naashte mein bhi",
+            "Dal, chana, rajma, paneer, dahi, anda, chicken, machhli, sprouts, tofu"
+          ],
+          [
+            "¼ Saabut anaaj",
+            "Kam refined, zyada fibre, chhota hissa",
+            "Multigrain ya bajra/jowar roti, brown ya haath-kuta chawal, oats, dalia, millets"
+          ],
+          [
+            "Thoda fat",
+            "Swaad aur pet bharne ke liye",
+            "Ek chammach ghee ya tel, kuch meve ya beej"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Samajhdaar Badlaav"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Iske bajaaye",
+          "Yeh try karein"
+        ],
+        "rows": [
+          [
+            "White bread, maida biscuit",
+            "Multigrain roti, bhuna chana, mutthi bhar meve"
+          ],
+          [
+            "2 chammach cheeni wali meethi chai",
+            "Dheere-dheere kam cheeni, ya bina cheeni ki chai"
+          ],
+          [
+            "Phalon ka juice, cold drink",
+            "Saabut phal, bina cheeni ka nimbu paani, chhaachh"
+          ],
+          [
+            "Sirf chawal ki badi plate",
+            "Kam chawal, saath mein khoob dal aur sabzi"
+          ],
+          [
+            "Shaam 5 baje tala namkeen",
+            "Sprout chaat, bhuna makhana, phal ke saath dahi"
+          ],
+          [
+            "Naashta chhod kar bhaari lunch",
+            "Protein wala naashta: besan chilla, anda, kam tel ka paneer paratha"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ek Sample Din"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Subah**: paani, aur kam cheeni ki chai",
+          "**Naashta**: pudina chutney ke saath 2 moong dal ya besan chilla, ya moongphali wala sabzi poha aur ek katori dahi",
+          "**Beech mein**: 1 phal (amrood, seb, santra, papita)",
+          "**Lunch**: 2 chhoti multigrain roti, dal, khoob saari sabzi, salad, dahi",
+          "**Shaam**: chai ke saath bhuna chana ya sprout chaat",
+          "**Dinner (jaldi, halka)**: extra dal wali sabzi khichdi, ya sabzi ke saath grilled paneer ya machhli",
+          "**Chalein**: 30 minute ki walk, behtar hai ki ismein 10 minute mukhya khaane ke baad hon"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Exercise utni hi zaroori hai jitna khaana",
+        "text": "Maanspeshiyan kam insulin mein sugar use kar leti hain. **Hafte mein lagbhag 150 minute** activity (tez chalna, cycling, dance, yoga) aur **hafte mein do baar strength exercise** (squats, deewar par push-up, resistance band) ka lakshya rakhein. Khaane ke baad 10 minute ki walk bhi madad karti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Saare carbs aur roti hamesha ke liye chhodne padenge.\"",
+            "Kam refined carbs chahiye, zero nahi. Sahi maatra mein saabut anaaj theek hai"
+          ],
+          [
+            "\"Doodh aur dairy se PCOS hota hai.\"",
+            "Iska koi achha saboot nahi. Dahi aur paneer kaam ke protein hain. Doctor kahein tabhi badlein"
+          ],
+          [
+            "\"Patli auraton ko PCOS nahi hota.\"",
+            "PCOS wali kai auraton ka vazan normal hota hai. Insulin resistance phir bhi ho sakta hai"
+          ],
+          [
+            "\"Pudina chai ya beej se PCOS theek ho jaayega.\"",
+            "Koi khaana PCOS theek nahi karta. Kuch thoda madad kar sakte hain, par ilaaj ki jagah nahi lete"
+          ],
+          [
+            "\"Crash diet sabse tez upaay hai.\"",
+            "Aksar vazan wapas aa jaata hai aur periods aur bigad sakte hain. Dheere, lagatar badlaav tikte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Sambhaalne layak",
+            "Anaiyamit par aate periods, halke muhase, diet aur exercise kar rahi hain",
+            "Jaari rakhein, aur saal mein ek baar jaanch"
+          ],
+          [
+            "🟡 Gynaecologist ko dikhayein",
+            "3 mahine se period nahi, chehre par zyada baal ya muhase, pregnancy ki koshish, ya mehnat ke baad bhi vazan badhna",
+            "Consultation book karein. Ilaaj ke vikalp hain"
+          ],
+          [
+            "🟡 Test karayein",
+            "Pyaas, baar-baar peshaab, gardan par gehri makhmali twacha",
+            "Sugar test (HbA1c). PCOS se diabetes ka khatra badhta hai"
+          ],
+          [
+            "🔴 Urgent",
+            "Chakkar ke saath bahut zyada bleeding, ya pelvis mein tez dard",
+            "Usi din doctor ko dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pichhle 3–6 periods ki taareekhein**",
+          "Aapka **vazan** aur kamar ka naap, aur kaise badla",
+          "Muhase, baal badhna ya baal patle hona",
+          "Ek aam din ka khaana aur activity",
+          "Koi report: ultrasound, sugar, thyroid, hormone"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Gynaecologist se **online consultation** aapke cycle, reports aur lakshya (niyamit periods, twacha, vazan ya pregnancy) dekhne aur khaana, activity aur zaroorat ho to dawa milakar plan banane ka aaraamdeh tareeka hai. (PCOS aur anaiyamit periods, anaiyamit cycle aur pregnancy ki koshish par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, International PCOS Guideline, WHO) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "breastfeeding-problems-latch-sore-nipples-low-milk-guide",
+    "title": "Breastfeeding Problems: Latch, Sore Nipples, Engorgement and \"Not Enough Milk\"",
+    "description": "Breastfeeding hurts or baby seems hungry? How to fix the latch, ease sore nipples and engorgement, the real signs of enough milk, and when a fever means mastitis.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "8 min",
+    "image": "🤱",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Everyone says breastfeeding is \"natural\", so when it hurts, or the baby cries after feeds, many new mothers quietly feel they're failing. They aren't. Breastfeeding is a skill that mother and baby learn together, and the first 2–3 weeks are the hardest. Most problems come down to a few fixable things, especially the **latch**. Here's practical help, and the signs that need a doctor."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "A good latch is the fix for most problems: **baby's mouth wide open, lots of the dark area (areola) in the mouth, chin touching the breast, lips turned out**. After day 5, **6 or more wet nappies a day** and steady weight gain mean the baby is getting enough. A **hard, red, painful area on the breast with fever** needs a doctor, and you should keep feeding."
+      },
+      {
+        "type": "heading",
+        "text": "Getting a Good Latch"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Sit comfortably with your back supported, and bring the **baby to the breast**, not the breast to the baby",
+          "Baby's **tummy against your tummy**, head and body in a straight line, nose opposite the nipple",
+          "Wait for a **wide-open mouth** (touch the nipple to the upper lip), then bring the baby on quickly",
+          "Aim the nipple towards the **roof of the mouth**, so the baby takes a big mouthful of breast, not just the nipple",
+          "Check: **chin touching the breast**, lips turned out, cheeks round (not sucked in), and slow deep sucks with swallowing sounds",
+          "If it pinches, slide a clean finger into the corner of the mouth to break the suction, and try again"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Common Problems and Fixes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Problem",
+          "What helps",
+          "See a doctor if"
+        ],
+        "rows": [
+          [
+            "Sore or cracked nipples",
+            "Fix the latch first. Rub a few drops of breast milk on the nipple after feeds and let it air-dry. Start on the less sore side",
+            "Pain is severe, lasts beyond the first weeks, or cracks bleed or look infected"
+          ],
+          [
+            "Engorgement (hard, full, painful breasts, days 3–5)",
+            "Feed often (8–12 times a day). Express a little to soften the breast before latching. Cold packs after feeds",
+            "It doesn't settle in 1–2 days, or you get a fever"
+          ],
+          [
+            "Blocked duct (tender lump)",
+            "Keep feeding from that side, gentle massage towards the nipple, warmth before feeds, loose clothing",
+            "The lump lasts over 2–3 days, or you get a fever"
+          ],
+          [
+            "Mastitis (red, hot, painful area, fever, flu-like)",
+            "Keep feeding or expressing from that breast, rest, fluids",
+            "Always. You may need antibiotics that are safe while breastfeeding"
+          ],
+          [
+            "Baby sleepy at the breast",
+            "Undress to the vest, switch sides, gently compress the breast",
+            "Poor feeding, fewer wet nappies, or yellow skin"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Am I Making Enough Milk?"
+      },
+      {
+        "type": "paragraph",
+        "text": "\"Doodh kam hai\" is the most common worry, and most often it isn't true. Breasts feel softer after the first weeks, babies feed often and cluster-feed in the evenings, and they cry for many reasons. None of these mean low milk. Look at what goes **in and out** instead:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "After day 5: **6 or more heavy wet nappies** and **regular yellow stools** a day",
+          "Baby is **back to birth weight by about 2 weeks**, then gains steadily",
+          "You hear **swallowing** during feeds, and the baby seems content after most feeds",
+          "To increase supply: **feed more often**, including at night, and let the baby finish the first breast before offering the second. Top-ups of formula can reduce your supply, so discuss them with a doctor first"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"The first yellow milk (colostrum) is dirty. Throw it away.\"",
+            "Colostrum is the baby's **first vaccine**, rich in protective antibodies. Give it all"
+          ],
+          [
+            "\"Give ghutti, honey or water before starting breastfeeding.\"",
+            "Start breastfeeding within the first hour. Nothing else is needed, and honey is dangerous under 1 year"
+          ],
+          [
+            "\"Small breasts make less milk.\"",
+            "Breast size doesn't decide milk supply. Frequent feeding does"
+          ],
+          [
+            "\"Stop feeding if you have mastitis or a cold.\"",
+            "Keep feeding. It helps you recover and doesn't harm the baby"
+          ],
+          [
+            "\"Breastfeeding mothers must avoid many foods.\"",
+            "A normal, varied diet is fine. Only avoid alcohol and excess caffeine, and limit a food only if it clearly upsets your baby"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Some tenderness in the first week, frequent feeds, evening cluster feeding",
+            "Work on the latch, rest, eat and drink well"
+          ],
+          [
+            "🟡 Get help",
+            "Pain through the whole feed, cracked nipples, baby not gaining, or you dread feeds",
+            "Book a consultation or ask a lactation counsellor"
+          ],
+          [
+            "🔴 Same day",
+            "Fever with a red, painful breast area, or a lump that keeps growing",
+            "See a doctor today"
+          ],
+          [
+            "🔴 Urgent (baby)",
+            "Fewer than 6 wet nappies after day 5, very sleepy or floppy, yellow skin spreading, or no stool for days in the first weeks",
+            "See a doctor today"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby's **age**, birth weight and latest weight",
+          "**Feeds per day**, and any formula top-ups",
+          "**Wet nappies and stools** in the last 24 hours",
+          "Where it hurts, and when (start of feed, whole feed, between feeds)",
+          "A short **video** of a feed can help the doctor see the latch"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** is a practical way to get help without travelling in the tiring early weeks. A gynaecologist or pediatrician can look at a feeding video, check for mastitis, and guide you on supply. You're doing better than you think. (See our guides on postpartum recovery, newborn concerns, and colic.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, UNICEF, NHS, Indian Academy of Pediatrics). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Sab kehte hain stanpaan \"natural\" hai, isliye jab dard ho, ya bachcha doodh peekar bhi roye, to kai nayi maayein chupchaap sochti hain ki woh asafal ho rahi hain. Aisa nahi hai. Stanpaan ek hunar hai jo maa aur bachcha saath seekhte hain, aur pehle 2–3 hafte sabse mushkil hote hain. Zyadatar dikkatein kuch theek ho sakne wali baaton par aati hain, khaaskar **latch** par. Yahan practical madad hai, aur woh sanket jinmein doctor chahiye."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Achha latch zyadatar dikkaton ka hal hai: **bachche ka muh poora khula, gehra hissa (areola) zyada muh mein, thodi stan ko chhooti hui, honth baahar mude**. Din 5 ke baad, **din mein 6 ya zyada geele nappy** aur lagatar vazan badhna matlab bachche ko kaafi doodh mil raha hai. **Bukhaar ke saath stan par sakht, laal, dukhta hissa** ho to doctor chahiye, aur doodh pilaana jaari rakhein."
+      },
+      {
+        "type": "heading",
+        "text": "Achha Latch Kaise Banayein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Peeth ko sahaara dekar aaram se baithein, aur **bachche ko stan tak laayein**, stan ko bachche tak nahi",
+          "Bachche ka **pet aapke pet se laga**, sir aur shareer ek seedh mein, naak nipple ke saamne",
+          "**Poora khula muh** aane ka intezaar karein (nipple upar wale honth se chhuayein), phir bachche ko jaldi lagaayein",
+          "Nipple ko **muh ki chhat ki taraf** rakhein, taaki bachcha sirf nipple nahi, stan ka bada hissa muh mein le",
+          "Check karein: **thodi stan se lagi**, honth baahar mude, gaal gol (andar dhanse nahi), aur dheemi gehri chusai ke saath nigalne ki awaaz",
+          "Agar chubhe, to muh ke kone mein saaf ungli daal kar pakad chhudaayein, aur dobara koshish karein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aam Dikkatein Aur Upaay"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Dikkat",
+          "Kya madad karta hai",
+          "Doctor ko dikhayein agar"
+        ],
+        "rows": [
+          [
+            "Dukhte ya phate nipple",
+            "Pehle latch theek karein. Doodh pilaane ke baad nipple par maa ke doodh ki kuch boondein lagaakar hawa mein sookhne dein. Kam dukhti taraf se shuru karein",
+            "Dard bahut zyada ho, pehle hafton ke baad bhi rahe, ya daraaron se khoon aaye ya infection lage"
+          ],
+          [
+            "Stan bhaari hona (sakht, bhare, dukhte, din 3–5)",
+            "Baar-baar pilaayein (din mein 8–12 baar). Latch se pehle thoda doodh nikaal kar stan naram karein. Pilaane ke baad thanda sek",
+            "1–2 din mein theek na ho, ya bukhaar aaye"
+          ],
+          [
+            "Duct band hona (dukhti gaanth)",
+            "Usi taraf se pilaati rahein, nipple ki taraf halki maalish, pilaane se pehle garmaahat, dheele kapde",
+            "Gaanth 2–3 din se zyada rahe, ya bukhaar aaye"
+          ],
+          [
+            "Mastitis (laal, garam, dukhta hissa, bukhaar, flu jaisa)",
+            "Us stan se pilaana ya doodh nikaalna jaari rakhein, aaram, paani",
+            "Hamesha. Stanpaan mein surakshit antibiotic ki zaroorat ho sakti hai"
+          ],
+          [
+            "Doodh peete samay bachcha sust",
+            "Kapde utaar kar sirf baniyan mein rakhein, taraf badlein, stan ko halke se dabaayein",
+            "Kam peena, kam geele nappy, ya peeli twacha"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kya Mera Doodh Kaafi Hai?"
+      },
+      {
+        "type": "paragraph",
+        "text": "\"Doodh kam hai\" sabse aam chinta hai, aur aksar sach nahi hoti. Pehle hafton ke baad stan naram lagte hain, bachche baar-baar peete hain aur shaam ko lagatar peete hain, aur woh kai wajahon se rote hain. Inmein se koi kam doodh ka matlab nahi. Iske bajaaye dekhein ki **kya andar ja raha hai aur kya baahar aa raha hai**:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Din 5 ke baad: din mein **6 ya zyada bhaari geele nappy** aur **niyamit peeli potty**",
+          "Bachcha **lagbhag 2 hafte mein janam ke vazan par wapas**, phir lagatar badhta hai",
+          "Pilaate samay **nigalne ki awaaz** aati hai, aur zyadatar baar bachcha baad mein santusht lagta hai",
+          "Doodh badhaane ke liye: **zyada baar pilaayein**, raat mein bhi, aur doosra stan dene se pehle pehla poora khatam karne dein. Formula ka upar se dena aapka doodh kam kar sakta hai, isliye pehle doctor se baat karein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Pehla peela doodh (colostrum) ganda hai, phenk do.\"",
+            "Colostrum bachche ka **pehla teeka** hai, suraksha dene wali antibodies se bharpoor. Poora pilaayein"
+          ],
+          [
+            "\"Stanpaan se pehle ghutti, shahad ya paani do.\"",
+            "Pehle ghante mein stanpaan shuru karein. Kuch aur nahi chahiye, aur 1 saal se pehle shahad khatarnaak hai"
+          ],
+          [
+            "\"Chhote stan mein kam doodh banta hai.\"",
+            "Stan ka size doodh tay nahi karta. Baar-baar pilaana karta hai"
+          ],
+          [
+            "\"Mastitis ya sardi mein pilaana band karo.\"",
+            "Pilaati rahein. Isse aap jaldi theek hoti hain aur bachche ko nuksaan nahi hota"
+          ],
+          [
+            "\"Doodh pilaane wali maa ko kai cheezein nahi khaani chahiye.\"",
+            "Normal, vividh khaana theek hai. Sirf sharaab aur zyada caffeine se bachein, aur koi cheez tabhi kam karein jab woh saaf taur par bachche ko pareshaan kare"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Pehle hafte thoda dard, baar-baar pilaana, shaam ko lagatar peena",
+            "Latch par kaam karein, aaram karein, achha khaayein-piyein"
+          ],
+          [
+            "🟡 Madad lein",
+            "Poore samay dard, phate nipple, bachche ka vazan na badhna, ya pilaane se dar lagna",
+            "Consultation book karein ya lactation counsellor se poochhein"
+          ],
+          [
+            "🔴 Usi din",
+            "Laal, dukhte stan ke saath bukhaar, ya badhti gaanth",
+            "Aaj doctor ko dikhayein"
+          ],
+          [
+            "🔴 Urgent (bachcha)",
+            "Din 5 ke baad 6 se kam geele nappy, bahut sust ya dheela, phailti peeli twacha, ya pehle hafton mein kai din potty nahi",
+            "Aaj doctor ko dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar**, janam ka vazan aur haal ka vazan",
+          "**Din mein kitni baar** pilaati hain, aur koi formula",
+          "Pichhle 24 ghante mein **geele nappy aur potty**",
+          "Kahan dard hota hai, aur kab (shuru mein, poore samay, beech mein)",
+          "Pilaate hue ek chhota **video** doctor ko latch dekhne mein madad karta hai"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Thakaa dene wale shuruaati hafton mein bina safar ke madad paane ka **online consultation** practical tareeka hai. Gynaecologist ya pediatrician pilaane ka video dekh sakte hain, mastitis check kar sakte hain, aur doodh badhaane mein guide kar sakte hain. Aap jitna sochti hain usse behtar kar rahi hain. (Delivery ke baad recovery, newborn ki chintaon aur colic par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, UNICEF, NHS, Indian Academy of Pediatrics) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "period-late-not-pregnant-reasons-guide",
+    "title": "Period Late but Pregnancy Test Negative? 9 Common Reasons",
+    "description": "Missed period, negative test? When to test again, the common reasons (stress, weight, PCOS, thyroid), and the signs worth a gynaecologist check.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "6 min",
+    "image": "📅",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Your period is late, you've taken a test, and it says negative. Now what? You might feel relieved, disappointed or simply confused. A late period without pregnancy is very common, and it usually has an everyday explanation. Here's how to be sure about the test, the most common reasons, and when it's worth seeing a gynaecologist."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "If you could be pregnant, **repeat the test with first-morning urine in 3–7 days**, because an early test can miss it. If it's still negative, stress, weight change, heavy exercise, PCOS or thyroid problems are common causes. See a gynaecologist if you've had **no period for 3 months**, or sooner if you have pain or other symptoms."
+      },
+      {
+        "type": "heading",
+        "text": "First, Make Sure the Test Is Right"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Home tests work best **from the day your period is due**, and are more reliable a week after",
+          "Use **first-morning urine**, which is more concentrated",
+          "Drinking lots of water just before testing can dilute the result",
+          "Read the result in the time given on the pack, and check the expiry date",
+          "If you ovulated later than usual this cycle, your period and the test are both \"late\". Testing again in a few days usually settles it"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "9 Common Reasons for a Late Period"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Reason",
+          "Clues"
+        ],
+        "rows": [
+          [
+            "Stress",
+            "Exams, a move, family tension, illness. Can delay ovulation by days to weeks"
+          ],
+          [
+            "Weight change",
+            "Sudden weight loss or gain, crash dieting, or eating too little"
+          ],
+          [
+            "Heavy exercise",
+            "Training hard while eating too little (common in athletes and dancers)"
+          ],
+          [
+            "PCOS",
+            "Irregular cycles for months, acne, extra facial hair, weight gain"
+          ],
+          [
+            "Thyroid problems",
+            "Tiredness, feeling cold or hot, weight change, hair fall"
+          ],
+          [
+            "High prolactin",
+            "Milky discharge from the nipples when not breastfeeding, sometimes headaches"
+          ],
+          [
+            "Breastfeeding",
+            "Periods often stay away for months while feeding"
+          ],
+          [
+            "Contraception or the emergency pill",
+            "Pills, the injection, hormonal IUD, or the morning-after pill can shift periods"
+          ],
+          [
+            "Perimenopause",
+            "In your 40s, cycles get shorter, longer or skip"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "One late period is usually not a problem",
+        "text": "Most women have an occasional cycle that comes a week or two late. What matters more is the **pattern** over several months. A period-tracking app or a simple calendar makes your consultation much more useful."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "One cycle late after stress or travel, test negative twice, feeling well",
+            "Wait and track. Periods often return next cycle"
+          ],
+          [
+            "🟡 See a gynaecologist",
+            "No period for 3 months, cycles regularly over 35 days, or trying to conceive",
+            "Book a consultation for check-up and blood tests"
+          ],
+          [
+            "🟡 See a doctor",
+            "Milky nipple discharge, new facial hair, severe acne, hot flushes under 40",
+            "Book a consultation. Hormone tests help"
+          ],
+          [
+            "🔴 Urgent",
+            "Positive or unsure test with one-sided tummy pain, shoulder-tip pain, dizziness or bleeding",
+            "Possible ectopic pregnancy. Go to an emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What a Gynaecologist May Check"
+      },
+      {
+        "type": "list",
+        "items": [
+          "A **blood pregnancy test** (hCG), which is more sensitive than a urine test",
+          "**Thyroid (TSH)** and **prolactin**, and sometimes other hormones",
+          "A **pelvic ultrasound** to look at the ovaries and the womb lining",
+          "Sometimes a short course of medicine to bring on a period, once pregnancy is ruled out"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Eat papaya or jaggery to bring the period.\"",
+            "No food reliably brings on a period. Find and treat the cause instead"
+          ],
+          [
+            "\"Taking a pill to start periods is harmless.\"",
+            "Don't take period-inducing tablets without a doctor. Pregnancy must be ruled out first"
+          ],
+          [
+            "\"A late period means something serious.\"",
+            "Usually it's stress, weight or hormones, and it's treatable"
+          ],
+          [
+            "\"Irregular periods will become regular after marriage.\"",
+            "Marriage doesn't fix irregular periods. If they're irregular, get them checked"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Dates of your last 3–6 periods**",
+          "**Pregnancy test dates and results**",
+          "Recent stress, illness, weight change or new exercise",
+          "Contraception or the emergency pill in the last 2 months",
+          "Other symptoms: acne, hair growth, nipple discharge, hot flushes"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a gynaecologist is a private, easy first step. The doctor can tell you which tests you actually need and whether a scan is required. (See our guides on irregular periods, PCOS, and early pregnancy signs.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Period late hai, aapne test kiya, aur woh negative aaya. Ab kya? Aapko rahat, nirasha ya bas uljhan mehsoos ho sakti hai. Bina pregnancy ke late period bahut aam hai, aur aksar iski rozmarra ki wajah hoti hai. Yahan jaaniye test par kaise pakka hon, sabse aam wajahein kya hain, aur kab gynaecologist ko dikhaana sahi hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Agar pregnancy ho sakti hai, to **3–7 din mein subah ke pehle peshaab se test dobara karein**, kyunki jaldi kiya test pakad nahi paata. Phir bhi negative ho, to tanaav, vazan badalna, bhaari exercise, PCOS ya thyroid aam wajahein hain. **3 mahine tak period na aaye** to gynaecologist ko dikhayein, aur dard ya doosre lakshan hon to pehle hi."
+      },
+      {
+        "type": "heading",
+        "text": "Pehle, Pakka Karein Ki Test Sahi Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Ghar ke test **period ki taareekh se** sabse achha kaam karte hain, aur ek hafte baad zyada bharosemand hote hain",
+          "**Subah ka pehla peshaab** lein, jo zyada gaadha hota hai",
+          "Test se theek pehle bahut paani peene se result patla ho sakta hai",
+          "Pack par diye samay mein result padhein, aur expiry date check karein",
+          "Agar is cycle mein ovulation der se hua, to period aur test dono \"late\" hote hain. Kuch din baad dobara test se aksar saaf ho jaata hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Late Period Ki 9 Aam Wajahein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Sanket"
+        ],
+        "rows": [
+          [
+            "Tanaav",
+            "Exam, ghar badalna, parivaar ka tension, bimaari. Ovulation ko dinon se hafton tak taal sakta hai"
+          ],
+          [
+            "Vazan badalna",
+            "Achanak vazan ghatna ya badhna, crash diet, ya bahut kam khaana"
+          ],
+          [
+            "Bhaari exercise",
+            "Kam khaate hue zyada training (khiladiyon aur dancers mein aam)"
+          ],
+          [
+            "PCOS",
+            "Mahinon se anaiyamit cycle, muhase, chehre par zyada baal, vazan badhna"
+          ],
+          [
+            "Thyroid ki dikkat",
+            "Thakaan, thand ya garmi lagna, vazan badalna, baal jhadna"
+          ],
+          [
+            "Prolactin zyada",
+            "Bina doodh pilaaye nipple se doodh jaisa paani, kabhi sir dard"
+          ],
+          [
+            "Stanpaan",
+            "Doodh pilaate samay aksar mahinon tak period nahi aata"
+          ],
+          [
+            "Contraception ya emergency goli",
+            "Goliyan, injection, hormonal IUD, ya morning-after goli period khiska sakti hai"
+          ],
+          [
+            "Perimenopause",
+            "40 ki umar mein cycle chhota, lamba ya chhoot jaata hai"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Ek baar late period aksar dikkat nahi",
+        "text": "Zyadatar auraton ka kabhi-kabhi ek cycle hafte-do hafte late aata hai. Zyada zaroori hai kai mahinon ka **pattern**. Period tracking app ya simple calendar se consultation kaafi zyada kaam ka hota hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Tanaav ya safar ke baad ek cycle late, do baar test negative, tabiyat theek",
+            "Intezaar karein aur track karein. Aksar agle cycle mein aa jaata hai"
+          ],
+          [
+            "🟡 Gynaecologist ko dikhayein",
+            "3 mahine se period nahi, cycle aksar 35 din se lamba, ya pregnancy ki koshish",
+            "Jaanch aur blood test ke liye consultation book karein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Nipple se doodh jaisa paani, chehre par naye baal, tez muhase, 40 se pehle garmi ki lehrein",
+            "Consultation book karein. Hormone test madad karte hain"
+          ],
+          [
+            "🔴 Urgent",
+            "Positive ya pakka na pata test ke saath pet mein ek taraf dard, kandhe ke kone mein dard, chakkar ya bleeding",
+            "Ectopic pregnancy ho sakti hai. Emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Gynaecologist Kya Check Kar Sakti Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Blood pregnancy test** (hCG), jo peshaab ke test se zyada sensitive hai",
+          "**Thyroid (TSH)** aur **prolactin**, aur kabhi doosre hormone",
+          "Ovaries aur bachchedaani ki parat dekhne ke liye **pelvic ultrasound**",
+          "Pregnancy hatne ke baad kabhi period laane ke liye dawa ka chhota course"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Period laane ke liye papita ya gud khao.\"",
+            "Koi khaana pakke taur par period nahi laata. Wajah dhoondh kar ilaaj karein"
+          ],
+          [
+            "\"Period shuru karne ki goli lena bematlab hai.\"",
+            "Doctor ke bina period laane wali goli na lein. Pehle pregnancy hataana zaroori hai"
+          ],
+          [
+            "\"Late period matlab kuch gambhir hai.\"",
+            "Aksar yeh tanaav, vazan ya hormone hota hai, aur iska ilaaj hai"
+          ],
+          [
+            "\"Shaadi ke baad periods apne aap niyamit ho jaayenge.\"",
+            "Shaadi se anaiyamit periods theek nahi hote. Anaiyamit hain to jaanch karayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pichhle 3–6 periods ki taareekhein**",
+          "**Pregnancy test ki taareekhein aur result**",
+          "Haal ka tanaav, bimaari, vazan badalna ya nayi exercise",
+          "Pichhle 2 mahine mein contraception ya emergency goli",
+          "Anya lakshan: muhase, baal badhna, nipple se paani, garmi ki lehrein"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Gynaecologist se **online consultation** ek private, aasaan pehla kadam hai. Doctor bata sakti hain ki aapko sach mein kaunse test chahiye aur scan zaroori hai ya nahi. (Anaiyamit periods, PCOS aur shuruaati pregnancy ke sanketon par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "shaking-hands-tremor-causes-when-to-worry-guide",
+    "title": "Shaking Hands (Tremor): Common Causes and When to Worry",
+    "description": "Shaky hands when writing or holding tea? The usual causes (caffeine, anxiety, thyroid, essential tremor), how it differs from Parkinson's, and when to worry.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "6 min",
+    "image": "🤲",
+    "content": [
+      {
+        "type": "intro",
+        "text": "The cup rattles on the saucer. Your signature looks shaky. Threading a needle has become hard. Shaking hands are very common, and many people worry straight away about Parkinson's. Most of the time the cause is something simpler and treatable: too much tea or coffee, anxiety, a thyroid problem, a medicine, or a harmless family trait called **essential tremor**. Here's how to tell the types apart."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "A fine shake when you **use** your hands (holding, writing) is usually from caffeine, anxiety, tiredness, thyroid, medicines or essential tremor. A shake mainly **at rest** on one side, with slowness or stiffness, can be Parkinson's and needs a neurologist. **Shaking with sweating, hunger and confusion** may be low blood sugar: eat or drink something sugary now."
+      },
+      {
+        "type": "heading",
+        "text": "Which Kind of Tremor Is It?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Type",
+          "When it shakes",
+          "Other clues"
+        ],
+        "rows": [
+          [
+            "Enhanced physiological tremor",
+            "Holding things out, with a fine fast shake",
+            "Worse with tea or coffee, stress, poor sleep, hunger, overactive thyroid, some medicines"
+          ],
+          [
+            "Essential tremor",
+            "Using the hands: writing, drinking, eating",
+            "Often both hands, sometimes the head or voice, runs in families, slowly gets more noticeable over years"
+          ],
+          [
+            "Parkinson's tremor",
+            "At rest, hands in the lap, often one side first, eases when you move",
+            "Slowness, stiffness, smaller handwriting, shuffling walk, less facial expression"
+          ],
+          [
+            "Low blood sugar",
+            "Suddenly, with sweating, hunger, racing heart",
+            "In people with diabetes on insulin or some tablets, or after skipping meals"
+          ],
+          [
+            "Alcohol withdrawal",
+            "Morning shakes after regular heavy drinking",
+            "Improves with alcohol, which is a warning sign. Needs medical help to stop safely"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Medicines and Substances That Can Cause Shaking"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Too much **tea, coffee, energy drinks** or strong pre-workout supplements",
+          "Asthma inhalers like **salbutamol**",
+          "**Thyroid tablets** at too high a dose",
+          "Some medicines for **depression, epilepsy, mood** and nausea",
+          "**Smoking** and nicotine"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Never stop a prescribed medicine on your own. Tell your doctor about the shaking, because a dose change or an alternative often helps."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Brief fine shake with stress, too much tea or coffee, or tiredness",
+            "Cut caffeine, sleep, eat regularly"
+          ],
+          [
+            "🟡 See a doctor",
+            "Shaking that lasts weeks, affects writing or eating, or runs in the family",
+            "Book a consultation. Thyroid and sugar tests help"
+          ],
+          [
+            "🟡 See a neurologist",
+            "Shaking at rest on one side, with slowness, stiffness or smaller handwriting",
+            "Book a neurology consultation"
+          ],
+          [
+            "🔴 Act now",
+            "Shaking with sweating, hunger, confusion (possible low sugar)",
+            "Take sugar or juice now, and get medical help if not better in 15 minutes"
+          ],
+          [
+            "🔴 Emergency",
+            "New tremor with confusion, high fever, severe headache, weakness, or after a head injury",
+            "Go to an emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daily Tips That Help"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Limit caffeine**, especially after midday",
+          "Use **heavier cups** and mugs, fill them only halfway, or use a straw",
+          "Rest your elbows on the table when eating or writing",
+          "**Wrist weights** or thicker pen grips can help some people",
+          "Manage stress: slow breathing, regular sleep, exercise"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"All shaking hands mean Parkinson's.\"",
+            "Most tremors aren't Parkinson's. Essential tremor is far more common"
+          ],
+          [
+            "\"It's just weakness. Take a tonic.\"",
+            "Tremor has a cause, such as caffeine, thyroid, medicines or essential tremor. A tonic won't treat it"
+          ],
+          [
+            "\"A drink in the evening fixes it, so it's fine.\"",
+            "Alcohol briefly calms essential tremor, but relying on it is risky. Doctors have safer treatments"
+          ],
+          [
+            "\"Nothing can be done about tremor.\"",
+            "Many causes are treatable, and medicines help essential tremor in many people"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "A short **video** of your hands at rest in your lap, held out in front, and while drinking or writing",
+          "When it started, and whether it's one side or both",
+          "**Daily tea, coffee and alcohol**, and smoking",
+          "All your **medicines** and inhalers",
+          "Family members with a tremor, and any thyroid or sugar reports"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Tremor is well suited to an **online video consultation**, since the doctor can watch your hands. A neurologist can usually tell the type, order simple tests, and suggest treatment. (See our guides on Parkinson's disease, thyroid problems, and anxiety.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NINDS, International Parkinson and Movement Disorder Society). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Plate par cup khadakta hai. Signature kaanpta hua dikhta hai. Sui mein dhaaga daalna mushkil ho gaya hai. Haath kaanpna bahut aam hai, aur kai log turant Parkinson's se darte hain. Zyadatar wajah simple aur ilaaj yogya hoti hai: zyada chai ya coffee, ghabrahat, thyroid ki dikkat, koi dawa, ya ek bematlab khaandaani aadat jise **essential tremor** kehte hain. Yahan jaaniye inmein fark kaise karein."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Haath **istemaal karte samay** (pakadna, likhna) halka kaanpna aksar caffeine, ghabrahat, thakaan, thyroid, dawaiyon ya essential tremor se hota hai. Ek taraf mukhya roop se **aaram mein** kaanpna, saath mein dheemapan ya akdan, Parkinson's ho sakta hai aur neurologist chahiye. **Paseene, bhookh aur uljhan ke saath kaanpna** low sugar ho sakta hai: abhi kuch meetha khaayein ya piyein."
+      },
+      {
+        "type": "heading",
+        "text": "Yeh Kaunsa Tremor Hai?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Type",
+          "Kab kaanpta hai",
+          "Anya sanket"
+        ],
+        "rows": [
+          [
+            "Enhanced physiological tremor",
+            "Cheez aage pakadne par, halka tez kaampan",
+            "Chai ya coffee, tanaav, kam neend, bhookh, thyroid zyada, kuch dawaiyon se badhta hai"
+          ],
+          [
+            "Essential tremor",
+            "Haath istemaal karte samay: likhna, peena, khaana",
+            "Aksar dono haath, kabhi sir ya awaaz, parivaar mein chalta hai, saalon mein dheere zyada dikhta hai"
+          ],
+          [
+            "Parkinson's tremor",
+            "Aaram mein, haath god mein, aksar pehle ek taraf, chalne-hilne par kam",
+            "Dheemapan, akdan, chhoti likhaawat, ghisatti chaal, chehre par kam bhaav"
+          ],
+          [
+            "Low blood sugar",
+            "Achanak, paseene, bhookh, tez dhadkan ke saath",
+            "Insulin ya kuch goliyan lene wale diabetes ke mareezon mein, ya khaana chhodne ke baad"
+          ],
+          [
+            "Sharaab chhodne par",
+            "Roz bhaari peene ke baad subah kaampan",
+            "Sharaab se theek hota hai, jo khatre ka sanket hai. Surakshit tareeke se chhodne ke liye medical madad chahiye"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Dawaiyan Aur Cheezein Jo Kaampan Kar Sakti Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Zyada **chai, coffee, energy drinks** ya tez pre-workout supplements",
+          "**Salbutamol** jaise asthma inhaler",
+          "Zyada dose mein **thyroid ki goli**",
+          "**Depression, mirgi, mood** aur ji machalne ki kuch dawaiyan",
+          "**Smoking** aur nicotine"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Likhi hui dawa khud kabhi band na karein. Doctor ko kaampan ke baare mein batayein, kyunki dose badalne ya doosri dawa se aksar madad milti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Tanaav, zyada chai ya coffee, ya thakaan mein thodi der halka kaampan",
+            "Caffeine kam karein, neend poori karein, samay par khaayein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Hafton tak kaampan, likhne ya khaane mein dikkat, ya parivaar mein chalta hai",
+            "Consultation book karein. Thyroid aur sugar test madad karte hain"
+          ],
+          [
+            "🟡 Neurologist ko dikhayein",
+            "Ek taraf aaram mein kaampan, saath mein dheemapan, akdan ya chhoti likhaawat",
+            "Neurology consultation book karein"
+          ],
+          [
+            "🔴 Abhi kuch karein",
+            "Paseene, bhookh, uljhan ke saath kaampan (low sugar ho sakta hai)",
+            "Abhi cheeni ya juice lein, 15 minute mein theek na ho to medical madad lein"
+          ],
+          [
+            "🔴 Emergency",
+            "Uljhan, tez bukhaar, tez sir dard, kamzori ke saath naya kaampan, ya sir par chot ke baad",
+            "Emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Rozmarra Ki Madadgaar Baatein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Caffeine kam karein**, khaaskar dopahar ke baad",
+          "**Bhaari cup** aur mug istemaal karein, aadha bharein, ya straw lein",
+          "Khaate ya likhte samay kohniyaan mez par tikaayein",
+          "Kuch logon ko **wrist weight** ya moti pen grip se madad milti hai",
+          "Tanaav sambhaalein: dheemi saans, niyamit neend, exercise"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Har kaanpte haath ka matlab Parkinson's.\"",
+            "Zyadatar tremor Parkinson's nahi hote. Essential tremor kahin zyada aam hai"
+          ],
+          [
+            "\"Bas kamzori hai. Tonic le lo.\"",
+            "Tremor ki wajah hoti hai, jaise caffeine, thyroid, dawaiyan ya essential tremor. Tonic iska ilaaj nahi"
+          ],
+          [
+            "\"Shaam ko ek peg se theek ho jaata hai, to sab theek.\"",
+            "Sharaab essential tremor ko thodi der shaant karti hai, lekin us par nirbhar rehna khatarnaak hai. Doctor ke paas surakshit ilaaj hain"
+          ],
+          [
+            "\"Tremor ka kuch nahi ho sakta.\"",
+            "Kai wajahon ka ilaaj hai, aur dawaiyan kai logon mein essential tremor mein madad karti hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Haathon ka ek chhota **video**: god mein aaram mein, aage phailaaye hue, aur peete ya likhte hue",
+          "Kab shuru hua, aur ek taraf ya dono taraf",
+          "**Roz ki chai, coffee aur sharaab**, aur smoking",
+          "Aapki saari **dawaiyan** aur inhaler",
+          "Parivaar mein kisi ko tremor, aur koi thyroid ya sugar report"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Tremor ke liye **online video consultation** bahut sahi hai, kyunki doctor aapke haath dekh sakte hain. Neurologist aksar type pehchaan kar simple test likh sakte hain aur ilaaj bata sakte hain. (Parkinson's disease, thyroid ki dikkat aur ghabrahat par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NINDS, International Parkinson and Movement Disorder Society) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "trigeminal-neuralgia-electric-shock-face-pain-guide",
+    "title": "Trigeminal Neuralgia: Sudden Electric-Shock Pain in the Face",
+    "description": "Electric pain in the cheek or jaw when brushing or eating? Why it's often mistaken for toothache, how doctors treat it, and when to see a neurologist.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "6 min",
+    "image": "⚡",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A sudden jolt of pain shoots through your cheek, jaw or teeth, like an electric shock. It lasts seconds, then stops, then strikes again when you brush your teeth, chew, talk, or even feel a breeze on your face. Many people go from dentist to dentist, and some even have healthy teeth removed. The real cause is often a nerve: **trigeminal neuralgia**. It's one of the most painful conditions there is, but it's also very treatable once it's recognised."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Brief, severe, **electric-shock pain on one side of the face**, set off by light touch, brushing, eating or wind, is typical of trigeminal neuralgia. **Ordinary painkillers usually don't help**, but specific nerve medicines prescribed by a doctor often work well. See a doctor or neurologist, and **don't agree to tooth extraction** unless a dentist finds a clear dental cause."
+      },
+      {
+        "type": "heading",
+        "text": "How It Feels"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Sudden stabbing or electric pain**, lasting a second to about 2 minutes, often in bursts",
+          "Almost always **one side** of the face: cheek, jaw, teeth, gums, lips, or around the eye",
+          "**Triggered** by everyday things: brushing, shaving, washing the face, chewing, talking, smiling, a cold breeze",
+          "Pain-free gaps between attacks, which can last weeks or months",
+          "More common **after 50**, and slightly more common in women"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Toothache or Trigeminal Neuralgia?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Toothache",
+          "Trigeminal neuralgia"
+        ],
+        "rows": [
+          [
+            "Type of pain",
+            "Throbbing, aching, constant",
+            "Electric, stabbing, in short bursts"
+          ],
+          [
+            "Trigger",
+            "Hot, cold or sweet food on one tooth, biting",
+            "Light touch on the face, brushing, wind, talking"
+          ],
+          [
+            "Dental check-up",
+            "Shows a cavity, infection or crack",
+            "Teeth look healthy"
+          ],
+          [
+            "Painkillers",
+            "Usually help",
+            "Usually don't help"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Avoid unnecessary tooth removal",
+        "text": "Because the pain feels like it comes from a tooth, people sometimes have healthy teeth pulled, and the pain continues. If a dentist can't find a clear problem, ask about trigeminal neuralgia and see a doctor before any extraction."
+      },
+      {
+        "type": "heading",
+        "text": "Why It Happens and How It's Treated"
+      },
+      {
+        "type": "paragraph",
+        "text": "Most often a **blood vessel presses on the trigeminal nerve** (the main nerve of feeling in the face) near the brain, irritating it. Less often it's linked to multiple sclerosis or another cause, which is why doctors sometimes order an **MRI scan**. Treatment usually starts with **specific nerve-calming medicines** (anti-seizure medicines are the usual first choice), taken regularly, not just during attacks. If medicines don't work or cause side effects, there are **procedures and surgery** that can give long-lasting relief."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟡 See a doctor",
+            "Brief electric face pain set off by touch, brushing or eating",
+            "Book a consultation. Medicine usually helps"
+          ],
+          [
+            "🟡 See a neurologist",
+            "Pain under 40, on both sides, with numbness of the face, or medicines not working",
+            "Book a neurology consultation. An MRI may be needed"
+          ],
+          [
+            "🔴 Urgent",
+            "Face pain with weakness, drooping face, double vision, or trouble speaking",
+            "Go to an emergency (possible stroke)"
+          ],
+          [
+            "🔴 Same day",
+            "Face pain with a rash or blisters on one side, or high fever and swelling",
+            "See a doctor today (shingles or infection)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daily Tips During a Flare"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Use a **soft toothbrush** and lukewarm water. Brush gently when the pain is quiet",
+          "Eat **soft, lukewarm foods** and chew on the less painful side",
+          "Protect your face from **wind and AC drafts** with a scarf",
+          "Take prescribed medicine **regularly**, as advised. Don't stop it suddenly",
+          "Keep a short diary of attacks and triggers for your doctor"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"It's a tooth problem, so remove the tooth.\"",
+            "If teeth are healthy, removal won't help. Find the nerve cause first"
+          ],
+          [
+            "\"A stronger painkiller will fix it.\"",
+            "Ordinary painkillers rarely work. Specific nerve medicines do"
+          ],
+          [
+            "\"It's just stress or in the mind.\"",
+            "It's a real nerve condition, and the pain is very real"
+          ],
+          [
+            "\"Nothing can be done if medicines fail.\"",
+            "Procedures and surgery help many people when medicines don't"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Where the pain is**, and whether it's always the same side",
+          "**How long** each attack lasts, and how many a day",
+          "**What sets it off**: brushing, eating, wind, talking",
+          "Any dental treatment or extractions so far",
+          "Painkillers tried, and whether they helped"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a neurologist or general physician is a good first step. The doctor can usually recognise trigeminal neuralgia from your description, start the right medicine, and tell you if a scan is needed. (See our guides on Bell's palsy, tension headache, and dental problems.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NINDS, International Headache Society). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Gaal, jabde ya daanton mein achanak current jaisa tez dard daudta hai. Kuch second rehta hai, rukta hai, phir brush karte, chabaate, bolte, ya chehre par hawa lagne par dobara aata hai. Kai log ek dentist se doosre dentist tak jaate hain, aur kuch ke to swasth daant bhi nikaal diye jaate hain. Asli wajah aksar ek nas hoti hai: **trigeminal neuralgia**. Yeh sabse dardnaak bimariyon mein se ek hai, lekin pehchaan hone par iska achha ilaaj hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Chehre ke **ek taraf chhota, tez, current jaisa dard**, jo halke chhoone, brush, khaane ya hawa se shuru ho, trigeminal neuralgia ka aam sanket hai. **Aam painkiller aksar kaam nahi karte**, lekin doctor ki di nas ki khaas dawaiyan aksar achha kaam karti hain. Doctor ya neurologist ko dikhayein, aur jab tak dentist saaf daant ki wajah na paaye, **daant nikalwaane ke liye haan na kahein**."
+      },
+      {
+        "type": "heading",
+        "text": "Kaisa Lagta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Achanak chubhta ya current jaisa dard**, ek second se lagbhag 2 minute, aksar jhatkon mein",
+          "Lagbhag hamesha chehre ki **ek taraf**: gaal, jabda, daant, masoode, honth, ya aankh ke aas-paas",
+          "Rozmarra ki cheezon se **shuru**: brush, shave, muh dhona, chabaana, bolna, muskurana, thandi hawa",
+          "Dauron ke beech bina dard ka samay, jo hafton ya mahinon tak chal sakta hai",
+          "**50 ke baad** zyada aam, aur auraton mein thoda zyada"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daant Dard Ya Trigeminal Neuralgia?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Daant dard",
+          "Trigeminal neuralgia"
+        ],
+        "rows": [
+          [
+            "Dard ka type",
+            "Dhad-dhad, dukhna, lagatar",
+            "Current jaisa, chubhta, chhote jhatkon mein"
+          ],
+          [
+            "Trigger",
+            "Ek daant par garam, thanda ya meetha, kaatna",
+            "Chehre par halka chhoona, brush, hawa, bolna"
+          ],
+          [
+            "Daant ki jaanch",
+            "Kida, infection ya daraar dikhti hai",
+            "Daant swasth dikhte hain"
+          ],
+          [
+            "Painkiller",
+            "Aksar madad karte hain",
+            "Aksar madad nahi karte"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Bina zaroorat daant na nikalwaayein",
+        "text": "Kyunki dard daant se aata lagta hai, kabhi log swasth daant nikalwa lete hain, aur dard chalta rehta hai. Agar dentist ko saaf dikkat na mile, to trigeminal neuralgia ke baare mein poochhein aur daant nikalwaane se pehle doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kyun Hota Hai Aur Ilaaj Kaise Hota Hai"
+      },
+      {
+        "type": "paragraph",
+        "text": "Aksar dimaag ke paas **ek khoon ki nas trigeminal nerve par dabaav daalti hai** (chehre mein mehsoos karne ki mukhya nas), jisse woh chidh jaati hai. Kabhi-kabhi yeh multiple sclerosis ya kisi aur wajah se juda hota hai, isliye doctor kabhi **MRI scan** karaate hain. Ilaaj aamtaur par **nas ko shaant karne wali khaas dawaiyon** se shuru hota hai (mirgi ki dawaiyan aam pehli pasand hain), jo sirf dauron mein nahi, niyamit li jaati hain. Agar dawaiyan kaam na karein ya side effect hon, to **procedure aur surgery** se lambe samay tak raahat mil sakti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟡 Doctor ko dikhayein",
+            "Chhoone, brush ya khaane se chehre par chhota current jaisa dard",
+            "Consultation book karein. Dawa aksar madad karti hai"
+          ],
+          [
+            "🟡 Neurologist ko dikhayein",
+            "40 se kam umar mein dard, dono taraf, chehre mein sunnpan, ya dawaiyan kaam na karein",
+            "Neurology consultation book karein. MRI ki zaroorat ho sakti hai"
+          ],
+          [
+            "🔴 Urgent",
+            "Chehre ke dard ke saath kamzori, latka chehra, do-do dikhna, ya bolne mein dikkat",
+            "Emergency jaayein (stroke ho sakta hai)"
+          ],
+          [
+            "🔴 Usi din",
+            "Ek taraf daane ya chhale ke saath chehre mein dard, ya tez bukhaar aur soojan",
+            "Aaj doctor ko dikhayein (shingles ya infection)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Dauron Mein Rozmarra Ki Madad"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Naram toothbrush** aur gunguna paani lein. Dard shaant ho tab halke se brush karein",
+          "**Naram, gunguna khaana** khaayein aur kam dard wali taraf chabaayein",
+          "Scarf se chehre ko **hawa aur AC ki seedhi hawa** se bachaayein",
+          "Likhi dawa salaah ke anusaar **niyamit** lein. Achanak band na karein",
+          "Doctor ke liye dauron aur triggers ki chhoti diary rakhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Daant ki dikkat hai, daant nikaal do.\"",
+            "Daant swasth hain to nikaalne se faayda nahi. Pehle nas ki wajah dhoondhein"
+          ],
+          [
+            "\"Tez painkiller se theek ho jaayega.\"",
+            "Aam painkiller shayad hi kaam karte hain. Nas ki khaas dawaiyan karti hain"
+          ],
+          [
+            "\"Bas tanaav hai ya mann ka vehem.\"",
+            "Yeh nas ki asli bimari hai, aur dard bilkul asli hai"
+          ],
+          [
+            "\"Dawa kaam na kare to kuch nahi ho sakta.\"",
+            "Dawa kaam na kare to procedure aur surgery kai logon ki madad karte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Dard kahan hai**, aur hamesha ek hi taraf hai ya nahi",
+          "Har daura **kitni der**, aur din mein kitne",
+          "**Kis cheez se shuru**: brush, khaana, hawa, bolna",
+          "Ab tak ka daant ka ilaaj ya nikalwaaye daant",
+          "Kaunse painkiller liye, aur madad mili ya nahi"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Neurologist ya general physician se **online consultation** achha pehla kadam hai. Doctor aksar aapke bataane se trigeminal neuralgia pehchaan kar sahi dawa shuru kar sakte hain, aur bata sakte hain ki scan chahiye ya nahi. (Bell's palsy, tension headache aur daant ki dikkaton par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NINDS, International Headache Society) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "brain-fog-forgetfulness-poor-concentration-causes-guide",
+    "title": "Brain Fog and Forgetfulness: Why You Can't Focus, and What Helps",
+    "description": "Forgetful, can't focus, head feels \"foggy\"? The common fixable causes (sleep, stress, B12, thyroid), simple tests, and signs that need a neurologist.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-01",
+    "readTime": "7 min",
+    "image": "🌫️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "You walk into a room and forget why. You read the same line three times. Names slip away mid-sentence. Many people in their 20s to 50s quietly worry this is the start of dementia. Usually it isn't. \"Brain fog\" is very common, and it most often comes from things that can be fixed: poor sleep, stress, low mood, too much multitasking, or a deficiency such as low B12 or thyroid. Here's how to find the cause."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Feeling foggy and forgetful, while still managing daily life, is most often from **sleep, stress, anxiety or depression, phone overload**, or low **B12, iron or thyroid**. Simple blood tests and a few habit changes help most people. See a doctor soon if memory is **getting steadily worse**, you **get lost in familiar places**, or family notice a change in personality."
+      },
+      {
+        "type": "heading",
+        "text": "Normal Forgetfulness or Something More?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Usually normal",
+          "Worth checking"
+        ],
+        "rows": [
+          [
+            "Forgetting where you kept your keys",
+            "Forgetting what keys are for"
+          ],
+          [
+            "Forgetting a name, then remembering later",
+            "Forgetting close family names or recent important events"
+          ],
+          [
+            "Losing track when tired or stressed",
+            "Getting lost on a familiar route"
+          ],
+          [
+            "Needing lists and reminders when busy",
+            "Repeating the same question many times in a day"
+          ],
+          [
+            "You notice and worry about it",
+            "Family notice it more than you do"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Common Causes (Most Are Fixable)"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Cause",
+          "Clues",
+          "What helps"
+        ],
+        "rows": [
+          [
+            "Poor or short sleep",
+            "Snoring, waking often, under 7 hours",
+            "Regular sleep, and a check for sleep apnoea if you snore"
+          ],
+          [
+            "Stress, anxiety, depression",
+            "Worry, low mood, poor interest, irritability",
+            "Talking to a doctor, therapy, and sometimes medicine"
+          ],
+          [
+            "Low vitamin B12 or iron",
+            "Tiredness, tingling feet (B12), pale skin, breathless (iron)",
+            "Blood test, then supplements if low"
+          ],
+          [
+            "Underactive thyroid",
+            "Tiredness, weight gain, feeling cold, constipation",
+            "TSH blood test, and thyroid treatment"
+          ],
+          [
+            "Phone and multitasking overload",
+            "Constant switching, notifications, late-night scrolling",
+            "Single-tasking, phone-free blocks, no screens before bed"
+          ],
+          [
+            "Medicines and alcohol",
+            "Some allergy, sleep, anxiety and pain medicines, regular drinking",
+            "Medicine review with a doctor, and cutting down alcohol"
+          ],
+          [
+            "After an illness",
+            "After COVID, dengue or a long fever",
+            "Usually improves over weeks to months"
+          ],
+          [
+            "Hormonal changes",
+            "Pregnancy, after delivery, perimenopause",
+            "Usually temporary. Discuss with your doctor"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "5 Things That Help This Week"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Protect sleep**: same bedtime daily, and phone away 30 minutes before bed",
+          "**One task at a time**: work in 25-minute blocks with notifications off",
+          "**Move daily**: a brisk 20–30 minute walk improves focus and mood",
+          "**Write it down**: one notebook or phone list for tasks, so your brain doesn't have to hold everything",
+          "**Eat and drink regularly**: dehydration and skipped meals make fog worse"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Tests a Doctor May Suggest"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Vitamin B12**, **CBC** (for anaemia), **TSH** (thyroid), **blood sugar**",
+          "Sometimes **vitamin D**, kidney and liver tests",
+          "A short **memory and thinking check** in the consultation",
+          "A brain scan only if there are warning signs, not for everyday forgetfulness"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Foggy when tired or stressed, better after rest or a holiday",
+            "Sleep, breaks and the 5 steps above"
+          ],
+          [
+            "🟡 See a doctor",
+            "Fog lasting weeks, with tiredness, low mood, or tingling",
+            "Book a consultation and blood tests"
+          ],
+          [
+            "🟡 See a neurologist",
+            "Memory steadily worse over months, getting lost, trouble with money or daily tasks",
+            "Book a neurology consultation, and bring a family member"
+          ],
+          [
+            "🔴 Emergency",
+            "Sudden confusion, with weakness, slurred speech, severe headache, or after a head injury",
+            "Go to an emergency now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Forgetting things at 35 means early dementia.\"",
+            "Dementia is rare at this age. Sleep, stress and deficiencies are far more common causes"
+          ],
+          [
+            "\"Memory tonics and brain pills will fix it.\"",
+            "There's little evidence they work. Treat the actual cause"
+          ],
+          [
+            "\"Almonds every morning will sharpen memory.\"",
+            "Nuts are healthy, but no single food fixes brain fog"
+          ],
+          [
+            "\"Nothing can be done about a weak memory.\"",
+            "Most causes of brain fog improve when treated"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**When it started**, and whether it's steady, better or worse",
+          "**Sleep hours**, snoring, and screen time at night",
+          "Mood, stress, and any big life changes",
+          "**Medicines**, alcohol, and recent illnesses",
+          "Any reports: B12, CBC, thyroid, sugar"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Brain fog suits an **online consultation** well. A doctor can sort out the likely causes, order the right tests, and tell you whether you need a neurologist. Most people feel much clearer once the cause is treated. (See our guides on vitamin B12 deficiency, better sleep, and dementia vs normal ageing.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NIH National Institute on Aging, WHO). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Aap kamre mein jaate hain aur bhool jaate hain kyun aaye. Ek hi line teen baar padhte hain. Baat karte-karte naam yaad nahi aata. 20 se 50 ki umar ke kai log chupchaap darte hain ki yeh dementia ki shuruaat hai. Aksar aisa nahi hota. \"Brain fog\" bahut aam hai, aur zyadatar theek ho sakne wali wajahon se hota hai: kam neend, tanaav, udaasi, ek saath bahut kaam, ya B12 ya thyroid jaisi kami. Yahan jaaniye wajah kaise dhoondhein."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Rozmarra ka kaam chalte hue dhundhla aur bhulakkad mehsoos karna aksar **neend, tanaav, ghabrahat ya depression, phone ka bojh**, ya **B12, iron ya thyroid** ki kami se hota hai. Simple blood test aur kuch aadaton ke badlaav se zyadatar logon ko madad milti hai. Jaldi doctor ko dikhayein agar yaaddaasht **lagatar kharaab ho rahi hai**, aap **jaani-pehchaani jagah par raasta bhoolte hain**, ya parivaar ko swabhaav mein badlaav dikhe."
+      },
+      {
+        "type": "heading",
+        "text": "Normal Bhoolna Ya Kuch Aur?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Aksar normal",
+          "Jaanch karaane layak"
+        ],
+        "rows": [
+          [
+            "Chaabi kahan rakhi, bhool jaana",
+            "Chaabi kis kaam aati hai, yeh bhool jaana"
+          ],
+          [
+            "Naam bhoolna, phir baad mein yaad aana",
+            "Kareebi parivaar ke naam ya haal ki zaroori baatein bhoolna"
+          ],
+          [
+            "Thakaan ya tanaav mein dhyaan bhatakna",
+            "Jaane-pehchaane raaste par kho jaana"
+          ],
+          [
+            "Vyast hone par list aur reminder chahiye",
+            "Din mein ek hi sawaal kai baar poochhna"
+          ],
+          [
+            "Aapko khud pata chalta hai aur chinta hoti hai",
+            "Parivaar ko aapse zyada dikhta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aam Wajahein (Zyadatar Theek Ho Sakti Hain)"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Sanket",
+          "Kya madad karta hai"
+        ],
+        "rows": [
+          [
+            "Kam ya kharaab neend",
+            "Kharraate, baar-baar jaagna, 7 ghante se kam",
+            "Niyamit neend, aur kharraate hon to sleep apnoea ki jaanch"
+          ],
+          [
+            "Tanaav, ghabrahat, depression",
+            "Chinta, udaasi, dilchaspi kam, chidchidapan",
+            "Doctor se baat, therapy, aur kabhi dawa"
+          ],
+          [
+            "Vitamin B12 ya iron kam",
+            "Thakaan, pairon mein jhunjhuni (B12), peeli twacha, saans phoolna (iron)",
+            "Blood test, phir kam ho to supplement"
+          ],
+          [
+            "Thyroid kam",
+            "Thakaan, vazan badhna, thand lagna, kabz",
+            "TSH blood test, aur thyroid ka ilaaj"
+          ],
+          [
+            "Phone aur multitasking ka bojh",
+            "Lagatar badalna, notifications, der raat scrolling",
+            "Ek samay ek kaam, bina phone ke samay, sone se pehle screen nahi"
+          ],
+          [
+            "Dawaiyan aur sharaab",
+            "Kuch allergy, neend, ghabrahat aur dard ki dawaiyan, roz peena",
+            "Doctor se dawaiyon ki jaanch, aur sharaab kam karna"
+          ],
+          [
+            "Bimaari ke baad",
+            "COVID, dengue ya lambe bukhaar ke baad",
+            "Aksar hafton se mahinon mein behtar"
+          ],
+          [
+            "Hormone ke badlaav",
+            "Pregnancy, delivery ke baad, perimenopause",
+            "Aksar kuch samay ka. Doctor se baat karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Is Hafte 5 Madadgaar Baatein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Neend bachaayein**: roz ek hi samay sona, aur sone se 30 minute pehle phone door",
+          "**Ek samay ek kaam**: notifications band karke 25 minute ke hisson mein kaam",
+          "**Roz chalein**: 20–30 minute ki tez walk se dhyaan aur mood behtar hota hai",
+          "**Likh lein**: kaamon ke liye ek notebook ya phone list, taaki dimaag ko sab yaad na rakhna pade",
+          "**Samay par khaayein-piyein**: paani ki kami aur chhoota khaana fog badhaate hain"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Doctor Kaunse Test Bata Sakte Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Vitamin B12**, **CBC** (khoon ki kami ke liye), **TSH** (thyroid), **blood sugar**",
+          "Kabhi **vitamin D**, kidney aur liver ke test",
+          "Consultation mein chhota **yaaddaasht aur sochne ka check**",
+          "Brain scan sirf khatre ke sanketon par, roz ke bhoolne ke liye nahi"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Thakaan ya tanaav mein dhundhlapan, aaram ya chhutti ke baad behtar",
+            "Neend, break aur upar ki 5 baatein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Hafton tak fog, saath mein thakaan, udaasi ya jhunjhuni",
+            "Consultation aur blood test book karein"
+          ],
+          [
+            "🟡 Neurologist ko dikhayein",
+            "Mahinon mein yaaddaasht lagatar kharaab, kho jaana, paise ya rozmarra ke kaam mein dikkat",
+            "Neurology consultation book karein, aur parivaar ke kisi sadasya ko saath laayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Achanak uljhan, saath mein kamzori, ladkhadaati zubaan, tez sir dard, ya sir par chot ke baad",
+            "Abhi emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"35 ki umar mein bhoolna matlab jaldi dementia.\"",
+            "Is umar mein dementia bahut kam hota hai. Neend, tanaav aur kami kahin zyada aam wajahein hain"
+          ],
+          [
+            "\"Memory tonic aur brain pill se theek ho jaayega.\"",
+            "Inke kaam karne ka bahut kam saboot hai. Asli wajah ka ilaaj karein"
+          ],
+          [
+            "\"Roz subah badaam se yaaddaasht tez hogi.\"",
+            "Meve swasth hain, lekin koi ek khaana brain fog theek nahi karta"
+          ],
+          [
+            "\"Kamzor yaaddaasht ka kuch nahi ho sakta.\"",
+            "Brain fog ki zyadatar wajahein ilaaj se behtar hoti hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Kab shuru hua**, aur ek jaisa hai, behtar ya kharaab",
+          "**Neend ke ghante**, kharraate, aur raat ka screen time",
+          "Mood, tanaav, aur zindagi ke bade badlaav",
+          "**Dawaiyan**, sharaab, aur haal ki bimaari",
+          "Koi report: B12, CBC, thyroid, sugar"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Brain fog ke liye **online consultation** achha rehta hai. Doctor sambhav wajahein samajh kar sahi test likh sakte hain, aur bata sakte hain ki neurologist ki zaroorat hai ya nahi. Wajah ka ilaaj hone par zyadatar log kaafi saaf mehsoos karte hain. (Vitamin B12 ki kami, achhi neend aur dementia vs normal umar badhne par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NIH National Institute on Aging, WHO) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "cough-cold-in-children-home-care-when-to-worry-guide",
+    "title": "Cough and Cold in Children: Safe Home Care and When to Worry",
+    "description": "Runny nose and cough in your child? How long it lasts, what really helps, why cough syrups aren't for under-4s, why antibiotics don't cure colds, and danger signs.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-01",
+    "readTime": "7 min",
+    "image": "🤧",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A blocked nose, a cough that keeps everyone awake, a cranky child who won't eat. Young children catch **6 to 8 colds a year**, more once they start school or day care. It's exhausting, but it's how their immune system learns. Most colds get better on their own. The key is knowing what actually helps, what to avoid, and the few signs that mean a doctor is needed today."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "A cold usually lasts **7–10 days**, and the cough can linger up to **3 weeks**. Fluids, rest, **saline nose drops** and (over 1 year) a little **honey** help. **Don't give over-the-counter cough and cold syrups to children under 4**, and antibiotics don't treat colds. See a doctor urgently for **fast or difficult breathing**, a baby under 3 months with fever, or a child who is very drowsy or not drinking."
+      },
+      {
+        "type": "heading",
+        "text": "What Actually Helps"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Plenty of fluids**: breastfeeding, water, warm soups, dal ka paani for older children",
+          "**Saline nose drops or spray** to loosen a blocked nose, especially before feeds and sleep. Gently suck out mucus in babies with a nasal aspirator",
+          "**Honey** (only over 1 year): half a teaspoon before bed can ease the cough",
+          "**Raise the head** slightly for older children (an extra pillow, not for babies under 1)",
+          "**Steamy bathroom**: sit with the child in the bathroom while a hot shower runs, instead of a bowl of hot water",
+          "**Fever or discomfort**: medicine as advised by your doctor, with the dose based on the child's weight"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Avoid these",
+        "text": "**Steam from a bowl of boiling water** causes serious burns in children every year. Use a steamy bathroom instead. **Vicks or balms in or under the nose**, camphor, and mustard-oil drops in the nose are not safe for babies. **Honey under 1 year** can cause infant botulism."
+      },
+      {
+        "type": "heading",
+        "text": "Cough Syrups and Antibiotics"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What to know"
+        ],
+        "rows": [
+          [
+            "Cough and cold syrups",
+            "Not recommended for children **under 4**, and India's drug regulator requires a warning on common combination cold medicines for this age. For older children, use only on a doctor's advice"
+          ],
+          [
+            "Antibiotics",
+            "Colds are caused by **viruses**. Antibiotics don't cure them, and overuse causes side effects and resistance"
+          ],
+          [
+            "When antibiotics may be needed",
+            "When a doctor finds a bacterial problem: some ear infections, pneumonia, or a sinus infection lasting over 10 days"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usual cold",
+            "Runny nose, mild cough, playing and drinking normally",
+            "Home care, and watch"
+          ],
+          [
+            "🟡 See a doctor",
+            "Fever over 3 days, ear pain, cough lasting over 3 weeks, thick nasal discharge over 10 days, wheezing",
+            "Book a consultation"
+          ],
+          [
+            "🔴 Urgent",
+            "Breathing fast, chest sucking in below the ribs, grunting, nostrils flaring, or blue lips",
+            "Go to a doctor or emergency now"
+          ],
+          [
+            "🔴 Urgent",
+            "Baby under 3 months with fever (38°C or more), very drowsy, not drinking, few wet nappies",
+            "Go to a doctor or emergency now"
+          ],
+          [
+            "🔴 Urgent",
+            "Coughing fits with a \"whoop\" or vomiting after coughing, or the baby goes blue while coughing",
+            "See a doctor today (possible whooping cough)"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "How to count fast breathing",
+        "text": "Count breaths for **one full minute** while the child is calm. Fast breathing is roughly **60 or more** under 2 months, **50 or more** from 2 to 12 months, and **40 or more** from 1 to 5 years. Also look for the chest pulling in below the ribs with each breath."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Cold food and ice cream cause colds.\"",
+            "Colds come from viruses, not cold food. Cold drinks are fine if the child wants them"
+          ],
+          [
+            "\"Green mucus means an antibiotic is needed.\"",
+            "Mucus often turns green or yellow in a normal viral cold"
+          ],
+          [
+            "\"A cough syrup will stop it faster.\"",
+            "Syrups don't shorten colds and aren't safe for under-4s"
+          ],
+          [
+            "\"Keep the child wrapped up and away from baths.\"",
+            "Normal clothing and a quick lukewarm bath are fine, and often soothing"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Child's **age and weight**",
+          "**Days of cough, cold and fever**, with temperature readings",
+          "**Breathing rate** counted for 1 minute, and a short video of the breathing if you're worried",
+          "Feeding, drinking and wet nappies or urine in the last 24 hours",
+          "Medicines given so far, with names and doses"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online video consultation** with a pediatrician is a good way to check breathing and decide whether your child needs to be seen in person, without taking a sick child out. (See our guides on fever in children, ear infections, and whooping cough.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, NHS, American Academy of Pediatrics, CDSCO (India)). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Band naak, khaansi jo sabko jagaaye rakhe, chidchida bachcha jo khaana na khaaye. Chhote bachchon ko **saal mein 6 se 8 baar zukaam** hota hai, school ya day care shuru hone par aur zyada. Thakaane wala hai, lekin isi se unki immunity seekhti hai. Zyadatar zukaam apne aap theek ho jaate hain. Zaroori hai jaanna ki kya sach mein madad karta hai, kya nahi karna, aur woh kuch sanket jinmein aaj hi doctor chahiye."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zukaam aamtaur par **7–10 din** rehta hai, aur khaansi **3 hafte** tak reh sakti hai. Paani, aaram, **saline naak ki boondein** aur (1 saal se upar) thoda **shahad** madad karte hain. **4 saal se chhote bachchon ko bina parchi ki khaansi-zukaam ki syrup na dein**, aur antibiotic zukaam ka ilaaj nahi. **Tez ya mushkil saans**, 3 mahine se chhote bachche ko bukhaar, ya bachcha bahut sust ho ya paani na piye, to turant doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kya Sach Mein Madad Karta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Khoob paani**: maa ka doodh, paani, garam soup, bade bachchon ke liye dal ka paani",
+          "Band naak kholne ke liye **saline naak ki boondein ya spray**, khaaskar doodh aur neend se pehle. Bachchon mein nasal aspirator se halke se balgam nikaalein",
+          "**Shahad** (sirf 1 saal se upar): sone se pehle aadha chammach khaansi kam kar sakta hai",
+          "Bade bachchon ka **sir thoda ooncha** rakhein (ek extra takiya, 1 saal se chhote ke liye nahi)",
+          "**Bhaap wala bathroom**: garam paani ka shower chala kar bachche ke saath bathroom mein baithein, garam paani ke bartan ke bajaaye",
+          "**Bukhaar ya takleef**: doctor ki salaah se dawa, dose bachche ke vazan ke hisaab se"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "In cheezon se bachein",
+        "text": "**Ubalte paani ke bartan ki bhaap** se har saal bachche bure tarah jalte hain. Iske bajaaye bhaap wala bathroom use karein. Bachchon ke liye **naak ke andar ya neeche Vicks ya balm**, kapoor, aur naak mein sarson ke tel ki boondein surakshit nahi. **1 saal se pehle shahad** se infant botulism ho sakta hai."
+      },
+      {
+        "type": "heading",
+        "text": "Khaansi Ki Syrup Aur Antibiotic"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Kya jaanein"
+        ],
+        "rows": [
+          [
+            "Khaansi-zukaam ki syrup",
+            "**4 saal se chhote** bachchon ke liye salaah nahi di jaati, aur India ke drug regulator ne is umar ke liye aam combination dawaiyon par chetaavni zaroori ki hai. Bade bachchon ko sirf doctor ki salaah par"
+          ],
+          [
+            "Antibiotic",
+            "Zukaam **virus** se hota hai. Antibiotic ise theek nahi karti, aur zyada use se side effect aur resistance hota hai"
+          ],
+          [
+            "Antibiotic kab chahiye ho sakti hai",
+            "Jab doctor bacterial dikkat paayein: kuch kaan ke infection, pneumonia, ya 10 din se zyada chalta sinus infection"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aam zukaam",
+            "Behti naak, halki khaansi, khel raha hai aur normal pee raha hai",
+            "Ghar par dekhbhaal, aur nazar rakhein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "3 din se zyada bukhaar, kaan dard, 3 hafte se zyada khaansi, 10 din se zyada gaadha naak ka paani, saans mein seeti",
+            "Consultation book karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Tez saans, pasliyon ke neeche chhaati andar dhansna, karaahna, nathune phoolna, ya neele honth",
+            "Abhi doctor ya emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "3 mahine se chhote bachche ko bukhaar (38°C ya zyada), bahut sust, paani nahi, kam geele nappy",
+            "Abhi doctor ya emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Khaansi ke daure \"whoop\" awaaz ke saath ya khaansi ke baad ulti, ya khaansi mein bachcha neela pade",
+            "Aaj doctor ko dikhayein (whooping cough ho sakti hai)"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Tez saans kaise ginein",
+        "text": "Bachcha shaant ho tab **poore ek minute** saans ginein. Tez saans lagbhag: 2 mahine se chhote mein **60 ya zyada**, 2 se 12 mahine mein **50 ya zyada**, aur 1 se 5 saal mein **40 ya zyada**. Har saans ke saath pasliyon ke neeche chhaati andar khinchna bhi dekhein."
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Thanda khaana aur ice cream se zukaam hota hai.\"",
+            "Zukaam virus se hota hai, thande khaane se nahi. Bachcha chaahe to thanda pee sakta hai"
+          ],
+          [
+            "\"Hara balgam matlab antibiotic chahiye.\"",
+            "Aam viral zukaam mein balgam aksar hara ya peela ho jaata hai"
+          ],
+          [
+            "\"Khaansi ki syrup se jaldi rukegi.\"",
+            "Syrup zukaam chhota nahi karti aur 4 se chhote ke liye surakshit nahi"
+          ],
+          [
+            "\"Bachche ko lapet kar rakho aur nahlaao mat.\"",
+            "Normal kapde aur jaldi gunguna snaan theek hai, aur aksar aaram deta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar aur vazan**",
+          "Khaansi, zukaam aur bukhaar **kitne din** se, taapmaan ki readings ke saath",
+          "1 minute mein gini **saans ki gintee**, aur chinta ho to saans ka chhota video",
+          "Pichhle 24 ghante mein khaana, paani aur geele nappy ya peshaab",
+          "Ab tak di gayi dawaiyan, naam aur dose ke saath"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pediatrician se **online video consultation** saans check karne aur yeh tay karne ka achha tareeka hai ki bachche ko milkar dikhaana zaroori hai ya nahi, bimaar bachche ko baahar le jaaye bina. (Bachchon mein bukhaar, kaan ke infection aur whooping cough par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, NHS, American Academy of Pediatrics, CDSCO (India)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "worms-in-children-deworming-signs-prevention-guide",
+    "title": "Worms in Children: Signs, Deworming, and How to Prevent Them",
+    "description": "Itchy bottom at night, tummy aches, poor appetite? The common worms in Indian children, how free deworming works, simple prevention habits, and when to see a doctor.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-01",
+    "readTime": "6 min",
+    "image": "🪱",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"Pet mein keede\" is one of the most common worries Indian parents have, and with good reason: worm infections are very common in children, especially where kids play barefoot or water and hand-washing aren't always easy. Worms can quietly cause tummy aches, poor growth, anaemia and tiredness. The good news: they're easy to treat and prevent, and India runs a **free deworming programme** for children."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "An **itchy bottom at night** is the classic sign of threadworms. Other worms can cause tummy pain, poor appetite, tiredness and anaemia. India's **National Deworming Day** (February and August) gives **free deworming tablets** to children aged 1–19 at schools and anganwadis. **Hand-washing, short nails, footwear and clean water** prevent most infections. See a doctor for blood in stool, weight loss, or worms that keep coming back."
+      },
+      {
+        "type": "heading",
+        "text": "Common Worms and Their Signs"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Worm",
+          "How children get it",
+          "Signs"
+        ],
+        "rows": [
+          [
+            "Threadworm (pinworm)",
+            "Eggs on fingers, under nails, on bedding and toys. Spreads easily in families",
+            "Itchy bottom, especially at night, disturbed sleep, tiny white threads near the bottom or in stool"
+          ],
+          [
+            "Roundworm",
+            "Eating eggs from soil, via dirty hands or unwashed food",
+            "Tummy pain, poor appetite, sometimes a worm passed in stool or vomit"
+          ],
+          [
+            "Hookworm",
+            "Larvae in soil enter through bare feet",
+            "Tiredness, pale skin, anaemia, itchy rash on the feet"
+          ],
+          [
+            "Whipworm",
+            "Eggs in soil, via dirty hands or food",
+            "Tummy pain, loose stools, sometimes with mucus or blood"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Deworming: What Parents Should Know"
+      },
+      {
+        "type": "list",
+        "items": [
+          "India's **National Deworming Day** gives a free tablet (albendazole) to children aged **1–19** at schools and anganwadis, usually in **February and August**",
+          "In areas where worms are common, the WHO recommends **regular deworming** for children, even without symptoms",
+          "The **dose depends on age**, so use the tablet given at school or anganwadi, or ask your doctor",
+          "For **threadworms**, treat the **whole family** at the same time, as they spread easily at home",
+          "Mild tummy ache or nausea after the tablet is common and passes quickly"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Prevention Habits That Really Work"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Wash hands with soap** after the toilet, after playing, and before eating",
+          "**Keep nails short and clean**, and discourage nail-biting",
+          "**Footwear outside**, especially on soil and in fields",
+          "**Clean drinking water**, and wash fruit and vegetables well",
+          "For threadworms: **change underwear daily**, wash bedding and towels in hot water, and bathe in the morning to remove eggs"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Common",
+            "Itchy bottom at night, child otherwise well",
+            "Hygiene steps, and ask your doctor or pharmacist about treatment for the family"
+          ],
+          [
+            "🟡 See a doctor",
+            "Tummy pain that keeps returning, poor appetite, pale or tired, not gaining weight, worms keep coming back",
+            "Book a consultation. A blood test for anaemia may help"
+          ],
+          [
+            "🔴 Same day",
+            "Blood in stool, severe tummy pain, repeated vomiting, or a swollen hard tummy",
+            "See a doctor today"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Eating sweets causes worms.\"",
+            "Worms come from eggs or larvae in soil and on hands, not from sugar"
+          ],
+          [
+            "\"Grinding teeth at night means worms.\"",
+            "Teeth grinding has many causes and isn't a reliable sign of worms"
+          ],
+          [
+            "\"Deworming tablets are harmful for children.\"",
+            "They're very safe and widely used. Mild tummy upset passes quickly"
+          ],
+          [
+            "\"One deworming lasts forever.\"",
+            "Children can get infected again, which is why deworming is repeated"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Child's **age and weight**",
+          "Symptoms, and since when (itch, tummy pain, appetite, tiredness)",
+          "**Last deworming date**",
+          "Whether others at home have the same itch",
+          "A photo of anything seen in the stool, if you can"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician can confirm the likely worm, guide treatment for the child and family, and check for anaemia or growth concerns. (See our guides on fussy eaters, child growth, and anaemia.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, Ministry of Health and Family Welfare (National Deworming Day), NHS). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Pet mein keede\" Indian maa-baap ki sabse aam chintaon mein se ek hai, aur iski wajah bhi hai: bachchon mein keedon ka infection bahut aam hai, khaaskar jahan bachche nange pair khelte hain ya paani aur haath dhona hamesha aasaan nahi hota. Keede chupchaap pet dard, kam growth, khoon ki kami aur thakaan kar sakte hain. Achhi baat: inka ilaaj aur bachaav aasaan hai, aur India bachchon ke liye **muft deworming programme** chalaata hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Raat ko gudaa (potty ki jagah) mein khujli** threadworm ka mukhya sanket hai. Doosre keede pet dard, kam bhookh, thakaan aur khoon ki kami kar sakte hain. India ka **National Deworming Day** (February aur August) school aur anganwadi mein 1–19 saal ke bachchon ko **muft deworming goli** deta hai. **Haath dhona, chhote naakhun, joote-chappal aur saaf paani** zyadatar infection rokte hain. Potty mein khoon, vazan ghatna, ya baar-baar keede hon to doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Aam Keede Aur Unke Sanket"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Keeda",
+          "Bachchon ko kaise hota hai",
+          "Sanket"
+        ],
+        "rows": [
+          [
+            "Threadworm (pinworm)",
+            "Ungliyon, naakhunon ke neeche, bistar aur khilaunon par ande. Parivaar mein aasaani se phailta hai",
+            "Gudaa mein khujli, khaaskar raat ko, kharaab neend, gudaa ke paas ya potty mein chhote safed dhaage"
+          ],
+          [
+            "Roundworm",
+            "Gande haath ya bina dhule khaane se mitti ke ande kha lena",
+            "Pet dard, kam bhookh, kabhi potty ya ulti mein keeda nikalna"
+          ],
+          [
+            "Hookworm",
+            "Mitti ke larva nange pairon se andar jaate hain",
+            "Thakaan, peeli twacha, khoon ki kami, pairon par khujli wale daane"
+          ],
+          [
+            "Whipworm",
+            "Gande haath ya khaane se mitti ke ande",
+            "Pet dard, patli potty, kabhi balgam ya khoon ke saath"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Deworming: Maa-Baap Ko Kya Jaanna Chahiye"
+      },
+      {
+        "type": "list",
+        "items": [
+          "India ka **National Deworming Day** school aur anganwadi mein **1–19 saal** ke bachchon ko muft goli (albendazole) deta hai, aamtaur par **February aur August** mein",
+          "Jahan keede aam hain, WHO bachchon ke liye **niyamit deworming** ki salaah deta hai, bina lakshan ke bhi",
+          "**Dose umar par nirbhar** hai, isliye school ya anganwadi ki di goli lein, ya doctor se poochhein",
+          "**Threadworm** mein **poore parivaar** ka ek saath ilaaj karein, kyunki yeh ghar mein aasaani se phailta hai",
+          "Goli ke baad halka pet dard ya ji machalna aam hai aur jaldi theek ho jaata hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Bachaav Ki Aadatein Jo Sach Mein Kaam Karti Hain"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Toilet ke baad, khelne ke baad, aur khaane se pehle **saabun se haath dhoyein**",
+          "**Naakhun chhote aur saaf** rakhein, aur naakhun chabaane se rokein",
+          "**Baahar joote-chappal**, khaaskar mitti aur kheton mein",
+          "**Saaf peene ka paani**, aur phal-sabzi achhe se dhoyein",
+          "Threadworm mein: **roz underwear badlein**, bistar aur tauliye garam paani mein dhoyein, aur ande hataane ke liye subah nahlaayein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aam",
+            "Raat ko gudaa mein khujli, bachcha baaki theek",
+            "Safai ke kadam, aur parivaar ke ilaaj ke liye doctor ya pharmacist se poochhein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Baar-baar pet dard, kam bhookh, peela ya thaka, vazan na badhna, keede baar-baar lautna",
+            "Consultation book karein. Khoon ki kami ka test madad kar sakta hai"
+          ],
+          [
+            "🔴 Usi din",
+            "Potty mein khoon, pet mein tez dard, baar-baar ulti, ya phoola sakht pet",
+            "Aaj doctor ko dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Mithaai khaane se keede hote hain.\"",
+            "Keede mitti aur haathon ke ande ya larva se hote hain, cheeni se nahi"
+          ],
+          [
+            "\"Raat ko daant peesna matlab keede.\"",
+            "Daant peesne ki kai wajahein hain, yeh keedon ka pakka sanket nahi"
+          ],
+          [
+            "\"Deworming ki goli bachchon ke liye nuksaandeh hai.\"",
+            "Yeh bahut surakshit hain aur bade paimaane par di jaati hain. Halka pet kharaab jaldi theek ho jaata hai"
+          ],
+          [
+            "\"Ek baar deworming hamesha ke liye kaafi.\"",
+            "Bachchon ko dobara infection ho sakta hai, isliye deworming dohraayi jaati hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar aur vazan**",
+          "Lakshan, aur kab se (khujli, pet dard, bhookh, thakaan)",
+          "**Pichhli deworming ki taareekh**",
+          "Ghar mein kisi aur ko bhi waisi khujli hai ya nahi",
+          "Ho sake to potty mein dikhi kisi cheez ki photo"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pediatrician se **online consultation** sambhav keede ko pehchaanne, bachche aur parivaar ke ilaaj mein guide karne, aur khoon ki kami ya growth ki chinta check karne mein madad kar sakta hai. (Nakhre wale khaane, bachchon ki growth aur khoon ki kami par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, Ministry of Health and Family Welfare (National Deworming Day), NHS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "baby-sleep-how-much-safe-sleep-routine-guide",
+    "title": "Baby Sleep: How Much Is Normal, Safe Sleep, and a Simple Routine",
+    "description": "Baby wakes every 2 hours? Normal sleep by age, the safe-sleep rules that protect babies, why to skip the mustard-seed pillow, and a simple routine.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-01",
+    "readTime": "7 min",
+    "image": "😴",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Every new parent asks it: \"Is my baby sleeping enough? Why does she wake up every two hours?\" Babies sleep a lot, but in short stretches, and that's normal. Night waking is how small tummies get fed. This guide explains how much sleep is normal at each age, the **safe-sleep rules** that protect babies from accidents and sudden infant death, and a simple routine that helps everyone get more rest."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Newborns sleep **14–17 hours** a day in short bursts, and waking every 2–3 hours to feed is normal. For safe sleep: always on the **back**, on a **firm, flat surface**, with **no pillows, soft toys or loose quilts** near the face, ideally in the **same room** as parents. Most babies start sleeping longer stretches between **3 and 6 months**."
+      },
+      {
+        "type": "heading",
+        "text": "How Much Sleep Is Normal?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Age",
+          "Total sleep in 24 hours",
+          "What it looks like"
+        ],
+        "rows": [
+          [
+            "0–3 months",
+            "14–17 hours",
+            "Short sleeps of 2–4 hours, day and night mixed up, waking to feed"
+          ],
+          [
+            "4–12 months",
+            "12–16 hours (including naps)",
+            "Longer night stretches, 2–3 naps a day"
+          ],
+          [
+            "1–2 years",
+            "11–14 hours (including naps)",
+            "One or two naps, mostly sleeping through the night"
+          ],
+          [
+            "3–5 years",
+            "10–13 hours (including a nap)",
+            "Many drop the daytime nap"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Safe-Sleep Rules (Every Sleep, Day and Night)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**On the back**, every time, for naps and at night. Not on the tummy or side",
+          "**Firm, flat surface**: a cot, crib or a firm mattress. Not a sofa, a swing, or a soft bed",
+          "**Nothing soft near the face**: no pillows, bumpers, soft toys, or heavy quilts. Use a light sheet tucked below the shoulders, or a baby sleeping bag",
+          "**Room-share**: keep the baby's cot next to your bed for the first 6 months",
+          "**Don't overheat**: one more light layer than you are wearing is enough. Keep the head uncovered",
+          "**Smoke-free home**, and no smoking near the baby"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "If the baby sleeps in your bed",
+        "text": "Bed-sharing is common in India. If you do it, make it safer: a **firm mattress**, the baby on their back **away from pillows and heavy razais**, **not between two adults**, never on a sofa, and **never** bed-share if anyone in the bed has had **alcohol, sleeping pills, or smokes**, or is extremely exhausted. Room-sharing with a separate cot is the safest choice."
+      },
+      {
+        "type": "heading",
+        "text": "About the Rai (Mustard-Seed) Pillow"
+      },
+      {
+        "type": "paragraph",
+        "text": "Many families use a mustard-seed pillow to \"shape the head\". Pillows in the first year can block a baby's breathing, and they aren't needed. A **flat patch on the head** usually improves by itself with **tummy time while awake**, holding the baby upright, and alternating the direction the head faces in the cot. Ask your pediatrician if you're concerned."
+      },
+      {
+        "type": "heading",
+        "text": "A Simple Bedtime Routine (From About 3 Months)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Same time each evening**, roughly",
+          "**Bath or wipe-down**, then fresh clothes and a clean nappy",
+          "**Feed**, then a quiet cuddle, a lullaby, or a story in dim light",
+          "**Into the cot drowsy but awake**, so the baby learns to fall asleep there",
+          "**Night feeds quiet and dark**: low light, little talking, back to sleep"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Frequent waking to feed, noisy breathing in sleep, brief pauses that restart by themselves",
+            "Follow safe-sleep rules, and rest when the baby rests"
+          ],
+          [
+            "🟡 See a doctor",
+            "Loud snoring most nights, very hard to wake for feeds, poor weight gain, or a very flat or uneven head",
+            "Book a consultation"
+          ],
+          [
+            "🟡 Ask for support",
+            "You are exhausted, low or tearful most days",
+            "Talk to your doctor. Postnatal low mood is common and treatable"
+          ],
+          [
+            "🔴 Emergency",
+            "Breathing pauses over 20 seconds, blue or grey lips, floppy, or can't be woken",
+            "Call for emergency help now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Babies sleep better on their tummy.\"",
+            "Back sleeping is the safest. Tummy time is for when the baby is awake and watched"
+          ],
+          [
+            "\"A thick razai keeps the baby warm and safe.\"",
+            "Heavy quilts can cover the face and overheat the baby. Use a light sheet or sleeping bag"
+          ],
+          [
+            "\"Formula or cereal at night makes babies sleep through.\"",
+            "It doesn't reliably help, and cereal in a bottle can cause choking"
+          ],
+          [
+            "\"Gripe water or ghutti helps babies sleep.\"",
+            "These aren't needed, and babies under 6 months should only have breast milk or formula"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby's **age**, birth weight and latest weight",
+          "A **2–3 day sleep and feed log** (times, rough lengths)",
+          "Where and how the baby sleeps (cot, your bed, position)",
+          "Snoring, breathing pauses, or a short video if you're worried",
+          "How **you** are coping"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician can check whether your baby's sleep is normal for their age, review the sleep setup, and help with a plan, with no need to travel on little sleep. (See our guides on colic, newborn concerns, and your baby's first year.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (American Academy of Pediatrics, NHS, WHO, American Academy of Sleep Medicine). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Har naye maa-baap yeh poochhte hain: \"Kya mera bachcha kaafi so raha hai? Har do ghante mein kyun jaagta hai?\" Bachche bahut sote hain, lekin chhote-chhote hisson mein, aur yeh normal hai. Raat mein jaagna chhote pet ko bharne ka tareeka hai. Yeh guide batati hai ki har umar mein kitni neend normal hai, **surakshit neend ke niyam** jo bachchon ko durghatna aur achanak shishu mrityu se bachaate hain, aur ek aasaan routine jisse sabko zyada aaram mile."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Navjaat din mein **14–17 ghante** chhote hisson mein sote hain, aur doodh ke liye har 2–3 ghante jaagna normal hai. Surakshit neend ke liye: hamesha **peeth ke bal**, **sakht, seedhi sataah** par, chehre ke paas **koi takiya, naram khilauna ya dheela razai nahi**, aur behtar hai ki maa-baap ke **usi kamre** mein. Zyadatar bachche **3 se 6 mahine** ke beech lambi neend lene lagte hain."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Neend Normal Hai?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Umar",
+          "24 ghante mein kul neend",
+          "Kaisa dikhta hai"
+        ],
+        "rows": [
+          [
+            "0–3 mahine",
+            "14–17 ghante",
+            "2–4 ghante ki chhoti neend, din-raat ulat-pulat, doodh ke liye jaagna"
+          ],
+          [
+            "4–12 mahine",
+            "12–16 ghante (jhapki samet)",
+            "Raat mein lambi neend, din mein 2–3 jhapki"
+          ],
+          [
+            "1–2 saal",
+            "11–14 ghante (jhapki samet)",
+            "Ek ya do jhapki, zyadatar raat bhar neend"
+          ],
+          [
+            "3–5 saal",
+            "10–13 ghante (jhapki samet)",
+            "Kai bachche din ki jhapki chhod dete hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Surakshit Neend Ke Niyam (Har Baar, Din Aur Raat)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Peeth ke bal**, har baar, jhapki aur raat dono mein. Pet ke bal ya karvat par nahi",
+          "**Sakht, seedhi sataah**: cot, palna ya sakht gadda. Sofa, jhoola ya naram bistar nahi",
+          "**Chehre ke paas kuch naram nahi**: takiya, bumper, naram khilaune ya bhaari razai nahi. Kandhon ke neeche dabaayi halki chaadar ya baby sleeping bag lein",
+          "**Kamra share karein**: pehle 6 mahine bachche ka cot apne bistar ke paas rakhein",
+          "**Zyada garmi nahi**: aapse ek halki layer zyada kaafi hai. Sir khula rakhein",
+          "**Bina dhuen ka ghar**, aur bachche ke paas smoking nahi"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Agar bachcha aapke bistar mein sota hai",
+        "text": "India mein saath sona aam hai. Agar aap aisa karte hain, to ise surakshit banayein: **sakht gadda**, bachcha peeth ke bal, **takiyon aur bhaari razai se door**, **do badon ke beech nahi**, sofa par kabhi nahi, aur agar bistar mein kisi ne **sharaab pi ho, neend ki goli li ho, ya smoking karta ho**, ya bahut zyada thaka ho, to **kabhi** saath na sulaayein. Alag cot ke saath kamra share karna sabse surakshit hai."
+      },
+      {
+        "type": "heading",
+        "text": "Rai (Sarson) Ke Takiye Ke Baare Mein"
+      },
+      {
+        "type": "paragraph",
+        "text": "Kai parivaar \"sir ka shape banane\" ke liye rai ka takiya istemaal karte hain. Pehle saal mein takiya bachche ki saans rok sakta hai, aur iski zaroorat nahi. **Sir ka chapta hissa** aamtaur par apne aap theek ho jaata hai: **jaagte samay tummy time**, bachche ko seedha pakadna, aur cot mein sir ki disha badalte rehna. Chinta ho to pediatrician se poochhein."
+      },
+      {
+        "type": "heading",
+        "text": "Sone Ka Aasaan Routine (Lagbhag 3 Mahine Se)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Roz shaam **lagbhag ek hi samay**",
+          "**Nahlaana ya ponchhna**, phir saaf kapde aur saaf nappy",
+          "**Doodh**, phir dheemi roshni mein shaant god, lori, ya kahaani",
+          "**Neend aate hue par jaagte hue cot mein litaayein**, taaki bachcha wahan sona seekhe",
+          "**Raat ka doodh shaant aur andhere mein**: kam roshni, kam baat, phir neend"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Doodh ke liye baar-baar jaagna, neend mein awaaz wali saans, chhote ruke jo apne aap phir shuru hon",
+            "Surakshit neend ke niyam maanein, aur bachcha soye tab aap bhi aaram karein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Zyadatar raaton mein tez kharraate, doodh ke liye jagaana bahut mushkil, vazan kam badhna, ya sir bahut chapta ya tedha",
+            "Consultation book karein"
+          ],
+          [
+            "🟡 Sahaara lein",
+            "Aap zyadatar din thaki, udaas ya rotee rehti hain",
+            "Doctor se baat karein. Delivery ke baad udaasi aam hai aur iska ilaaj hai"
+          ],
+          [
+            "🔴 Emergency",
+            "20 second se lambi saans ruki, neele ya bhoore honth, dheela, ya jaag nahi raha",
+            "Abhi emergency madad bulaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Bachche pet ke bal achha sote hain.\"",
+            "Peeth ke bal sona sabse surakshit hai. Tummy time sirf jaagte aur nazar mein rehte samay"
+          ],
+          [
+            "\"Moti razai bachche ko garam aur surakshit rakhti hai.\"",
+            "Bhaari razai chehra dhak sakti hai aur garmi badha sakti hai. Halki chaadar ya sleeping bag lein"
+          ],
+          [
+            "\"Raat ko formula ya cereal se bachcha poori raat sota hai.\"",
+            "Isse pakki madad nahi milti, aur bottle mein cereal se gale mein atak sakta hai"
+          ],
+          [
+            "\"Gripe water ya ghutti se bachcha sota hai.\"",
+            "Inki zaroorat nahi, aur 6 mahine se chhote bachchon ko sirf maa ka doodh ya formula dena chahiye"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar**, janam ka vazan aur haal ka vazan",
+          "**2–3 din ka neend aur doodh ka log** (samay, lagbhag kitni der)",
+          "Bachcha kahan aur kaise sota hai (cot, aapka bistar, position)",
+          "Kharraate, saans rukna, ya chinta ho to chhota video",
+          "**Aap** kaise sambhaal rahe hain"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pediatrician se **online consultation** yeh check kar sakta hai ki bachche ki neend umar ke hisaab se normal hai ya nahi, sone ki vyavastha dekh sakta hai, aur plan mein madad kar sakta hai, kam neend mein safar kiye bina. (Colic, newborn ki chintaon aur bachche ke pehle saal par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (American Academy of Pediatrics, NHS, WHO, American Academy of Sleep Medicine) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "losing-weight-without-trying-causes-when-to-worry-guide",
+    "title": "Losing Weight Without Trying: Causes and When to See a Doctor",
+    "description": "Clothes getting loose without dieting? Common causes (diabetes, thyroid, TB, stress, digestion), the tests that find them, and signs to act on soon.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-11-01",
+    "readTime": "6 min",
+    "image": "⚖️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Losing weight sounds like good news, until you realise you haven't been trying. Your clothes feel loose, someone says \"you've become thin\", and you're not sure why. Weight naturally moves up and down a little, but **losing a noticeable amount without trying** is your body's way of asking for a check-up. Often the cause is simple and treatable, like diabetes, thyroid or stress. Sometimes it's an early sign of something that's far easier to treat when caught early."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Losing **more than 5% of your weight in 6–12 months** without trying (about 3 kg if you weigh 60 kg) deserves a doctor's visit. Common causes are **diabetes, an overactive thyroid, TB, depression or stress, and digestive problems**. Simple blood tests find most of them. See a doctor **sooner** if weight loss comes with fever, night sweats, a cough for over 2 weeks, blood in stool, or trouble swallowing."
+      },
+      {
+        "type": "heading",
+        "text": "Common Causes and Their Clues"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Cause",
+          "Clues",
+          "Usual test"
+        ],
+        "rows": [
+          [
+            "Diabetes",
+            "Very thirsty, passing urine often, tiredness, slow-healing wounds",
+            "Fasting sugar, HbA1c"
+          ],
+          [
+            "Overactive thyroid",
+            "Racing heart, feeling hot, sweating, shaky hands, loose stools",
+            "TSH, T3, T4"
+          ],
+          [
+            "Tuberculosis (TB)",
+            "Cough over 2 weeks, evening fever, night sweats, loss of appetite",
+            "Chest X-ray, sputum test"
+          ],
+          [
+            "Depression, anxiety, stress",
+            "Low mood, poor appetite, poor sleep, loss of interest",
+            "A conversation with a doctor"
+          ],
+          [
+            "Digestive problems",
+            "Acidity or pain after food, loose stools, bloating, ulcers, coeliac disease",
+            "Stool tests, blood tests, sometimes endoscopy"
+          ],
+          [
+            "Teeth or swallowing problems",
+            "Painful teeth, loose dentures, food sticking in the throat",
+            "Dental check-up, examination"
+          ],
+          [
+            "Medicines",
+            "New medicines that reduce appetite or upset the stomach",
+            "Medicine review"
+          ],
+          [
+            "Serious illness, including cancer",
+            "Steady weight loss with tiredness, a lump, bleeding, or ongoing pain",
+            "Examination and specific tests"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Don't wait if you notice these",
+        "text": "Weight loss with **fever or night sweats**, a **cough lasting over 2 weeks** (TB is common and curable, and testing is **free at government centres**), **blood in stool or black stools**, **trouble swallowing**, persistent **vomiting**, or a **new lump** should be checked within days, not months."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "A kg or two after illness, a stressful phase, or more activity, and you're eating normally",
+            "Watch your weight monthly"
+          ],
+          [
+            "🟡 See a doctor",
+            "Over 5% lost in 6–12 months without trying",
+            "Book a consultation and basic blood tests"
+          ],
+          [
+            "🟡 See a doctor this week",
+            "Weight loss with thirst and frequent urination, racing heart, or low mood",
+            "Book a consultation. Sugar and thyroid tests help"
+          ],
+          [
+            "🔴 Within days",
+            "Weight loss with fever, night sweats, long cough, bleeding, trouble swallowing, or a lump",
+            "See a doctor soon. Don't wait for it to settle"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Tests a Doctor May Suggest"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**CBC** (blood count), **blood sugar and HbA1c**, **thyroid (TSH)**",
+          "**Liver and kidney tests**, and **ESR or CRP** for inflammation",
+          "**Chest X-ray** if there's a cough or fever",
+          "**Stool tests**, and sometimes an ultrasound or endoscopy, depending on your symptoms"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Losing weight is always good news.\"",
+            "Not when you aren't trying. Unexplained weight loss is a reason to get checked"
+          ],
+          [
+            "\"It's just weakness. A tonic will fix it.\"",
+            "Tonics don't treat the cause. Find out why first"
+          ],
+          [
+            "\"Weight loss always means cancer.\"",
+            "Most often it's diabetes, thyroid, TB, stress or digestion, all of which are treatable"
+          ],
+          [
+            "\"TB only happens to poor people.\"",
+            "TB can affect anyone. It's common in India, and fully curable with treatment"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Your weight** now, and what it was 6–12 months ago (old reports or photos help)",
+          "Appetite, and what you eat in a typical day",
+          "Other symptoms: thirst, urine, fever, cough, sweating, stools, mood",
+          "**Medicines** you take",
+          "Any recent **reports**: sugar, thyroid, CBC"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a general physician is a good first step. The doctor can review your symptoms, order the right tests, and arrange an in-person examination if needed. Finding the cause early makes treatment simpler. (See our guides on silent signs of high blood sugar, thyroid problems, tuberculosis, and symptoms you should never ignore.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, WHO, National TB Elimination Programme (India)). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Vazan ghatna achhi khabar lagti hai, jab tak yeh samajh na aaye ki aapne koshish hi nahi ki. Kapde dheele lagte hain, koi kehta hai \"tum patle ho gaye\", aur pata nahi kyun. Vazan thoda upar-neeche hota hi hai, lekin **bina koshish ke dikhne laayak vazan ghatna** shareer ka jaanch maangne ka tareeka hai. Aksar wajah simple aur ilaaj yogya hoti hai, jaise diabetes, thyroid ya tanaav. Kabhi yeh kisi aisi cheez ka shuruaati sanket hota hai jo jaldi pakadne par kahin aasaani se theek hoti hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Bina koshish **6–12 mahine mein 5% se zyada vazan ghatna** (60 kg vazan par lagbhag 3 kg) doctor ko dikhaane layak hai. Aam wajahein **diabetes, thyroid zyada, TB, depression ya tanaav, aur paachan ki dikkatein** hain. Simple blood test se zyadatar pata chal jaata hai. Agar vazan ghatne ke saath bukhaar, raat ko paseena, 2 hafte se zyada khaansi, potty mein khoon, ya nigalne mein dikkat ho, to **jaldi** dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Aam Wajahein Aur Unke Sanket"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Sanket",
+          "Aam test"
+        ],
+        "rows": [
+          [
+            "Diabetes",
+            "Bahut pyaas, baar-baar peshaab, thakaan, ghaav der se bharna",
+            "Fasting sugar, HbA1c"
+          ],
+          [
+            "Thyroid zyada",
+            "Tez dhadkan, garmi lagna, paseena, kaanpte haath, patli potty",
+            "TSH, T3, T4"
+          ],
+          [
+            "Tuberculosis (TB)",
+            "2 hafte se zyada khaansi, shaam ko bukhaar, raat ko paseena, bhookh kam",
+            "Chhaati ka X-ray, balgam ki jaanch"
+          ],
+          [
+            "Depression, ghabrahat, tanaav",
+            "Udaasi, kam bhookh, kam neend, dilchaspi kam",
+            "Doctor se baatcheet"
+          ],
+          [
+            "Paachan ki dikkatein",
+            "Khaane ke baad acidity ya dard, patli potty, pet phoolna, ulcer, coeliac disease",
+            "Potty ki jaanch, blood test, kabhi endoscopy"
+          ],
+          [
+            "Daant ya nigalne ki dikkat",
+            "Dukhte daant, dheele nakli daant, gale mein khaana atakna",
+            "Daant ki jaanch, examination"
+          ],
+          [
+            "Dawaiyan",
+            "Nayi dawaiyan jo bhookh kam karein ya pet kharaab karein",
+            "Dawaiyon ki jaanch"
+          ],
+          [
+            "Gambhir bimaari, cancer samet",
+            "Thakaan, gaanth, bleeding, ya lagatar dard ke saath lagatar vazan ghatna",
+            "Examination aur khaas test"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Yeh dikhe to intezaar na karein",
+        "text": "Vazan ghatne ke saath **bukhaar ya raat ko paseena**, **2 hafte se zyada khaansi** (TB aam hai aur theek ho jaati hai, aur **sarkaari kendron par jaanch muft** hai), **potty mein khoon ya kaali potty**, **nigalne mein dikkat**, lagatar **ulti**, ya **nayi gaanth** ho to mahinon nahi, dinon mein jaanch karayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Bimaari, tanaav ke daur, ya zyada mehnat ke baad ek-do kilo, aur khaana normal",
+            "Har mahine vazan dekhein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Bina koshish 6–12 mahine mein 5% se zyada kam",
+            "Consultation aur basic blood test book karein"
+          ],
+          [
+            "🟡 Is hafte doctor ko dikhayein",
+            "Pyaas aur baar-baar peshaab, tez dhadkan, ya udaasi ke saath vazan ghatna",
+            "Consultation book karein. Sugar aur thyroid test madad karte hain"
+          ],
+          [
+            "🔴 Kuch dinon mein",
+            "Bukhaar, raat ko paseena, lambi khaansi, bleeding, nigalne mein dikkat, ya gaanth ke saath vazan ghatna",
+            "Jaldi doctor ko dikhayein. Apne aap theek hone ka intezaar na karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Doctor Kaunse Test Bata Sakte Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**CBC** (khoon ki gintee), **blood sugar aur HbA1c**, **thyroid (TSH)**",
+          "**Liver aur kidney ke test**, aur soojan ke liye **ESR ya CRP**",
+          "Khaansi ya bukhaar ho to **chhaati ka X-ray**",
+          "Lakshanon ke hisaab se **potty ki jaanch**, aur kabhi ultrasound ya endoscopy"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Vazan ghatna hamesha achhi khabar hai.\"",
+            "Jab koshish na kar rahe hon tab nahi. Bina wajah vazan ghatna jaanch ki wajah hai"
+          ],
+          [
+            "\"Bas kamzori hai. Tonic se theek ho jaayega.\"",
+            "Tonic wajah ka ilaaj nahi karta. Pehle kyun, yeh jaanein"
+          ],
+          [
+            "\"Vazan ghatna matlab hamesha cancer.\"",
+            "Aksar yeh diabetes, thyroid, TB, tanaav ya paachan hota hai, jin sabka ilaaj hai"
+          ],
+          [
+            "\"TB sirf gareebon ko hoti hai.\"",
+            "TB kisi ko bhi ho sakti hai. India mein aam hai, aur ilaaj se poori tarah theek hoti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Abhi ka vazan**, aur 6–12 mahine pehle kitna tha (purani report ya photo madad karti hai)",
+          "Bhookh, aur aam din mein kya khaate hain",
+          "Anya lakshan: pyaas, peshaab, bukhaar, khaansi, paseena, potty, mood",
+          "Jo **dawaiyan** lete hain",
+          "Haal ki koi **report**: sugar, thyroid, CBC"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "General physician se **online consultation** achha pehla kadam hai. Doctor aapke lakshan dekh kar sahi test likh sakte hain, aur zaroorat ho to milkar jaanch karwa sakte hain. Wajah jaldi milne se ilaaj aasaan hota hai. (High blood sugar ke chupe sanket, thyroid ki dikkat, tuberculosis aur kabhi na taalne wale lakshanon par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, WHO, National TB Elimination Programme (India)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
   }
 ];
