@@ -65,7 +65,7 @@ function BottomNav() {
     // readable over any page. Guarded by tests/navContrast.test.mjs — keep
     // the background fully opaque and labels ≥ 4.5:1.
     // pb-[safe-area] keeps the tabs clear of the home indicator.
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden pb-[env(safe-area-inset-bottom)]">
+    <nav data-bottom-nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden pb-[env(safe-area-inset-bottom)]">
       <div className="flex justify-around items-stretch h-16">
         {navItems.map((item) => {
           const active = isActive(item);

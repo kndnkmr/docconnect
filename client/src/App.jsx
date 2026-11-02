@@ -34,7 +34,7 @@ import { usePwa } from './context/PwaContext';
 import Navbar from './components/Navbar';
 import SessionExpired from './components/SessionExpired';
 import WhatsAppButton from './components/WhatsAppButton';
-import { IosInstallSheet } from './components/IosInstall';
+import { IosInstallSheet, IosInstalledWelcome } from './components/IosInstall';
 import BottomNav from './components/BottomNav';
 import ScrollToTop from './components/ScrollToTop';
 import { dropPrerenderedLd } from './utils/prerenderLd';
@@ -448,6 +448,7 @@ function App() {
       <WhatsAppButton />
       {/* iPhone-only "Add to Home Screen" guide (renders nothing elsewhere). */}
       <IosInstallSheet />
+      <IosInstalledWelcome />
 
       {/* Bottom navigation — mobile only */}
       <BottomNav />

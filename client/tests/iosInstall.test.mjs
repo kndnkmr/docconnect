@@ -1,7 +1,7 @@
 // iPhone install guide: only for iPhone/iPad, never Android.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { installEnv, wantsIosGuide, iosSteps, safariLink, iosNudgeSnoozed, snoozeIosNudge } from '../src/utils/iosInstall.js';
+import { installEnv, wantsIosGuide, iosSteps, safariLink, iosNudgeSnoozed, snoozeIosNudge, shareButtonAt, iosGuideSteps, shouldWelcomeInstall, markWelcomeSeen } from '../src/utils/iosInstall.js';
 
 const UA = {
   iphoneSafari: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
@@ -25,7 +25,7 @@ test('Android and desktop never get the iPhone guide', () => {
 });
 
 test('iPhone browsers and in-app browsers are recognised', () => {
-  assert.deepEqual(installEnv({ ua: UA.iphoneSafari }), { ios: true, inApp: null, browser: 'safari', installed: false });
+  assert.deepEqual(installEnv({ ua: UA.iphoneSafari }), { ios: true, inApp: null, browser: 'safari', installed: false, ipad: false });
   assert.equal(installEnv({ ua: UA.iphoneChrome }).browser, 'chrome');
   assert.equal(installEnv({ ua: UA.iphoneInsta }).inApp, 'Instagram');
   assert.equal(installEnv({ ua: UA.iphoneFb }).inApp, 'Facebook');
@@ -54,4 +54,32 @@ test('"Maybe later" hides the card for a week', () => {
   assert.equal(iosNudgeSnoozed(s, 2000), true);
   assert.equal(iosNudgeSnoozed(s, 1000 + 8 * 24 * 3600 * 1000), false);
   assert.equal(iosNudgeSnoozed({ getItem() { throw new Error('x'); } }), false);
+});
+
+test('arrow points where the Share button really is', () => {
+  assert.equal(shareButtonAt(installEnv({ ua: UA.iphoneSafari })), 'bottom');
+  assert.equal(shareButtonAt(installEnv({ ua: UA.iphoneChrome })), 'top');
+  assert.equal(shareButtonAt(installEnv({ ua: UA.ipad, touchPoints: 5 })), 'top');
+  assert.equal(shareButtonAt(installEnv({ ua: UA.androidChrome, touchPoints: 5 })), null, 'never on Android');
+});
+
+test('guide has 3 short steps in both languages, each with words to read aloud', () => {
+  for (const lang of ['en', 'hi']) {
+    const s = iosGuideSteps(installEnv({ ua: UA.iphoneSafari }), lang);
+    assert.deepEqual(s.map((x) => x.key), ['share', 'add-home', 'add']);
+    for (const x of s) { assert.ok(x.title && x.sub && x.say); assert.ok(x.title.length < 40, x.title); }
+  }
+  assert.match(iosGuideSteps(installEnv({ ua: UA.iphoneSafari }))[0].sub, /bottom/);
+  assert.match(iosGuideSteps(installEnv({ ua: UA.iphoneChrome }))[0].sub, /top right/);
+});
+
+test('installed welcome shows once, only when opened from the iPhone icon', () => {
+  const mem = new Map();
+  const st = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+  assert.equal(shouldWelcomeInstall(installEnv({ ua: UA.iphoneSafari }), st), false, 'not installed yet');
+  const inst = installEnv({ ua: UA.iphoneSafari, standalone: true });
+  assert.equal(shouldWelcomeInstall(inst, st), true);
+  markWelcomeSeen(st);
+  assert.equal(shouldWelcomeInstall(inst, st), false);
+  assert.equal(shouldWelcomeInstall(installEnv({ ua: UA.androidChrome, standalone: true }), st), false, 'never on Android');
 });
