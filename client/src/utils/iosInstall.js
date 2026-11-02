@@ -33,7 +33,11 @@ export function installEnv({ ua = '', touchPoints = 0, standalone = false } = {}
   const ipad = /iPad/i.test(ua) || /Macintosh/i.test(ua);
   const hit = IN_APP.find(([re]) => re.test(ua));
   const browser = /CriOS/i.test(ua) ? 'chrome' : /FxiOS/i.test(ua) ? 'firefox' : /EdgiOS/i.test(ua) ? 'edge' : 'safari';
-  return { ios: true, inApp: hit ? hit[1] : null, browser, installed: Boolean(standalone), ipad };
+  // Safari 26 (iOS 26) moved Share into the ⋯ menu beside the address bar.
+  // iOS 26 freezes the OS number in the user agent, but Safari still reports
+  // its own version ("Version/26.x"), so that's what we read.
+  const sv = browser === 'safari' ? Number((ua.match(/Version\/(\d+)/) || [])[1]) || 0 : 0;
+  return { ios: true, inApp: hit ? hit[1] : null, browser, installed: Boolean(standalone), ipad, newSafari: sv >= 26 };
 }
 
 // The live environment (browser only).
@@ -54,6 +58,14 @@ export function iosSteps(env, lang = 'en') {
   const share = chromeLike
     ? (hi ? 'ऊपर पता-पट्टी में Share ⬆ पर टैप करें' : 'Tap Share ⬆ in the address bar (top)')
     : (hi ? 'नीचे Share ⬆ पर टैप करें (नए iPhone पर पहले ⋯ टैप करें)' : 'Tap Share ⬆ at the bottom (on newer iPhones, tap ⋯ first)');
+  if (env && env.newSafari && !env.ipad) {
+    return [
+      hi ? 'नीचे पता-पट्टी के पास ⋯ (तीन बिंदु) टैप करें' : 'Tap ⋯ (three dots) next to the address bar, at the bottom',
+      hi ? 'मेन्यू में “Share” टैप करें' : 'Tap “Share” in the menu',
+      hi ? '“Add to Home Screen” टैप करें (न दिखे तो “View More”)' : 'Tap “Add to Home Screen” (or “View More” first)',
+      hi ? '“Open as Web App” चालू रखें, फिर “Add” टैप करें' : 'Keep “Open as Web App” on, then tap “Add”',
+    ];
+  }
   return [
     share,
     hi ? 'नीचे स्क्रॉल करें, “Add to Home Screen” टैप करें' : 'Scroll down, tap “Add to Home Screen”',
@@ -81,7 +93,8 @@ export function snoozeIosNudge(storage, now = Date.now()) {
 // iPad Safari and Chrome/Edge/Firefox on iPhone = top right.
 export function shareButtonAt(env) {
   if (!env || !env.ios) return null;
-  return env.ipad || env.browser !== 'safari' ? 'top' : 'bottom';
+  if (env.ipad || env.browser !== 'safari') return 'top';
+  return env.newSafari ? 'bottom-right' : 'bottom'; // iOS 26: the ⋯ button
 }
 
 // "Follow the arrow" guide: one short step at a time. title/sub are shown,
@@ -89,6 +102,35 @@ export function shareButtonAt(env) {
 export function iosGuideSteps(env, lang = 'en') {
   const hi = lang === 'hi';
   const top = shareButtonAt(env) === 'top';
+  // iOS 26 Safari: ⋯ → Share → Add to Home Screen → (Open as Web App on) Add.
+  if (shareButtonAt(env) === 'bottom-right') {
+    return [
+      {
+        key: 'more',
+        title: hi ? '⋯ बटन टैप करें' : 'Tap the ⋯ button',
+        sub: hi ? 'नीचे दाईं ओर, पता-पट्टी के बगल में। (⬆ Share दिखे तो सीधे वही टैप करें।)' : 'Bottom right, next to the address bar. (If you see Share ⬆ there, tap that instead.)',
+        say: hi ? 'नीचे दाईं ओर, पता पट्टी के बगल में, तीन बिंदु वाला बटन टैप करें।' : 'Tap the three dots button at the bottom right, next to the address bar.',
+      },
+      {
+        key: 'share',
+        title: hi ? '“Share” टैप करें' : 'Tap “Share”',
+        sub: hi ? 'एक छोटा मेन्यू खुलेगा। उसमें Share चुनें।' : 'A small menu opens. Choose Share.',
+        say: hi ? 'जो मेन्यू खुले, उसमें शेयर टैप करें।' : 'In the menu that opens, tap Share.',
+      },
+      {
+        key: 'add-home',
+        title: hi ? 'इसे टैप करें:' : 'Tap this:',
+        sub: hi ? 'न दिखे? पहले “View More” टैप करें या नीचे स्क्रॉल करें।' : 'Don’t see it? Tap “View More” first, or scroll down.',
+        say: hi ? 'ऐड टू होम स्क्रीन टैप करें। न दिखे तो पहले व्यू मोर टैप करें।' : 'Tap Add to Home Screen. If you don’t see it, tap View More first.',
+      },
+      {
+        key: 'add',
+        title: hi ? '“Add” टैप करें' : 'Tap “Add”',
+        sub: hi ? '“Open as Web App” चालू रहने दें। “Add” ऊपर दाईं ओर है।' : 'Leave “Open as Web App” switched on. “Add” is at the top right.',
+        say: hi ? 'ओपन ऐज़ वेब ऐप चालू रहने दें, और ऊपर दाईं ओर ऐड टैप करें।' : 'Leave Open as Web App switched on, and tap Add at the top right.',
+      },
+    ];
+  }
   return [
     {
       key: 'share',

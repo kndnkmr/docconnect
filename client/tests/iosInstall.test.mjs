@@ -25,7 +25,7 @@ test('Android and desktop never get the iPhone guide', () => {
 });
 
 test('iPhone browsers and in-app browsers are recognised', () => {
-  assert.deepEqual(installEnv({ ua: UA.iphoneSafari }), { ios: true, inApp: null, browser: 'safari', installed: false, ipad: false });
+  assert.deepEqual(installEnv({ ua: UA.iphoneSafari }), { ios: true, inApp: null, browser: 'safari', installed: false, ipad: false, newSafari: false });
   assert.equal(installEnv({ ua: UA.iphoneChrome }).browser, 'chrome');
   assert.equal(installEnv({ ua: UA.iphoneInsta }).inApp, 'Instagram');
   assert.equal(installEnv({ ua: UA.iphoneFb }).inApp, 'Facebook');
@@ -82,4 +82,23 @@ test('installed welcome shows once, only when opened from the iPhone icon', () =
   markWelcomeSeen(st);
   assert.equal(shouldWelcomeInstall(inst, st), false);
   assert.equal(shouldWelcomeInstall(installEnv({ ua: UA.androidChrome, standalone: true }), st), false, 'never on Android');
+});
+
+const IOS26 = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1';
+test('iOS 26 Safari: arrow at ⋯ (bottom right) and the 4-step path', () => {
+  const e = installEnv({ ua: IOS26 });
+  assert.equal(e.newSafari, true);
+  assert.equal(shareButtonAt(e), 'bottom-right');
+  for (const lang of ['en', 'hi']) {
+    const s = iosGuideSteps(e, lang);
+    assert.deepEqual(s.map((x) => x.key), ['more', 'share', 'add-home', 'add']);
+    for (const x of s) assert.ok(x.title && x.sub && x.say);
+  }
+  assert.match(iosGuideSteps(e)[2].sub, /View More/);
+  assert.match(iosGuideSteps(e)[3].sub, /Open as Web App/);
+  assert.equal(iosSteps(e).length, 4);
+  // Older Safari and Chrome on iPhone keep their paths.
+  assert.equal(shareButtonAt(installEnv({ ua: UA.iphoneSafari })), 'bottom');
+  assert.equal(installEnv({ ua: UA.iphoneChrome }).newSafari, false);
+  assert.equal(shareButtonAt(installEnv({ ua: UA.ipad.replace('Version/17.4', 'Version/26.0'), touchPoints: 5 })), 'top');
 });

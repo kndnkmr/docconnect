@@ -42,12 +42,12 @@ const T = {
     alertsDoctor: 'Get an alert the moment a patient books, pays or calls. iPhone needs ProMedicoz on your Home Screen for alerts (3 taps).',
     showMe: 'Show me how', later: 'Maybe later',
     demo: 'Animation showing the 3 taps',
-    stepOf: (n) => `Step ${n} of 3`, next: 'Next ›', back: '‹ Back', done: 'Done',
+    stepOf: (n, total = 3) => `Step ${n} of ${total}`, next: 'Next ›', back: '‹ Back', done: 'Done',
     listen: '🔊 Listen', stop: '⏹ Stop', stepByStep: '▶ Show me, step by step',
     welcomeTitle: 'ProMedicoz is installed!', welcomeText: 'One last tap so your doctor can reach you:',
     welcomeAlerts: '🔔 Turn on alerts', welcomeLogin: 'Log in to get alerts', welcomeLater: 'Not now',
     alertsOn: 'Alerts are on. You’ll hear from your doctor here.', alertsFail: 'Alerts could not be turned on. You can try again from your dashboard.',
-    shareBelow: 'Share is in Safari’s bar below', shareAbove: 'Share is in the bar above',
+    shareBelow: 'Share is in Safari’s bar below', shareAbove: 'Share is in the bar above', moreBelow: 'Tap ⋯ down here',
   },
   hi: {
     title: 'ProMedicoz को iPhone पर जोड़ें',
@@ -65,12 +65,12 @@ const T = {
     alertsDoctor: 'मरीज़ के बुक, भुगतान या कॉल करते ही अलर्ट पाएं। अलर्ट के लिए iPhone पर ProMedicoz को Home Screen पर जोड़ना ज़रूरी है (3 टैप)।',
     showMe: 'तरीका दिखाएं', later: 'बाद में',
     demo: '3 टैप दिखाने वाला एनिमेशन',
-    stepOf: (n) => `स्टेप ${n} / 3`, next: 'आगे ›', back: '‹ पीछे', done: 'हो गया',
+    stepOf: (n, total = 3) => `स्टेप ${n} / ${total}`, next: 'आगे ›', back: '‹ पीछे', done: 'हो गया',
     listen: '🔊 सुनें', stop: '⏹ रोकें', stepByStep: '▶ एक-एक स्टेप दिखाएं',
     welcomeTitle: 'ProMedicoz इंस्टॉल हो गया!', welcomeText: 'बस एक टैप, ताकि डॉक्टर आप तक पहुँच सकें:',
     welcomeAlerts: '🔔 अलर्ट चालू करें', welcomeLogin: 'अलर्ट के लिए लॉग इन करें', welcomeLater: 'अभी नहीं',
     alertsOn: 'अलर्ट चालू हैं। डॉक्टर की खबर आपको यहीं मिलेगी।', alertsFail: 'अलर्ट चालू नहीं हो सके। डैशबोर्ड से दोबारा कोशिश करें।',
-    shareBelow: 'Share नीचे Safari पट्टी में', shareAbove: 'Share ऊपर की पट्टी में',
+    shareBelow: 'Share नीचे Safari पट्टी में', shareAbove: 'Share ऊपर की पट्टी में', moreBelow: '⋯ यहाँ नीचे टैप करें',
   },
 };
 const useT = () => { const { lang } = useLang(); return { t: T[lang] || T.en, lang }; };
@@ -193,13 +193,27 @@ function MenuPicture() {
     </div>
   );
 }
-function AddPicture() {
+function MorePicture() {
+  return (
+    <div className="mx-auto w-60 rounded-full bg-gray-100 border border-gray-200 pl-4 pr-1.5 py-1.5 flex items-center justify-between" aria-hidden="true">
+      <span className="text-xs text-gray-500">promedicoz.in</span>
+      <span className="w-10 h-10 rounded-full bg-primary-50 border-2 border-primary-600 text-primary-700 text-xl font-bold flex items-center justify-center">⋯</span>
+    </div>
+  );
+}
+function AddPicture({ webAppSwitch = false }) {
   return (
     <div className="mx-auto w-56" aria-hidden="true">
       <div className="rounded-xl bg-gray-50 border border-gray-200 px-3 py-2.5 flex items-center justify-between text-sm">
         <span className="text-gray-400">Cancel</span>
         <span className="relative font-bold text-primary-600">Add<span className="absolute -inset-2 rounded-full border-[3px] border-amber-400" /></span>
       </div>
+      {webAppSwitch && (
+        <div className="mt-2 rounded-xl bg-gray-50 border border-gray-200 px-3 py-2 flex items-center justify-between text-xs text-gray-700">
+          <span>Open as Web App</span>
+          <span className="w-9 h-5 rounded-full bg-green-500 relative"><span className="absolute right-0.5 top-0.5 w-4 h-4 rounded-full bg-white" /></span>
+        </div>
+      )}
       <div className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-600">
         <img src="/icons/apple-touch-icon-180.png" alt="" className="w-9 h-9 rounded-[10px] shadow" />
         <span>ProMedicoz</span>
@@ -216,7 +230,7 @@ function FollowTheArrow({ env, onClose }) {
   const at = shareButtonAt(env); // 'bottom' | 'top'
   const cur = steps[step];
   useEffect(() => () => stopSpeaking(), []);
-  // Hide the app's own bottom tabs while guiding, so the arrow points past
+  // Hide the app's own bottom tabs (and the floating WhatsApp button) while guiding, so the arrow points past
   // the page edge to Safari's real bar (not at our "Doctors"/"Blog" tabs).
   useEffect(() => {
     document.body.classList.add('pmz-guide-open');
@@ -230,10 +244,11 @@ function FollowTheArrow({ env, onClose }) {
     setTalking(true);
     speak(cur.say, lang, () => setTalking(false));
   };
-  const pictures = [<ShareIcon key="s" />, <MenuPicture key="m" />, <AddPicture key="a" />];
+  const newLayout = steps.length === 4; // iOS 26 Safari: ⋯ → Share → Add to Home Screen → Add
+  const PICTURE = { more: <MorePicture />, share: <ShareIcon />, 'add-home': <MenuPicture />, add: <AddPicture webAppSwitch={newLayout} /> };
   // Card sits away from the arrow: top of the screen when the button is at
   // the bottom, and the other way round.
-  const cardPos = at === 'bottom' ? 'items-start pt-[calc(1rem+env(safe-area-inset-top))]' : 'items-end pb-[calc(1rem+env(safe-area-inset-bottom))]';
+  const cardPos = at !== 'top' ? 'items-start pt-[calc(1rem+env(safe-area-inset-top))]' : 'items-end pb-[calc(1rem+env(safe-area-inset-bottom))]';
   return (
     // Portal to <body> at the very top layer, so the app's own bottom tabs
     // are dimmed too and can't be mistaken for Safari's bar.
@@ -243,19 +258,19 @@ function FollowTheArrow({ env, onClose }) {
         @keyframes pmzBounceUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
         .pmz-arrow-down{animation:pmzBounceDown 1s ease-in-out infinite}
         .pmz-arrow-up{animation:pmzBounceUp 1s ease-in-out infinite}
-        body.pmz-guide-open [data-bottom-nav]{display:none !important}
+        body.pmz-guide-open [data-bottom-nav],body.pmz-guide-open [data-floating-whatsapp]{display:none !important}
         @media (prefers-reduced-motion:reduce){.pmz-arrow-down,.pmz-arrow-up{animation:none}}
       `}</style>
       <div role="dialog" aria-modal="true" aria-label={t.title} onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl p-5 text-center">
         <button type="button" onClick={close} aria-label={t.close} className="absolute top-3 right-3 text-gray-500 text-xl leading-none">✕</button>
         <p className="text-xs font-semibold text-gray-500 flex items-center justify-center gap-2">
-          {t.stepOf(step + 1)}
+          {t.stepOf(step + 1, steps.length)}
           <span className="flex gap-1" aria-hidden="true">{steps.map((_, i) => <span key={i} className={`w-2 h-2 rounded-full ${i <= step ? 'bg-primary-600' : 'bg-gray-300'}`} />)}</span>
         </p>
         <h2 className="text-xl font-extrabold text-gray-900 mt-2" aria-live="polite">{cur.title}</h2>
         <p className="text-sm text-gray-600 mt-1 mb-4">{cur.sub}</p>
-        <div className="flex justify-center">{pictures[step]}</div>
+        <div className="flex justify-center">{PICTURE[cur.key]}</div>
         <div className="mt-5 flex items-center justify-between gap-2">
           {step > 0
             ? <button type="button" onClick={() => go(step - 1)} className="px-3 py-2 text-sm text-gray-600">{t.back}</button>
@@ -269,7 +284,13 @@ function FollowTheArrow({ env, onClose }) {
         </div>
       </div>
       {/* The big bouncing arrow at the REAL Share button (step 1 only). */}
-      {step === 0 && (at === 'bottom' ? (
+      {step === 0 && at === 'bottom-right' && (
+        <div className="pointer-events-none fixed right-3 bottom-[env(safe-area-inset-bottom)] flex flex-col items-end text-amber-300" aria-hidden="true">
+          <span className="whitespace-nowrap text-sm font-bold text-white mb-1 drop-shadow bg-black/40 rounded-full px-3 py-1">{t.moreBelow}</span>
+          <svg viewBox="0 0 48 64" className="pmz-arrow-down w-14 h-20 mr-1 drop-shadow-lg" fill="currentColor"><path d="M18 0h12v40h14L24 64 4 40h14z" /></svg>
+        </div>
+      )}
+      {step === 0 && at !== 'bottom-right' && (at === 'bottom' ? (
         <div className="pointer-events-none fixed left-1/2 -translate-x-1/2 bottom-[env(safe-area-inset-bottom)] flex flex-col items-center text-amber-300" aria-hidden="true">
           <span className="whitespace-nowrap text-sm font-bold text-white mb-1 drop-shadow bg-black/40 rounded-full px-3 py-1">{t.shareBelow}</span>
           <svg viewBox="0 0 48 64" className="pmz-arrow-down w-14 h-20 drop-shadow-lg" fill="currentColor"><path d="M18 0h12v40h14L24 64 4 40h14z" /></svg>

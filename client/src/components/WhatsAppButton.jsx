@@ -72,6 +72,7 @@ function FloatingWhatsApp({ phoneNumber }) {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
+      data-floating-whatsapp
       className={`fixed bottom-20 md:bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-2.5 shadow-md hover:shadow-lg transition-all duration-300 group ${scrolling ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-2' : 'opacity-100'}`}
       aria-label="Contact us on WhatsApp"
     >
