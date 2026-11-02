@@ -72,7 +72,7 @@ const START_HERE_SLUGS = ['why-preventive-health-checkups-matter', 'silent-signs
 
 const TXT = {
   en: {
-    title: 'Health Blog', sub: (n) => `${n} articles · simple, doctor-checked health information`, reads: (r) => ` · ${r} reads`,
+    title: 'Health Blog', sub: (n) => `${n} articles · simple, doctor-checked health information`, readsAfter: ' reads and counting',
     searchPh: 'What is the problem? e.g. stomach pain, sugar, periods…', clear: 'Clear search', resultsFor: (n, q) => `${n} ${n === 1 ? 'article' : 'articles'} for “${q}”`,
     noResults: (q) => `No articles for “${q}”`, noResultsHint: 'Try a simpler word (e.g. "fever", "BP"), or pick a topic.', showAll: 'Show all articles',
     continue: '↩ Continue reading', saved: '⭐ Saved', popular: '🔥 Most read', latest: 'Latest articles', topicArticles: (t) => `${t} articles`,
@@ -80,7 +80,7 @@ const TXT = {
     suggestionsFor: (q) => `Top matches for “${q}”`, seeAll: (n) => `See all ${n} →`,
   },
   hi: {
-    title: 'स्वास्थ्य जानकारी', sub: (n) => `${n} लेख · आसान भाषा में, डॉक्टरों द्वारा जाँचे हुए`, reads: (r) => ` · ${r} बार पढ़े गए`,
+    title: 'स्वास्थ्य जानकारी', sub: (n) => `${n} लेख · आसान भाषा में, डॉक्टरों द्वारा जाँचे हुए`, readsAfter: ' बार पढ़े गए, और गिनती जारी है',
     searchPh: 'क्या परेशानी है? जैसे: पेट दर्द, शुगर, पीरियड…', clear: 'खोज हटाएं', resultsFor: (n, q) => `“${q}” के लिए ${n} लेख`,
     noResults: (q) => `“${q}” के लिए कोई लेख नहीं मिला`, noResultsHint: 'कोई आसान शब्द लिखें (जैसे "बुखार", "BP"), या कोई विषय चुनें।', showAll: 'सभी लेख दिखाएं',
     continue: '↩ पढ़ना जारी रखें', saved: '⭐ सेव किए हुए', popular: '🔥 सबसे ज़्यादा पढ़े गए', latest: 'नए लेख', topicArticles: (t) => `${t} के लेख`,
@@ -194,7 +194,7 @@ function BlogList() {
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
         <div className="container mx-auto px-4 pt-6 pb-7 max-w-3xl">
           <h1 className="text-2xl sm:text-3xl font-bold">{t.title}</h1>
-          <p className="text-primary-100 text-sm mt-1">{t.sub(articles.length)}{totalReads > 0 ? t.reads(formatViews(totalReads)) : ''}</p>
+          <p className="text-primary-100 text-sm mt-1">{t.sub(articles.length)}{totalReads > 0 && <> · <span className="font-semibold text-white">{formatViews(totalReads)}</span>{t.readsAfter}</>}</p>
           <div className="relative mt-4">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" aria-hidden="true">🔍</span>
             <input
