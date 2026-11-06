@@ -150,7 +150,7 @@ const getMyAppointments = async (req, res) => {
 
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
-      .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes')
+      .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes isAdminVerified')
       .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     const byId = {};
@@ -225,7 +225,7 @@ const getAppointmentById = async (req, res) => {
     // Same doctor fields the patient's appointment list already shows, so the
     // live booking page can show the payment box (UPI ID/QR) once confirmed.
     const appointment = await Appointment.findById(req.params.id)
-      .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes')
+      .populate('doctor', 'name specialization profilePhoto consultationFee clinicAddress upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes isAdminVerified')
       .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
     if (!appointment) {

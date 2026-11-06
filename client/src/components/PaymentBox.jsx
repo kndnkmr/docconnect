@@ -35,6 +35,7 @@ import { appointmentAPI, getUploadUrl } from '../services/api';
 import { paymentStage, buildUpiLink, isMobileDevice, cleanUTR, reminderState, supportMessage } from '../utils/paymentFlow';
 import { readUpiFromImage, isValidUpiId, sameUpi } from '../utils/upiQr';
 import { useLang } from '../context/LangContext';
+import { formatDoctorName, cleanDoctorName } from '../utils/formatName';
 
 // Only needed for doctors with a UPI ID but no QR image.
 const MadeQr = lazy(() => import('qrcode.react').then((m) => ({ default: m.QRCodeSVG })));
@@ -81,6 +82,16 @@ const TXT = {
     step2: "Tell the doctor you've paid",
     paid: "✅ I've paid",
     paidSub: 'The doctor confirms it and your slot is locked.',
+    // ---- Trust lines (all true for every booking at this step) ----
+    trustConfirmed: (dr) => `${dr} has confirmed your visit.`,
+    trustConfirmedSub: 'Your slot is reserved for you.',
+    trustDirect: 'Money goes straight to the doctor.',
+    trustDirectSub: 'ProMedicoz takes no commission and never holds it.',
+    trustChecked: 'Checked by the ProMedicoz team',
+    trustCheckedSub: 'before this doctor could take bookings.',
+    trustDoubt: 'Any doubt?', trustWhatsApp: 'WhatsApp us', trustHuman: ', a real person replies.',
+    quote: 'Just like at the clinic, you pay your doctor directly. We only made it easier, with no middleman and no extra charges.',
+    quoteBy: 'Team ProMedicoz',
     // proof sheet (opens after "I've paid")
     proofTitle: 'Add your payment screenshot',
     proofSub: 'It helps the doctor confirm faster. Optional.',
@@ -146,6 +157,15 @@ const TXT = {
     step2: 'डॉक्टर को बताएँ कि आपने पेमेंट कर दिया',
     paid: '✅ पेमेंट कर दिया',
     paidSub: 'डॉक्टर कन्फ़र्म करेंगे और आपका स्लॉट पक्का हो जाएगा।',
+    trustConfirmed: (dr) => `${dr} ने आपकी बुकिंग कन्फ़र्म कर दी है।`,
+    trustConfirmedSub: 'आपका समय आपके लिए रखा गया है।',
+    trustDirect: 'पैसा सीधे डॉक्टर को जाता है।',
+    trustDirectSub: 'ProMedicoz कोई कमीशन नहीं लेता और पैसा अपने पास नहीं रखता।',
+    trustChecked: 'ProMedicoz टीम ने जाँच की है,',
+    trustCheckedSub: 'उसके बाद ही यह डॉक्टर बुकिंग ले सकते हैं।',
+    trustDoubt: 'कोई शक?', trustWhatsApp: 'हमें WhatsApp करें', trustHuman: ', असली इंसान जवाब देगा।',
+    quote: 'जैसे क्लिनिक में आप सीधे डॉक्टर को फ़ीस देते हैं, वैसे ही यहाँ भी। हमने बस इसे आसान बनाया है, बिना किसी बिचौलिए और बिना किसी अतिरिक्त चार्ज के।',
+    quoteBy: 'टीम ProMedicoz',
     proofTitle: 'पेमेंट का स्क्रीनशॉट जोड़ें',
     proofSub: 'इससे डॉक्टर जल्दी कन्फ़र्म कर पाते हैं। ज़रूरी नहीं।',
     chooseShot: '📎 स्क्रीनशॉट चुनें',
@@ -414,7 +434,7 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={t.qrDialogAria}>
       <button type="button" className="absolute inset-0 bg-black/80" onClick={closeQr} aria-label={t.closeQrAria} />
       <div className="relative bg-white rounded-2xl p-4 max-w-sm w-full text-center">
-        <p className="font-semibold text-gray-800">{t.payTo(fee, doctor.name)}</p>
+        <p className="font-semibold text-gray-800">{t.payTo(fee, cleanDoctorName(doctor.name))}</p>
         <img src={qrSrc} alt={t.qrAlt} className="w-full max-w-xs mx-auto my-3 rounded-lg border" />
         {payUpi && <p className="text-xs text-gray-600">UPI ID: <span className="font-mono">{payUpi}</span></p>}
         {payeeName && <p className="text-xs text-green-800 mt-0.5"><strong>{t.payee(payeeName)}</strong></p>}
@@ -430,7 +450,31 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
       <div className="mt-3 space-y-3">
         {hiddenFileInput}
         {qrOverlay}
-        <p className="text-base font-bold text-gray-900">{t.payTitle(fee, doctor.name)}</p>
+        <p className="text-base font-bold text-gray-900">{t.payTitle(fee, cleanDoctorName(doctor.name))}</p>
+
+        {/* Trust lines — only facts that are true for this booking. "Checked
+            by the ProMedicoz team" shows only for doctors an admin has
+            actually verified (isAdminVerified). */}
+        <ul className="p-3 bg-white border border-green-200 rounded-xl space-y-2" aria-label="Why it is safe to pay">
+          {[
+            [t.trustConfirmed(formatDoctorName(doctor.name)), t.trustConfirmedSub],
+            [t.trustDirect, t.trustDirectSub],
+            ...(doctor.isAdminVerified ? [[t.trustChecked, t.trustCheckedSub]] : []),
+          ].map(([head, sub]) => (
+            <li key={head} className="flex items-start gap-2">
+              <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-green-600 text-white text-[10px] font-bold flex items-center justify-center" aria-hidden="true">✓</span>
+              <p className="text-sm leading-snug"><strong className="text-green-900">{head}</strong> <span className="text-green-800">{sub}</span></p>
+            </li>
+          ))}
+          <li className="flex items-start gap-2 pt-1 border-t border-green-100">
+            <span className="mt-0.5 flex-shrink-0" aria-hidden="true">💬</span>
+            <p className="text-sm text-gray-700 leading-snug">
+              {t.trustDoubt}{' '}
+              <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-green-700 underline">{t.trustWhatsApp}</a>
+              {t.trustHuman}
+            </p>
+          </li>
+        </ul>
 
         {/* Step 1: scan */}
         <div className="p-3 bg-green-50 border border-green-200 rounded-xl">
@@ -473,6 +517,15 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
             </>
           )}
         </div>
+
+        {/* The clinic comparison: paying the doctor directly is familiar. */}
+        <figure className="px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl">
+          <blockquote className="flex gap-2 text-sm italic text-gray-700 leading-relaxed">
+            <span className="text-2xl leading-none text-primary-300 not-italic" aria-hidden="true">&ldquo;</span>
+            <span>{t.quote}</span>
+          </blockquote>
+          <figcaption className="mt-1.5 pl-6 text-xs text-gray-500">{t.quoteBy}</figcaption>
+        </figure>
       </div>
     );
   }

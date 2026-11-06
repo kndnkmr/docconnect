@@ -2199,3 +2199,13 @@ All use your Google/GitHub account for login — no separate passwords to rememb
   - `IosAlertsCard`: "Get alerts on your iPhone" on the booking-done page and the dashboard (patients and doctors), shown only where iPhone can't turn on alerts yet. "Maybe later" hides it for 7 days.
   - `/install` on iPhone shows only the iPhone steps, plus an "in Instagram's browser" strip.
 - Home Screen icon: `public/icons/apple-touch-icon-180.png` (full square, no transparent corners, which iPhone would fill with black).
+
+## Pay step: trust lines
+
+- Above the QR (`client/src/components/PaymentBox.jsx`, stage "pay", shown only after the doctor confirms), in English and Hindi:
+  - ✓ "<Doctor> has confirmed your visit. Your slot is reserved for you."
+  - ✓ "Money goes straight to the doctor. ProMedicoz takes no commission and never holds it."
+  - ✓ "Checked by the ProMedicoz team before this doctor could take bookings." This shows ONLY when the doctor has `isAdminVerified` (an admin really checked them), so it is never untrue. The patient's appointment data includes `isAdminVerified` (server `appointmentController` populate).
+  - 💬 "Any doubt? WhatsApp us, a real person replies.", which opens support WhatsApp with the patient, doctor, date and time filled in.
+- Below "I've paid": the quote "Just like at the clinic, you pay your doctor directly. We only made it easier, with no middleman and no extra charges." from Team ProMedicoz.
+- The pay heading uses the clean doctor name ("Pay Rs. 500 to Dr. Pooja Singh", never "Dr. Dr …").
