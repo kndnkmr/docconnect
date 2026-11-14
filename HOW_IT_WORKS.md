@@ -2209,3 +2209,14 @@ All use your Google/GitHub account for login — no separate passwords to rememb
   - 💬 "Any doubt? WhatsApp us, a real person replies.", which opens support WhatsApp with the patient, doctor, date and time filled in.
 - Below "I've paid": the quote "Just like at the clinic, you pay your doctor directly. We only made it easier, with no middleman and no extra charges." from Team ProMedicoz.
 - The pay heading uses the clean doctor name ("Pay Rs. 500 to Dr. Pooja Singh", never "Dr. Dr …").
+
+## Sehat Kundli (family health chart)
+
+- `/tools/sehat-kundli` (English) and `/tools/sehat-kundli/hi` (Hindi). The patient ticks which relatives (mother, father, brother/sister, grandparents/uncles/aunts) have diabetes, BP, heart attack/stroke, thyroid, breast/ovarian cancer, colon cancer, kidney disease, thalassaemia or glaucoma, and adds their age and woman/man. They get "Due now", "Coming up" (with start ages) and "At special times" (pregnancy, before marriage). Family-driven items are tagged "Family" and come first.
+- Medical guidance, not astrology. Rules come from public screening guidelines (India NP-NCD screening from 30, WHO, ADA/RSSDI, AHA, ACS/NCCN, US Multi-Society Task Force, AAO, ATA, MoHFW thalassaemia). Parents and siblings move tests earlier; grandparents/uncles/aunts only get a note. Every result says to confirm with a doctor, and links to General Physician (and Gynaecologist for women).
+- Rules, copy and the "send to siblings" link code live in `client/src/pages/tools/kundliRules.js` (tests: `client/tests/kundliRules.test.mjs`). It is NOT named `sehatKundli.js`, because macOS treats that and `SehatKundli.jsx` as the same file.
+- Sharing:
+  - "Share my Kundli picture": a 1080x1350 PNG drawn on the phone (`kundliCard.js`), showing family conditions (no relative names) and the top check-ups.
+  - "Send to brothers & sisters": the link carries the family list after `#f=` (e.g. `d:f,h:f!`), which is never sent to any server. The sibling opens it pre-filled and only adds their age.
+- Nothing is uploaded or saved. Analytics events (`tool_kundli_*`) carry no health details.
+- Google: both pages are prerendered (`buildKundliRoutes` in `client/scripts/prerender.mjs`), with a table computed from the same rules, FAQs, and the share card `public/og/tools/sehat-kundli.png` (made by `client/scripts/gen-kundli-card.mjs`, run locally). Listed first on `/tools` and in `llms.txt`.

@@ -643,6 +643,75 @@ async function buildVaccineAndHubRoutes(articles) {
   ];
 }
 
+// ---- Sehat Kundli (family health chart) pages ----
+// EN + HI pages (indexable, hreflang pair). The crawler body lists, for each
+// condition, what changes when a parent or sibling has it — computed from the
+// same rules the page uses (src/pages/tools/kundliRules.js).
+async function buildKundliRoutes(articles) {
+  const { COPY, RELATED_ARTICLES, TOOL_PATH, CONDITIONS, buildKundli } = await import('../src/pages/tools/kundliRules.js');
+  const card = `${SITE}/og/tools/sehat-kundli.png`;
+  const en = `${SITE}${TOOL_PATH}`;
+  const hi = `${SITE}${TOOL_PATH}/hi`;
+  const hreflang = [{ lang: 'en', href: en }, { lang: 'hi', href: hi }, { lang: 'x-default', href: en }];
+  const bySlug = new Map(articles.map((a) => [a.slug, a]));
+  const page = (lang) => {
+    const c = COPY[lang];
+    const rows = CONDITIONS.map((cond) => {
+      const k = buildKundli({ age: 60, sex: 'f', family: { [cond.key]: ['mother'] } });
+      const fam = [...k.due, ...k.later, ...k.moments].filter((x) => x.family)
+        .map((x) => `${x.title[lang]}${x.startAge != null ? ` (${c.fromAge(x.startAge)})` : ''}`);
+      return `<tr><th scope="row">${escText(cond.label[lang])}</th><td>${escText(fam.join('; ') || '-')}</td></tr>`;
+    }).join('');
+    const relLinks = RELATED_ARTICLES.map((sl) => bySlug.get(sl)).filter(Boolean).map((a) => lang === 'hi'
+      ? linkItem(`/blog/${a.slug}/hi`, TITLES_HI[a.slug] || a.title)
+      : linkItem(`/blog/${a.slug}`, a.title)).join('');
+    return {
+      body:
+        `<main${lang === 'hi' ? ' lang="hi"' : ''}><h1>${escText(c.title)}</h1><p>${escText(c.subtitle)}</p>` +
+        `<h2>${escText(c.howTitle)}</h2><p>${escText(c.how)}</p>` +
+        `<table><thead><tr><th>${lang === 'hi' ? 'Parivaar mein (maa/baap/bhai/behen)' : 'In a parent or sibling'}</th><th>${lang === 'hi' ? 'Aapke liye' : 'For you'}</th></tr></thead><tbody>${rows}</tbody></table>` +
+        `<p>${escText(c.free)}</p><p>${escText(c.safety)}</p><p>${escText(c.privacy)}</p>` +
+        `<h2>${escText(c.faqTitle)}</h2>${c.faq.map((f) => `<h3>${escText(f.q)}</h3><p>${escText(f.a)}</p>`).join('')}` +
+        `<h2>${escText(c.readMore)}</h2><ul>${relLinks}${linkItem('/specialization/general-physician', lang === 'hi' ? 'General Physician dhoondhein' : 'Find a General Physician')}${linkItem('/tools', 'Free health tools')}</ul></main>`,
+      faqLd: {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+    };
+  };
+  const appLd = (lang, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: COPY[lang].seoTitle,
+    url,
+    description: COPY[lang].seoDesc,
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'Any',
+    inLanguage: lang === 'hi' ? 'hi' : 'en-IN',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE },
+  });
+  const crumbs = (name, url) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: 'Free health tools', item: `${SITE}/tools` },
+      { '@type': 'ListItem', position: 3, name, item: url },
+    ],
+  });
+  const pEn = page('en');
+  const pHi = page('hi');
+  console.log('[prerender] Built Sehat Kundli pages (EN + HI).');
+  return [
+    { path: TOOL_PATH, title: COPY.en.seoTitle, description: COPY.en.seoDesc, type: 'website', ogImage: card,
+      hreflang, bodyHtml: pEn.body, jsonLd: [appLd('en', en), pEn.faqLd, crumbs('Sehat Kundli', en)] },
+    { path: `${TOOL_PATH}/hi`, title: COPY.hi.seoTitle, description: COPY.hi.seoDesc, type: 'website', ogImage: card,
+      hreflang, htmlLang: 'hi', bodyHtml: pHi.body, jsonLd: [appLd('hi', hi), pHi.faqLd, crumbs('Sehat Kundli (Hindi)', hi)] },
+  ];
+}
 // ---- Report Samjhao (blood report explained) pages ----
 // EN + HI pages (indexable, hreflang pair). The crawler body lists every test
 // with what it is and its typical adult range/bands — the same copy and
@@ -1114,6 +1183,7 @@ async function buildRoutes() {
   routes.push(...(await buildOvulationRoutes(articles)));
   routes.push(...(await buildVaccineAndHubRoutes(articles)));
   routes.push(...(await buildReportRoutes(articles)));
+  routes.push(...(await buildKundliRoutes(articles)));
 
   // Crawler text for the listing / info / specialization pages.
   await attachListingBodies(routes, articles, specializationData);
@@ -1352,6 +1422,7 @@ async function writeLlmsTxt(routes) {
     `- [Ovulation & period calculator](${SITE}/tools/ovulation-calculator): Free, private fertile-days, ovulation and next-period calculator (Hindi version at /tools/ovulation-calculator/hi)`,
     `- [Baby vaccination schedule](${SITE}/tools/vaccination-schedule): Free vaccine dates by date of birth, India's government schedule (UIP) (Hindi version at /tools/vaccination-schedule/hi)`,
     `- [Report Samjhao](${SITE}/tools/blood-report): Understand a blood report (CBC, thyroid, sugar, vitamin D, B12) in simple English or Hindi; photo read on the phone, nothing uploaded (Hindi version at /tools/blood-report/hi)`,
+    `- [Sehat Kundli](${SITE}/tools/sehat-kundli): Free family health chart: tick which relatives have diabetes, BP, heart disease, thyroid, cancer or thalassaemia and see which check-ups you need from what age; medical guidance, not astrology (Hindi version at /tools/sehat-kundli/hi)`,
     `- [Free health tools](${SITE}/tools): All free ProMedicoz health tools`,
     '',
     '## Specialities',

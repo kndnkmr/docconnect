@@ -3,6 +3,12 @@
 
 export const TOOLS = [
   {
+    id: 'sehat_kundli', path: '/tools/sehat-kundli', emoji: '🪔',
+    cls: 'bg-orange-50 border-orange-200 text-orange-900',
+    name: { en: 'Sehat Kundli (family health chart)', hi: 'Sehat Kundli' },
+    desc: { en: 'Family history → which check-ups you need, from what age', hi: 'Parivaar ki history se: kaunse test, kis umar se' },
+  },
+  {
     id: 'due_date', path: '/tools/due-date-calculator', emoji: '🤰',
     cls: 'bg-pink-50 border-pink-200 text-pink-900',
     name: { en: 'Pregnancy due date', hi: 'Meri due date kab hai?' },
@@ -30,8 +36,8 @@ export const TOOLS = [
 
 export const HUB_COPY = {
   en: {
-    seoTitle: 'Free Health Tools — Blood Report, Due Date, Ovulation & Baby Vaccine Calculators',
-    seoDesc: 'Free, private health tools from ProMedicoz in English and Hindi: Report Samjhao (blood report explained), pregnancy due date calculator, ovulation & period calculator, and baby vaccination schedule. Everything you enter stays on your phone.',
+    seoTitle: 'Free Health Tools — Sehat Kundli, Blood Report, Due Date, Ovulation & Baby Vaccines',
+    seoDesc: 'Free, private health tools from ProMedicoz in English and Hindi: Sehat Kundli (family health chart), Report Samjhao (blood report explained), pregnancy due date calculator, ovulation & period calculator, and baby vaccination schedule. Everything you enter stays on your phone.',
     title: 'Free health tools',
     subtitle: 'Free · Hindi + English · Your details stay on your phone',
     privacy: 'All tools work right here on your phone. What you type or photograph is never sent to ProMedicoz and never shared with anyone.',
