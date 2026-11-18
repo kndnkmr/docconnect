@@ -6,6 +6,8 @@ A full-stack web application where doctors register profiles, patients browse an
 
 Built as a learning project covering: authentication, CRUD operations, file uploads, role-based access, relational data, and responsive UI.
 
+**New here? Start with [LEARN_HOW_IT_CONNECTS.md](./LEARN_HOW_IT_CONNECTS.md)**: a guided tour of how every service connects, with diagrams, one booking followed end to end, and a quiz.
+
 **Related docs:** [SCALING.md](./SCALING.md) — the ordered scale-up plan (Render → WebSockets → Atlas) and upgrade triggers for when real traffic arrives.
 
 ---
@@ -272,6 +274,7 @@ Medical numbers (ranges, limits, schedule) live in one plain-JS file per tool (`
 docconnect/
 ├── README.md                    ← You are here
 ├── HOW_IT_WORKS.md              ← Full technical documentation
+├── LEARN_HOW_IT_CONNECTS.md     ← START HERE to learn: how every service connects (guided tour)
 ├── WINDOWS_SETUP.md             ← Windows laptop setup guide
 ├── .gitignore                   ← Files excluded from Git
 ├── .github/workflows/uptime.yml ← GitHub uptime check every ~10 min (emails on failure)
