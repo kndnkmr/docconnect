@@ -38778,5 +38778,3333 @@ export const articles = [
         "text": "Yeh trusted public health guidance (WHO dengue guidelines, National Centre for Vector Borne Diseases Control (India), NHS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
       }
     ]
+  },
+  {
+    "slug": "preeclampsia-high-bp-in-pregnancy-warning-signs-guide",
+    "title": "High BP in Pregnancy (Pre-eclampsia): Warning Signs Every Family Should Know",
+    "description": "Pre-eclampsia can be silent until it becomes dangerous. Who is at risk, the warning signs (headache, blurred vision, swelling), why BP checks matter, when to rush.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🩺",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Pre-eclampsia is a condition in pregnancy where **blood pressure rises and organs like the kidneys and liver are affected**. It usually starts after 20 weeks, often in the last months, and sometimes even after delivery. It's one of the main reasons mothers and babies become seriously ill in India, and the frightening part is that **it can feel like nothing at first**. The good news: it's easy to catch with **regular BP and urine checks**, and early care makes it much safer."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "Go to hospital **the same day** if you are more than 20 weeks pregnant (or recently delivered) and have **a severe headache that won't go, blurred vision or flashing lights, pain under the ribs on the right, sudden swelling of the face or hands, vomiting, or reduced baby movements**. A **fit (seizure)** or breathlessness is an emergency. Get your **BP checked at every antenatal visit**."
+      },
+      {
+        "type": "heading",
+        "text": "Who Is at Higher Risk"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**First pregnancy**, or a new partner",
+          "Pre-eclampsia in a **previous pregnancy**, or in your mother or sister",
+          "**High BP, diabetes, kidney disease** or lupus before pregnancy",
+          "**Twins or more**",
+          "Age **over 40**, or obesity",
+          "Pregnancy after IVF",
+          "More than 10 years since the last pregnancy"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Ask about aspirin early",
+        "text": "For women at higher risk, doctors often prescribe **low-dose aspirin from about 12 weeks** to lower the chance of pre-eclampsia. **Don't start it yourself.** Ask your gynaecologist at your first visits."
+      },
+      {
+        "type": "heading",
+        "text": "Warning Signs"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Sign",
+          "Why it matters"
+        ],
+        "rows": [
+          [
+            "Severe headache that painkillers don't help",
+            "Can mean very high BP affecting the brain"
+          ],
+          [
+            "Blurred vision, flashing lights, spots",
+            "A sign of severe pre-eclampsia"
+          ],
+          [
+            "Pain under the ribs on the right, or upper tummy",
+            "Can mean the liver is affected"
+          ],
+          [
+            "Sudden swelling of the face, hands or feet",
+            "Some swelling of the feet is normal; sudden swelling of the face and hands is not"
+          ],
+          [
+            "Vomiting late in pregnancy, feeling very unwell",
+            "Can be a sign of worsening"
+          ],
+          [
+            "Baby moving less",
+            "The placenta may not be working well"
+          ],
+          [
+            "Breathlessness, a fit",
+            "Emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How It's Checked and Treated"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**BP** at every visit: 140/90 or more after 20 weeks needs attention",
+          "**Urine protein** test",
+          "Blood tests for **platelets, liver and kidneys**, and scans to check the baby's growth",
+          "Treatment: BP medicines that are safe in pregnancy, closer monitoring, sometimes hospital admission",
+          "**Delivery of the baby and placenta** is the cure. The timing depends on how severe it is and how many weeks pregnant you are",
+          "BP can stay high or even start **in the first 6 weeks after delivery**, so keep checking"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "At Home: What You Can Do"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Don't miss antenatal visits.** BP checks are free at government health centres",
+          "If your doctor advises, **check BP at home** with a digital machine and note it down",
+          "Know the warning signs, and **tell your family** so they can act if you can't",
+          "Take medicines exactly as prescribed; don't stop them because you feel fine",
+          "Keep a hospital bag and transport plan ready from the 7th month"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Mild ankle swelling by evening, BP normal at visits",
+            "Keep up antenatal visits"
+          ],
+          [
+            "🟡 See a doctor soon",
+            "BP 140/90 or more on a home machine without other symptoms",
+            "Contact your gynaecologist within a day"
+          ],
+          [
+            "🔴 Same day hospital",
+            "Severe headache, blurred vision, right-side upper tummy pain, sudden face or hand swelling, vomiting, less baby movement",
+            "Go to hospital today"
+          ],
+          [
+            "🔴 Emergency",
+            "A fit, breathlessness, chest pain, or BP 160/110 or more",
+            "Call an ambulance or go to the nearest emergency now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Swelling in pregnancy is always normal.\"",
+            "Mild foot swelling is common; sudden swelling of the face and hands can be a warning sign"
+          ],
+          [
+            "\"Eating less salt prevents pre-eclampsia.\"",
+            "It doesn't prevent it. A normal, balanced diet is best; follow your doctor's advice"
+          ],
+          [
+            "\"I feel fine, so my BP must be fine.\"",
+            "Pre-eclampsia can be silent. Only checking BP and urine tells you"
+          ],
+          [
+            "\"Once the baby is born, the risk is over.\"",
+            "It can start or worsen in the weeks after delivery. Keep checking BP"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Weeks of pregnancy** (or date of delivery)",
+          "Your **BP readings**, with dates and times",
+          "Any headache, vision changes, swelling, tummy pain or vomiting",
+          "Past BP problems, diabetes or kidney disease",
+          "Medicines you take, including aspirin"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "For **raised BP readings without warning signs**, an **online consultation** with a gynaecologist helps you understand the numbers and plan the next check-up quickly. For any warning sign above, go to hospital first, don't wait for an appointment. (See our guides on antenatal check-ups, gestational diabetes, and bleeding in early pregnancy.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, NHS, Federation of Obstetric and Gynaecological Societies of India (FOGSI), ACOG). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Pre-eclampsia pregnancy ki aisi sthiti hai jismein **BP badhta hai aur kidney, liver jaise ang prabhavit hote hain**. Yeh aamtaur par 20 hafte ke baad shuru hota hai, aksar aakhri mahinon mein, aur kabhi delivery ke baad bhi. India mein maa aur bachche ke gambhir roop se bimaar hone ki yeh mukhya wajahon mein se ek hai, aur daraane wali baat yeh hai ki **shuru mein kuch mehsoos nahi hota**. Achhi khabar: **niyamit BP aur peshaab ki jaanch** se yeh aasaani se pakda jaata hai, aur jaldi dekhbhaal se kaafi surakshit hota hai."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Agar aap 20 hafte se zyada pregnant hain (ya haal mein delivery hui hai) aur **tez sir dard jo na jaaye, dhundhla dikhna ya chamakti roshni, daayin pasliyon ke neeche dard, chehre ya haathon mein achanak soojan, ulti, ya bachche ki harkat kam** ho, to **usi din** hospital jaayein. **Daura (fit)** ya saans phoolna emergency hai. **Har antenatal visit par BP check** karayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kise Zyada Khatra Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Pehli pregnancy**, ya naya partner",
+          "**Pichhli pregnancy** mein, ya maa ya behen ko pre-eclampsia",
+          "Pregnancy se pehle **high BP, diabetes, kidney ki bimaari** ya lupus",
+          "**Judwa ya zyada** bachche",
+          "**40 se zyada** umar, ya motapa",
+          "IVF ke baad pregnancy",
+          "Pichhli pregnancy se 10 saal se zyada ka gap"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Aspirin ke baare mein jaldi poochhein",
+        "text": "Zyada khatre wali auraton ko doctor aksar pre-eclampsia ka khatra kam karne ke liye **lagbhag 12 hafte se kam dose aspirin** dete hain. **Khud shuru na karein.** Shuruaati visits mein gynaecologist se poochhein."
+      },
+      {
+        "type": "heading",
+        "text": "Khatre Ke Sanket"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Sanket",
+          "Kyun zaroori"
+        ],
+        "rows": [
+          [
+            "Tez sir dard jo painkiller se na jaaye",
+            "Bahut high BP ka dimaag par asar ho sakta hai"
+          ],
+          [
+            "Dhundhla dikhna, chamakti roshni, dhabbe",
+            "Gambhir pre-eclampsia ka sanket"
+          ],
+          [
+            "Daayin pasliyon ke neeche ya pet ke upar dard",
+            "Liver prabhavit ho sakta hai"
+          ],
+          [
+            "Chehre, haathon ya pairon mein achanak soojan",
+            "Pairon mein thodi soojan normal hai; chehre aur haathon mein achanak soojan nahi"
+          ],
+          [
+            "Aakhri mahinon mein ulti, bahut bimaar lagna",
+            "Bigadne ka sanket ho sakta hai"
+          ],
+          [
+            "Bachche ki harkat kam",
+            "Placenta theek kaam nahi kar raha ho sakta"
+          ],
+          [
+            "Saans phoolna, daura",
+            "Emergency"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Jaanch Aur Ilaaj Kaise Hota Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Har visit par **BP**: 20 hafte ke baad 140/90 ya zyada par dhyaan chahiye",
+          "**Peshaab mein protein** ki jaanch",
+          "**Platelets, liver aur kidney** ke blood test, aur bachche ki growth ke scan",
+          "Ilaaj: pregnancy mein surakshit BP ki dawaiyan, zyada nigraani, kabhi hospital mein bharti",
+          "**Bachche aur placenta ki delivery** hi ilaaj hai. Samay gambhirta aur pregnancy ke hafton par nirbhar karta hai",
+          "Delivery ke **pehle 6 hafton mein** BP high reh sakta hai ya shuru bhi ho sakta hai, isliye check karti rahein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ghar Par Aap Kya Kar Sakti Hain"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Antenatal visits na chhodein.** Sarkari kendron par BP jaanch muft hai",
+          "Doctor kahein to digital machine se **ghar par BP check** karein aur likh lein",
+          "Khatre ke sanket jaanein, aur **parivaar ko batayein** taaki aap na kar sakein to woh kadam utha sakein",
+          "Dawaiyan theek parchi ke anusaar lein; theek lagne par band na karein",
+          "7ve mahine se hospital bag aur gaadi ka plan taiyaar rakhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Shaam tak takhnon mein halki soojan, visits mein BP normal",
+            "Antenatal visits jaari rakhein"
+          ],
+          [
+            "🟡 Jaldi doctor ko dikhayein",
+            "Ghar ki machine par bina doosre lakshanon ke BP 140/90 ya zyada",
+            "Ek din mein gynaecologist se sampark karein"
+          ],
+          [
+            "🔴 Usi din hospital",
+            "Tez sir dard, dhundhla dikhna, daayin taraf pet ke upar dard, chehre ya haath mein achanak soojan, ulti, bachche ki harkat kam",
+            "Aaj hospital jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Daura, saans phoolna, seene mein dard, ya BP 160/110 ya zyada",
+            "Ambulance bulaayein ya abhi nazdeeki emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Pregnancy mein soojan hamesha normal hai.\"",
+            "Pairon mein halki soojan aam hai; chehre aur haathon mein achanak soojan khatre ka sanket ho sakti hai"
+          ],
+          [
+            "\"Kam namak khaane se pre-eclampsia nahi hota.\"",
+            "Isse bachaav nahi hota. Normal, santulit khaana sabse achha; doctor ki salaah maanein"
+          ],
+          [
+            "\"Main theek mehsoos karti hoon, to BP bhi theek hoga.\"",
+            "Pre-eclampsia chupchaap ho sakta hai. Sirf BP aur peshaab ki jaanch se pata chalta hai"
+          ],
+          [
+            "\"Bachcha hone ke baad khatra khatam.\"",
+            "Delivery ke baad ke hafton mein shuru ya bigad sakta hai. BP check karti rahein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pregnancy ke hafte** (ya delivery ki taareekh)",
+          "Aapki **BP readings**, taareekh aur samay ke saath",
+          "Koi sir dard, dikhne mein badlaav, soojan, pet dard ya ulti",
+          "Pehle ki BP ki dikkat, diabetes ya kidney ki bimaari",
+          "Li ja rahi dawaiyan, aspirin samet"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "**Bina khatre ke sanket ke badhi BP readings** mein gynaecologist se **online consultation** numbers samajhne aur agli jaanch jaldi plan karne mein madad karta hai. Upar ke kisi bhi khatre ke sanket par pehle hospital jaayein, appointment ka intezaar na karein. (Antenatal jaanch, gestational diabetes aur shuruaati pregnancy mein bleeding par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, NHS, Federation of Obstetric and Gynaecological Societies of India (FOGSI), ACOG) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "baby-movements-in-pregnancy-kick-count-guide",
+    "title": "Baby Movements in Pregnancy: When You Feel Them and When Less Is a Warning",
+    "description": "When you first feel your baby move, what normal movement looks like later, why \"babies move less near the end\" is a myth, how to check, and when to go to hospital.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "👶",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Feeling your baby move is one of the most reassuring parts of pregnancy, and it's also one of the best signs that the baby is well. A **change in the baby's usual pattern**, especially fewer movements, can be an early warning that the baby needs help. Many women are told to \"wait and see\", which can be dangerous. Here's what's normal, and exactly when to act."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "Most women first feel movements between **16 and 24 weeks**. From about **28 weeks**, get to know your baby's **own pattern**. If movements are **less than usual, have changed, or stopped**, **don't wait until the next day**: lie on your left side for a short while and focus on movements, and if they're still reduced, **go to hospital or call your doctor right away**."
+      },
+      {
+        "type": "heading",
+        "text": "When Will I Feel My Baby?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Weeks",
+          "What you may feel"
+        ],
+        "rows": [
+          [
+            "16–20 (second pregnancy and later)",
+            "Light flutters, \"bubbles\" or gas-like feelings"
+          ],
+          [
+            "18–24 (first pregnancy)",
+            "Flutters, then clearer kicks"
+          ],
+          [
+            "24–28",
+            "Kicks, jabs, rolls; others may feel them on your tummy"
+          ],
+          [
+            "28 onwards",
+            "A regular daily pattern; strong rolls and kicks until birth"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Normal Looks Like"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Every baby has its **own pattern**: some are busy in the evening, after meals, or when you lie down",
+          "Babies sleep for **20–40 minutes** at a time, sometimes up to 90 minutes, so short quiet spells are normal",
+          "Near the end, movements may feel **different (more rolls, fewer sharp kicks)**, but they should **not become less frequent**",
+          "There's no fixed number that suits everyone; **your baby's usual pattern** is what matters"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Myth: \"Babies move less near the end because there's no space\"",
+        "text": "This is **not true** and can delay care. Babies keep moving right up to and during labour. **Less movement at any stage after 24–28 weeks needs to be checked the same day.**"
+      },
+      {
+        "type": "heading",
+        "text": "If You Think Movements Are Less"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Lie on your left side** in a quiet place and focus on the baby for about an hour",
+          "If you feel fewer movements than usual, or none, **contact your hospital or doctor immediately**, day or night",
+          "**Don't** rely on cold water, sweets or a home Doppler/app to \"check\". A normal sound on a home device doesn't mean the baby is well",
+          "At hospital, they listen to the heartbeat, often do a **CTG (heart tracing)** and sometimes a scan",
+          "If it happens again later, **go again**. Every episode needs checking"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Usual pattern, with short quiet spells when the baby sleeps",
+            "Keep getting to know the pattern"
+          ],
+          [
+            "🔴 Same day",
+            "Fewer movements than usual, or a change in pattern",
+            "Contact the hospital or doctor now, don't wait until tomorrow"
+          ],
+          [
+            "🔴 Emergency",
+            "No movements at all, or reduced movements with bleeding, tummy pain, fluid leaking, or headache with blurred vision",
+            "Go to hospital now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Count 10 kicks; less than that is fine if it's later in the day.\"",
+            "There's no safe fixed number. Any reduction from your baby's usual pattern needs a check"
+          ],
+          [
+            "\"Drink cold water or eat something sweet to make the baby move.\"",
+            "This doesn't prove the baby is well. If movements are reduced, get checked"
+          ],
+          [
+            "\"A home heartbeat device can reassure me.\"",
+            "Home devices can give false reassurance. Hospital checks are needed"
+          ],
+          [
+            "\"Baby moves less near delivery.\"",
+            "Movements change in feel, but shouldn't reduce"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Weeks of pregnancy**",
+          "Your baby's **usual pattern**, and when the change started",
+          "Any bleeding, pain, fluid leaking, swelling, headache or fever",
+          "Your BP readings, if you check at home",
+          "Any previous episodes of reduced movements"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Reduced movements need an **in-person hospital check**, not a phone call or online chat. An **online consultation** with a gynaecologist is useful earlier, to understand your baby's patterns and plan your antenatal visits. (See our guides on antenatal check-ups, pregnancy scans, and high BP in pregnancy.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, Royal College of Obstetricians and Gynaecologists, Tommy's pregnancy guidance). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Bachche ki harkat mehsoos karna pregnancy ka sabse tasalli wala hissa hai, aur yeh bachche ke theek hone ke sabse achhe sanketon mein se ek bhi hai. **Bachche ke roz ke pattern mein badlaav**, khaaskar harkat kam hona, is baat ka shuruaati sanket ho sakta hai ki bachche ko madad chahiye. Kai auraton se \"dekhte hain\" kaha jaata hai, jo khatarnaak ho sakta hai. Yahan jaaniye kya normal hai, aur theek kab kadam uthaana hai."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zyadatar auraton ko pehli harkat **16 se 24 hafte** ke beech mehsoos hoti hai. Lagbhag **28 hafte** se apne bachche ka **apna pattern** pehchaanein. Agar harkat **roz se kam, badli hui, ya band** ho, to **agle din ka intezaar na karein**: thodi der baayin karvat let kar harkat par dhyaan dein, aur phir bhi kam ho to **turant hospital jaayein ya doctor ko call karein**."
+      },
+      {
+        "type": "heading",
+        "text": "Bachcha Kab Mehsoos Hoga?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Hafte",
+          "Kya mehsoos ho sakta hai"
+        ],
+        "rows": [
+          [
+            "16–20 (doosri ya baad ki pregnancy)",
+            "Halki phadphadahat, \"bulbule\" ya gas jaisa"
+          ],
+          [
+            "18–24 (pehli pregnancy)",
+            "Phadphadahat, phir saaf kick"
+          ],
+          [
+            "24–28",
+            "Kick, dhakke, palatna; doosre bhi pet par mehsoos kar sakte hain"
+          ],
+          [
+            "28 ke baad",
+            "Roz ka niyamit pattern; janm tak tez palatna aur kick"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Normal Kaisa Hota Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Har bachche ka **apna pattern** hota hai: kuch shaam ko, khaane ke baad, ya aapke letne par zyada hilte hain",
+          "Bachche ek baar mein **20–40 minute**, kabhi 90 minute tak sote hain, isliye thodi der shaanti normal hai",
+          "Aakhir mein harkat **alag lag sakti hai (zyada palatna, kam tez kick)**, lekin **kam nahi honi chahiye**",
+          "Sabke liye koi ek tay gintee nahi; **aapke bachche ka roz ka pattern** hi maayne rakhta hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Myth: \"Aakhir mein jagah nahi hoti isliye bachcha kam hilta hai\"",
+        "text": "Yeh **sach nahi** hai aur isse ilaaj mein der ho sakti hai. Bachche delivery tak aur uske dauraan bhi hilte rehte hain. **24–28 hafte ke baad kisi bhi samay harkat kam ho to usi din check karayein.**"
+      },
+      {
+        "type": "heading",
+        "text": "Agar Lage Ki Harkat Kam Hai"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Shaant jagah **baayin karvat letein** aur lagbhag ek ghanta bachche par dhyaan dein",
+          "Roz se kam harkat ho, ya bilkul na ho, to din ho ya raat, **turant hospital ya doctor se sampark karein**",
+          "Thande paani, meethe ya ghar ke Doppler/app par \"check\" ke liye **bharosa na karein**. Ghar ke device par normal awaaz ka matlab yeh nahi ki bachcha theek hai",
+          "Hospital mein dhadkan suni jaati hai, aksar **CTG (dhadkan ki tracing)** aur kabhi scan hota hai",
+          "Baad mein phir ho to **phir jaayein**. Har baar jaanch zaroori hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Roz ka pattern, bachche ke sone par thodi der shaanti",
+            "Pattern pehchaanti rahein"
+          ],
+          [
+            "🔴 Usi din",
+            "Roz se kam harkat, ya pattern mein badlaav",
+            "Abhi hospital ya doctor se sampark karein, kal ka intezaar na karein"
+          ],
+          [
+            "🔴 Emergency",
+            "Bilkul harkat nahi, ya kam harkat ke saath bleeding, pet dard, paani risna, ya sir dard aur dhundhla dikhna",
+            "Abhi hospital jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"10 kick ginein; din mein der se kam ho to bhi theek hai.\"",
+            "Koi surakshit tay gintee nahi. Roz ke pattern se koi bhi kami check karani chahiye"
+          ],
+          [
+            "\"Bachche ko hilaane ke liye thanda paani ya meetha lo.\"",
+            "Isse saabit nahi hota ki bachcha theek hai. Harkat kam ho to jaanch karayein"
+          ],
+          [
+            "\"Ghar ka dhadkan wala device tasalli de sakta hai.\"",
+            "Ghar ke device jhoothi tasalli de sakte hain. Hospital mein jaanch zaroori hai"
+          ],
+          [
+            "\"Delivery ke paas bachcha kam hilta hai.\"",
+            "Harkat ka ehsaas badalta hai, lekin kam nahi hona chahiye"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pregnancy ke hafte**",
+          "Bachche ka **roz ka pattern**, aur badlaav kab shuru hua",
+          "Koi bleeding, dard, paani risna, soojan, sir dard ya bukhaar",
+          "Ghar par check karti hain to BP readings",
+          "Pehle kabhi harkat kam hui ho to"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Harkat kam hone par **hospital mein milkar jaanch** chahiye, phone call ya online chat nahi. Gynaecologist se **online consultation** pehle ke liye kaam ka hai: bachche ke pattern samajhne aur antenatal visits plan karne ke liye. (Antenatal jaanch, pregnancy scan aur pregnancy mein high BP par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, Royal College of Obstetricians and Gynaecologists, Tommy's pregnancy guidance) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "pregnancy-discomforts-back-pain-heartburn-constipation-guide",
+    "title": "Common Pregnancy Discomforts: Back Pain, Heartburn, Constipation, Leg Cramps",
+    "description": "Back pain, acidity, constipation, leg cramps, swollen feet and poor sleep in pregnancy: what's normal, simple safe relief, what to avoid, and when to see a doctor.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🤰",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Pregnancy brings many small discomforts that nobody warns you about: a burning chest after dinner, an aching back, cramps that wake you at night, hard stools. Most are caused by **hormones and the growing baby**, and most can be eased with simple, safe steps. A few need a doctor, and it's worth knowing which. Here's a practical guide, one problem at a time."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Most pregnancy aches are normal and ease with **posture, small frequent meals, fibre and water, gentle walking and good sleep positions**. **Don't take any medicine, including \"harmless\" painkillers or ayurvedic churan, without asking your doctor.** See a doctor the same day for **regular tightening or pain in the tummy, bleeding, fluid leaking, a severe headache, or pain on one side of the back with fever**."
+      },
+      {
+        "type": "heading",
+        "text": "Back Pain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Very common from the middle months, as hormones loosen joints and the bump grows",
+          "**Stand tall**, bend your knees to pick things up, and avoid lifting heavy objects",
+          "Wear **flat, comfortable footwear**; sit with your back supported",
+          "Sleep on your **side with a pillow between the knees**",
+          "Gentle walking, prenatal yoga or physiotherapy exercises help; a warm (not hot) compress eases spasm",
+          "**See a doctor** for back pain with fever, burning urine, bleeding or regular tightening (it may be an infection or labour)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Heartburn and Acidity"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Small, frequent meals** instead of three large ones",
+          "Avoid **spicy, oily and fried** food, especially at night",
+          "Eat dinner **2–3 hours before lying down**; raise the head of the bed slightly",
+          "Cold milk or curd soothes some women",
+          "Ask your doctor before taking antacids. Some are safe in pregnancy, but check which one and how much"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Constipation and Piles"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Hormones slow the gut, and **iron tablets** make it worse",
+          "**8–10 glasses of water**, plus fibre: fruits (papaya, guava, pear), vegetables, dal, whole grains, isabgol if your doctor agrees",
+          "Walk daily; **don't strain** on the toilet",
+          "If iron tablets cause constipation, ask your doctor about the timing or type. **Don't stop them yourself**",
+          "Ask your doctor before using any laxative or \"churan\""
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Leg Cramps, Swelling and Sleep"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Leg cramps**: stretch the calf (pull your toes towards you), walk a little, stay hydrated",
+          "**Swollen feet by evening**: rest with your feet raised, avoid standing for long, walk regularly",
+          "**Sleep**: from the middle months, sleep **on your side** (left is often comfortable), with pillows under the bump and between the knees",
+          "**Frequent urination** is normal, but burning or pain while passing urine is not. See a doctor (urine infections are common in pregnancy)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Mild backache, heartburn, constipation, evening ankle swelling, night cramps",
+            "Simple self-care above"
+          ],
+          [
+            "🟡 See a doctor",
+            "Burning urine, constipation for many days despite fibre, piles bleeding, or heartburn not settling",
+            "Book a consultation"
+          ],
+          [
+            "🔴 Same day",
+            "Regular tightening or pain in the tummy, bleeding, fluid leaking, reduced baby movements, or one-sided back pain with fever",
+            "Go to hospital today"
+          ],
+          [
+            "🔴 Same day",
+            "Sudden swelling of the face or hands, severe headache, blurred vision",
+            "Go to hospital today (possible pre-eclampsia)"
+          ],
+          [
+            "🔴 Emergency",
+            "Painful, swollen calf on one side, or chest pain and breathlessness",
+            "Go to an emergency now (possible blood clot)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Heartburn means the baby will have lots of hair.\"",
+            "Heartburn comes from hormones and pressure on the stomach, not the baby's hair"
+          ],
+          [
+            "\"Ayurvedic churan is natural, so it's safe in pregnancy.\"",
+            "Some herbal products aren't safe in pregnancy. Ask your doctor first"
+          ],
+          [
+            "\"Pregnant women should lie in bed to protect the baby.\"",
+            "Gentle activity is healthier for most pregnancies, unless your doctor advises rest"
+          ],
+          [
+            "\"Back pain is just weakness; drink more milk.\"",
+            "It's mostly hormones and posture. Exercise and good posture help more"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Weeks of pregnancy**",
+          "Which discomfort, since when, and what makes it worse",
+          "Any bleeding, fever, burning urine, swelling or headache",
+          "**Medicines and supplements** you take (iron, calcium, folic acid)",
+          "Your BP readings, if you check them"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Most of these problems are easy to discuss in an **online consultation** with a gynaecologist, who can suggest medicines that are safe in pregnancy and tell you whether anything needs a check in person. (See our guides on morning sickness, high BP in pregnancy, and baby movements.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Pregnancy mein kai chhoti takleefein aati hain jinke baare mein koi pehle nahi batata: raat ke khaane ke baad seene mein jalan, dukhti kamar, raat ko jagaane wale cramps, sakht potty. Zyadatar **hormone aur badhte bachche** ki wajah se hoti hain, aur zyadatar simple, surakshit upaayon se kam ho jaati hain. Kuch mein doctor chahiye, aur yeh jaanna zaroori hai ki kaunsi. Yahan ek-ek takleef ke liye practical guide hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Pregnancy ke zyadatar dard normal hain aur **sahi posture, thoda-thoda baar-baar khaana, fibre aur paani, halki walk aur sone ki sahi position** se kam hote hain. **Doctor se poochhe bina koi dawa na lein, \"bematlab\" painkiller ya ayurvedic churan bhi nahi.** **Pet mein niyamit jakdan ya dard, bleeding, paani risna, tez sir dard, ya bukhaar ke saath kamar ke ek taraf dard** ho to usi din doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kamar Dard"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Beech ke mahinon se bahut aam, kyunki hormone jodon ko dheela karte hain aur pet badhta hai",
+          "**Seedhi khadi rahein**, cheez uthaane ke liye ghutne modein, aur bhaari cheez na uthaayein",
+          "**Seedhe, aaraamdeh joote-chappal** pehnein; peeth ko sahaara dekar baithein",
+          "**Karvat lekar, ghutnon ke beech takiya** rakh kar soyein",
+          "Halki walk, pregnancy yoga ya physiotherapy exercise madad karti hain; garam (bahut garam nahi) sek akdan kam karta hai",
+          "Bukhaar, peshaab mein jalan, bleeding ya niyamit jakdan ke saath kamar dard ho to **doctor ko dikhayein** (infection ya labour ho sakta hai)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Seene Mein Jalan Aur Acidity"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Teen bade khaanon ke bajaaye **thoda-thoda baar-baar** khaayein",
+          "**Teekha, tela aur tala** khaana na khaayein, khaaskar raat ko",
+          "Letne se **2–3 ghante pehle** raat ka khaana khaayein; bistar ka sirhaana thoda ooncha karein",
+          "Kuch auraton ko thanda doodh ya dahi aaram deta hai",
+          "Antacid lene se pehle doctor se poochhein. Kuch pregnancy mein surakshit hain, par kaunsa aur kitna, yeh check karein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kabz Aur Bawaseer"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Hormone pet ki raftaar dheemi karte hain, aur **iron ki goliyan** ise badhaati hain",
+          "**8–10 gilaas paani**, saath mein fibre: phal (papita, amrood, naashpati), sabzi, dal, saabut anaaj, doctor maanein to isabgol",
+          "Roz chalein; toilet mein **zor na lagayein**",
+          "Iron ki goli se kabz ho to doctor se samay ya type ke baare mein poochhein. **Khud band na karein**",
+          "Koi bhi laxative ya \"churan\" lene se pehle doctor se poochhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Pairon Mein Cramp, Soojan Aur Neend"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Pairon mein cramp**: pindli ko kheenchein (ungliyan apni taraf), thoda chalein, paani piyein",
+          "**Shaam tak soojhe pair**: pair ooncha karke aaram, der tak khade na rahein, niyamit chalein",
+          "**Neend**: beech ke mahinon se **karvat lekar** soyein (baayin aksar aaraamdeh), pet ke neeche aur ghutnon ke beech takiya",
+          "**Baar-baar peshaab** normal hai, lekin peshaab mein jalan ya dard nahi. Doctor ko dikhayein (pregnancy mein peshaab ka infection aam hai)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Halka kamar dard, seene mein jalan, kabz, shaam ko takhnon mein soojan, raat ke cramp",
+            "Upar ke simple upaay"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Peshaab mein jalan, fibre ke baad bhi kai din kabz, bawaseer se khoon, ya jalan kam na ho",
+            "Consultation book karein"
+          ],
+          [
+            "🔴 Usi din",
+            "Pet mein niyamit jakdan ya dard, bleeding, paani risna, bachche ki harkat kam, ya bukhaar ke saath ek taraf kamar dard",
+            "Aaj hospital jaayein"
+          ],
+          [
+            "🔴 Usi din",
+            "Chehre ya haathon mein achanak soojan, tez sir dard, dhundhla dikhna",
+            "Aaj hospital jaayein (pre-eclampsia ho sakta hai)"
+          ],
+          [
+            "🔴 Emergency",
+            "Ek taraf dukhti, soojhi pindli, ya seene mein dard aur saans phoolna",
+            "Abhi emergency jaayein (khoon ka thakka ho sakta hai)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Seene mein jalan matlab bachche ke bahut baal honge.\"",
+            "Jalan hormone aur pet par dabaav se hoti hai, bachche ke baalon se nahi"
+          ],
+          [
+            "\"Ayurvedic churan natural hai, to pregnancy mein surakshit.\"",
+            "Kuch herbal cheezein pregnancy mein surakshit nahi. Pehle doctor se poochhein"
+          ],
+          [
+            "\"Bachche ki suraksha ke liye bistar par lete raho.\"",
+            "Zyadatar pregnancy mein halki activity behtar hai, jab tak doctor aaram na batayein"
+          ],
+          [
+            "\"Kamar dard bas kamzori hai; zyada doodh piyo.\"",
+            "Yeh zyadatar hormone aur posture se hai. Exercise aur sahi posture zyada madad karte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pregnancy ke hafte**",
+          "Kaunsi takleef, kab se, aur kis cheez se badhti hai",
+          "Koi bleeding, bukhaar, peshaab mein jalan, soojan ya sir dard",
+          "Li ja rahi **dawaiyan aur supplements** (iron, calcium, folic acid)",
+          "Check karti hain to BP readings"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Inmein se zyadatar dikkaton par gynaecologist se **online consultation** mein aasaani se baat ho sakti hai: woh pregnancy mein surakshit dawaiyan bata sakti hain aur yeh bhi ki kisi cheez ki milkar jaanch chahiye ya nahi. (Morning sickness, pregnancy mein high BP aur bachche ki harkat par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "stroke-patient-care-at-home-family-guide",
+    "title": "Caring for a Stroke Patient at Home: A Practical Guide for the Family",
+    "description": "Bringing a family member home after a stroke? Safe eating, medicines, bedsores, falls, mood, and the signs of a second stroke that need 108 right away.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🧠",
+    "content": [
+      {
+        "type": "intro",
+        "text": "The first weeks at home after a stroke are when families feel most unsure. The hospital has done its part, and now the daily care is yours. The good news is that **most recovery happens in the first 3 to 6 months**, and simple, careful routines at home make a real difference. This guide covers what matters most: **preventing a second stroke, safe eating, skin care, falls, and mood**."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "**Give every medicine exactly as prescribed** (BP, blood thinner, cholesterol, sugar) and never stop them on your own. **Don't give food or water by mouth until swallowing has been checked.** Turn a bed-bound person **every 2 hours**. And learn **BE FAST**: if you see new face drooping, arm weakness, speech trouble, sudden loss of balance or vision, **call 108 immediately**."
+      },
+      {
+        "type": "heading",
+        "text": "Preventing a Second Stroke"
+      },
+      {
+        "type": "list",
+        "items": [
+          "The risk of another stroke is **highest in the first weeks and months**",
+          "**Medicines are the main protection**: keep a written chart and a weekly pill box",
+          "Check **BP at home** and write it down, so the doctor can adjust doses",
+          "Keep sugar controlled if diabetic, and **stop all tobacco** (smoking, gutka, khaini)",
+          "Less salt, more vegetables and dal, and gentle daily activity as advised by the physio"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Safe Eating and Drinking"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Many people have **swallowing trouble** after a stroke. Food or water can go into the lungs and cause **pneumonia**",
+          "Feed only what the hospital team advised (soft, mashed or thickened)",
+          "Sit the person **fully upright** for meals and for 30 minutes after",
+          "Small spoonfuls, slowly, with no talking while swallowing",
+          "**Coughing, choking or a wet, gurgly voice** while eating means stop and tell the doctor"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daily Care Routine"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Skin**: turn every 2 hours if bed-bound; check hips, back, heels and elbows daily for red patches",
+          "**Weak arm**: support it on a pillow; never pull the person up by the weak arm (it injures the shoulder)",
+          "**Falls**: clear the floor, add a night light, use a commode near the bed, keep someone close while walking",
+          "**Exercises**: do the physio exercises daily, little and often",
+          "**Talking**: speak slowly, one question at a time, and give time to answer"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Mood matters too",
+        "text": "About **1 in 3 people** feel low or anxious after a stroke. Crying easily, anger or losing interest is common, and it is treatable. Tell the doctor. Caregivers need rest as well: share the duties within the family."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Expected",
+            "Tiredness, slow progress, some days better than others",
+            "Keep the routine and exercises going"
+          ],
+          [
+            "🟡 See doctor soon",
+            "Low mood, BP readings staying high, red skin patches, shoulder pain, constipation, poor sleep",
+            "Book a consultation in the next few days"
+          ],
+          [
+            "🔴 Emergency (108)",
+            "New face drooping, arm or leg weakness, speech trouble, sudden confusion, severe headache, a fit, or choking with breathing trouble",
+            "Call 108 now and note the time it started"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Once he feels better, the medicines can stop.\"",
+            "Stroke prevention medicines are usually lifelong. Stopping them raises the risk of another stroke"
+          ],
+          [
+            "\"Massage with oil will bring back movement.\"",
+            "Gentle massage can comfort, but movement returns through regular, guided exercise"
+          ],
+          [
+            "\"Keep the patient in bed so he can rest.\"",
+            "Too much bed rest causes stiffness, bedsores and clots. Move as advised, as early as safe"
+          ],
+          [
+            "\"Recovery stops after one month.\"",
+            "Most gains come in 3 to 6 months, and many people keep improving slowly after that"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The **discharge summary** and the full medicine list",
+          "A week of **BP and sugar readings**",
+          "How eating, walking, speech and toilet habits are going",
+          "Any new symptoms, falls, fever or cough",
+          "Questions about driving, work, or when to return for follow-up"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Many follow-up questions after a stroke can be answered without travelling: reviewing BP readings, side effects, mood and the daily routine. An **online consultation** with a neurologist saves the patient a tiring trip. Any **new stroke sign is an emergency**: call 108, don't book a consultation. (See our guides on stroke warning signs (BE FAST), stroke rehabilitation, and reading BP numbers.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (World Stroke Organization, NHS, American Stroke Association). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Stroke ke baad ghar par pehle kuch hafte parivaar ko sabse zyada uljhan mein daalte hain. Hospital ne apna kaam kar diya, ab roz ki dekhbhaal aapke haath mein hai. Achhi baat yeh hai ki **zyadatar sudhaar pehle 3 se 6 mahine mein hota hai**, aur ghar par saadhaaran, dhyaan se kiye gaye routine se sach mein fark padta hai. Is guide mein sabse zaroori baatein hain: **doosre stroke se bachaav, surakshit khaana, chamdi ki dekhbhaal, girna, aur mann ki haalat**."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Har dawa bilkul likhe anusaar dein** (BP, khoon patla karne wali, cholesterol, sugar) aur apne aap kabhi band na karein. **Nigalne ki jaanch hone tak muh se khaana ya paani na dein.** Bistar par rehne wale ko **har 2 ghante karvat dilaayein**. Aur **BE FAST** yaad rakhein: chehra naya tedha ho, haath kamzor ho, bolne mein dikkat ho, achanak santulan ya nazar jaaye, to **turant 108 call karein**."
+      },
+      {
+        "type": "heading",
+        "text": "Doosre Stroke Se Bachaav"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Doosre stroke ka khatra **pehle kuch hafton aur mahinon mein sabse zyada** hota hai",
+          "**Dawaayein sabse badi suraksha hain**: likhit chart aur hafte ka pill box rakhein",
+          "**Ghar par BP check** karke likhein, taaki doctor dose theek kar sakein",
+          "Diabetes ho to sugar control rakhein, aur **har tarah ka tambaaku band** karein (cigarette, gutka, khaini)",
+          "Kam namak, zyada sabzi aur daal, aur physio ki salah se roz halki activity"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Surakshit Khaana Aur Peena"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Stroke ke baad kai logon ko **nigalne mein dikkat** hoti hai. Khaana ya paani phephdon mein jaakar **pneumonia** kar sakta hai",
+          "Wahi khilaayein jo hospital team ne bataaya (naram, masla hua ya gaadha)",
+          "Khaane ke samay aur uske 30 minute baad tak **bilkul seedha bithaayein**",
+          "Chhote chammach, dheere dheere, nigalte samay baat nahi",
+          "Khaate samay **khaansi, phanda lagna ya geeli, ghurghuraati awaaz** ho to rok dein aur doctor ko batayein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Roz Ki Dekhbhaal"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Chamdi**: bistar par ho to har 2 ghante karvat; kulhe, peeth, eedi aur kohni par laal nishaan roz dekhein",
+          "**Kamzor haath**: takiye par sahaara dein; kamzor haath pakad kar kabhi na uthaayein (kandha chot khaata hai)",
+          "**Girna**: farsh saaf rakhein, raat ki light lagaayein, bistar ke paas commode rakhein, chalte samay koi paas rahe",
+          "**Exercise**: physio wali exercise roz karein, thodi thodi aur baar baar",
+          "**Baat-cheet**: dheere bolein, ek baar mein ek sawaal, aur jawaab ke liye samay dein"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Mann ki haalat bhi zaroori hai",
+        "text": "Stroke ke baad lagbhag **3 mein se 1 vyakti** udaas ya ghabraaya hua mehsoos karta hai. Jaldi rona, gussa ya kisi cheez mein mann na lagna aam hai, aur iska ilaaj ho sakta hai. Doctor ko batayein. Dekhbhaal karne walon ko bhi aaraam chahiye: parivaar mein zimmedaari baantein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Ummeed ke mutaabik",
+            "Thakaan, dheema sudhaar, kuch din doosron se behtar",
+            "Routine aur exercise jaari rakhein"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Udaasi, BP lagaataar zyada, chamdi par laal nishaan, kandhe mein dard, kabz, neend kharaab",
+            "Agle kuch dinon mein consultation book karein"
+          ],
+          [
+            "🔴 Emergency (108)",
+            "Chehra naya tedha, haath ya pair mein kamzori, bolne mein dikkat, achanak confusion, tez sir dard, daura, ya phanda lagne ke saath saans ki takleef",
+            "Abhi 108 call karein aur shuru hone ka samay note karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Theek lagne lage to dawa band kar sakte hain.\"",
+            "Stroke se bachaav ki dawaayein aksar umar bhar chalti hain. Band karne se doosre stroke ka khatra badhta hai"
+          ],
+          [
+            "\"Tel ki maalish se harkat wapas aa jaayegi.\"",
+            "Halki maalish aaraam de sakti hai, lekin harkat niyamit, sahi exercise se lautti hai"
+          ],
+          [
+            "\"Mareez ko bistar par hi rakho taaki aaraam mile.\"",
+            "Zyada bistar par rehne se akdan, bedsore aur clot hote hain. Jitni jaldi surakshit ho, salah anusaar chalein-phirein"
+          ],
+          [
+            "\"Ek mahine baad sudhaar ruk jaata hai.\"",
+            "Zyadatar sudhaar 3 se 6 mahine mein hota hai, aur kai log uske baad bhi dheere dheere behtar hote hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Discharge summary** aur dawaon ki poori list",
+          "Ek hafte ki **BP aur sugar readings**",
+          "Khaana, chalna, bolna aur toilet kaisa chal raha hai",
+          "Koi naya lakshan, girna, bukhaar ya khaansi",
+          "Gaadi chalaane, kaam, ya follow-up kab aana hai, iske sawaal"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Stroke ke baad follow-up ke kai sawaal bina safar ke hal ho sakte hain: BP readings dekhna, dawa ke side effect, mann ki haalat aur roz ka routine. Neurologist se **online consultation** mareez ko thakaane wale safar se bachaata hai. **Stroke ka koi bhi naya lakshan emergency hai**: 108 call karein, consultation book na karein. (Stroke ke warning signs (BE FAST), stroke rehabilitation aur BP numbers samajhne par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (World Stroke Organization, NHS, American Stroke Association) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "morning-headache-waking-up-with-headache-guide",
+    "title": "Waking Up With a Headache: Common Causes and When It Needs a Doctor",
+    "description": "Why you wake up with a headache: sleep, snoring, teeth grinding, painkiller overuse, migraine and more. Simple fixes, and the morning signs that need a doctor.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🌅",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A headache that greets you as soon as you wake up can spoil the whole day. Most morning headaches come from **everyday causes** like poor sleep, snoring, a late night with screens, or too many painkillers. A few need a doctor's attention. This guide helps you find your likely cause and spot the warning signs."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "The most common causes are **too little or broken sleep, snoring (sleep apnoea), teeth grinding, dehydration, missing your morning tea or coffee, and taking painkillers too often**. Migraine also often starts early in the morning. See a doctor soon if morning headaches are **new and getting worse over weeks**, come **with vomiting**, or are **worse on lying down, coughing or straining**."
+      },
+      {
+        "type": "heading",
+        "text": "Common Causes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Cause",
+          "Clues"
+        ],
+        "rows": [
+          [
+            "Poor or irregular sleep",
+            "Late nights, phone in bed, very different weekend sleep times"
+          ],
+          [
+            "Snoring / sleep apnoea",
+            "Loud snoring, gasping at night, dry mouth, sleepy all day"
+          ],
+          [
+            "Teeth grinding",
+            "Jaw ache, tight temples, worn teeth, partner hears grinding"
+          ],
+          [
+            "Painkiller overuse",
+            "Taking headache tablets on many days a month, headache returns each morning"
+          ],
+          [
+            "Caffeine withdrawal",
+            "Eases soon after your first cup of tea or coffee"
+          ],
+          [
+            "Migraine",
+            "Throbbing, one side, nausea, light bothers you, often runs in the family"
+          ],
+          [
+            "Dehydration or alcohol",
+            "Little water the day before, or drinking the night before"
+          ],
+          [
+            "Low mood or stress",
+            "Poor sleep, early waking, feeling low or worried"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "The painkiller trap",
+        "text": "Taking simple painkillers on **15 or more days a month** (or combination tablets on 10 or more days) can itself cause a daily headache, often worst in the morning. This is called **medication overuse headache**. A doctor can help you stop safely and start a preventive plan."
+      },
+      {
+        "type": "heading",
+        "text": "Simple Things to Try for 2 Weeks"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Go to bed and wake up at the **same time every day**, including Sundays",
+          "**No phone or TV** for 30 minutes before sleep",
+          "Drink enough water during the day and limit alcohol",
+          "Keep tea or coffee to a **steady amount** at the same time each day",
+          "Use a pillow that keeps your neck straight",
+          "Keep a simple **headache diary**: sleep time, snoring, tablets taken, pain score"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually harmless",
+            "Occasional, after a late night or a missed cup of tea, goes within an hour or two",
+            "Fix sleep and water, watch the pattern"
+          ],
+          [
+            "🟡 See doctor soon",
+            "Most mornings for weeks, loud snoring, tablets on many days, or headache starting after age 50",
+            "Book a consultation and bring your diary"
+          ],
+          [
+            "🔴 Urgent",
+            "Getting worse each week with vomiting, worse lying down or coughing, blurred or double vision, weakness, confusion, a fit, or fever with stiff neck",
+            "See a doctor today or go to hospital"
+          ],
+          [
+            "🔴 Emergency (108)",
+            "Sudden, very severe \"worst ever\" headache that peaks within a minute",
+            "Call 108 now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Morning headache means high BP.\"",
+            "Usual BP rises rarely cause headache. Only very high BP does, so check it, but look for other causes too"
+          ],
+          [
+            "\"Snoring is just a habit.\"",
+            "Loud snoring with gasping can be sleep apnoea, which causes morning headaches and raises heart risk"
+          ],
+          [
+            "\"More tablets will stop it.\"",
+            "Frequent tablets can make headaches daily. Fewer, planned doses work better"
+          ],
+          [
+            "\"It must be a brain tumour.\"",
+            "Tumours are rare. Warning signs like vomiting, weakness or worsening over weeks are what need checking"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "How many mornings a week, and for how long",
+          "Your **sleep times** and whether you snore (ask your family)",
+          "**Every tablet** you take for pain, and on how many days a month",
+          "Your BP reading, if you can check it",
+          "Any vomiting, vision change, weakness or other new symptoms"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Most morning headaches can be sorted with a good history, and that is exactly what an **online consultation** with a neurologist or general physician does well: finding the pattern, stopping painkiller overuse, and deciding whether you need a sleep study or a scan. (See our guides on frequent headaches, migraine vs headache, and snoring.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Migraine Foundation, International Headache Society). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Aankh khulte hi sir dard poora din kharaab kar sakta hai. Zyadatar subah ke sir dard **roz ki aam wajahon** se hote hain, jaise kharaab neend, kharraate, der raat tak screen, ya zyada painkiller. Kuch mein doctor ki zaroorat hoti hai. Yeh guide aapki sambhavit wajah aur khatre ke sanket pehchaanne mein madad karegi."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Sabse aam wajahein hain **kam ya tooti neend, kharraate (sleep apnoea), daant peesna, paani ki kami, subah ki chai-coffee na milna, aur baar baar painkiller lena**. Migraine bhi aksar subah jaldi shuru hota hai. Jald doctor ko dikhaayein agar subah ka sir dard **naya hai aur hafton mein badh raha hai**, **ulti ke saath** aata hai, ya **letne, khaansne ya zor lagaane par badhta** hai."
+      },
+      {
+        "type": "heading",
+        "text": "Aam Kaaran"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Kaaran",
+          "Pehchaan"
+        ],
+        "rows": [
+          [
+            "Kharaab ya be-niyam neend",
+            "Der raat, bistar mein phone, weekend par sone ka samay bahut alag"
+          ],
+          [
+            "Kharraate / sleep apnoea",
+            "Tez kharraate, raat mein saans atakna, muh sookhna, din bhar neend"
+          ],
+          [
+            "Daant peesna",
+            "Jabde mein dard, kanpatti mein khinchaav, ghise daant, saathi ko awaaz sunaayi deti hai"
+          ],
+          [
+            "Painkiller ka zyada istemaal",
+            "Mahine mein kai din sir dard ki goli, har subah dard wapas"
+          ],
+          [
+            "Caffeine ki aadat",
+            "Pehli chai ya coffee ke thodi der baad aaraam"
+          ],
+          [
+            "Migraine",
+            "Dhak-dhak dard, ek taraf, ji machlana, roshni chubhna, aksar parivaar mein"
+          ],
+          [
+            "Paani ki kami ya sharaab",
+            "Pichhle din kam paani, ya raat ko sharaab"
+          ],
+          [
+            "Udaasi ya tanaav",
+            "Kharaab neend, jaldi aankh khulna, mann udaas ya pareshaan"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Painkiller ka jaal",
+        "text": "Saadhaaran painkiller **mahine mein 15 ya zyada din** (ya combination goliyan 10 ya zyada din) lene se khud roz ka sir dard ho sakta hai, jo aksar subah sabse zyada hota hai. Ise **medication overuse headache** kehte hain. Doctor surakshit tarike se band karwaane aur bachaav ka plan shuru karne mein madad kar sakte hain."
+      },
+      {
+        "type": "heading",
+        "text": "2 Hafte Tak Yeh Aasaan Upaay Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Roz **ek hi samay** soyein aur uthein, Sunday ko bhi",
+          "Sone se 30 minute pehle **phone ya TV nahi**",
+          "Din mein bharpoor paani piyein aur sharaab kam karein",
+          "Chai ya coffee roz **ek jaisi maatra** mein, ek hi samay par lein",
+          "Aisa takiya lein jo gardan seedhi rakhe",
+          "Ek saadhi **sir dard diary** rakhein: sone ka samay, kharraate, li gayi goliyan, dard ka score"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar bekhatar",
+            "Kabhi kabhi, der raat ya chai chhootne ke baad, ek-do ghante mein theek",
+            "Neend aur paani theek karein, pattern dekhein"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Hafton se zyadatar subah, tez kharraate, kai din goliyan, ya 50 ki umar ke baad naya sir dard",
+            "Consultation book karein aur diary saath laayein"
+          ],
+          [
+            "🔴 Zaroori",
+            "Har hafte badhta hua aur ulti ke saath, letne ya khaansne par zyada, dhundhla ya do dikhna, kamzori, confusion, daura, ya bukhaar ke saath gardan akadna",
+            "Aaj hi doctor ko dikhaayein ya hospital jaayein"
+          ],
+          [
+            "🔴 Emergency (108)",
+            "Achanak, bahut tez \"zindagi ka sabse bura\" sir dard jo ek minute mein charam par ho",
+            "Abhi 108 call karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Subah ka sir dard matlab high BP.\"",
+            "Aam BP badhne se sir dard kam hi hota hai. Sirf bahut zyada BP se hota hai, isliye check karein, par doosri wajahein bhi dekhein"
+          ],
+          [
+            "\"Kharraate bas ek aadat hai.\"",
+            "Saans atakne ke saath tez kharraate sleep apnoea ho sakte hain, jo subah sir dard karta hai aur dil ka khatra badhaata hai"
+          ],
+          [
+            "\"Zyada goli lene se ruk jaayega.\"",
+            "Baar baar goli lene se sir dard roz ka ho sakta hai. Kam aur soch-samajh kar li gayi dose behtar kaam karti hai"
+          ],
+          [
+            "\"Zaroor brain tumour hoga.\"",
+            "Tumour kam hi hota hai. Ulti, kamzori ya hafton mein badhna jaise sanket hi jaanch maangte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Hafte mein kitni subah, aur kab se",
+          "Aapke **sone ka samay** aur kya aap kharraate lete hain (parivaar se poochhein)",
+          "Dard ke liye li gayi **har goli**, aur mahine mein kitne din",
+          "Check kar sakein to BP reading",
+          "Koi ulti, nazar mein badlaav, kamzori ya doosre naye lakshan"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Zyadatar subah ke sir dard achhi history se samajh aa jaate hain, aur yahi kaam neurologist ya general physician se **online consultation** mein achhe se hota hai: pattern dhoondhna, painkiller ka zyada istemaal rokna, aur tay karna ki sleep study ya scan chahiye ya nahi. (Baar baar sir dard, migraine vs sir dard, aur kharraaton par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Migraine Foundation, International Headache Society) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "baby-spit-up-vs-vomiting-reflux-guide",
+    "title": "Baby Spit-Up or Vomiting? How to Tell the Difference and When to Worry",
+    "description": "Most babies bring up milk after feeds and it is harmless. How to tell normal spit-up from real vomiting, simple feeding tips, and the danger signs like green vomit.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🍼",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Almost every new parent worries when the baby brings up milk after a feed, sometimes all over the clothes. In most babies this is **normal spit-up (reflux)**, because the valve at the top of the stomach is still immature. It usually **peaks around 4 months** and settles by the first birthday. Real vomiting, especially some types, is different and needs a doctor. Here's how to tell them apart."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "**Spit-up** flows out easily, often with a burp, and the baby stays **happy and keeps gaining weight**. **Vomiting** is forceful and the baby may look unwell. Go to a doctor **urgently** for **green or yellow-green vomit, blood in vomit, forceful (projectile) vomiting after every feed, a swollen tummy, fewer wet nappies, or a very sleepy baby**."
+      },
+      {
+        "type": "heading",
+        "text": "Spit-Up vs Vomiting"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Spit-up (reflux)",
+          "Vomiting"
+        ],
+        "rows": [
+          [
+            "How it comes out",
+            "Flows or dribbles out easily",
+            "Forceful, may shoot out"
+          ],
+          [
+            "Amount",
+            "Usually a spoonful or two (looks more on cloth)",
+            "Often most of the feed"
+          ],
+          [
+            "Baby's mood",
+            "Happy, feeds well",
+            "May cry, look pale, unwell or sleepy"
+          ],
+          [
+            "Weight",
+            "Keeps gaining normally",
+            "May stop gaining or lose weight"
+          ],
+          [
+            "Age",
+            "Common from birth to about 12 months",
+            "Any age, often with an illness"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Simple Feeding Tips for Spit-Up"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Feed **smaller amounts, more often**, and avoid overfeeding",
+          "**Burp** the baby during and after feeds",
+          "Hold the baby **upright for 20 to 30 minutes** after feeding",
+          "Avoid tight nappies or clothes around the tummy",
+          "If bottle feeding, check the teat hole isn't too large",
+          "Keep breastfeeding: it is still the best food, even with spit-up"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Safe sleep still comes first",
+        "text": "Always put the baby to sleep **flat on the back**, on a firm surface. **Don't** raise the mattress, use a pillow, or put the baby on the tummy to \"stop reflux\". These raise the risk of sudden infant death and don't reduce spit-up."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Easy spit-up, happy baby, good weight gain, 6 or more wet nappies a day",
+            "Use the feeding tips, no medicine needed"
+          ],
+          [
+            "🟡 See doctor soon",
+            "Crying and arching with every feed, refusing feeds, poor weight gain, spit-up starting after 6 months or continuing past 12 months, cough or wheeze with feeds",
+            "Book a consultation in the next few days"
+          ],
+          [
+            "🔴 Urgent",
+            "Forceful vomiting after every feed (especially at 2 to 8 weeks), blood or brown \"coffee-ground\" vomit, fever, fewer wet nappies, dry mouth",
+            "See a doctor today"
+          ],
+          [
+            "🔴 Emergency",
+            "Green or yellow-green vomit, swollen hard tummy, baby very sleepy or floppy, breathing trouble or turning blue",
+            "Go to hospital now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Spit-up means the milk doesn't suit the baby.\"",
+            "Most spit-up is normal. Don't stop breastfeeding or change formula without a doctor's advice"
+          ],
+          [
+            "\"Give gripe water or home remedies after every feed.\"",
+            "They don't treat reflux. Don't give anything other than milk to young babies without a doctor's advice"
+          ],
+          [
+            "\"Sleeping on the tummy stops spit-up.\"",
+            "Back sleeping is the safe position. Tummy sleeping raises the risk of sudden infant death"
+          ],
+          [
+            "\"Every baby who spits up needs acid medicine.\"",
+            "Happy babies who gain weight don't need medicine. A doctor decides if treatment is needed"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby's **age and recent weight** (from the vaccination card)",
+          "How often, how much, and the **colour** of what comes up",
+          "Number of **wet nappies** in the last 24 hours",
+          "Feeding type: breast, formula, or both, and how much",
+          "A short **video** of a spit-up or vomit can help the doctor"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "For a happy spitter, an **online consultation** with a pediatrician is often enough to check weight, feeding and reassure you, and a video helps a lot. Green vomit, a swollen tummy, or a floppy baby is an **emergency**: go to hospital, don't wait for a consultation. (See our guides on common newborn concerns, newborn jaundice, and diarrhoea and vomiting in children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Academy of Pediatrics (HealthyChildren.org), NICE). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Lagbhag har naye maa-baap pareshaan hote hain jab baby feed ke baad doodh ulat deta hai, kabhi poore kapdon par. Zyadatar babies mein yeh **normal spit-up (reflux)** hai, kyunki pet ke upar ka valve abhi kachcha hota hai. Yeh aam taur par **lagbhag 4 mahine par sabse zyada** hota hai aur pehle janmdin tak theek ho jaata hai. Asli ulti, khaaskar kuch tarah ki, alag hai aur doctor ko dikhaani chahiye. Yahan jaaniye fark kaise karein."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Spit-up** aasaani se, aksar dakaar ke saath bahar aata hai, aur baby **khush rehta hai aur vazan badhta rehta hai**. **Ulti** zor se hoti hai aur baby beemar lag sakta hai. **Turant** doctor ke paas jaayein agar **hari ya peeli-hari ulti, ulti mein khoon, har feed ke baad zor se (fawwaare jaisi) ulti, phoola pet, kam geele nappy, ya baby bahut sust** ho."
+      },
+      {
+        "type": "heading",
+        "text": "Spit-Up vs Ulti"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Spit-up (reflux)",
+          "Ulti"
+        ],
+        "rows": [
+          [
+            "Kaise nikalta hai",
+            "Aasaani se behta ya tapakta hai",
+            "Zor se, fawwaare jaisa nikal sakta hai"
+          ],
+          [
+            "Maatra",
+            "Aksar ek-do chammach (kapde par zyada dikhta hai)",
+            "Aksar zyadatar feed"
+          ],
+          [
+            "Baby ka mood",
+            "Khush, achhe se peeta hai",
+            "Ro sakta hai, peela, beemar ya sust lag sakta hai"
+          ],
+          [
+            "Vazan",
+            "Normal badhta rehta hai",
+            "Badhna ruk sakta hai ya ghat sakta hai"
+          ],
+          [
+            "Umar",
+            "Janm se lagbhag 12 mahine tak aam",
+            "Kisi bhi umar mein, aksar beemari ke saath"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Spit-Up Ke Liye Aasaan Feeding Tips"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Thoda thoda, baar baar** pilaayein, zarurat se zyada na pilaayein",
+          "Feed ke beech mein aur baad mein **dakaar dilaayein**",
+          "Feed ke baad baby ko **20 se 30 minute seedha** pakdein",
+          "Pet par tight nappy ya kapde na pehnaayein",
+          "Bottle se pilaate hain to dekhein nipple ka chhed bahut bada na ho",
+          "Maa ka doodh jaari rakhein: spit-up ke saath bhi yahi sabse achha khaana hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Surakshit neend sabse pehle",
+        "text": "Baby ko hamesha **peeth ke bal seedha**, sakht satah par sulaayein. \"Reflux rokne\" ke liye gadda **ooncha na karein**, takiya na lagaayein, aur pet ke bal na sulaayein. Isse achanak shishu mrityu ka khatra badhta hai aur spit-up kam nahi hota."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Aasaan spit-up, khush baby, achha vazan, din mein 6 ya zyada geele nappy",
+            "Feeding tips apnaayein, dawa ki zaroorat nahi"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Har feed par rona aur kamar akadna, peene se mana, vazan kam badhna, 6 mahine ke baad shuru ya 12 mahine ke baad bhi jaari spit-up, feed ke saath khaansi ya saans mein seeti",
+            "Agle kuch dinon mein consultation book karein"
+          ],
+          [
+            "🔴 Zaroori",
+            "Har feed ke baad zor se ulti (khaaskar 2 se 8 hafte ki umar mein), khoon ya bhoori \"coffee jaisi\" ulti, bukhaar, kam geele nappy, muh sookha",
+            "Aaj hi doctor ko dikhaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Hari ya peeli-hari ulti, phoola sakht pet, baby bahut sust ya dheela, saans ki takleef ya neela padna",
+            "Abhi hospital jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Doodh ulatna matlab doodh suit nahi kar raha.\"",
+            "Zyadatar spit-up normal hai. Doctor ki salah ke bina maa ka doodh band na karein ya formula na badlein"
+          ],
+          [
+            "\"Har feed ke baad gripe water ya gharelu nuskhe do.\"",
+            "Inse reflux ka ilaaj nahi hota. Chhote baby ko doctor ki salah ke bina doodh ke alaava kuch na dein"
+          ],
+          [
+            "\"Pet ke bal sulaane se doodh nahi ulatta.\"",
+            "Peeth ke bal sulaana hi surakshit hai. Pet ke bal sulaane se achanak shishu mrityu ka khatra badhta hai"
+          ],
+          [
+            "\"Har ulatne wale baby ko acid ki dawa chahiye.\"",
+            "Khush aur vazan badhaate babies ko dawa nahi chahiye. Ilaaj chahiye ya nahi, yeh doctor tay karte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Baby ki **umar aur haal ka vazan** (vaccination card se)",
+          "Kitni baar, kitna, aur jo nikalta hai uska **rang**",
+          "Pichhle 24 ghante mein **geele nappy** kitne",
+          "Feeding: maa ka doodh, formula, ya dono, aur kitna",
+          "Spit-up ya ulti ka chhota **video** doctor ki madad karta hai"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Khush spit-up wale baby ke liye pediatrician se **online consultation** aksar kaafi hota hai: vazan aur feeding check karna aur tasalli dena, aur video se bahut madad milti hai. Hari ulti, phoola pet, ya dheela baby **emergency** hai: hospital jaayein, consultation ka intezaar na karein. (Navjaat ki aam chintaayein, navjaat jaundice, aur bachchon mein dast-ulti par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Academy of Pediatrics (HealthyChildren.org), NICE) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "speech-delay-late-talking-child-guide",
+    "title": "Is My Child Talking Late? Speech Milestones, Red Flags and How to Help",
+    "description": "When children usually start talking, the red flags for speech delay, why a hearing test comes first, how screens affect speech, and simple daily ways to help.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🗣️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"Wait, he will talk on his own\" is something many parents hear from relatives. Children do learn at different speeds, but waiting too long can mean missing the best time to help. **Early help works best**, and a few simple checks can tell you whether your child is on track. This guide gives the usual milestones, clear red flags, and daily habits that help children talk."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "Most children say **first words around 12 months**, have **about 50 words and join 2 words by 2 years**, and speak in short sentences by 3. See a pediatrician if there is **no babbling or pointing by 12 months, no words by 16 months, no 2-word phrases by 2 years**, or **any loss of words or skills** at any age. A **hearing test** is usually the first step."
+      },
+      {
+        "type": "heading",
+        "text": "Usual Speech Milestones"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Age",
+          "Most children can"
+        ],
+        "rows": [
+          [
+            "6–9 months",
+            "Babble (\"ba-ba\", \"da-da\"), turn to sounds and their name"
+          ],
+          [
+            "12 months",
+            "Say 1 to 3 words, point, wave bye-bye, understand \"no\""
+          ],
+          [
+            "18 months",
+            "Say 10 to 20 words, follow a simple instruction like \"bring the ball\""
+          ],
+          [
+            "2 years",
+            "Say about 50 words, join 2 words (\"mummy come\", \"more milk\")"
+          ],
+          [
+            "3 years",
+            "Speak in 3-word sentences; family understands most of it"
+          ],
+          [
+            "4 years",
+            "Tell a short story; strangers understand most of it"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Common Reasons for Late Talking"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Hearing problems**, including fluid behind the ears after colds",
+          "**Too much screen time** and less face-to-face talking",
+          "A simple **late talker** who understands well and catches up",
+          "**Autism**, especially with poor eye contact, not pointing, or not responding to name",
+          "Developmental delay, premature birth, or rarely mouth and muscle problems"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Two languages at home is fine",
+        "text": "Speaking Hindi, English and a local language at home **does not cause speech delay**. Children may mix words at first, which is normal. Speak the language you are most comfortable in."
+      },
+      {
+        "type": "heading",
+        "text": "Simple Ways to Help Every Day"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Talk through your day**: \"Now we are cutting the apple. Red apple!\"",
+          "**Read picture books** and name things together, even for 10 minutes",
+          "Sing rhymes with actions",
+          "**Wait** after asking something, give your child time to respond",
+          "**Add one word** to what they say: child says \"ball\", you say \"big ball\"",
+          "**No screens before 2 years** (except video calls), and **under 1 hour a day** from 2 to 5 years"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Likely fine",
+            "A little behind on words but understands well, points, plays and makes eye contact",
+            "Talk, read and limit screens; check again in 2 to 3 months"
+          ],
+          [
+            "🟡 See doctor soon",
+            "No babbling or pointing by 12 months, no words by 16 months, no 2-word phrases by 2 years, or family can't understand speech at 3",
+            "Book a consultation; ask about a hearing test"
+          ],
+          [
+            "🔴 Don't wait",
+            "Child stops using words or skills they had, doesn't respond to name, or rarely makes eye contact",
+            "See a pediatrician this week"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Boys always talk late, wait till 4.\"",
+            "Boys may be a bit slower, but the same red flags apply. Waiting delays help"
+          ],
+          [
+            "\"Cutting the tongue-tie will make him talk.\"",
+            "Tongue-tie rarely causes late talking. A proper assessment is needed first"
+          ],
+          [
+            "\"Cartoons in English will teach him to speak.\"",
+            "Children learn to talk from people, not screens. Screen time is linked with slower speech"
+          ],
+          [
+            "\"Speech therapy is only for older children.\"",
+            "Therapy for toddlers is play-based and works best when started early"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The **words your child says** and how many",
+          "Does the child **understand** simple instructions, point, and respond to name?",
+          "Daily **screen time**",
+          "Any ear infections, hearing concerns, or birth history (premature, NICU stay)",
+          "A short **video** of your child playing and talking"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician is a good first step for speech worries: the doctor can review milestones, watch a video, and guide you to a hearing test and speech therapy if needed. (See our guides on autism awareness, toddler tantrums, and screen time for children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (American Academy of Pediatrics, CDC developmental milestones, WHO, Indian Academy of Pediatrics). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Ruko, apne aap bolega\" yeh baat kai maa-baap rishtedaaron se sunte hain. Bachche alag alag raftaar se seekhte hain, lekin bahut der tak intezaar karne se madad ka sabse achha samay chhoot sakta hai. **Jaldi madad sabse achha kaam karti hai**, aur kuch aasaan baatein bata sakti hain ki bachcha sahi raaste par hai ya nahi. Is guide mein aam padaav, saaf khatre ke sanket, aur roz ki aadatein hain jo bachchon ko bolne mein madad karti hain."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zyadatar bachche **lagbhag 12 mahine par pehle shabd** bolte hain, **2 saal tak lagbhag 50 shabd aur 2 shabd jodte** hain, aur 3 saal tak chhote vaakya bolte hain. Pediatrician ko dikhaayein agar **12 mahine tak na babbling ho na ishaara, 16 mahine tak koi shabd na ho, 2 saal tak 2 shabd na jode**, ya kisi bhi umar mein **shabd ya hunar wapas chale jaayein**. Aam taur par pehla kadam **sunne ki jaanch** hai."
+      },
+      {
+        "type": "heading",
+        "text": "Bolne Ke Aam Padaav"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Umar",
+          "Zyadatar bachche kar sakte hain"
+        ],
+        "rows": [
+          [
+            "6–9 mahine",
+            "Babbling (\"ba-ba\", \"da-da\"), awaaz aur naam par mudna"
+          ],
+          [
+            "12 mahine",
+            "1 se 3 shabd, ishaara karna, bye-bye karna, \"na\" samajhna"
+          ],
+          [
+            "18 mahine",
+            "10 se 20 shabd, \"ball laao\" jaisi aasaan baat maanna"
+          ],
+          [
+            "2 saal",
+            "Lagbhag 50 shabd, 2 shabd jodna (\"mummy aao\", \"aur doodh\")"
+          ],
+          [
+            "3 saal",
+            "3 shabd ke vaakya; parivaar zyadatar samajh leta hai"
+          ],
+          [
+            "4 saal",
+            "Chhoti kahaani sunaana; anjaan log bhi zyadatar samajh lete hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Der Se Bolne Ke Aam Kaaran"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Sunne ki dikkat**, sardi ke baad kaan ke peechhe paani bhi",
+          "**Zyada screen time** aur aamne-saamne baat kam",
+          "Saadhaaran **late talker** jo achhe se samajhta hai aur pakad leta hai",
+          "**Autism**, khaaskar aankh na milaana, ishaara na karna, ya naam par jawaab na dena",
+          "Vikaas mein deri, samay se pehle janm, ya kabhi kabhi muh aur maanspeshiyon ki dikkat"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Ghar mein do bhasha bilkul theek hai",
+        "text": "Ghar mein Hindi, English aur local bhasha bolne se **bolne mein deri nahi hoti**. Shuru mein bachche shabd mila sakte hain, yeh normal hai. Jo bhasha aapko sabse aasaan lage, wahi bolein."
+      },
+      {
+        "type": "heading",
+        "text": "Roz Madad Ke Aasaan Tarike"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Apne kaam bolte jaayein**: \"Ab hum seb kaat rahe hain. Laal seb!\"",
+          "**Tasveer wali kitaab padhein** aur saath mein cheezon ke naam lein, 10 minute bhi",
+          "Haath ke ishaaron ke saath kavita gaayein",
+          "Kuch poochhne ke baad **ruk kar intezaar karein**, bachche ko jawaab ka samay dein",
+          "Bachche ki baat mein **ek shabd jodein**: bachcha kahe \"ball\", aap kahein \"badi ball\"",
+          "**2 saal se pehle screen nahi** (video call chhod kar), aur 2 se 5 saal tak **din mein 1 ghante se kam**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Shayad theek",
+            "Shabdon mein thoda peechhe par achhe se samajhta hai, ishaara karta hai, khelta hai aur aankh milaata hai",
+            "Baat karein, padhein aur screen kam karein; 2 se 3 mahine mein phir dekhein"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "12 mahine tak babbling ya ishaara nahi, 16 mahine tak shabd nahi, 2 saal tak 2 shabd nahi jode, ya 3 saal par parivaar baat na samjhe",
+            "Consultation book karein; sunne ki jaanch ke baare mein poochhein"
+          ],
+          [
+            "🔴 Intezaar na karein",
+            "Bachcha pehle ke shabd ya hunar chhod de, naam par jawaab na de, ya bahut kam aankh milaaye",
+            "Isi hafte pediatrician ko dikhaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Ladke hamesha der se bolte hain, 4 saal tak ruko.\"",
+            "Ladke thode dheeme ho sakte hain, par wahi khatre ke sanket laagu hote hain. Intezaar se madad mein der hoti hai"
+          ],
+          [
+            "\"Jeebh ka tanka kataane se bolne lagega.\"",
+            "Tongue-tie se der se bolna kam hi hota hai. Pehle sahi jaanch zaroori hai"
+          ],
+          [
+            "\"English cartoon se bolna seekh jaayega.\"",
+            "Bachche logon se bolna seekhte hain, screen se nahi. Screen time ka sambandh dheeme bolne se hai"
+          ],
+          [
+            "\"Speech therapy sirf bade bachchon ke liye hai.\"",
+            "Chhote bachchon ki therapy khel ke zariye hoti hai aur jaldi shuru karne par sabse achha kaam karti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachcha **kaun se shabd** bolta hai aur kitne",
+          "Kya bachcha aasaan baatein **samajhta** hai, ishaara karta hai, aur naam par jawaab deta hai?",
+          "Roz ka **screen time**",
+          "Kaan ka infection, sunne ki chinta, ya janm ki history (samay se pehle, NICU)",
+          "Bachche ke khelte aur bolte hue ka chhota **video**"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Bolne ki chinta mein pediatrician se **online consultation** achha pehla kadam hai: doctor padaav dekh sakte hain, video dekh sakte hain, aur zaroorat ho to sunne ki jaanch aur speech therapy ke liye raah dikha sakte hain. (Autism awareness, bachchon ki zid, aur bachchon ke screen time par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (American Academy of Pediatrics, CDC developmental milestones, WHO, Indian Academy of Pediatrics) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "toddler-tantrums-how-to-handle-guide",
+    "title": "Toddler Tantrums: Why They Happen and How to Handle Them Calmly",
+    "description": "Tantrums are a normal part of being 1 to 4 years old. Why they happen, what to do during and after one, how to prevent them, and when they need a doctor's advice.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "😤",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Lying on the floor in the market, screaming for a toy, throwing food: almost every toddler does this, and almost every parent feels embarrassed or helpless. Tantrums are **a normal part of development** between 1 and 4 years, most common around 2 to 3. Young children feel big emotions but don't yet have the words or self-control to handle them. The way you respond can make tantrums shorter and less frequent."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "During a tantrum, **stay calm, keep your child safe, and don't give in** to what started it. Use few words and wait. Afterwards, **hug, name the feeling** (\"You were angry because...\"), and move on. Prevent many tantrums by avoiding **hunger and tiredness**, giving **simple choices**, and **warning before changes**. **Don't hit or shout**: it makes tantrums worse."
+      },
+      {
+        "type": "heading",
+        "text": "Why Tantrums Happen"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Hungry, tired or unwell**: the most common triggers",
+          "**Frustration**: wanting to do something they can't yet do",
+          "**Can't say what they want**, especially in late talkers",
+          "Wanting **independence** (\"I do it!\") but hearing \"no\"",
+          "**Sudden changes**: leaving the park, switching off the TV"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What to Do During a Tantrum"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Stay calm** and take a breath. Your calm helps your child calm down",
+          "**Keep them safe**: move away hard or sharp objects, or move your child to a safe spot",
+          "**Don't give in** to the demand, or your child learns that tantrums work",
+          "Use **few words**: \"I'm here. When you're calm, we'll talk\"",
+          "**Don't argue or explain** during the tantrum; wait until it passes",
+          "In public, calmly take your child somewhere quieter"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "After the Tantrum and Preventing the Next"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Give a **hug** and name the feeling: \"You were sad we had to leave\"",
+          "**Praise good behaviour** often: \"You waited so nicely!\"",
+          "Keep regular **meal and nap times**, carry a snack when going out",
+          "Give **2 simple choices**: \"Red cup or blue cup?\"",
+          "**Warn before changes**: \"Five more minutes, then we go home\"",
+          "Keep rules few and the same every time, with all family members agreeing"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Breath-holding spells",
+        "text": "Some toddlers cry so hard they **hold their breath, turn blue or pale, and briefly go limp**. It looks frightening but is usually harmless and they recover within a minute. **Tell a doctor after the first episode**: they may check for iron deficiency, which can make spells more common."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Tantrums at 1 to 4 years, under 15 minutes, with good behaviour in between",
+            "Stay calm, stay consistent"
+          ],
+          [
+            "🟡 See doctor soon",
+            "Many tantrums every day, often longer than 25 minutes, still frequent after age 5, with speech delay, poor sleep, or breath-holding spells",
+            "Book a consultation to discuss"
+          ],
+          [
+            "🔴 Don't wait",
+            "Child often hurts themselves or others, loses skills they had, or tantrums started after a big change and keep getting worse",
+            "See a pediatrician this week"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"A slap will stop the habit.\"",
+            "Hitting teaches that hitting is how to deal with anger, and tantrums often increase"
+          ],
+          [
+            "\"Give the phone, it calms him down.\"",
+            "It works for a minute but teaches that tantrums earn screens. Use calm waiting instead"
+          ],
+          [
+            "\"Tantrums mean bad parenting.\"",
+            "Tantrums are a normal stage. Consistent, calm responses help them pass sooner"
+          ],
+          [
+            "\"He is doing it on purpose to trouble us.\"",
+            "Toddlers don't yet have the self-control to manage strong feelings. They learn it from you"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "How often tantrums happen and **how long** they last",
+          "**What usually triggers** them, and how the family responds",
+          "Your child's **speech, sleep and eating**",
+          "Any breath-holding, fainting or self-injury",
+          "Recent changes at home: new sibling, moving house, starting playschool"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician is a comfortable way to talk through tantrums without dragging an upset toddler to a clinic. The doctor can check for causes like speech delay, poor sleep or anaemia, and give you a simple plan the whole family can follow. (See our guides on late talking, autism awareness, and screen time for children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (American Academy of Pediatrics (HealthyChildren.org), NHS, CDC). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Bazaar mein zameen par let jaana, khilone ke liye cheekhna, khaana phenkna: lagbhag har chhota bachcha aisa karta hai, aur lagbhag har maa-baap sharminda ya bebas mehsoos karte hain. Zid aur gussa 1 se 4 saal ke beech **vikaas ka normal hissa** hai, sabse zyada 2 se 3 saal mein. Chhote bachchon ko bade ehsaas hote hain lekin unhe sambhaalne ke liye abhi shabd ya khud par kaabu nahi hota. Aap kaise jawaab dete hain, isse zid chhoti aur kam ho sakti hai."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zid ke dauraan **shaant rahein, bachche ko surakshit rakhein, aur jis baat par zid shuru hui wo na maanein**. Kam shabd bolein aur intezaar karein. Baad mein **gale lagaayein, ehsaas ka naam lein** (\"Tumhe gussa aaya kyunki...\"), aur aage badhein. **Bhookh aur thakaan** se bachaakar, **aasaan vikalp** dekar, aur **badlaav se pehle bata kar** kai baar zid rok sakte hain. **Maarein ya chillaayein nahi**: isse zid badhti hai."
+      },
+      {
+        "type": "heading",
+        "text": "Zid Kyun Hoti Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Bhookha, thaka ya beemar**: sabse aam wajah",
+          "**Jhunjhlaahat**: kuch karna chahta hai jo abhi nahi kar paata",
+          "**Bata nahi paata ki kya chahiye**, khaaskar der se bolne wale bachche",
+          "**Khud karna** chahta hai (\"main karunga!\") par \"na\" sunta hai",
+          "**Achanak badlaav**: park se jaana, TV band karna"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Zid Ke Dauraan Kya Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Shaant rahein** aur gehri saans lein. Aapki shaanti bachche ko shaant karti hai",
+          "**Surakshit rakhein**: sakht ya nukeeli cheezein hataayein, ya bachche ko surakshit jagah le jaayein",
+          "Zid wali maang **na maanein**, warna bachcha seekhega ki zid se kaam banta hai",
+          "**Kam shabd** bolein: \"Main yahin hoon. Shaant ho jaao, phir baat karenge\"",
+          "Zid ke dauraan **bahas ya samjhaana na karein**; guzarne ka intezaar karein",
+          "Bahar hon to shaanti se bachche ko kisi shaant jagah le jaayein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Zid Ke Baad Aur Agli Baar Se Bachaav"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Gale lagaayein** aur ehsaas ka naam lein: \"Tum udaas the kyunki humein jaana pada\"",
+          "**Achhe vyavhaar ki taareef** baar baar karein: \"Tumne kitne achhe se intezaar kiya!\"",
+          "**Khaane aur sone ka samay** tay rakhein, bahar jaate samay snack saath rakhein",
+          "**2 aasaan vikalp** dein: \"Laal cup ya neela cup?\"",
+          "**Badlaav se pehle batayein**: \"Paanch minute aur, phir ghar chalenge\"",
+          "Niyam kam rakhein aur har baar ek jaise, ghar ke sab log ek raay mein"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Saans rokne ke daure",
+        "text": "Kuch bachche itna rote hain ki **saans rok lete hain, neele ya peele pad jaate hain, aur thodi der dheele** ho jaate hain. Yeh darawna lagta hai lekin aksar bekhatar hai aur ek minute mein theek ho jaate hain. **Pehli baar hone par doctor ko batayein**: wo iron ki kami check kar sakte hain, jisse yeh daure zyada ho sakte hain."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "1 se 4 saal mein zid, 15 minute se kam, beech mein achha vyavhaar",
+            "Shaant rahein, ek jaisa vyavhaar rakhein"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Roz kai baar zid, aksar 25 minute se lambi, 5 saal ke baad bhi baar baar, ya saath mein der se bolna, kharaab neend, ya saans rokne ke daure",
+            "Baat karne ke liye consultation book karein"
+          ],
+          [
+            "🔴 Intezaar na karein",
+            "Bachcha aksar khud ko ya doosron ko chot pahunchaata hai, pehle ke hunar chhod deta hai, ya kisi bade badlaav ke baad zid shuru hokar badhti ja rahi hai",
+            "Isi hafte pediatrician ko dikhaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Ek thappad se aadat chhoot jaayegi.\"",
+            "Maarne se bachcha seekhta hai ki gusse mein maarte hain, aur zid aksar badhti hai"
+          ],
+          [
+            "\"Phone de do, shaant ho jaata hai.\"",
+            "Ek minute ke liye kaam karta hai par sikhaata hai ki zid se screen milti hai. Iski jagah shaanti se intezaar karein"
+          ],
+          [
+            "\"Zid matlab parvarish kharaab hai.\"",
+            "Zid ek normal padaav hai. Shaant, ek jaisa jawaab isse jaldi guzaarta hai"
+          ],
+          [
+            "\"Woh jaan-boojh kar pareshaan karta hai.\"",
+            "Chhote bachchon mein abhi tez ehsaas sambhaalne ka kaabu nahi hota. Woh yeh aapse seekhte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Zid kitni baar hoti hai aur **kitni der** chalti hai",
+          "**Aam taur par kis baat se** shuru hoti hai, aur parivaar kaise jawaab deta hai",
+          "Bachche ka **bolna, sona aur khaana**",
+          "Koi saans rokna, behosh hona ya khud ko chot",
+          "Ghar mein haal ke badlaav: naya bhai-behen, ghar badalna, playschool shuru"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pediatrician se **online consultation** zid par baat karne ka aaraamdeh tarika hai, bina pareshaan bachche ko clinic le jaaye. Doctor der se bolna, kharaab neend ya khoon ki kami jaisi wajahein dekh sakte hain, aur aisa aasaan plan de sakte hain jo poora parivaar apna sake. (Der se bolna, autism awareness, aur bachchon ke screen time par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (American Academy of Pediatrics (HealthyChildren.org), NHS, CDC) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "liver-function-test-sgpt-sgot-high-meaning-guide",
+    "title": "SGPT or SGOT High in Your Liver Function Test? What It Means and What to Do",
+    "description": "Understand your liver function test: SGPT (ALT), SGOT (AST), bilirubin, ALP and albumin. Common reasons for mildly high values, next steps, and the danger signs.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🧪",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A liver function test (LFT) is often done in a routine check-up, and many people are alarmed to see **SGPT or SGOT marked high**. A mildly high value is **very common** and often comes from **fatty liver, alcohol, recent illness or a medicine**. It is a signal to look further, not a diagnosis. This guide explains each value in plain words and what usually happens next."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "**SGPT (ALT)** and **SGOT (AST)** are enzymes that leak out when liver cells are irritated. Mildly high levels (**less than 2 to 3 times the upper limit**) are common and usually from **fatty liver, alcohol or medicines**. The doctor will often repeat the test and may order an **ultrasound and hepatitis B and C tests**. Go to a doctor **urgently** if you have **yellow eyes, dark urine, pale stools, vomiting, confusion or a swollen belly**."
+      },
+      {
+        "type": "heading",
+        "text": "What Each Value Means"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Test",
+          "What it shows"
+        ],
+        "rows": [
+          [
+            "SGPT / ALT",
+            "Mainly from the liver; high when liver cells are irritated or damaged"
+          ],
+          [
+            "SGOT / AST",
+            "From the liver and also muscles and heart; rises after heavy exercise too"
+          ],
+          [
+            "Bilirubin",
+            "Yellow pigment; high levels cause jaundice (yellow eyes and skin)"
+          ],
+          [
+            "ALP and GGT",
+            "Point to the bile ducts; GGT also rises with alcohol"
+          ],
+          [
+            "Albumin and total protein",
+            "Show how well the liver makes proteins; low in long-standing liver disease"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Normal ranges differ by lab",
+        "text": "Always compare your result with the **range printed on your own report**. For SGPT, many labs use an upper limit of about 35 to 45 U/L. How high the number is, and whether it stays high, matters more than a single slightly raised value."
+      },
+      {
+        "type": "heading",
+        "text": "Common Reasons for High SGPT / SGOT"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Fatty liver**: the most common cause in India, linked with belly fat, diabetes and high cholesterol",
+          "**Alcohol**: even regular \"social\" drinking",
+          "**Medicines**: TB medicines, some antibiotics, excess paracetamol, some cholesterol and seizure medicines",
+          "**Herbal or \"liver tonic\" products and supplements**, including some ayurvedic and bodybuilding products",
+          "**Viral hepatitis** (A, B, C, E) and recent infections like dengue or typhoid",
+          "**Heavy exercise** in the past 2 days (raises SGOT), and thyroid problems"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Usually Happens Next"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The doctor reviews your **medicines, alcohol, weight and symptoms**",
+          "**Don't stop prescribed medicines on your own**, especially TB or seizure medicines; ask the doctor",
+          "Avoid alcohol and stop unnecessary supplements",
+          "Often the **test is repeated** in a few weeks",
+          "An **abdominal ultrasound** and **hepatitis B and C tests** are common next steps",
+          "For fatty liver, **losing 5 to 10% of body weight** can bring values back to normal"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Mild",
+            "SGPT or SGOT slightly high (under 2 to 3 times the limit), you feel well",
+            "See a doctor in the coming weeks; avoid alcohol; repeat test as advised"
+          ],
+          [
+            "🟡 See doctor soon",
+            "Values more than 3 times the limit, staying high on repeat tests, or with tiredness, itching or poor appetite",
+            "Book a consultation this week"
+          ],
+          [
+            "🔴 Urgent",
+            "Very high values (more than 10 times the limit), yellow eyes, dark urine or pale stools, or high values while on TB medicines",
+            "See a doctor today"
+          ],
+          [
+            "🔴 Emergency",
+            "Confusion or drowsiness, vomiting blood, black stools, swollen belly, or after taking too much paracetamol",
+            "Go to hospital now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"High SGPT means the liver is failing.\"",
+            "Mild rises are common and often reversible. Liver failure has other signs and very abnormal tests"
+          ],
+          [
+            "\"A liver tonic will clean the liver.\"",
+            "No tonic is proven to fix the liver, and some herbal products harm it. Treat the cause instead"
+          ],
+          [
+            "\"Normal LFT means no fatty liver.\"",
+            "Fatty liver can be present with normal values. An ultrasound shows it better"
+          ],
+          [
+            "\"Only heavy drinkers get liver problems.\"",
+            "Fatty liver from weight and diabetes is now more common than alcohol-related disease"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Your **full LFT report**, and any earlier reports to compare",
+          "**Every medicine, supplement and herbal product** you take",
+          "How much **alcohol** you drink in a week",
+          "Your weight, waist size, and sugar or cholesterol reports",
+          "Any symptoms: yellow eyes, dark urine, itching, tummy pain"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "A raised LFT is a perfect question for an **online consultation** with a general physician: upload the report, go through your medicines and habits, and get a clear plan for which tests to do next. Yellow eyes with confusion or vomiting blood is an **emergency**: go to hospital. (See our guides on fatty liver, jaundice in adults, and hepatitis.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American College of Gastroenterology, British Society of Gastroenterology). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Liver function test (LFT) aksar routine check-up mein hota hai, aur kai log **SGPT ya SGOT high** dekh kar ghabra jaate hain. Halka sa badha hua value **bahut aam** hai aur aksar **fatty liver, sharaab, haal ki beemari ya kisi dawa** se hota hai. Yeh aage jaanch karne ka sanket hai, bimaari ka faisla nahi. Yeh guide har value ko aasaan shabdon mein samjhaati hai aur bataati hai ki aage aam taur par kya hota hai."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "**SGPT (ALT)** aur **SGOT (AST)** enzyme hain jo liver cells mein jalan hone par khoon mein aa jaate hain. Halka badhna (**upper limit ke 2 se 3 guna se kam**) aam hai aur aksar **fatty liver, sharaab ya dawaon** se hota hai. Doctor aksar test dohraate hain aur **ultrasound aur hepatitis B aur C test** karwa sakte hain. **Turant** doctor ko dikhaayein agar **aankhein peeli, peshaab gaadha, mal safed-sa, ulti, confusion ya pet phoola** ho."
+      },
+      {
+        "type": "heading",
+        "text": "Har Value Ka Matlab"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Test",
+          "Kya bataata hai"
+        ],
+        "rows": [
+          [
+            "SGPT / ALT",
+            "Mukhya roop se liver se; liver cells mein jalan ya nuksaan par badhta hai"
+          ],
+          [
+            "SGOT / AST",
+            "Liver ke saath maanspeshiyon aur dil se bhi; bhaari exercise ke baad bhi badhta hai"
+          ],
+          [
+            "Bilirubin",
+            "Peela rang; zyada hone par jaundice (aankh aur chamdi peeli)"
+          ],
+          [
+            "ALP aur GGT",
+            "Pitt ki naliyon ki taraf ishaara; GGT sharaab se bhi badhta hai"
+          ],
+          [
+            "Albumin aur total protein",
+            "Liver kitna achha protein banaata hai; purani liver beemari mein kam"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Normal range har lab mein alag",
+        "text": "Apna result hamesha **apni report par chhapi range** se milaayein. SGPT ke liye kai labs lagbhag 35 se 45 U/L ki upper limit rakhte hain. Number kitna zyada hai, aur kya woh lagaataar zyada rehta hai, yeh ek baar thoda badhe value se zyada maayne rakhta hai."
+      },
+      {
+        "type": "heading",
+        "text": "SGPT / SGOT High Hone Ke Aam Kaaran"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Fatty liver**: Bharat mein sabse aam wajah, pet ki charbi, diabetes aur high cholesterol se juda",
+          "**Sharaab**: niyamit \"social\" peena bhi",
+          "**Dawaayein**: TB ki dawa, kuch antibiotics, zyada paracetamol, kuch cholesterol aur mirgi ki dawaayein",
+          "**Herbal ya \"liver tonic\" products aur supplements**, kuch ayurvedic aur bodybuilding products bhi",
+          "**Viral hepatitis** (A, B, C, E) aur dengue ya typhoid jaise haal ke infection",
+          "Pichhle 2 din mein **bhaari exercise** (SGOT badhaati hai), aur thyroid ki dikkat"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aage Aam Taur Par Kya Hota Hai"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Doctor aapki **dawaayein, sharaab, vazan aur lakshan** dekhte hain",
+          "**Likhi hui dawaayein apne aap band na karein**, khaaskar TB ya mirgi ki; doctor se poochhein",
+          "Sharaab se bachein aur bina zaroorat ke supplements band karein",
+          "Aksar kuch hafton mein **test dohraaya** jaata hai",
+          "**Pet ka ultrasound** aur **hepatitis B aur C test** aam agle kadam hain",
+          "Fatty liver mein **vazan 5 se 10% ghataane** se values normal ho sakti hain"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Halka",
+            "SGPT ya SGOT thoda zyada (limit ke 2 se 3 guna se kam), aap theek mehsoos karte hain",
+            "Aane wale hafton mein doctor ko dikhaayein; sharaab se bachein; salah anusaar test dohraayein"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Values limit ke 3 guna se zyada, dohraane par bhi zyada, ya thakaan, khujli ya bhookh kam ke saath",
+            "Isi hafte consultation book karein"
+          ],
+          [
+            "🔴 Zaroori",
+            "Bahut zyada values (limit ke 10 guna se zyada), aankhein peeli, gaadha peshaab ya safed-sa mal, ya TB ki dawa ke dauraan values zyada",
+            "Aaj hi doctor ko dikhaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Confusion ya susti, khoon ki ulti, kaala mal, phoola pet, ya zyada paracetamol lene ke baad",
+            "Abhi hospital jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"SGPT high matlab liver fail ho raha hai.\"",
+            "Halka badhna aam hai aur aksar theek ho jaata hai. Liver failure ke alag lakshan aur bahut kharaab test hote hain"
+          ],
+          [
+            "\"Liver tonic liver saaf kar dega.\"",
+            "Koi tonic liver theek karne mein saabit nahi hai, aur kuch herbal products nuksaan karte hain. Wajah ka ilaaj karein"
+          ],
+          [
+            "\"LFT normal matlab fatty liver nahi.\"",
+            "Normal values ke saath bhi fatty liver ho sakta hai. Ultrasound ise behtar dikhaata hai"
+          ],
+          [
+            "\"Sirf zyada peene walon ko liver ki dikkat hoti hai.\"",
+            "Vazan aur diabetes se fatty liver ab sharaab se judi beemari se zyada aam hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Aapki **poori LFT report**, aur milaane ke liye purani reports",
+          "**Har dawa, supplement aur herbal product** jo aap lete hain",
+          "Hafte mein kitni **sharaab** peete hain",
+          "Aapka vazan, kamar ka naap, aur sugar ya cholesterol reports",
+          "Koi lakshan: peeli aankhein, gaadha peshaab, khujli, pet dard"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Badhi hui LFT general physician se **online consultation** ke liye bilkul sahi sawaal hai: report upload karein, apni dawaayein aur aadatein batayein, aur saaf plan paayein ki aage kaun se test karne hain. Confusion ke saath peeli aankhein ya khoon ki ulti **emergency** hai: hospital jaayein. (Fatty liver, badon mein jaundice, aur hepatitis par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American College of Gastroenterology, British Society of Gastroenterology) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "esr-crp-high-meaning-blood-test-guide",
+    "title": "ESR or CRP High in Your Blood Test? What These Inflammation Tests Really Tell You",
+    "description": "ESR and CRP show inflammation somewhere in the body but not where or why. What high values mean, common causes, why antibiotics aren't automatic, and when to worry.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🩸",
+    "content": [
+      {
+        "type": "intro",
+        "text": "ESR and CRP are two of the most commonly ordered blood tests, and a high result often causes worry. Both are **markers of inflammation**: they rise when the body is fighting an infection, an injury, or an inflammatory illness. But they **don't tell where the problem is or what is causing it**. The doctor reads them alongside your symptoms and other tests. Here's how to make sense of them."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "A **mildly high ESR or CRP** is common with a recent cold, minor infection, injury, pregnancy, weight gain or smoking, and **ESR also rises with age and anaemia**. A **very high CRP** (often over 100 mg/L) usually points to a significant infection or inflammation. **Don't start antibiotics just because a number is high**; the doctor decides based on the full picture. See a doctor **urgently** for **high fever with feeling very unwell**, or a **new headache with jaw pain or vision problems after age 50**."
+      },
+      {
+        "type": "heading",
+        "text": "ESR vs CRP"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "ESR",
+          "CRP"
+        ],
+        "rows": [
+          [
+            "What it measures",
+            "How fast red blood cells settle in a tube (mm/hr)",
+            "A protein the liver makes during inflammation (mg/L)"
+          ],
+          [
+            "Speed of change",
+            "Rises and falls slowly, over days to weeks",
+            "Rises within hours, falls within days"
+          ],
+          [
+            "Also affected by",
+            "Age, being female, anaemia, pregnancy, kidney disease",
+            "Weight, smoking, pregnancy"
+          ],
+          [
+            "Often used for",
+            "Tracking TB, arthritis, some long-term conditions",
+            "Checking infections and response to treatment"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Normal ranges",
+        "text": "Check the **range on your own report**. As a rough guide, CRP is usually under 5 to 10 mg/L. A normal ESR is roughly **under (age ÷ 2) for men** and **under ((age + 10) ÷ 2) for women**, so a 60-year-old woman may have a normal ESR of up to about 35. **hs-CRP** is a different, more sensitive test used for heart risk."
+      },
+      {
+        "type": "heading",
+        "text": "Common Reasons for a High Result"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Infections**: viral fever, urine infection, chest infection, TB",
+          "**Joint and autoimmune conditions**: rheumatoid arthritis, lupus",
+          "**Recent injury, surgery or dental infection**",
+          "**Anaemia, pregnancy, kidney disease and older age** (mainly ESR)",
+          "**Obesity and smoking** (mild rise in CRP)",
+          "Less often, **cancers**, usually with other signs like weight loss"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Usually Happens Next"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The doctor matches the result with your **symptoms and examination**",
+          "A **mild rise in someone who feels well** is often simply repeated in a few weeks",
+          "Other tests may follow: **CBC, urine test, chest X-ray**, or tests for arthritis",
+          "If you are on treatment (for TB or arthritis), **falling values** show it is working",
+          "**Don't take antibiotics or steroids on your own** to bring the number down"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Mild",
+            "Slightly high ESR or CRP, you feel well, or had a recent cold",
+            "Discuss with a doctor; often just repeat later"
+          ],
+          [
+            "🟡 See doctor soon",
+            "High values with joint pain and morning stiffness, cough for over 2 weeks, weight loss, night sweats, or ongoing tiredness",
+            "Book a consultation this week"
+          ],
+          [
+            "🔴 Urgent",
+            "Very high CRP with fever and feeling very unwell, or over 50 with a new headache, scalp tenderness, jaw pain while chewing, or vision change",
+            "See a doctor today"
+          ],
+          [
+            "🔴 Emergency",
+            "Fever with confusion, fast breathing, very low BP, or cold, mottled skin",
+            "Go to hospital now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"High CRP means I need antibiotics.\"",
+            "Viral infections and non-infectious inflammation also raise CRP. Antibiotics only help bacterial infections"
+          ],
+          [
+            "\"High ESR means TB.\"",
+            "TB is one cause among many. ESR also rises with age, anaemia and pregnancy"
+          ],
+          [
+            "\"Normal ESR and CRP mean nothing is wrong.\"",
+            "They can be normal in some illnesses. Symptoms still matter"
+          ],
+          [
+            "\"The higher the number, the worse the disease.\"",
+            "Very high values need attention, but the cause matters more than the exact number"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The **report** with the lab's normal range, and earlier results if any",
+          "Any **fever, cough, joint pain, weight loss or night sweats**, and for how long",
+          "Recent infections, injuries, surgery or dental problems",
+          "Medicines you take, including any antibiotics or steroids",
+          "Whether you are pregnant"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "A high ESR or CRP without obvious symptoms is a good reason for an **online consultation** with a general physician: share the report, discuss your symptoms, and find out which tests, if any, are needed next. (See our guides on understanding your CBC report, which blood test is for what, and fever in adults.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, MedlinePlus (US National Library of Medicine), Testing.com). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "ESR aur CRP sabse zyada karwaaye jaane wale blood test mein se hain, aur high result aksar chinta deta hai. Dono **sujan (inflammation) ke sanket** hain: yeh tab badhte hain jab shareer kisi infection, chot ya sujan wali beemari se lad raha ho. Lekin yeh **nahi bataate ki dikkat kahan hai ya kis wajah se hai**. Doctor inhe aapke lakshanon aur doosre test ke saath padhte hain. Yahan jaaniye inhe kaise samjhein."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Halka badha ESR ya CRP** haal ki sardi, chhote infection, chot, pregnancy, vazan badhne ya smoking mein aam hai, aur **ESR umar aur khoon ki kami se bhi badhta hai**. **Bahut zyada CRP** (aksar 100 mg/L se upar) aam taur par kisi bade infection ya sujan ki taraf ishaara karta hai. **Sirf number high hone par antibiotic shuru na karein**; doctor poori tasveer dekh kar tay karte hain. **Turant** doctor ko dikhaayein agar **tez bukhaar ke saath bahut beemar** lag raha ho, ya **50 ki umar ke baad naya sir dard jabde ke dard ya nazar ki dikkat ke saath** ho."
+      },
+      {
+        "type": "heading",
+        "text": "ESR vs CRP"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "ESR",
+          "CRP"
+        ],
+        "rows": [
+          [
+            "Kya maapta hai",
+            "Laal rakt koshikaayein tube mein kitni tezi se baithti hain (mm/hr)",
+            "Sujan ke samay liver jo protein banaata hai (mg/L)"
+          ],
+          [
+            "Badlaav ki raftaar",
+            "Dheere badhta aur ghatata hai, dinon se hafton mein",
+            "Ghanton mein badhta hai, dinon mein ghatata hai"
+          ],
+          [
+            "Isse bhi asar",
+            "Umar, mahila hona, khoon ki kami, pregnancy, kidney ki beemari",
+            "Vazan, smoking, pregnancy"
+          ],
+          [
+            "Aksar kis liye",
+            "TB, gathiya, kuch lambi beemariyon par nazar",
+            "Infection check karna aur ilaaj ka asar dekhna"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Normal range",
+        "text": "**Apni report par di gayi range** dekhein. Mote taur par CRP aksar 5 se 10 mg/L se kam hota hai. Normal ESR lagbhag **purushon mein (umar ÷ 2) se kam** aur **mahilaon mein ((umar + 10) ÷ 2) se kam** hota hai, isliye 60 saal ki mahila mein lagbhag 35 tak ESR normal ho sakta hai. **hs-CRP** ek alag, zyada sensitive test hai jo dil ke khatre ke liye hota hai."
+      },
+      {
+        "type": "heading",
+        "text": "High Result Ke Aam Kaaran"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Infection**: viral bukhaar, peshaab ka infection, chhaati ka infection, TB",
+          "**Jodon aur autoimmune beemariyan**: rheumatoid arthritis, lupus",
+          "**Haal ki chot, operation ya daant ka infection**",
+          "**Khoon ki kami, pregnancy, kidney ki beemari aur badhti umar** (mukhya roop se ESR)",
+          "**Motapa aur smoking** (CRP mein halka badhaav)",
+          "Kam hi, **cancer**, aksar vazan ghatne jaise doosre lakshanon ke saath"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aage Aam Taur Par Kya Hota Hai"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Doctor result ko aapke **lakshanon aur jaanch** se milaate hain",
+          "**Theek mehsoos karne wale mein halka badhaav** aksar kuch hafton baad bas dohraaya jaata hai",
+          "Doosre test ho sakte hain: **CBC, peshaab ka test, chhaati ka X-ray**, ya gathiya ke test",
+          "Agar ilaaj chal raha hai (TB ya gathiya), to **ghatte values** bataate hain ki ilaaj kaam kar raha hai",
+          "Number ghataane ke liye **apne aap antibiotic ya steroid na lein**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Halka",
+            "ESR ya CRP thoda zyada, aap theek hain, ya haal mein sardi hui thi",
+            "Doctor se baat karein; aksar baad mein bas dohraana"
+          ],
+          [
+            "🟡 Jald doctor ko dikhaayein",
+            "Jodon mein dard aur subah akdan, 2 hafte se zyada khaansi, vazan ghatna, raat ko paseena, ya lagaataar thakaan ke saath high values",
+            "Isi hafte consultation book karein"
+          ],
+          [
+            "🔴 Zaroori",
+            "Bukhaar aur bahut beemar lagne ke saath bahut zyada CRP, ya 50 se upar umar mein naya sir dard, sir ki chamdi chhoone par dard, chabaate samay jabde mein dard, ya nazar mein badlaav",
+            "Aaj hi doctor ko dikhaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Bukhaar ke saath confusion, tez saans, bahut kam BP, ya thandi, dhabbedaar chamdi",
+            "Abhi hospital jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"CRP high matlab antibiotic chahiye.\"",
+            "Viral infection aur bina infection ki sujan se bhi CRP badhta hai. Antibiotic sirf bacterial infection mein kaam karti hai"
+          ],
+          [
+            "\"ESR high matlab TB.\"",
+            "TB kai wajahon mein se ek hai. ESR umar, khoon ki kami aur pregnancy se bhi badhta hai"
+          ],
+          [
+            "\"ESR aur CRP normal matlab koi dikkat nahi.\"",
+            "Kuch beemariyon mein yeh normal ho sakte hain. Lakshan phir bhi maayne rakhte hain"
+          ],
+          [
+            "\"Number jitna zyada, beemari utni kharaab.\"",
+            "Bahut zyada values par dhyaan chahiye, lekin sahi number se zyada wajah maayne rakhti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Lab ki normal range ke saath **report**, aur purane result ho to",
+          "Koi **bukhaar, khaansi, jodon ka dard, vazan ghatna ya raat ko paseena**, aur kab se",
+          "Haal ke infection, chot, operation ya daant ki dikkat",
+          "Li ja rahi dawaayein, antibiotic ya steroid bhi",
+          "Kya aap pregnant hain"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Bina saaf lakshanon ke high ESR ya CRP general physician se **online consultation** ki achhi wajah hai: report share karein, lakshanon par baat karein, aur jaanein ki aage kaun se test, agar koi, chahiye. (CBC report samajhne, kaun sa blood test kis liye, aur badon mein bukhaar par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, MedlinePlus (US National Library of Medicine), Testing.com) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
   }
 ];
