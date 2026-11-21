@@ -132,4 +132,17 @@ export const INTERNAL_LINKS = {
   'threadworms': 'worms-in-children-deworming-signs-prevention-guide',
   'safe sleep': 'baby-sleep-how-much-safe-sleep-routine-guide',
   'unexplained weight loss': 'losing-weight-without-trying-causes-when-to-worry-guide',
+  // Added Nov 2026 (third batch)
+  'pregnancy test': 'pregnancy-test-when-to-take-faint-line-guide',
+  'folic acid': 'folic-acid-before-pregnancy-when-how-much-guide',
+  'c-section': 'c-section-recovery-at-home-care-guide',
+  'caesarean': 'c-section-recovery-at-home-care-guide',
+  'menstrual migraine': 'menstrual-migraine-headache-before-periods-guide',
+  'pinched nerve': 'pinched-nerve-neck-arm-numbness-tingling-guide',
+  'febrile seizure': 'febrile-seizure-child-fits-with-fever-guide',
+  'febrile seizures': 'febrile-seizure-child-fits-with-fever-guide',
+  'hand, foot and mouth disease': 'hand-foot-mouth-disease-children-rash-mouth-sores-guide',
+  'uric acid': 'high-uric-acid-what-the-number-means-diet-guide',
+  'low platelets': 'low-platelet-count-what-it-means-dengue-guide',
+  'platelet count': 'low-platelet-count-what-it-means-dengue-guide',
 };

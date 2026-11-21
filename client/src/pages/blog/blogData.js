@@ -35148,5 +35148,3635 @@ export const articles = [
         "text": "Yeh trusted public health guidance (NHS, WHO, National TB Elimination Programme (India)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
       }
     ]
+  },
+  {
+    "slug": "pregnancy-test-when-to-take-faint-line-guide",
+    "title": "Home Pregnancy Test: When to Take It, How to Read a Faint Line",
+    "description": "When a home pregnancy test works, how to do it right, what a faint line means, why it can be wrong, and what to do after a positive or negative result.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🧪",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Waiting to know whether you are pregnant can feel like the longest wait of your life. A home pregnancy test kit from any chemist is cheap and accurate, **if you use it at the right time and the right way**. Most \"wrong\" results happen because the test was done too early. Here is exactly when to test, how to read the result (including that confusing faint line), and what to do next."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Test **from the day your period is due**, and for the most reliable result, **a week after a missed period**. Use your **first urine of the morning**. **Any second line, even a faint one, usually means pregnant.** A negative test with no period after a week? Test again, and see a doctor if it stays negative and your period still hasn't come."
+      },
+      {
+        "type": "heading",
+        "text": "How the Test Works"
+      },
+      {
+        "type": "paragraph",
+        "text": "After a fertilised egg attaches to the womb, the body makes a hormone called **hCG**. It appears in urine and roughly doubles every two days in early pregnancy. A home test detects it. Testing too early means there may not be enough hCG yet, which is why a negative result in the first days can later turn positive."
+      },
+      {
+        "type": "heading",
+        "text": "When to Test"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "When",
+          "How reliable",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "Before your period is due",
+            "Often misses an early pregnancy",
+            "Better to wait"
+          ],
+          [
+            "On the day your period is due",
+            "Picks up most pregnancies",
+            "Test with first-morning urine"
+          ],
+          [
+            "1 week after a missed period",
+            "Most reliable for home tests",
+            "Best time if you can wait"
+          ],
+          [
+            "Irregular periods",
+            "Hard to time",
+            "Test about 3 weeks after unprotected sex"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How to Do It Right"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Check the expiry date** on the pack, and read its instructions (kits differ slightly)",
+          "Use **first urine of the morning**, which has the most hCG",
+          "Don't drink lots of water just before testing, since it dilutes the urine",
+          "Put the urine drops or the stick in as the pack says, and lay it flat",
+          "**Read the result in the time given** (usually 3–5 minutes). Don't read it after 10 minutes, when lines can appear that mean nothing"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Reading the Result"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "What you see",
+          "What it usually means"
+        ],
+        "rows": [
+          [
+            "Two clear lines (C and T)",
+            "Pregnant"
+          ],
+          [
+            "Two lines, the T line faint",
+            "Very likely pregnant, but early. Repeat in 2–3 days; the line should get darker"
+          ],
+          [
+            "Only the C (control) line",
+            "Not pregnant, or tested too early"
+          ],
+          [
+            "No C line at all",
+            "The test didn't work. Use a new kit"
+          ],
+          [
+            "A colourless line that appeared after 10+ minutes",
+            "An \"evaporation line\", not a result. Test again"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Faint line? Here's what to do",
+        "text": "A faint line is usually an early pregnancy. Repeat the test in **2–3 days** with first-morning urine: if the line gets darker, the pregnancy is progressing. A **blood pregnancy test (beta hCG)** at a lab gives a clear yes or no and a number, and is the best next step if you're unsure."
+      },
+      {
+        "type": "heading",
+        "text": "Why a Test Can Be Wrong"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Negative but pregnant**: tested too early, very diluted urine, or an expired kit",
+          "**Positive but not pregnant** (rare): a very early miscarriage (chemical pregnancy), some fertility injections containing hCG, or reading after the time limit",
+          "**Contraceptive pills, antibiotics and most medicines don't affect the result**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Situation",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Positive, feeling well",
+            "Two lines, no pain or bleeding",
+            "Start folic acid if you haven't, and book a gynaecologist visit in the next 1–2 weeks"
+          ],
+          [
+            "🟡 Negative, no period",
+            "Still negative a week after a missed period",
+            "Test again in a week. If still negative, see a doctor (stress, thyroid, PCOS and others can delay periods)"
+          ],
+          [
+            "🔴 Positive with pain",
+            "Severe or one-sided lower tummy pain, shoulder-tip pain, dizziness or fainting",
+            "Go to an emergency now. It could be an ectopic pregnancy"
+          ],
+          [
+            "🔴 Positive with bleeding",
+            "Heavy bleeding or clots",
+            "Seek urgent care the same day"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"A faint line means a weak pregnancy.\"",
+            "It usually means an early pregnancy. Line darkness is not a measure of health"
+          ],
+          [
+            "\"Sugar or salt tests at home work too.\"",
+            "They don't. Use a pregnancy test kit or a blood test"
+          ],
+          [
+            "\"Expensive kits are more accurate.\"",
+            "Ordinary chemist kits work well when used at the right time"
+          ],
+          [
+            "\"Testing at night is just as good.\"",
+            "Morning urine is best in the first weeks, when hCG is still low"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "The **first day of your last period**, and how regular your cycles are",
+          "**Test dates and results** (a photo of the kit helps)",
+          "Any pain, bleeding, vomiting or dizziness",
+          "Medicines you take, and whether you've started folic acid",
+          "Past pregnancies, miscarriages or an ectopic pregnancy"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a gynaecologist is an easy first step after a positive test: the doctor can confirm what to do now, which tests and scan you need and when, and start you on the right supplements. (See our guides on early pregnancy signs, folic acid, and bleeding in early pregnancy.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, MedlinePlus). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Pregnant hain ya nahi, yeh jaanne ka intezaar zindagi ka sabse lamba intezaar lag sakta hai. Kisi bhi chemist ki home pregnancy test kit sasti aur sahi hoti hai, **agar sahi samay par aur sahi tareeke se istemaal karein**. Zyadatar \"galat\" result isliye aate hain kyunki test bahut jaldi kiya gaya. Yahan jaaniye kab test karein, result kaise padhein (woh uljhan wali halki line bhi), aur aage kya karein."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "**Period aane wale din se** test karein, aur sabse pakke result ke liye **period miss hone ke ek hafte baad**. **Subah ka pehla peshaab** lein. **Doosri line, chaahe halki ho, aksar pregnancy ka matlab hai.** Negative test aur ek hafte baad bhi period nahi? Dobara test karein, aur negative rahe aur period na aaye to doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Test Kaise Kaam Karta Hai"
+      },
+      {
+        "type": "paragraph",
+        "text": "Fertilised ande ke bachchedaani se judne ke baad shareer **hCG** naam ka hormone banata hai. Yeh peshaab mein aata hai aur shuruaati pregnancy mein lagbhag har do din mein dugna hota hai. Ghar ka test isi ko pakadta hai. Bahut jaldi test karne par hCG kaafi nahi hota, isliye shuru ke dinon ka negative result baad mein positive ho sakta hai."
+      },
+      {
+        "type": "heading",
+        "text": "Test Kab Karein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Kab",
+          "Kitna bharosemand",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "Period aane se pehle",
+            "Aksar shuruaati pregnancy chhoot jaati hai",
+            "Intezaar karna behtar"
+          ],
+          [
+            "Period aane wale din",
+            "Zyadatar pregnancy pakad leta hai",
+            "Subah ke pehle peshaab se test"
+          ],
+          [
+            "Period miss hone ke 1 hafte baad",
+            "Ghar ke test ke liye sabse bharosemand",
+            "Intezaar kar sakein to sabse sahi samay"
+          ],
+          [
+            "Anaiyamit periods",
+            "Samay tay karna mushkil",
+            "Bina suraksha sex ke lagbhag 3 hafte baad test"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sahi Tareeka"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Pack par **expiry date check** karein, aur uske nirdesh padhein (kits thodi alag hoti hain)",
+          "**Subah ka pehla peshaab** lein, ismein sabse zyada hCG hota hai",
+          "Test se theek pehle bahut paani na piyein, isse peshaab patla hota hai",
+          "Pack ke anusaar peshaab ki boondein daalein ya stick lagayein, aur seedha rakhein",
+          "**Diye gaye samay mein result padhein** (aamtaur par 3–5 minute). 10 minute ke baad na padhein, tab bematlab lines aa sakti hain"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Result Kaise Padhein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Aap kya dekhti hain",
+          "Aamtaur par matlab"
+        ],
+        "rows": [
+          [
+            "Do saaf lines (C aur T)",
+            "Pregnant"
+          ],
+          [
+            "Do lines, T line halki",
+            "Bahut mumkin pregnant, par shuruaat. 2–3 din mein dobara karein; line gehri honi chahiye"
+          ],
+          [
+            "Sirf C (control) line",
+            "Pregnant nahi, ya bahut jaldi test kiya"
+          ],
+          [
+            "C line bilkul nahi",
+            "Test kaam nahi kiya. Nayi kit lein"
+          ],
+          [
+            "10+ minute baad aayi berang line",
+            "\"Evaporation line\", result nahi. Dobara test karein"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Halki line? Yeh karein",
+        "text": "Halki line aksar shuruaati pregnancy hoti hai. **2–3 din** mein subah ke pehle peshaab se dobara test karein: line gehri ho to pregnancy aage badh rahi hai. Lab mein **blood pregnancy test (beta hCG)** saaf haan ya naa aur ek number deta hai, aur pakka na ho to yahi sabse achha agla kadam hai."
+      },
+      {
+        "type": "heading",
+        "text": "Test Galat Kyun Ho Sakta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Negative par pregnant**: bahut jaldi test, bahut patla peshaab, ya expired kit",
+          "**Positive par pregnant nahi** (kam hota hai): bahut shuruaati miscarriage (chemical pregnancy), hCG wale kuch fertility injection, ya samay ke baad padhna",
+          "**Contraceptive goliyan, antibiotic aur zyadatar dawaiyan result par asar nahi daalti**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Sthiti",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Positive, tabiyat theek",
+            "Do lines, dard ya bleeding nahi",
+            "Folic acid shuru nahi kiya to karein, aur 1–2 hafte mein gynaecologist ko dikhayein"
+          ],
+          [
+            "🟡 Negative, period nahi",
+            "Period miss hone ke hafte baad bhi negative",
+            "Ek hafte baad dobara test. Phir bhi negative ho to doctor ko dikhayein (tanaav, thyroid, PCOS aadi period taal sakte hain)"
+          ],
+          [
+            "🔴 Positive ke saath dard",
+            "Pet ke neeche tez ya ek taraf dard, kandhe ke kone mein dard, chakkar ya behoshi",
+            "Abhi emergency jaayein. Ectopic pregnancy ho sakti hai"
+          ],
+          [
+            "🔴 Positive ke saath bleeding",
+            "Zyada bleeding ya thakke",
+            "Usi din turant dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Halki line matlab kamzor pregnancy.\"",
+            "Aksar iska matlab shuruaati pregnancy hai. Line ka gehra hona sehat ka maap nahi"
+          ],
+          [
+            "\"Ghar par cheeni ya namak wala test bhi chalta hai.\"",
+            "Nahi chalta. Pregnancy test kit ya blood test lein"
+          ],
+          [
+            "\"Mehngi kit zyada sahi hoti hai.\"",
+            "Sahi samay par istemaal karein to aam chemist kit achha kaam karti hai"
+          ],
+          [
+            "\"Raat ko test bhi utna hi achha hai.\"",
+            "Shuru ke hafton mein, jab hCG kam hota hai, subah ka peshaab sabse achha hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pichhle period ka pehla din**, aur cycle kitni niyamit hai",
+          "**Test ki taareekhein aur result** (kit ki photo madad karti hai)",
+          "Koi dard, bleeding, ulti ya chakkar",
+          "Jo dawaiyan leti hain, aur folic acid shuru kiya ya nahi",
+          "Pichhli pregnancy, miscarriage ya ectopic pregnancy"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Positive test ke baad gynaecologist se **online consultation** aasaan pehla kadam hai: doctor bata sakti hain ki abhi kya karein, kaunse test aur scan kab chahiye, aur sahi supplements shuru karwa sakti hain. (Shuruaati pregnancy ke sanket, folic acid aur shuruaati pregnancy mein bleeding par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, MedlinePlus) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "folic-acid-before-pregnancy-when-how-much-guide",
+    "title": "Folic Acid Before and During Pregnancy: When to Start and How Much",
+    "description": "Why folic acid protects your baby's brain and spine, when to start (before pregnancy), the usual dose, who needs more, foods that help, and common myths.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "💊",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Of all the tablets suggested in pregnancy, folic acid is the one with the strongest proof, and the one most women start **too late**. It protects the baby's brain and spinal cord, which form in the **first 4 weeks**, often before you even know you are pregnant. That's why doctors say to start it **before** trying for a baby. Here's what to know."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Take folic acid **from at least 1 month before trying to conceive** until the end of the **first 3 months** of pregnancy. The usual dose is **400 micrograms (0.4 mg) a day**. Some women need a **higher dose** that a doctor prescribes (for example with diabetes, epilepsy medicines, obesity, or a previous baby with a spine problem). Already pregnant and haven't started? **Start today.**"
+      },
+      {
+        "type": "heading",
+        "text": "Why It Matters"
+      },
+      {
+        "type": "paragraph",
+        "text": "Folic acid is a B vitamin (B9). In the first weeks, the baby's spine forms from a tiny tube that must close properly. Without enough folate, it may not close fully, causing **neural tube defects** such as spina bifida. Taking folic acid before and in early pregnancy greatly lowers this risk. It also helps prevent one kind of **anaemia** in the mother."
+      },
+      {
+        "type": "heading",
+        "text": "When to Start and Stop"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Stage",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "Planning a pregnancy",
+            "Start at least 1 month (ideally 3 months) before trying"
+          ],
+          [
+            "Found out you're pregnant and haven't started",
+            "Start immediately. It still helps"
+          ],
+          [
+            "First 12 weeks",
+            "Take it every day"
+          ],
+          [
+            "After 12 weeks",
+            "Your doctor may continue it, often as part of iron-folic acid tablets (free at government health centres under the national programme)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Who Needs a Higher Dose"
+      },
+      {
+        "type": "paragraph",
+        "text": "Some women are advised a **higher dose (often 5 mg a day)**, but only on a doctor's prescription:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "A previous pregnancy with a **neural tube defect**, or one in you or your partner's family",
+          "**Diabetes**",
+          "**Epilepsy medicines** or certain other medicines",
+          "**Obesity** (BMI 30 or more)",
+          "**Sickle cell disease or thalassaemia**",
+          "Conditions that affect how food is absorbed (for example coeliac disease)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Foods That Help (but Aren't Enough Alone)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Green leafy vegetables**: palak, methi, sarson, bathua",
+          "**Dals and pulses**: rajma, chana, moong, lobia",
+          "**Fruits**: oranges, papaya, banana",
+          "Beetroot, peas, sprouts and peanuts"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "A good diet helps, but cooking destroys some folate, so food alone usually can't give enough in early pregnancy. That's why the tablet is still advised."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Situation",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Fine",
+            "Planning or early pregnancy, taking 400 mcg daily",
+            "Keep going until at least 12 weeks"
+          ],
+          [
+            "🟡 Talk to a doctor",
+            "You have diabetes, epilepsy, obesity, thalassaemia, or a family history of spine defects",
+            "Ask about the higher dose, ideally before trying"
+          ],
+          [
+            "🟡 Talk to a doctor",
+            "Pregnant and only just found out you missed folic acid",
+            "Start now, and mention it at your first scan visit. The anomaly scan around 18–20 weeks checks the spine"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Folic acid is only needed after the pregnancy test is positive.\"",
+            "It works best when started before pregnancy, because the spine forms in the first 4 weeks"
+          ],
+          [
+            "\"Folic acid causes twins.\"",
+            "No good evidence. It just protects the baby's development"
+          ],
+          [
+            "\"More is better.\"",
+            "Take the dose advised. A higher dose is only for women a doctor identifies"
+          ],
+          [
+            "\"A good diet means I don't need the tablet.\"",
+            "Food alone rarely gives enough in early pregnancy"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Whether you are **planning** or **already pregnant** (and how many weeks)",
+          "Any **diabetes, epilepsy, thyroid, thalassaemia** or other condition",
+          "**Medicines** you take now",
+          "Past pregnancies, and any baby with a birth defect in the family",
+          "Your height and weight"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a gynaecologist before trying for a baby is one of the most useful things you can do: the doctor can choose the right folic acid dose, check your other medicines and tests, and plan a healthy start. (See our guides on trying to conceive, pregnancy diet, and the pregnancy test.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO, NHS, Ministry of Health & Family Welfare (Anemia Mukt Bharat)). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Pregnancy mein bataayi jaane wali sab goliyon mein folic acid ka saboot sabse pakka hai, aur zyadatar auratein ise **bahut der se** shuru karti hain. Yeh bachche ke dimaag aur reedh ki haddi ki raksha karta hai, jo **pehle 4 hafton** mein banti hain, aksar pregnancy pata chalne se bhi pehle. Isliye doctor kehte hain ki ise bachche ki koshish **se pehle** shuru karein. Yahan zaroori baatein hain."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Folic acid **pregnancy ki koshish se kam se kam 1 mahina pehle** se lekar pregnancy ke **pehle 3 mahine** ke ant tak lein. Aam dose **din mein 400 microgram (0.4 mg)** hai. Kuch auraton ko doctor ki likhi **zyada dose** chahiye (jaise diabetes, mirgi ki dawa, motapa, ya pehle bachche ko reedh ki dikkat). Pregnant hain aur shuru nahi kiya? **Aaj se shuru karein.**"
+      },
+      {
+        "type": "heading",
+        "text": "Yeh Kyun Zaroori Hai"
+      },
+      {
+        "type": "paragraph",
+        "text": "Folic acid ek B vitamin (B9) hai. Pehle hafton mein bachche ki reedh ek chhoti nali se banti hai jo theek se band honi chahiye. Kaafi folate na ho to yeh poori band nahi hoti, jisse spina bifida jaise **neural tube defects** hote hain. Pregnancy se pehle aur shuru mein folic acid lene se yeh khatra bahut kam hota hai. Yeh maa mein ek tarah ki **khoon ki kami** se bhi bachaata hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kab Shuru Aur Kab Band Karein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Sthiti",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "Pregnancy plan kar rahi hain",
+            "Koshish se kam se kam 1 mahina (behtar 3 mahine) pehle shuru karein"
+          ],
+          [
+            "Pregnancy pata chali, shuru nahi kiya",
+            "Turant shuru karein. Ab bhi madad karta hai"
+          ],
+          [
+            "Pehle 12 hafte",
+            "Roz lein"
+          ],
+          [
+            "12 hafte ke baad",
+            "Doctor ise jaari rakh sakti hain, aksar iron-folic acid goliyon ke roop mein (rashtriya programme ke tahat sarkari kendron par muft)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kise Zyada Dose Chahiye"
+      },
+      {
+        "type": "paragraph",
+        "text": "Kuch auraton ko **zyada dose (aksar din mein 5 mg)** ki salaah di jaati hai, lekin sirf doctor ki parchi par:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Pichhli pregnancy mein **neural tube defect**, ya aapke ya partner ke parivaar mein",
+          "**Diabetes**",
+          "**Mirgi ki dawaiyan** ya kuch anya dawaiyan",
+          "**Motapa** (BMI 30 ya zyada)",
+          "**Sickle cell ya thalassemia**",
+          "Aisi bimariyan jo khaane ka absorption bigaadti hain (jaise coeliac disease)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Madadgaar Khaana (Par Akele Kaafi Nahi)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Hari pattedaar sabziyan**: palak, methi, sarson, bathua",
+          "**Daalein**: rajma, chana, moong, lobia",
+          "**Phal**: santra, papita, kela",
+          "Chukandar, matar, sprouts aur moongphali"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Achha khaana madad karta hai, lekin pakaane se kuch folate nasht ho jaata hai, isliye shuruaati pregnancy mein sirf khaane se aksar kaafi nahi milta. Isliye goli ki salaah phir bhi di jaati hai."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Sthiti",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Theek",
+            "Plan kar rahi hain ya shuruaati pregnancy, roz 400 mcg le rahi hain",
+            "Kam se kam 12 hafte tak jaari rakhein"
+          ],
+          [
+            "🟡 Doctor se baat karein",
+            "Diabetes, mirgi, motapa, thalassemia, ya parivaar mein reedh ki dikkat",
+            "Zyada dose ke baare mein poochhein, behtar hai koshish se pehle"
+          ],
+          [
+            "🟡 Doctor se baat karein",
+            "Pregnant hain aur abhi pata chala ki folic acid chhoot gaya",
+            "Abhi shuru karein, aur pehli scan visit mein batayein. Lagbhag 18–20 hafte ka anomaly scan reedh check karta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Folic acid sirf pregnancy test positive hone ke baad chahiye.\"",
+            "Pregnancy se pehle shuru karne par sabse achha kaam karta hai, kyunki reedh pehle 4 hafton mein banti hai"
+          ],
+          [
+            "\"Folic acid se judwa bachche hote hain.\"",
+            "Koi achha saboot nahi. Yeh bas bachche ke vikas ki raksha karta hai"
+          ],
+          [
+            "\"Zyada lena behtar hai.\"",
+            "Batayi gayi dose lein. Zyada dose sirf unke liye jinhe doctor pehchaanein"
+          ],
+          [
+            "\"Achha khaana hai to goli nahi chahiye.\"",
+            "Shuruaati pregnancy mein sirf khaane se shayad hi kaafi milta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Aap **plan kar rahi hain** ya **pregnant hain** (aur kitne hafte)",
+          "Koi **diabetes, mirgi, thyroid, thalassemia** ya anya bimari",
+          "Abhi li ja rahi **dawaiyan**",
+          "Pichhli pregnancy, aur parivaar mein janm ki koi dikkat",
+          "Aapki lambaai aur vazan"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Bachche ki koshish se pehle gynaecologist se **online consultation** sabse kaam ki cheezon mein se ek hai: doctor sahi folic acid dose chun sakti hain, baaki dawaiyan aur test dekh sakti hain, aur swasth shuruaat ka plan bana sakti hain. (Pregnancy ki koshish, pregnancy diet aur pregnancy test par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO, NHS, Ministry of Health & Family Welfare (Anemia Mukt Bharat)) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "c-section-recovery-at-home-care-guide",
+    "title": "C-Section Recovery at Home: Wound Care, Pain, Walking and Warning Signs",
+    "description": "Recovering after a caesarean? A week-by-week guide to wound care, pain relief, walking, lifting, food, feeding the baby, and the warning signs that need a doctor.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🩹",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A caesarean (C-section) is major tummy surgery, and you're recovering from it while caring for a newborn. Many new mothers hear \"don't move at all for 40 days\" from one side and \"you should be fine in a week\" from another. The truth is in between: **gentle movement early speeds healing**, while heavy work and lifting should wait. This guide covers the first 6 weeks."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Most women feel much better in **2 weeks** and recover fully in about **6 weeks**. **Walk a little from day 1–2**, keep the wound clean and dry, take pain relief as prescribed, and **don't lift anything heavier than your baby** for about 6 weeks. Get help urgently for **fever, a wound that is red, hot, oozing or opening, heavy bleeding, or a painful swollen calf**."
+      },
+      {
+        "type": "heading",
+        "text": "Recovery Week by Week"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Time",
+          "What's normal",
+          "What you can do"
+        ],
+        "rows": [
+          [
+            "Days 1–3 (hospital)",
+            "Wound pain, tiredness, bleeding like a heavy period",
+            "Sit up, stand and walk short distances with help; start breastfeeding"
+          ],
+          [
+            "Week 1–2",
+            "Pain easing, bleeding getting lighter, wound feels tight or numb",
+            "Short walks at home several times a day; light household tasks"
+          ],
+          [
+            "Week 3–4",
+            "Much more comfortable; bleeding light or stopped",
+            "Longer walks; gentle daily routine"
+          ],
+          [
+            "Week 6",
+            "Most women feel close to normal",
+            "Check-up with your doctor; ask about exercise, driving and sex"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Caring for the Wound"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Keep it **clean and dry**. A daily bath or shower is fine once your doctor allows it, usually after the dressing is removed. Pat it dry gently",
+          "Wear **loose cotton clothes** and high-waisted underwear that doesn't rub the scar",
+          "**Don't put powder, oil, turmeric or home remedies** on the wound",
+          "Numbness around the scar is common and slowly improves over months",
+          "Stitches or clips are removed at the clinic if they don't dissolve. Your hospital will say when"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Pain, Coughing and Getting Up"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Take pain relief **regularly as prescribed** in the first days. It helps you walk and feed the baby comfortably",
+          "When you cough, sneeze or laugh, **hold a pillow firmly over the wound**",
+          "To get out of bed: roll onto your side, push up with your arms, then swing your legs down",
+          "Walking early helps prevent **blood clots**, gas pain and constipation"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Food, Fluids and Toilet"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Eat normal, home-cooked food: dal, sabzi, roti or rice, curd, fruits, eggs or paneer. Protein helps the wound heal",
+          "Drink plenty of water, especially if breastfeeding",
+          "Fibre and fluids prevent constipation; ask your doctor for a stool softener if needed. Don't strain",
+          "Continue iron and calcium tablets if prescribed"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Feeding Your Baby"
+      },
+      {
+        "type": "paragraph",
+        "text": "Breastfeeding after a C-section is safe and encouraged. Positions that keep the baby's weight off your wound help: the **side-lying** position in bed, or the **\"rugby/football hold\"** with the baby tucked under your arm on a pillow. Ask a nurse or doctor to help with the first feeds."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Wound soreness that's slowly easing, light bleeding, tiredness",
+            "Rest, short walks, pain relief as advised"
+          ],
+          [
+            "🟡 See a doctor soon",
+            "Wound slightly red or itchy, burning when passing urine, constipation for several days, very low mood",
+            "Book a consultation in a day or two"
+          ],
+          [
+            "🔴 Urgent",
+            "Fever, a wound that is red, hot, swollen, oozing pus or opening",
+            "See a doctor the same day (infection)"
+          ],
+          [
+            "🔴 Urgent",
+            "Soaking a pad an hour, large clots, foul-smelling discharge",
+            "Go to hospital"
+          ],
+          [
+            "🔴 Emergency",
+            "Painful, swollen calf, or chest pain and breathlessness",
+            "Go to an emergency now (possible blood clot)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Stay in bed for 40 days.\"",
+            "Gentle walking from day 1–2 speeds healing and prevents clots. Rest, yes; bed rest, no"
+          ],
+          [
+            "\"Don't drink water, the wound will swell.\"",
+            "Water is important, especially when breastfeeding. It doesn't harm the wound"
+          ],
+          [
+            "\"Tie a tight cloth around the tummy to shape it.\"",
+            "A gentle support belt is fine if comfortable, but very tight binding can hurt the wound and breathing"
+          ],
+          [
+            "\"After one C-section, every delivery must be a C-section.\"",
+            "Not always. Many women can try a normal delivery next time; discuss it with your gynaecologist"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Date of the C-section**, and your discharge papers",
+          "A **photo of the wound** in good light",
+          "Your temperature if you feel feverish",
+          "How much you are bleeding, and its smell and colour",
+          "Medicines you are taking, and how feeding is going"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online video consultation** is easy to do from home while you recover: a gynaecologist can look at the wound on camera, check your symptoms and tell you if you need to be seen in person. (See our guides on postpartum recovery, breastfeeding problems, and baby sleep.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Caesarean (C-section) pet ki badi surgery hai, aur aap naye bachche ki dekhbhaal karte hue isse theek ho rahi hain. Kai nayi maayon ko ek taraf se sunne ko milta hai \"40 din bilkul mat hilo\" aur doosri taraf se \"ek hafte mein theek ho jaogi\". Sach beech mein hai: **jaldi halki harkat se ghaav jaldi bharta hai**, jabki bhaari kaam aur vazan uthaana ruk kar karein. Yeh guide pehle 6 hafton ke baare mein hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zyadatar auratein **2 hafte** mein kaafi behtar mehsoos karti hain aur lagbhag **6 hafte** mein poori tarah theek hoti hain. **Din 1–2 se thoda chalein**, ghaav saaf aur sookha rakhein, dard ki dawa parchi ke anusaar lein, aur lagbhag 6 hafte tak **bachche se bhaari kuch na uthaayein**. **Bukhaar, laal, garam, risaav wala ya khulta ghaav, zyada bleeding, ya dukhti soojhi pindli** ho to turant madad lein."
+      },
+      {
+        "type": "heading",
+        "text": "Hafte-Dar-Hafte Recovery"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Samay",
+          "Kya normal hai",
+          "Kya kar sakti hain"
+        ],
+        "rows": [
+          [
+            "Din 1–3 (hospital)",
+            "Ghaav mein dard, thakaan, bhaari period jaisi bleeding",
+            "Madad se baithna, khade hona aur thoda chalna; stanpaan shuru"
+          ],
+          [
+            "Hafta 1–2",
+            "Dard kam, bleeding halki, ghaav tight ya sunn lagta hai",
+            "Ghar mein din mein kai baar chhoti walk; halke ghar ke kaam"
+          ],
+          [
+            "Hafta 3–4",
+            "Kaafi aaram; bleeding halki ya band",
+            "Lambi walk; halka roz ka routine"
+          ],
+          [
+            "Hafta 6",
+            "Zyadatar auratein lagbhag normal mehsoos karti hain",
+            "Doctor se jaanch; exercise, gaadi chalaana aur sex ke baare mein poochhein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ghaav Ki Dekhbhaal"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Saaf aur sookha** rakhein. Doctor ijaazat dein tab roz nahaana theek hai, aamtaur par dressing hatne ke baad. Halke se thapthapa kar sukhaayein",
+          "**Dheele cotton kapde** aur oonchi kamar wali underwear pehnein jo nishaan par na ragde",
+          "Ghaav par **powder, tel, haldi ya gharelu nuskhe na lagayein**",
+          "Nishaan ke aas-paas sunnpan aam hai aur mahinon mein dheere theek hota hai",
+          "Taanke ya clips na ghulein to clinic mein nikaale jaate hain. Hospital batayega kab"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Dard, Khaansi Aur Uthna"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Shuru ke dinon mein dard ki dawa **parchi ke anusaar niyamit** lein. Isse chalna aur doodh pilaana aasaan hota hai",
+          "Khaansi, chheenk ya hansi aaye to **ghaav par takiya kas kar dabaayein**",
+          "Bistar se uthne ke liye: karvat lein, haathon se dhakel kar uthein, phir pair neeche laayein",
+          "Jaldi chalne se **khoon ke thakke**, gas ka dard aur kabz se bachaav hota hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Khaana, Paani Aur Toilet"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Normal ghar ka khaana khaayein: dal, sabzi, roti ya chawal, dahi, phal, anda ya paneer. Protein ghaav bharne mein madad karta hai",
+          "Khoob paani piyein, khaaskar doodh pilaati hain to",
+          "Fibre aur paani kabz se bachaate hain; zaroorat ho to doctor se stool softener poochhein. Zor na lagayein",
+          "Parchi mein iron aur calcium ki goliyan hon to jaari rakhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Bachche Ko Doodh Pilaana"
+      },
+      {
+        "type": "paragraph",
+        "text": "C-section ke baad stanpaan surakshit hai aur iski salaah di jaati hai. Aise position madad karte hain jismein bachche ka vazan ghaav par na pade: bistar par **karvat lekar**, ya **\"football hold\"** jismein bachcha takiye par aapki baah ke neeche ho. Pehle kuch baar nurse ya doctor se madad lein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Ghaav mein dard jo dheere kam ho raha hai, halki bleeding, thakaan",
+            "Aaram, chhoti walk, salaah ke anusaar dard ki dawa"
+          ],
+          [
+            "🟡 Jaldi doctor ko dikhayein",
+            "Ghaav thoda laal ya khujli, peshaab mein jalan, kai din se kabz, bahut udaasi",
+            "Ek-do din mein consultation book karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bukhaar, laal, garam, soojha, mawaad wala ya khulta ghaav",
+            "Usi din doctor ko dikhayein (infection)"
+          ],
+          [
+            "🔴 Urgent",
+            "Har ghante pad bhar jaana, bade thakke, badboodaar discharge",
+            "Hospital jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Dukhti, soojhi pindli, ya seene mein dard aur saans phoolna",
+            "Abhi emergency jaayein (khoon ka thakka ho sakta hai)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"40 din bistar par raho.\"",
+            "Din 1–2 se halki walk se ghaav jaldi bharta hai aur thakke nahi bante. Aaram haan, bistar par pade rehna nahi"
+          ],
+          [
+            "\"Paani mat piyo, ghaav soojh jaayega.\"",
+            "Paani zaroori hai, khaaskar doodh pilaate samay. Isse ghaav ko nuksaan nahi hota"
+          ],
+          [
+            "\"Pet ko shape dene ke liye kas kar kapda baandho.\"",
+            "Aaraamdeh ho to halki support belt theek hai, lekin bahut kas kar baandhne se ghaav aur saans ko takleef ho sakti hai"
+          ],
+          [
+            "\"Ek C-section ke baad har delivery C-section hogi.\"",
+            "Hamesha nahi. Kai auratein agli baar normal delivery try kar sakti hain; gynaecologist se baat karein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**C-section ki taareekh**, aur discharge ke kaagaz",
+          "Achhi roshni mein **ghaav ki photo**",
+          "Bukhaar lage to taapmaan",
+          "Kitni bleeding hai, uski badboo aur rang",
+          "Jo dawaiyan le rahi hain, aur doodh pilaana kaisa chal raha hai"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Recovery ke dauraan ghar se **online video consultation** aasaan hai: gynaecologist camera par ghaav dekh sakti hain, lakshan check kar sakti hain aur bata sakti hain ki milkar dikhaana zaroori hai ya nahi. (Delivery ke baad recovery, stanpaan ki dikkaton aur bachche ki neend par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, ACOG, Royal College of Obstetricians and Gynaecologists) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "menstrual-migraine-headache-before-periods-guide",
+    "title": "Headache Before or During Periods (Menstrual Migraine): Why and What Helps",
+    "description": "Bad headaches every month around your period? Why hormones trigger migraine, how to track it, what helps during an attack, and when to see a doctor.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🌙",
+    "content": [
+      {
+        "type": "intro",
+        "text": "If a pounding headache arrives like clockwork every month, just before or during your period, you're not imagining the link. Many women with migraine find their worst attacks come with their period. These \"menstrual migraines\" are often **longer and harder to treat** than other attacks, but because they are predictable, they can also be **planned for**. Here's how."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "The drop in the hormone **oestrogen** just before a period can trigger migraine. **Track your headaches and periods for 2–3 months.** If the pattern is clear, a doctor can suggest **treatment taken in advance** around those days. See a doctor urgently for a **sudden \"worst-ever\" headache**, or a headache with weakness, confusion or vision loss."
+      },
+      {
+        "type": "heading",
+        "text": "Is It Menstrual Migraine?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Headache from **2 days before to 3 days after** the period starts, in most cycles",
+          "**Throbbing**, often one-sided, with nausea or sensitivity to light and sound",
+          "Often lasts longer (up to 2–3 days) than your other headaches",
+          "Some women only get migraines then (\"pure menstrual migraine\"); others get them at other times too"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why Hormones Trigger It"
+      },
+      {
+        "type": "paragraph",
+        "text": "Oestrogen levels fall sharply just before a period. In people prone to migraine, that drop can set off an attack. Other things around periods can add up: poor sleep, cramps, low iron from heavy bleeding, and skipped meals. Migraine often improves in pregnancy (when oestrogen is steady) and may change around menopause."
+      },
+      {
+        "type": "heading",
+        "text": "Track It: Your 3-Month Diary"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Mark the **first day of each period**",
+          "Mark **each headache day**, how bad it was (1–10), and how long it lasted",
+          "Note what you took and whether it helped",
+          "Note sleep, missed meals, and heavy bleeding",
+          "After 2–3 months, look for the pattern, and take the diary to your doctor"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "During an Attack"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Treat it **early**, at the first sign. Medicine works better before the pain peaks",
+          "Rest in a **dark, quiet room**, with a cold pack on the forehead or neck",
+          "Drink water and eat something light",
+          "A doctor can prescribe **specific migraine medicines** if ordinary painkillers don't work",
+          "Avoid using painkillers on **more than 2–3 days a week**, as that can cause more headaches (medication-overuse headache)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Prevention Options to Discuss with a Doctor"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Short-term prevention**: medicine taken for a few days around the expected period (only if your cycle is regular)",
+          "**Daily prevention** if migraines are frequent at other times too",
+          "Treating **heavy periods** and **low iron**, which can make migraines worse",
+          "Hormonal options in some women; **women who get migraine with aura should discuss the safety of combined pills with a doctor**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually manageable",
+            "Predictable monthly headaches that ease with rest and simple painkillers",
+            "Track it, and treat early"
+          ],
+          [
+            "🟡 See a doctor",
+            "Headaches stop you working or studying, painkillers needed many days, or you're on the pill and get aura",
+            "Book a consultation; better treatments exist"
+          ],
+          [
+            "🔴 Emergency",
+            "Sudden \"worst-ever\" headache, or headache with weakness, numbness, confusion, slurred speech, fits or vision loss",
+            "Go to an emergency now"
+          ],
+          [
+            "🔴 Urgent",
+            "Headache with fever and stiff neck, or a new pattern after age 50",
+            "See a doctor the same day"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Period headaches are normal; just bear them.\"",
+            "Common is not the same as untreatable. Planned treatment can help a lot"
+          ],
+          [
+            "\"It's just weakness, eat more ghee.\"",
+            "It's a hormone-related brain response. Regular meals and iron help, but it needs proper treatment"
+          ],
+          [
+            "\"Strong painkillers every day will stop it.\"",
+            "Painkillers on many days can actually cause daily headaches"
+          ],
+          [
+            "\"Migraine means something serious in the brain.\"",
+            "Migraine is a common condition, not a tumour. But new or changed headaches should be checked"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Your **headache and period diary** (2–3 months)",
+          "What the headache feels like, and any **aura** (flashing lights, zig-zag lines) before it",
+          "**Medicines** you take, including painkillers and contraceptive pills",
+          "How heavy your periods are",
+          "Any other health problems"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Menstrual migraine is well suited to an **online consultation**: a neurologist or gynaecologist can review your diary and plan treatment around your cycle. (See our guides on migraine vs headache, migraine triggers, heavy periods, and tension headache.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Migraine Foundation, International Headache Society). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Agar har mahine period se theek pehle ya dauraan dhad-dhad karta sir dard ghadi ki tarah aata hai, to yeh rishta aapka vehem nahi hai. Migraine wali kai auraton ke sabse bure daure period ke saath aate hain. Yeh \"menstrual migraine\" aksar **lambe aur ilaaj mein mushkil** hote hain, lekin kyunki pehle se pata hota hai, inke liye **pehle se taiyaari** bhi ho sakti hai. Yahan jaaniye kaise."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Period se theek pehle **oestrogen** hormone ka girna migraine shuru kar sakta hai. **2–3 mahine sir dard aur periods ko track karein.** Pattern saaf ho to doctor un dinon ke aas-paas **pehle se li jaane wali dawa** bata sakte hain. **Achanak \"zindagi ka sabse bura\" sir dard**, ya kamzori, uljhan ya dikhna band hone ke saath sir dard ho to turant doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Kya Yeh Menstrual Migraine Hai?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Zyadatar cycles mein period shuru hone se **2 din pehle se 3 din baad tak** sir dard",
+          "**Dhad-dhad** dard, aksar ek taraf, ji machalna ya roshni aur awaaz se dikkat",
+          "Aksar baaki sir dard se lamba (2–3 din tak)",
+          "Kuch auraton ko sirf tab hi hota hai (\"pure menstrual migraine\"); kuch ko baaki samay bhi"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Hormone Ise Kyun Shuru Karte Hain"
+      },
+      {
+        "type": "paragraph",
+        "text": "Period se theek pehle oestrogen tezi se girta hai. Migraine ki pravritti wale logon mein yeh girna daura shuru kar sakta hai. Periods ke aas-paas aur cheezein bhi jud jaati hain: kam neend, marod, zyada bleeding se iron ki kami, aur chhoota khaana. Pregnancy mein (jab oestrogen sthir rehta hai) migraine aksar behtar hota hai aur menopause ke aas-paas badal sakta hai."
+      },
+      {
+        "type": "heading",
+        "text": "Track Karein: 3 Mahine Ki Diary"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Har period ka **pehla din** likhein",
+          "**Har sir dard ka din**, kitna tez (1–10), aur kitni der chala, likhein",
+          "Kya liya aur madad mili ya nahi, likhein",
+          "Neend, chhoota khaana aur zyada bleeding likhein",
+          "2–3 mahine baad pattern dekhein, aur diary doctor ke paas le jaayein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daure Ke Dauraan"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Pehle sanket par hi **jaldi** ilaaj karein. Dard charam par pahunchne se pehle dawa behtar kaam karti hai",
+          "**Andhere, shaant kamre** mein aaram, maathe ya gardan par thanda sek",
+          "Paani piyein aur kuch halka khaayein",
+          "Aam painkiller kaam na karein to doctor **migraine ki khaas dawaiyan** likh sakte hain",
+          "**Hafte mein 2–3 din se zyada** painkiller na lein, isse sir dard aur badh sakta hai (medication-overuse headache)"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Doctor Se Bachaav Ke Vikalp Poochhein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Kam samay ka bachaav**: andaaze ke period ke aas-paas kuch din li jaane wali dawa (sirf niyamit cycle mein)",
+          "Baaki samay bhi migraine aksar ho to **roz ka bachaav**",
+          "**Zyada periods** aur **iron ki kami** ka ilaaj, jo migraine badha sakte hain",
+          "Kuch auraton mein hormonal vikalp; **jinhe aura wala migraine hota hai, woh combined goliyon ki suraksha ke baare mein doctor se baat karein**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhti hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar sambhaalne layak",
+            "Har mahine pehle se pata sir dard jo aaram aur simple painkiller se theek ho",
+            "Track karein, aur jaldi ilaaj karein"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Sir dard se kaam ya padhaai ruke, kai din painkiller lena pade, ya goli le rahi hain aur aura hota hai",
+            "Consultation book karein; behtar ilaaj hain"
+          ],
+          [
+            "🔴 Emergency",
+            "Achanak \"sabse bura\" sir dard, ya kamzori, sunnpan, uljhan, ladkhadaati zubaan, daura ya dikhna band hona",
+            "Abhi emergency jaayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bukhaar aur akdi gardan ke saath sir dard, ya 50 ke baad naya pattern",
+            "Usi din doctor ko dikhayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Period ka sir dard normal hai; bas sah lo.\"",
+            "Aam hona aur ilaaj na hona ek baat nahi. Plan kiya ilaaj bahut madad karta hai"
+          ],
+          [
+            "\"Bas kamzori hai, zyada ghee khao.\"",
+            "Yeh hormone se juda dimaag ka response hai. Samay par khaana aur iron madad karte hain, par sahi ilaaj chahiye"
+          ],
+          [
+            "\"Roz tez painkiller se ruk jaayega.\"",
+            "Kai din painkiller se roz ka sir dard ho sakta hai"
+          ],
+          [
+            "\"Migraine matlab dimaag mein kuch gambhir.\"",
+            "Migraine aam bimari hai, tumour nahi. Lekin naya ya badla hua sir dard check karayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Aapki **sir dard aur period diary** (2–3 mahine)",
+          "Sir dard kaisa lagta hai, aur pehle koi **aura** (chamakti roshni, tedhi-medhi lines)",
+          "Li ja rahi **dawaiyan**, painkiller aur contraceptive goliyan samet",
+          "Periods kitne zyada hote hain",
+          "Koi anya bimari"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Menstrual migraine ke liye **online consultation** achha rehta hai: neurologist ya gynaecologist aapki diary dekh kar cycle ke hisaab se ilaaj plan kar sakte hain. (Migraine vs headache, migraine triggers, zyada periods aur tension headache par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Migraine Foundation, International Headache Society) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "pinched-nerve-neck-arm-numbness-tingling-guide",
+    "title": "Pinched Nerve in the Neck: Arm Pain, Numbness and Tingling Explained",
+    "description": "Neck pain shooting into the arm, or tingling fingers? What a pinched nerve is, what helps at home, warning signs, and when a scan is needed.",
+    "specialization": "Neurologist",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🧍",
+    "content": [
+      {
+        "type": "intro",
+        "text": "A pain that starts in the neck and shoots down your arm, sometimes with tingling or numbness in the fingers, is often described as \"**nas dab gayi**\". Doctors call it **cervical radiculopathy**: a nerve root in the neck is being squeezed. It can be very painful, but the good news is that **most cases get much better within weeks** with simple care. Here's how to tell it apart from other causes, and when it needs urgent attention."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Neck pain that **travels down one arm**, with tingling, numbness or weakness in the hand, is typical of a pinched nerve. Most people improve in **4–12 weeks** with pain relief, gentle movement and good posture. Seek **urgent** care for **weakness in both arms or legs, trouble walking, loss of bladder or bowel control**, or pain after an injury."
+      },
+      {
+        "type": "heading",
+        "text": "Common Signs"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Sharp or burning pain** from the neck into the shoulder, arm or hand, usually **one side**",
+          "**Tingling, pins and needles or numbness** in particular fingers",
+          "**Weakness**: dropping things, trouble gripping",
+          "Pain worse when you **turn or tilt the head**, or look down at the phone for long",
+          "Some people find raising the arm over the head eases it"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why It Happens"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Age-related wear** of the neck bones and discs (cervical spondylosis), the most common cause after 40",
+          "A **slipped (bulging) disc** pressing on the nerve, more common in younger people",
+          "Long hours with the neck bent forward: phone, laptop, two-wheeler riding",
+          "Less often: an injury, infection or a growth"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Pinched Nerve or Something Else?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Pinched nerve (neck)",
+          "Carpal tunnel (wrist)",
+          "Heart (angina)"
+        ],
+        "rows": [
+          [
+            "Where it starts",
+            "Neck, into the arm",
+            "Wrist, into the fingers",
+            "Chest, may spread to the left arm or jaw"
+          ],
+          [
+            "Worse with",
+            "Neck movement",
+            "Wrist use, at night",
+            "Effort, climbing stairs"
+          ],
+          [
+            "Numb fingers",
+            "Depends on the nerve",
+            "Thumb, index and middle",
+            "Usually not"
+          ],
+          [
+            "What to do",
+            "See a doctor",
+            "See a doctor",
+            "**Emergency if with sweating or breathlessness**"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Helps at Home"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Keep moving gently**. Complete rest and long use of a neck collar usually slow recovery",
+          "**Pain relief** as advised by a doctor or pharmacist; a warm compress for muscle spasm",
+          "**Fix your screen height**: phone and laptop at eye level, and take breaks every 30–45 minutes",
+          "A **supportive pillow** that keeps the neck in line, not too high",
+          "Once the worst pain settles, **gentle neck exercises** shown by a doctor or physiotherapist"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Tests and Treatment"
+      },
+      {
+        "type": "paragraph",
+        "text": "Most people **don't need a scan at first**. A doctor examines your strength, reflexes and feeling. An **MRI** is done if symptoms are severe, keep getting worse, last beyond 6–8 weeks, or if there are warning signs. Treatment usually starts with medicines for nerve pain and physiotherapy. Injections or surgery are needed only for a small number of people with severe or worsening weakness."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually improves",
+            "Neck and arm pain with some tingling, slowly getting better",
+            "Home care for a few weeks"
+          ],
+          [
+            "🟡 See a doctor",
+            "Pain not better in 2–3 weeks, numbness spreading, or weakness in the hand",
+            "Book a consultation"
+          ],
+          [
+            "🔴 Urgent",
+            "Weakness in both arms or legs, clumsy hands, trouble walking or balancing",
+            "See a doctor the same day (possible pressure on the spinal cord)"
+          ],
+          [
+            "🔴 Emergency",
+            "Loss of bladder or bowel control, pain after a fall or accident, or with fever and weight loss",
+            "Go to an emergency"
+          ],
+          [
+            "🔴 Emergency",
+            "Left arm pain with chest tightness, sweating or breathlessness",
+            "Go to an emergency now (heart)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Nas dabi hai, to operation hi ilaaj hai.\"",
+            "Most people get better without surgery"
+          ],
+          [
+            "\"Wear a neck collar all day.\"",
+            "Long use weakens neck muscles. Use it only briefly if a doctor advises"
+          ],
+          [
+            "\"Massage the neck hard to set the nerve right.\"",
+            "Forceful massage or \"cracking\" the neck can be risky. Gentle movement is safer"
+          ],
+          [
+            "\"Get an MRI immediately.\"",
+            "Most people don't need one at first. A doctor decides based on your symptoms"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Where the pain goes**: neck, shoulder, which fingers tingle",
+          "When it started, and anything that triggered it",
+          "Any **weakness**, dropping things, or trouble walking",
+          "Your work posture and daily screen time",
+          "Any reports: X-ray, MRI, sugar (diabetes can also cause tingling)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a neurologist is a good first step. The doctor can check the pattern, rule out warning signs, start nerve-pain treatment and advise whether you need a scan or an in-person exam. (See our guides on peripheral neuropathy, carpal tunnel, and neck pain from phone posture.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NINDS, American Academy of Orthopaedic Surgeons). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Gardan se shuru hokar haath mein daudta dard, kabhi ungliyon mein jhunjhuni ya sunnpan ke saath, aksar \"**nas dab gayi**\" kehlaata hai. Doctor ise **cervical radiculopathy** kehte hain: gardan ki ek nas ki jad dab rahi hai. Yeh bahut dardnaak ho sakta hai, lekin achhi baat yeh hai ki **zyadatar mamle hafton mein kaafi behtar ho jaate hain**, simple dekhbhaal se. Yahan jaaniye ise doosri wajahon se kaise alag karein, aur kab turant dikhaana zaroori hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Gardan ka dard jo **ek haath mein neeche jaaye**, saath mein haath mein jhunjhuni, sunnpan ya kamzori, nas dabne ka aam sanket hai. Zyadatar log dard ki dawa, halki harkat aur sahi posture se **4–12 hafton** mein behtar hote hain. **Dono haathon ya pairon mein kamzori, chalne mein dikkat, peshaab ya potty par control khona**, ya chot ke baad dard ho to **turant** dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Aam Sanket"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Gardan se kandhe, haath ya hatheli tak **tez ya jalta dard**, aamtaur par **ek taraf**",
+          "Kuch khaas ungliyon mein **jhunjhuni, sui chubhna ya sunnpan**",
+          "**Kamzori**: cheezein girna, pakadne mein dikkat",
+          "**Sir ghumaane ya jhukaane**, ya der tak phone neeche dekhne par dard zyada",
+          "Kuch logon ko haath sir ke upar rakhne se aaram milta hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kyun Hota Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Gardan ki haddiyon aur discs ka **umar ke saath ghisna** (cervical spondylosis), 40 ke baad sabse aam wajah",
+          "Nas par dabti **slip disc**, kam umar walon mein zyada",
+          "Gardan aage jhuka kar lambe ghante: phone, laptop, two-wheeler chalaana",
+          "Kam hi: chot, infection ya gaanth"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Nas Dabna Ya Kuch Aur?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Nas dabna (gardan)",
+          "Carpal tunnel (kalai)",
+          "Dil (angina)"
+        ],
+        "rows": [
+          [
+            "Kahan se shuru",
+            "Gardan se haath mein",
+            "Kalai se ungliyon mein",
+            "Seene se, baayen haath ya jabde tak phail sakta hai"
+          ],
+          [
+            "Kis se zyada",
+            "Gardan hilaane se",
+            "Kalai ke kaam se, raat ko",
+            "Mehnat, seedhiyan chadhne se"
+          ],
+          [
+            "Sunn ungliyan",
+            "Nas par nirbhar",
+            "Angootha, tarjani aur beech ki",
+            "Aamtaur par nahi"
+          ],
+          [
+            "Kya karein",
+            "Doctor ko dikhayein",
+            "Doctor ko dikhayein",
+            "**Paseena ya saans phoolne ke saath ho to emergency**"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ghar Par Kya Madad Karta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Halke se hilte rahein**. Poora aaram aur lambe samay tak neck collar se aksar recovery dheemi hoti hai",
+          "Doctor ya pharmacist ki salaah se **dard ki dawa**; maanspeshi ki akdan ke liye garam sek",
+          "**Screen ki oonchaai theek karein**: phone aur laptop aankhon ki seedh mein, aur har 30–45 minute break",
+          "Gardan ko seedh mein rakhne wala **sahi takiya**, zyada ooncha nahi",
+          "Sabse tez dard kam hone par doctor ya physiotherapist ki bataayi **halki gardan ki exercise**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Test Aur Ilaaj"
+      },
+      {
+        "type": "paragraph",
+        "text": "Zyadatar logon ko **shuru mein scan ki zaroorat nahi** hoti. Doctor aapki taakat, reflexes aur mehsoos karne ki shakti check karte hain. **MRI** tab hota hai jab lakshan tez hon, badhte jaayein, 6–8 hafte se zyada chalein, ya khatre ke sanket hon. Ilaaj aamtaur par nas ke dard ki dawa aur physiotherapy se shuru hota hai. Injection ya surgery sirf kuch logon ko chahiye jinmein tez ya badhti kamzori ho."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek hota hai",
+            "Gardan aur haath mein dard, thodi jhunjhuni, dheere behtar",
+            "Kuch hafte ghar par dekhbhaal"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "2–3 hafte mein behtar nahi, sunnpan phailna, ya haath mein kamzori",
+            "Consultation book karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Dono haathon ya pairon mein kamzori, haathon mein bhaddapan, chalne ya santulan mein dikkat",
+            "Usi din doctor ko dikhayein (reedh ki nas par dabaav ho sakta hai)"
+          ],
+          [
+            "🔴 Emergency",
+            "Peshaab ya potty par control khona, girne ya accident ke baad dard, ya bukhaar aur vazan ghatne ke saath",
+            "Emergency jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Baayen haath mein dard ke saath seene mein jakdan, paseena ya saans phoolna",
+            "Abhi emergency jaayein (dil)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Nas dabi hai, to operation hi ilaaj hai.\"",
+            "Zyadatar log bina surgery ke theek ho jaate hain"
+          ],
+          [
+            "\"Din bhar neck collar pehno.\"",
+            "Lambe samay tak pehenne se gardan ki maanspeshiyan kamzor hoti hain. Doctor kahein tabhi thodi der"
+          ],
+          [
+            "\"Gardan zor se dabaao, nas baith jaayegi.\"",
+            "Zor ki maalish ya gardan \"chatkaana\" khatarnaak ho sakta hai. Halki harkat surakshit hai"
+          ],
+          [
+            "\"Turant MRI karao.\"",
+            "Zyadatar logon ko shuru mein nahi chahiye. Doctor lakshan dekh kar tay karte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Dard kahan jaata hai**: gardan, kandha, kaunsi ungliyon mein jhunjhuni",
+          "Kab shuru hua, aur kisi cheez se shuru hua ya nahi",
+          "Koi **kamzori**, cheezein girna, ya chalne mein dikkat",
+          "Kaam ka posture aur roz ka screen time",
+          "Koi report: X-ray, MRI, sugar (diabetes se bhi jhunjhuni hoti hai)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Neurologist se **online consultation** achha pehla kadam hai. Doctor pattern samajh kar khatre ke sanket hata sakte hain, nas ke dard ka ilaaj shuru kar sakte hain aur bata sakte hain ki scan ya milkar jaanch chahiye ya nahi. (Peripheral neuropathy, carpal tunnel aur phone posture se gardan dard par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NINDS, American Academy of Orthopaedic Surgeons) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "febrile-seizure-child-fits-with-fever-guide",
+    "title": "Fits With Fever in Children (Febrile Seizures): What to Do and What It Means",
+    "description": "Child had a fit during fever? What a febrile seizure is, exactly what to do in those minutes, what not to do, when to call an ambulance, and the outlook.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🌡️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Few things are more frightening than seeing your child suddenly stiffen, shake and stop responding during a fever. Many parents fear their child is dying, or think it is \"epilepsy\". In young children this is most often a **febrile seizure**, a fit triggered by a rise in temperature. It looks terrifying, but **most are harmless and over within a few minutes**. Knowing what to do keeps your child safe."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Febrile seizures happen in about **1 in 25 children** aged **6 months to 5 years**, and usually last **under 5 minutes**. **Lay the child on their side on the floor, time the fit, and don't put anything in their mouth.** Call an ambulance if it lasts **more than 5 minutes**, it is the **first ever fit**, or breathing seems difficult. Most children grow out of them and **don't develop epilepsy**."
+      },
+      {
+        "type": "heading",
+        "text": "What It Looks Like"
+      },
+      {
+        "type": "list",
+        "items": [
+          "The child becomes **stiff**, then the arms and legs **jerk**",
+          "Eyes may roll up; they don't respond to you",
+          "They may go **pale or blue** around the lips, wet themselves, or vomit",
+          "Afterwards they are **sleepy or confused** for up to an hour, which is normal",
+          "Sometimes it's milder: the child goes floppy and stares"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What to Do (the first 5 minutes)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Stay calm and note the time** the fit started",
+          "Put the child **on the floor or a bed, on their side** (recovery position), away from anything hard or sharp",
+          "Loosen tight clothes around the neck",
+          "**Don't hold them down** or try to stop the jerking",
+          "**Don't put anything in the mouth**: no spoon, finger, water or medicine. They cannot swallow their tongue",
+          "Stay with them until the fit stops, then keep them on their side as they recover",
+          "If you can, **take a short video**. It helps the doctor a lot"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Avoid these common reactions",
+        "text": "**Don't splash cold water, put the child in a cold bath, shake them, or put onion or a shoe to their nose.** These don't stop a fit and can cause harm. Don't give medicine by mouth until the child is fully awake and can swallow."
+      },
+      {
+        "type": "heading",
+        "text": "When to Call an Ambulance"
+      },
+      {
+        "type": "list",
+        "items": [
+          "The fit lasts **more than 5 minutes**",
+          "It's your child's **first fit**",
+          "Another fit happens in the same illness",
+          "The child has **trouble breathing**, stays blue, or doesn't wake up normally within an hour",
+          "Fit on only **one side** of the body",
+          "**Stiff neck**, a rash that doesn't fade when pressed, a bulging soft spot in a baby, or the child seems very ill"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "After the Fit"
+      },
+      {
+        "type": "paragraph",
+        "text": "A doctor should always check the child after a first febrile seizure, to find the cause of the fever (often a cold, ear or throat infection, or a viral illness) and rule out serious infections like meningitis. Most children **don't need a brain scan or EEG** after a simple febrile seizure. Fever medicine keeps the child comfortable, but it **doesn't reliably prevent** another febrile seizure."
+      },
+      {
+        "type": "heading",
+        "text": "Will It Happen Again? Is It Epilepsy?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "About **1 in 3** children has another febrile seizure with a future fever",
+          "Most children **grow out of them by age 5–6**",
+          "Simple febrile seizures **don't damage the brain** or affect learning",
+          "Only a small number of children later develop epilepsy, and the risk is only slightly higher than in other children"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Situation",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟡 See a doctor today",
+            "A short fit (under 5 minutes) that has stopped, child waking up normally",
+            "Get the child checked today to find the cause of the fever"
+          ],
+          [
+            "🔴 Emergency",
+            "Fit lasting over 5 minutes, first-ever fit, repeated fits, or trouble breathing",
+            "Call an ambulance or go to the nearest emergency"
+          ],
+          [
+            "🔴 Emergency",
+            "Very drowsy after an hour, stiff neck, purple rash, or a baby under 6 months",
+            "Go to an emergency now"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Put a spoon in the mouth so they don't bite their tongue.\"",
+            "Never. It can break teeth or block breathing"
+          ],
+          [
+            "\"Smelling a shoe or onion will stop the fit.\"",
+            "It doesn't help. Lay the child on their side and time the fit"
+          ],
+          [
+            "\"A fit with fever means epilepsy.\"",
+            "Most febrile seizures are not epilepsy and children grow out of them"
+          ],
+          [
+            "\"Giving paracetamol every few hours prevents fits.\"",
+            "Fever medicine doesn't reliably prevent febrile seizures. Use it for comfort, at the right dose"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**How long** the fit lasted, and a video if you took one",
+          "The child's **age, weight** and temperature",
+          "What the fit looked like (whole body or one side)",
+          "Other symptoms: cough, ear pain, rash, vomiting, loose stools",
+          "Any fits in the family, and vaccinations given recently"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "After the child has been checked, an **online consultation** with a pediatrician is useful for follow-up questions: what to do in the next fever, and whether any tests are needed. For any fit happening now, or one lasting over 5 minutes, call an ambulance first. (See our guides on fever in children, seizure first aid, and cough and cold in children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American Academy of Pediatrics, NINDS). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Bukhaar mein bachche ka achanak akad jaana, kaanpna aur jawaab na dena dekhna sabse darawni cheezon mein se ek hai. Kai maa-baap ko lagta hai bachcha mar raha hai, ya yeh \"mirgi\" hai. Chhote bachchon mein yeh aksar **febrile seizure** hota hai, yaani taapmaan badhne se aaya daura. Dikhne mein darawna hai, lekin **zyadatar bematlab hote hain aur kuch minute mein khatam ho jaate hain**. Kya karna hai, yeh jaanne se bachcha surakshit rehta hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Febrile seizure **6 mahine se 5 saal** ke lagbhag **25 mein se 1 bachche** ko hota hai, aur aamtaur par **5 minute se kam** chalta hai. **Bachche ko zameen par karvat se litaayein, daure ka samay dekhein, aur muh mein kuch na daalein.** **5 minute se zyada** chale, **pehla daura** ho, ya saans mein dikkat lage to ambulance bulaayein. Zyadatar bachche isse bade hokar nikal jaate hain aur **unhe mirgi nahi hoti**."
+      },
+      {
+        "type": "heading",
+        "text": "Kaisa Dikhta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Bachcha **akad** jaata hai, phir haath-pair **jhatke** maarte hain",
+          "Aankhen upar chadh sakti hain; aapko jawaab nahi deta",
+          "Honthon ke aas-paas **peela ya neela** pad sakta hai, peshaab nikal sakta hai, ya ulti ho sakti hai",
+          "Baad mein ek ghante tak **neend ya uljhan** mein rehta hai, jo normal hai",
+          "Kabhi halka hota hai: bachcha dheela pad kar ek-tak dekhta hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kya Karein (Pehle 5 Minute)"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Shaant rahein aur samay note karein** jab daura shuru hua",
+          "Bachche ko **zameen ya bistar par karvat se** litaayein (recovery position), sakht ya nukeeli cheezon se door",
+          "Gale ke paas tight kapde dheele karein",
+          "Bachche ko **zor se na pakdein** aur jhatke rokne ki koshish na karein",
+          "**Muh mein kuch na daalein**: chammach, ungli, paani ya dawa nahi. Bachcha apni jeebh nahi nigal sakta",
+          "Daura rukne tak saath rahein, phir theek hote samay karvat par hi rakhein",
+          "Ho sake to **chhota video** banaayein. Doctor ki bahut madad karta hai"
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "In aam reactions se bachein",
+        "text": "**Thanda paani na chhidkein, thande paani mein na bithaayein, bachche ko na jhatkein, aur naak par pyaaz ya joota na laayein.** Inse daura nahi rukta aur nuksaan ho sakta hai. Bachcha poori tarah jaag kar nigal na sake, tab tak muh se dawa na dein."
+      },
+      {
+        "type": "heading",
+        "text": "Ambulance Kab Bulaayein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Daura **5 minute se zyada** chale",
+          "Bachche ka **pehla daura** ho",
+          "Usi bimaari mein doosra daura aaye",
+          "Bachche ko **saans lene mein dikkat**, neela hi rahe, ya ek ghante mein normal na jaage",
+          "Shareer ki sirf **ek taraf** daura",
+          "**Akdi gardan**, dabaane par na mitne wale daane, bachche ki naram jagah (taalu) phooli, ya bachcha bahut bimaar lage"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Daure Ke Baad"
+      },
+      {
+        "type": "paragraph",
+        "text": "Pehle febrile seizure ke baad doctor ko hamesha bachcha dikhaana chahiye, taaki bukhaar ki wajah (aksar sardi, kaan ya gale ka infection, ya viral bimaari) pata chale aur meningitis jaise gambhir infection hataaye ja sakein. Simple febrile seizure ke baad zyadatar bachchon ko **brain scan ya EEG ki zaroorat nahi** hoti. Bukhaar ki dawa bachche ko aaram deti hai, lekin agla febrile seizure **pakke taur par nahi rokti**."
+      },
+      {
+        "type": "heading",
+        "text": "Kya Phir Hoga? Kya Yeh Mirgi Hai?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Lagbhag **3 mein se 1** bachche ko aage ke kisi bukhaar mein phir hota hai",
+          "Zyadatar bachche **5–6 saal tak isse nikal jaate hain**",
+          "Simple febrile seizure **dimaag ko nuksaan nahi** pahunchaata aur padhaai par asar nahi daalta",
+          "Bahut kam bachchon ko baad mein mirgi hoti hai, aur khatra doosre bachchon se bas thoda zyada hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Sthiti",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟡 Aaj doctor ko dikhayein",
+            "Chhota daura (5 minute se kam) jo ruk gaya, bachcha normal jaag raha hai",
+            "Bukhaar ki wajah jaanne ke liye aaj hi dikhayein"
+          ],
+          [
+            "🔴 Emergency",
+            "5 minute se lamba daura, pehla daura, baar-baar daure, ya saans mein dikkat",
+            "Ambulance bulaayein ya nazdeeki emergency jaayein"
+          ],
+          [
+            "🔴 Emergency",
+            "Ek ghante baad bhi bahut neend, akdi gardan, baingani daane, ya 6 mahine se chhota bachcha",
+            "Abhi emergency jaayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Jeebh na kate isliye muh mein chammach daalo.\"",
+            "Kabhi nahi. Isse daant toot sakte hain ya saans ruk sakti hai"
+          ],
+          [
+            "\"Joota ya pyaaz sunghaane se daura rukega.\"",
+            "Koi madad nahi. Bachche ko karvat se litaa kar samay dekhein"
+          ],
+          [
+            "\"Bukhaar mein daura matlab mirgi.\"",
+            "Zyadatar febrile seizure mirgi nahi hote aur bachche isse nikal jaate hain"
+          ],
+          [
+            "\"Har kuch ghante paracetamol dene se daure rukte hain.\"",
+            "Bukhaar ki dawa febrile seizure pakke taur par nahi rokti. Aaram ke liye sahi dose mein dein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Daura **kitni der** chala, aur video banaaya ho to",
+          "Bachche ki **umar, vazan** aur taapmaan",
+          "Daura kaisa dikha (poora shareer ya ek taraf)",
+          "Anya lakshan: khaansi, kaan dard, daane, ulti, dast",
+          "Parivaar mein kisi ko daure, aur haal mein lage teeke"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Bachche ki jaanch ho jaane ke baad, aage ke sawaalon ke liye pediatrician se **online consultation** kaam ka hai: agle bukhaar mein kya karein, aur koi test chahiye ya nahi. Abhi chal rahe daure, ya 5 minute se lambe daure mein, pehle ambulance bulaayein. (Bachchon mein bukhaar, daure ke first aid aur bachchon mein khaansi-zukaam par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American Academy of Pediatrics, NINDS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "underweight-child-not-gaining-weight-guide",
+    "title": "Child Not Gaining Weight? Causes, a Food Plan That Helps, and When to Worry",
+    "description": "Worried your child is too thin? How to check on a growth chart, common reasons, an Indian food plan with energy-rich foods, myths about tonics, and warning signs.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "⚖️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"Kuch khata hi nahi, bilkul patla hai.\" It's one of the most common worries Indian parents bring to a doctor, usually with comments from relatives. Many thin children are perfectly healthy and simply small-built. Others really aren't gaining enough. The way to tell is not by how they look, but by **how they grow over time**. Here's how to check, and what actually helps."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "What matters is whether your child **keeps growing along their own line on a growth chart**, not whether they look thin. Give **3 meals and 2–3 snacks a day** with energy-rich foods (ghee, peanuts, eggs, paneer, banana), limit milk to about **2 cups a day** after age 1, and avoid junk food. See a doctor if weight is **falling across growth lines**, **not increasing for 2–3 months**, or there are other symptoms."
+      },
+      {
+        "type": "heading",
+        "text": "First: Is Your Child Really Underweight?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Ask for the **weight and height to be plotted on a growth chart** (on the MCP card, at the anganwadi or at the doctor). The WHO charts are used in India",
+          "One reading tells little. **The trend over months** tells a lot",
+          "A child who stays steadily on a low line (and whose parents are also small) is often healthy",
+          "A child whose weight is **dropping to lower lines**, or has stopped gaining, needs a check"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Common Reasons"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Reason",
+          "Clues"
+        ],
+        "rows": [
+          [
+            "Not enough energy in food",
+            "Small portions, lots of watery dal or rice water, long gaps between meals"
+          ],
+          [
+            "Too much milk or juice",
+            "Drinks a lot, then has no appetite for food"
+          ],
+          [
+            "Snacks of chips, biscuits, sweets",
+            "Fills up on empty calories, refuses proper meals"
+          ],
+          [
+            "Frequent infections, worms",
+            "Repeated loose stools, coughs or fevers; itchy bottom"
+          ],
+          [
+            "Anaemia (low iron)",
+            "Pale, tired, poor appetite"
+          ],
+          [
+            "Feeding battles, screens during meals",
+            "Mealtimes are stressful, child eats only with a phone"
+          ],
+          [
+            "Medical causes (less common)",
+            "Long-lasting diarrhoea, breathing problems, thyroid, heart or kidney conditions, coeliac disease"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "A Food Plan That Helps"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Regular times**: 3 meals and 2–3 snacks; avoid grazing all day",
+          "**Add energy to every meal**: a spoon of ghee or oil in dal, khichdi or roti; peanut or til chutney",
+          "**Protein daily**: eggs, paneer, curd, dal, chana, rajma, chicken or fish for non-vegetarian families",
+          "**Energy-rich snacks**: banana, peanut chikki, roasted chana, sattu drink, paneer or egg paratha, dry fruit powder in milk or porridge",
+          "**Milk**: about 2 cups (400–500 ml) a day after age 1; more than that fills the tummy and can cause anaemia",
+          "Serve **small portions** and let them ask for more"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Mealtime Tips That Work"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Eat together**, with no TV or phone at the table",
+          "Let toddlers **feed themselves**, even if it's messy",
+          "Don't force-feed, bribe or punish. Pressure usually reduces appetite",
+          "Offer a refused food again on other days; it can take 10–15 tries",
+          "Keep meals to about **20–30 minutes**"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Thin but active and playful, growing steadily along the same line",
+            "Follow the food plan; recheck growth every few months"
+          ],
+          [
+            "🟡 See a pediatrician",
+            "Weight not increasing for 2–3 months, falling across chart lines, or always tired and pale",
+            "Book a consultation; simple tests (blood count, stool, urine) may help"
+          ],
+          [
+            "🔴 Urgent",
+            "Losing weight with long-lasting diarrhoea, vomiting, fever, or the child is very weak",
+            "See a doctor the same day"
+          ],
+          [
+            "🔴 Urgent",
+            "Very thin with swelling of the feet or face",
+            "See a doctor today (severe malnutrition)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"A weight-gain tonic or protein powder will fix it.\"",
+            "Real food works best. Use supplements only if a doctor advises"
+          ],
+          [
+            "\"More milk means a healthier child.\"",
+            "Too much milk reduces appetite and can cause iron deficiency"
+          ],
+          [
+            "\"A chubby child is a healthy child.\"",
+            "Steady growth matters, not chubbiness"
+          ],
+          [
+            "\"He'll eat when he's hungry, so give him whatever he likes.\"",
+            "Children need structure: regular meals and healthy choices, without pressure"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Child's **age**, and **weights and heights** you have (MCP card, school records)",
+          "A **typical day of food and drink**, including milk and snacks",
+          "Illnesses in the last few months, stools, and when deworming was last done",
+          "Parents' heights",
+          "Any other worries: tiredness, development, sleep"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "An **online consultation** with a pediatrician is a practical way to plot growth, review the diet and decide whether any tests are needed. (See our guides on fussy eaters, worms and deworming, child growth, and starting solids.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO Child Growth Standards, Indian Academy of Pediatrics, NHS). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Kuch khata hi nahi, bilkul patla hai.\" Indian maa-baap doctor ke paas laane wali sabse aam chintaon mein se ek, aksar rishtedaaron ki baaton ke saath. Kai patle bachche bilkul swasth hote hain aur bas chhote kad-kaathi ke. Kuch sach mein kaafi vazan nahi badhaate. Pehchaanne ka tareeka unka dikhna nahi, balki **samay ke saath unka badhna** hai. Yahan jaaniye kaise check karein, aur kya sach mein madad karta hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Zaroori yeh hai ki bachcha **growth chart par apni line par lagatar badh raha hai** ya nahi, yeh nahi ki patla dikhta hai. **Din mein 3 khaane aur 2–3 naashte** energy wale khaane ke saath dein (ghee, moongphali, anda, paneer, kela), 1 saal ke baad doodh lagbhag **2 cup roz** tak rakhein, aur junk food se bachein. Agar vazan **growth lines se neeche gir raha hai**, **2–3 mahine se nahi badh raha**, ya doosre lakshan hain to doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Pehle: Kya Bachcha Sach Mein Kam Vazan Ka Hai?"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Vazan aur lambaai growth chart par lagwaayein** (MCP card par, anganwadi mein ya doctor ke paas). India mein WHO charts use hote hain",
+          "Ek reading kam batati hai. **Mahinon ka trend** bahut kuch batata hai",
+          "Jo bachcha lagatar neechi line par rehta hai (aur maa-baap bhi chhote kad ke hain) aksar swasth hota hai",
+          "Jiska vazan **neeche ki lines tak gir raha** hai, ya badhna ruk gaya hai, uski jaanch zaroori hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aam Wajahein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Wajah",
+          "Sanket"
+        ],
+        "rows": [
+          [
+            "Khaane mein kam energy",
+            "Chhote hisse, zyada patli dal ya maand, khaanon ke beech lamba gap"
+          ],
+          [
+            "Zyada doodh ya juice",
+            "Bahut peeta hai, phir khaane ki bhookh nahi"
+          ],
+          [
+            "Chips, biscuit, mithaai ka naashta",
+            "Khaali calories se pet bharta hai, sahi khaana mana karta hai"
+          ],
+          [
+            "Baar-baar infection, keede",
+            "Baar-baar dast, khaansi ya bukhaar; gudaa mein khujli"
+          ],
+          [
+            "Khoon ki kami (iron kam)",
+            "Peela, thaka, kam bhookh"
+          ],
+          [
+            "Khaane par ladaai, khaate samay screen",
+            "Khaana tanaav bhara, bachcha sirf phone ke saath khaata hai"
+          ],
+          [
+            "Medical wajahein (kam aam)",
+            "Lamba dast, saans ki dikkat, thyroid, dil ya kidney ki bimari, coeliac disease"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Madadgaar Khaane Ka Plan"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Niyamit samay**: 3 khaane aur 2–3 naashte; din bhar thoda-thoda chabaane se bachein",
+          "**Har khaane mein energy jodein**: dal, khichdi ya roti mein ek chammach ghee ya tel; moongphali ya til ki chutney",
+          "**Roz protein**: anda, paneer, dahi, dal, chana, rajma, maansahari parivaaron ke liye chicken ya machhli",
+          "**Energy wale naashte**: kela, moongphali chikki, bhuna chana, sattu, paneer ya anda paratha, doodh ya daliye mein meve ka powder",
+          "**Doodh**: 1 saal ke baad lagbhag 2 cup (400–500 ml) roz; isse zyada se pet bhar jaata hai aur khoon ki kami ho sakti hai",
+          "**Chhote hisse** dein aur bachche ko aur maangne dein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Khaane Ke Samay Kaam Ki Baatein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Saath baith kar khaayein**, mez par TV ya phone nahi",
+          "Chhote bachchon ko **khud khaane dein**, chaahe gandagi ho",
+          "Zabardasti, laalach ya saza na dein. Dabaav se aksar bhookh kam hoti hai",
+          "Mana ki gayi cheez doosre din phir dein; 10–15 baar lag sakti hain",
+          "Khaana lagbhag **20–30 minute** mein khatam karein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Patla par chust aur khelta hai, usi line par lagatar badh raha hai",
+            "Khaane ka plan maanein; kuch mahinon mein growth dobara check karein"
+          ],
+          [
+            "🟡 Pediatrician ko dikhayein",
+            "2–3 mahine se vazan nahi badha, chart lines se neeche gir raha, ya hamesha thaka aur peela",
+            "Consultation book karein; simple test (khoon, potty, peshaab) madad kar sakte hain"
+          ],
+          [
+            "🔴 Urgent",
+            "Lambe dast, ulti, bukhaar ke saath vazan ghatna, ya bachcha bahut kamzor",
+            "Usi din doctor ko dikhayein"
+          ],
+          [
+            "🔴 Urgent",
+            "Bahut patla aur pairon ya chehre par soojan",
+            "Aaj doctor ko dikhayein (gambhir kuposhan)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Vazan badhaane ka tonic ya protein powder theek kar dega.\"",
+            "Asli khaana sabse achha kaam karta hai. Supplement sirf doctor ki salaah par"
+          ],
+          [
+            "\"Zyada doodh matlab zyada swasth bachcha.\"",
+            "Zyada doodh bhookh kam karta hai aur iron ki kami kar sakta hai"
+          ],
+          [
+            "\"Gol-matol bachcha hi swasth bachcha.\"",
+            "Lagatar badhna zaroori hai, motapa nahi"
+          ],
+          [
+            "\"Bhookh lagegi to khaayega, jo pasand hai wahi do.\"",
+            "Bachchon ko dhaancha chahiye: niyamit khaana aur swasth vikalp, bina dabaav ke"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Bachche ki **umar**, aur jo bhi **vazan aur lambaai** pata hai (MCP card, school record)",
+          "**Ek aam din ka khaana-peena**, doodh aur naashte samet",
+          "Pichhle kuch mahinon ki bimaari, potty, aur pichhli deworming kab hui",
+          "Maa-baap ki lambaai",
+          "Koi aur chinta: thakaan, vikas, neend"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pediatrician se **online consultation** growth chart par vazan dekhne, khaane ki jaanch karne aur test ki zaroorat tay karne ka practical tareeka hai. (Nakhre wale khaane, keede aur deworming, bachchon ki growth aur pehla khaana par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO Child Growth Standards, Indian Academy of Pediatrics, NHS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "hand-foot-mouth-disease-children-rash-mouth-sores-guide",
+    "title": "Hand, Foot and Mouth Disease in Children: Rash, Mouth Sores and Home Care",
+    "description": "Spots on hands and feet and painful mouth sores? What HFMD is, how long it lasts, how to keep your child drinking, when they can go back to school, and danger signs.",
+    "specialization": "Pediatrician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🖐️",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Your child has a fever, refuses food, and then small red spots or blisters appear on the hands, feet, around the mouth, and sometimes the bottom. This is very often **hand, foot and mouth disease (HFMD)**, a common viral infection in children under 5 that spreads quickly in schools and play groups. It's **not related to the foot-and-mouth disease of cattle**. It's uncomfortable, but usually **gets better on its own in 7–10 days**."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "HFMD causes **fever, painful mouth sores, and spots on the hands and feet**. There's no specific medicine; care is about **comfort and fluids**. The biggest risk is **dehydration**, because swallowing hurts. See a doctor if your child **isn't drinking or passing much urine**, has a high fever lasting over 3 days, or seems very drowsy, irritable or has jerky movements."
+      },
+      {
+        "type": "heading",
+        "text": "How It Usually Goes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Day",
+          "What you may see"
+        ],
+        "rows": [
+          [
+            "Days 1–2",
+            "Fever, sore throat, tiredness, poor appetite"
+          ],
+          [
+            "Days 2–4",
+            "Painful sores in the mouth and on the tongue; red spots or small blisters on palms, soles, sometimes knees and bottom"
+          ],
+          [
+            "Days 5–10",
+            "Spots dry up and fade; eating improves"
+          ],
+          [
+            "A few weeks later",
+            "Sometimes peeling skin on fingers, or a nail that comes loose. This is harmless and grows back"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Care at Home"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Fluids first**: small sips often. Cool water, milk, ORS, coconut water, buttermilk",
+          "Offer **soft, cool, bland foods**: curd, khichdi, mashed banana, suji kheer, ice cream or kulfi",
+          "Avoid **spicy, salty, sour or very hot** foods and citrus juices, which sting the sores",
+          "For pain or fever, give medicine **as your doctor advises, with the dose based on weight**",
+          "Let the spots be: **don't pop blisters**, and keep nails short"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Stopping It from Spreading"
+      },
+      {
+        "type": "list",
+        "items": [
+          "The virus spreads through **saliva, coughs, blister fluid and stools**",
+          "**Wash hands with soap** often, especially after nappy changes and before cooking",
+          "Don't share cups, spoons or towels; clean toys and surfaces",
+          "Keep the child **home while they have a fever or are unwell**; most can return once the fever has gone and they feel better, even if some spots remain. Follow your school's rules",
+          "Adults can catch it too, usually mildly"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usual HFMD",
+            "Mouth sores and spots, drinking and passing urine, playful between fevers",
+            "Home care, and watch fluids"
+          ],
+          [
+            "🟡 See a doctor",
+            "Fever over 3 days, very sore mouth with little eating, or a baby under 6 months",
+            "Book a consultation"
+          ],
+          [
+            "🔴 Urgent",
+            "Few wet nappies or no urine for 8 hours, dry mouth, no tears, very sleepy",
+            "See a doctor the same day (dehydration)"
+          ],
+          [
+            "🔴 Emergency",
+            "Very drowsy or hard to wake, very irritable, jerky movements, weakness, stiff neck, or fast breathing",
+            "Go to an emergency now (rare complications)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"It's the cattle disease.\"",
+            "No. Human HFMD is a different virus, not caught from animals"
+          ],
+          [
+            "\"Antibiotics will clear it faster.\"",
+            "It's viral, so antibiotics don't help"
+          ],
+          [
+            "\"Put gentian violet or toothpaste on the sores.\"",
+            "Don't. Keep the mouth clean with sips of water"
+          ],
+          [
+            "\"It's chickenpox.\"",
+            "Different illness. HFMD spots are mostly on the hands, feet and mouth"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Photos** of the spots and mouth sores in good light",
+          "Child's **age and weight**, and the temperature readings",
+          "How much they are **drinking**, and wet nappies or urine in the last 24 hours",
+          "Anyone else at school or home with the same rash",
+          "Medicines given so far"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "HFMD is well suited to an **online consultation**: a pediatrician can usually recognise it from photos, guide you on fluids and fever, and tell you if the child needs to be seen. (See our guides on fever in children, cough and cold in children, and diarrhoea and vomiting in children.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, CDC, American Academy of Pediatrics). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Bachche ko bukhaar hai, khaana mana karta hai, aur phir haathon, pairon, muh ke aas-paas, aur kabhi kulhon par chhote laal daane ya chhale nikal aate hain. Yeh aksar **hand, foot and mouth disease (HFMD)** hoti hai, 5 saal se chhote bachchon ka aam viral infection jo school aur khelne ke groups mein tezi se phailta hai. Iska **jaanwaron ki \"khurpaka-muhpaka\" bimaari se koi lena-dena nahi**. Takleef deta hai, lekin aamtaur par **7–10 din mein apne aap theek ho jaata hai**."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "HFMD mein **bukhaar, muh mein dukhte chhale, aur haath-pairon par daane** hote hain. Koi khaas dawa nahi hai; dekhbhaal **aaram aur paani** ki hai. Sabse bada khatra **paani ki kami** hai, kyunki nigalne mein dard hota hai. Agar bachcha **paani nahi pee raha ya peshaab kam hai**, 3 din se zyada tez bukhaar hai, ya bahut neend mein, chidchida ya jhatkedaar harkat kare to doctor ko dikhayein."
+      },
+      {
+        "type": "heading",
+        "text": "Aamtaur Par Kaise Chalta Hai"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Din",
+          "Kya dikh sakta hai"
+        ],
+        "rows": [
+          [
+            "Din 1–2",
+            "Bukhaar, gale mein kharash, thakaan, kam bhookh"
+          ],
+          [
+            "Din 2–4",
+            "Muh aur jeebh par dukhte chhale; hatheliyon, talvon, kabhi ghutno aur kulhon par laal daane ya chhote chhale"
+          ],
+          [
+            "Din 5–10",
+            "Daane sookh kar mit jaate hain; khaana behtar hota hai"
+          ],
+          [
+            "Kuch hafte baad",
+            "Kabhi ungliyon ki twacha chhilti hai, ya naakhun dheela ho jaata hai. Yeh bematlab hai aur wapas ugta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ghar Par Dekhbhaal"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Pehle paani**: thoda-thoda baar-baar. Thanda paani, doodh, ORS, nariyal paani, chhaachh",
+          "**Naram, thanda, saada khaana** dein: dahi, khichdi, masla kela, suji kheer, ice cream ya kulfi",
+          "**Teekha, namkeen, khatta ya bahut garam** khaana aur khatte juice na dein, chhalon mein chubhte hain",
+          "Dard ya bukhaar mein dawa **doctor ki salaah ke anusaar, vazan ke hisaab se dose**",
+          "Daanon ko chhod dein: **chhale na phodein**, aur naakhun chhote rakhein"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Phailne Se Kaise Rokein"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Virus **laar, khaansi, chhalon ke paani aur potty** se phailta hai",
+          "Baar-baar **saabun se haath dhoyein**, khaaskar nappy badalne ke baad aur khaana banaane se pehle",
+          "Cup, chammach ya tauliye share na karein; khilaune aur sataah saaf karein",
+          "**Bukhaar ya bimaar hone tak** bachche ko ghar rakhein; bukhaar utarne aur behtar mehsoos hone par zyadatar school ja sakte hain, chaahe kuch daane baaki hon. School ke niyam maanein",
+          "Badon ko bhi ho sakta hai, aamtaur par halka"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aam HFMD",
+            "Muh ke chhale aur daane, paani pee raha hai aur peshaab normal, bukhaar ke beech khel raha hai",
+            "Ghar par dekhbhaal, paani par nazar"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "3 din se zyada bukhaar, muh bahut dukhta hai aur kam khaata hai, ya 6 mahine se chhota bachcha",
+            "Consultation book karein"
+          ],
+          [
+            "🔴 Urgent",
+            "Kam geele nappy ya 8 ghante peshaab nahi, sookha muh, aansu nahi, bahut neend",
+            "Usi din doctor ko dikhayein (paani ki kami)"
+          ],
+          [
+            "🔴 Emergency",
+            "Bahut neend ya jagaana mushkil, bahut chidchida, jhatkedaar harkat, kamzori, akdi gardan, ya tez saans",
+            "Abhi emergency jaayein (kam hone wali gambhir dikkatein)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Yeh jaanwaron wali bimaari hai.\"",
+            "Nahi. Insaanon ki HFMD alag virus hai, jaanwaron se nahi hoti"
+          ],
+          [
+            "\"Antibiotic se jaldi theek hogi.\"",
+            "Yeh viral hai, antibiotic madad nahi karti"
+          ],
+          [
+            "\"Chhalon par gentian violet ya toothpaste lagao.\"",
+            "Na lagayein. Ghoont-ghoont paani se muh saaf rakhein"
+          ],
+          [
+            "\"Yeh chickenpox hai.\"",
+            "Alag bimaari hai. HFMD ke daane zyadatar haath, pair aur muh par hote hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Achhi roshni mein daanon aur muh ke chhalon ki **photos**",
+          "Bachche ki **umar aur vazan**, aur taapmaan ki readings",
+          "Bachcha kitna **paani pee raha** hai, aur pichhle 24 ghante mein geele nappy ya peshaab",
+          "School ya ghar mein kisi aur ko waise hi daane",
+          "Ab tak di gayi dawaiyan"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "HFMD ke liye **online consultation** achha rehta hai: pediatrician aksar photos se pehchaan kar paani aur bukhaar ke baare mein guide kar sakte hain, aur bata sakte hain ki bachche ko milkar dikhaana zaroori hai ya nahi. (Bachchon mein bukhaar, khaansi-zukaam aur dast-ulti par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, CDC, American Academy of Pediatrics) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "high-uric-acid-what-the-number-means-diet-guide",
+    "title": "High Uric Acid: What Your Report Means, Diet, and When It Needs Treatment",
+    "description": "Uric acid high in your blood report? Normal ranges, what raises it, which foods to limit (and myths about dal and tomato), gout signs, and when medicine is needed.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-11-21",
+    "readTime": "6 min",
+    "image": "🧂",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Uric acid is now one of the most common \"high\" results in routine blood tests in India, often found in a full-body check-up. Many people panic and stop eating dal, tomatoes and spinach. The truth is more reassuring: **a high number alone doesn't always need medicine**, and some popular food bans aren't needed at all. Here's what the number means and what actually helps."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Uric acid is usually considered high above about **7 mg/dL in men** and **6 mg/dL in women** (labs vary slightly). If you have **no gout attacks and no kidney stones**, doctors usually start with **lifestyle changes**, not tablets: less alcohol (especially beer), fewer sugary drinks, less red meat and organ meat, more water, and gradual weight loss. **Sudden, very painful swelling of a joint** (often the big toe) needs a doctor."
+      },
+      {
+        "type": "heading",
+        "text": "What Is Uric Acid?"
+      },
+      {
+        "type": "paragraph",
+        "text": "Your body makes uric acid when it breaks down substances called **purines**, found in your own cells and in some foods. Kidneys normally flush it out in urine. When too much is made or too little is removed, the level rises. Very high levels can form crystals in joints (**gout**) or stones in the kidneys."
+      },
+      {
+        "type": "heading",
+        "text": "Reading Your Report"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Level (mg/dL)",
+          "What it usually means"
+        ],
+        "rows": [
+          [
+            "Men about 3.4–7.0, women about 2.4–6.0",
+            "Typical range (check your lab's range printed on the report)"
+          ],
+          [
+            "Slightly above range, no symptoms",
+            "Common. Usually lifestyle changes and a repeat test"
+          ],
+          [
+            "Above about 9, or with gout or kidney stones",
+            "Needs a doctor's plan; medicine may be advised"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What Raises Uric Acid"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Alcohol**, especially beer",
+          "**Sugary drinks** and fruit juices high in fructose",
+          "**Red meat, organ meat** (liver, kidney) and some seafood",
+          "**Excess weight**, diabetes and high BP",
+          "**Some medicines**, for example certain water pills (diuretics) for BP",
+          "**Dehydration**, crash dieting or fasting",
+          "Kidney problems and family history"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What to Eat and Limit"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Limit",
+          "Fine in normal amounts",
+          "Helpful"
+        ],
+        "rows": [
+          [
+            "Beer and other alcohol",
+            "Dals, rajma, chana (plant purines raise it much less than meat)",
+            "Plenty of water (8–10 glasses)"
+          ],
+          [
+            "Soft drinks, packaged juices, sweets",
+            "Spinach, tomato, mushrooms, peas",
+            "Low-fat milk and curd"
+          ],
+          [
+            "Red meat, organ meat, some seafood",
+            "Eggs, paneer",
+            "Fruits, vegetables, whole grains"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Lose weight slowly",
+        "text": "Losing weight lowers uric acid, but **crash diets and long fasts can raise it** and trigger gout. Aim for steady loss with regular meals and daily walking."
+      },
+      {
+        "type": "heading",
+        "text": "When Is Medicine Needed?"
+      },
+      {
+        "type": "paragraph",
+        "text": "Doctors usually advise uric-acid-lowering medicine for people with **repeated gout attacks**, gout lumps under the skin (tophi), **kidney stones** from uric acid, or very high levels with kidney disease. If you start medicine, it's usually taken **long term**. Don't stop it on your own, and don't start it just because a single report was high."
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Usually fine",
+            "Slightly high on a report, no joint pain or stones",
+            "Lifestyle changes, and repeat the test in 3–6 months"
+          ],
+          [
+            "🟡 See a doctor",
+            "Very high level, diabetes, BP or kidney problems, or a family history of gout",
+            "Book a consultation for a plan"
+          ],
+          [
+            "🔴 Same day",
+            "Sudden, very painful, red, swollen joint (often the big toe, ankle or knee)",
+            "See a doctor today (possible gout)"
+          ],
+          [
+            "🔴 Urgent",
+            "Hot swollen joint with fever, or severe back or side pain with blood in urine",
+            "See a doctor urgently (infection or kidney stone)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Stop all dals and tomatoes.\"",
+            "Plant foods raise uric acid far less than meat and alcohol. You don't need to stop them"
+          ],
+          [
+            "\"Every high report needs tablets.\"",
+            "Without gout or stones, lifestyle changes usually come first"
+          ],
+          [
+            "\"High uric acid causes all joint pain.\"",
+            "Most joint pain has other causes. Gout pain is sudden and severe"
+          ],
+          [
+            "\"Once the level is normal, stop the medicine.\"",
+            "If prescribed, it's usually long term. Stopping can bring gout back"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Your **uric acid result** and the lab's normal range",
+          "Other reports: sugar, kidney (creatinine), lipids, BP",
+          "Any **joint pain attacks** or kidney stones",
+          "Alcohol, soft drinks and meat in a typical week",
+          "**Medicines** you take, especially for BP"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "High uric acid is easy to discuss in an **online consultation**: a general physician can read your report with the other results and tell you whether you need lifestyle changes, a repeat test or medicine. (See our guides on gout, kidney function tests, and blood tests explained.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, American College of Rheumatology, MedlinePlus). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "India mein routine blood test mein ab uric acid sabse aam \"high\" results mein se ek hai, aksar full-body check-up mein milta hai. Kai log ghabra kar dal, tamatar aur palak khaana band kar dete hain. Sach zyada tasalli wala hai: **sirf high number ka matlab hamesha dawa nahi**, aur khaane ki kai mashhoor manaahiyon ki zaroorat hi nahi. Yahan jaaniye number ka matlab aur kya sach mein madad karta hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Uric acid aamtaur par **mardon mein lagbhag 7 mg/dL** aur **auraton mein 6 mg/dL** se upar high maana jaata hai (labs mein thoda fark). Agar **gout ke daure aur kidney stone nahi** hain, to doctor aksar goli se nahi, **lifestyle badlaav** se shuru karte hain: kam sharaab (khaaskar beer), kam meethe drinks, kam laal maans aur kaleji, zyada paani, aur dheere vazan kam karna. **Jod mein achanak bahut dardnaak soojan** (aksar pair ka angootha) ho to doctor chahiye."
+      },
+      {
+        "type": "heading",
+        "text": "Uric Acid Kya Hai?"
+      },
+      {
+        "type": "paragraph",
+        "text": "Shareer **purines** naam ke padarthon ko todte samay uric acid banata hai, jo aapki apni cells aur kuch khaane mein hote hain. Kidney ise aamtaur par peshaab se nikaal deti hai. Jab zyada banta hai ya kam nikalta hai, to level badhta hai. Bahut zyada level jodon mein crystals (**gout**) ya kidney mein pathri bana sakta hai."
+      },
+      {
+        "type": "heading",
+        "text": "Report Kaise Padhein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Level (mg/dL)",
+          "Aamtaur par matlab"
+        ],
+        "rows": [
+          [
+            "Mard lagbhag 3.4–7.0, aurat lagbhag 2.4–6.0",
+            "Aam range (report par chhapi lab ki range dekhein)"
+          ],
+          [
+            "Range se thoda upar, koi lakshan nahi",
+            "Aam hai. Aksar lifestyle badlaav aur dobara test"
+          ],
+          [
+            "Lagbhag 9 se upar, ya gout ya pathri ke saath",
+            "Doctor ka plan chahiye; dawa ki salaah mil sakti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Uric Acid Kya Badhaata Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Sharaab**, khaaskar beer",
+          "Fructose wale **meethe drinks** aur phalon ke juice",
+          "**Laal maans, kaleji** (liver, kidney) aur kuch seafood",
+          "**Zyada vazan**, diabetes aur high BP",
+          "**Kuch dawaiyan**, jaise BP ki kuch peshaab badhaane wali goliyan (diuretics)",
+          "**Paani ki kami**, crash diet ya lamba upvaas",
+          "Kidney ki dikkat aur khaandaani history"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kya Khaayein Aur Kya Kam Karein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Kam karein",
+          "Normal maatra mein theek",
+          "Madadgaar"
+        ],
+        "rows": [
+          [
+            "Beer aur doosri sharaab",
+            "Dal, rajma, chana (paudhon ke purines maans se bahut kam badhaate hain)",
+            "Khoob paani (8–10 gilaas)"
+          ],
+          [
+            "Cold drinks, packet juice, mithaai",
+            "Palak, tamatar, mushroom, matar",
+            "Kam fat ka doodh aur dahi"
+          ],
+          [
+            "Laal maans, kaleji, kuch seafood",
+            "Anda, paneer",
+            "Phal, sabziyan, saabut anaaj"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Vazan dheere kam karein",
+        "text": "Vazan kam hone se uric acid kam hota hai, lekin **crash diet aur lambe upvaas se yeh badh sakta hai** aur gout ka daura aa sakta hai. Niyamit khaane aur roz chalne ke saath dheere-dheere vazan kam karein."
+      },
+      {
+        "type": "heading",
+        "text": "Dawa Kab Chahiye?"
+      },
+      {
+        "type": "paragraph",
+        "text": "Doctor aamtaur par uric acid kam karne wali dawa unhe dete hain jinhe **baar-baar gout ke daure**, twacha ke neeche gout ki gaanthein (tophi), uric acid ki **kidney stone**, ya kidney ki bimaari ke saath bahut zyada level ho. Dawa shuru ho to aamtaur par **lambe samay** chalti hai. Khud band na karein, aur sirf ek report high aane par shuru na karein."
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Aksar theek",
+            "Report par thoda high, jodon mein dard ya pathri nahi",
+            "Lifestyle badlaav, aur 3–6 mahine mein dobara test"
+          ],
+          [
+            "🟡 Doctor ko dikhayein",
+            "Bahut zyada level, diabetes, BP ya kidney ki dikkat, ya parivaar mein gout",
+            "Plan ke liye consultation book karein"
+          ],
+          [
+            "🔴 Usi din",
+            "Achanak bahut dardnaak, laal, soojha jod (aksar pair ka angootha, takhna ya ghutna)",
+            "Aaj doctor ko dikhayein (gout ho sakta hai)"
+          ],
+          [
+            "🔴 Urgent",
+            "Bukhaar ke saath garam soojha jod, ya peshaab mein khoon ke saath kamar ya bagal mein tez dard",
+            "Turant doctor ko dikhayein (infection ya pathri)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Saari dal aur tamatar band karo.\"",
+            "Paudhon wala khaana maans aur sharaab se bahut kam uric acid badhaata hai. Band karne ki zaroorat nahi"
+          ],
+          [
+            "\"Har high report ko goli chahiye.\"",
+            "Gout ya pathri na ho to aksar pehle lifestyle badlaav"
+          ],
+          [
+            "\"High uric acid se har jodon ka dard hota hai.\"",
+            "Zyadatar jodon ke dard ki doosri wajahein hoti hain. Gout ka dard achanak aur bahut tez hota hai"
+          ],
+          [
+            "\"Level normal ho jaaye to dawa band karo.\"",
+            "Doctor ne di ho to aksar lambe samay ki hoti hai. Band karne se gout lautta hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Aapka **uric acid result** aur lab ki normal range",
+          "Anya report: sugar, kidney (creatinine), lipids, BP",
+          "Koi **jodon ke dard ke daure** ya kidney stone",
+          "Ek aam hafte mein sharaab, cold drinks aur maans",
+          "Li ja rahi **dawaiyan**, khaaskar BP ki"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "High uric acid par **online consultation** mein aasaani se baat ho sakti hai: general physician aapki report ko baaki results ke saath dekh kar bata sakte hain ki lifestyle badlaav, dobara test ya dawa mein se kya chahiye. (Gout, kidney function test aur blood test par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, American College of Rheumatology, MedlinePlus) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
+  },
+  {
+    "slug": "low-platelet-count-what-it-means-dengue-guide",
+    "title": "Low Platelet Count: What the Number Means, Dengue, and When to Worry",
+    "description": "Platelets low in your report? Normal ranges, why they fall (dengue, viral fever), myths about papaya leaf and kiwi, and the warning signs that are urgent.",
+    "specialization": "General Physician",
+    "publishedDate": "2026-11-21",
+    "readTime": "7 min",
+    "image": "🩸",
+    "content": [
+      {
+        "type": "intro",
+        "text": "Every monsoon, the same message goes around family WhatsApp groups: \"platelets have dropped, arrange papaya leaf juice, kiwi, goat milk.\" A falling platelet count is frightening, especially in dengue season. But **the number alone doesn't tell the whole story**, and many people are given platelet transfusions they don't need. Here's what the number means, what actually matters, and when to go to hospital."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Quick answer",
+        "text": "Normal platelets are about **1.5–4.5 lakh per microlitre**. In dengue and viral fevers they often fall for a few days and then **recover on their own**. **Warning signs matter more than the exact number**: bleeding gums or nose, black stools, blood in vomit or urine, severe tummy pain, repeated vomiting, or extreme weakness need hospital care now. Avoid **ibuprofen, aspirin and other NSAIDs** if dengue is possible."
+      },
+      {
+        "type": "heading",
+        "text": "Reading the Number"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Platelet count (per microlitre)",
+          "What it usually means"
+        ],
+        "rows": [
+          [
+            "1.5–4.5 lakh",
+            "Normal"
+          ],
+          [
+            "1–1.5 lakh",
+            "Mildly low. Common in viral fevers. Usually just watch and repeat as advised"
+          ],
+          [
+            "50,000–1 lakh",
+            "Moderately low. Needs a doctor's follow-up, often daily counts in dengue"
+          ],
+          [
+            "Below 20,000, or any count with bleeding",
+            "Needs hospital care"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Reports are written differently",
+        "text": "The same value can be written as **1.2 lakh**, **120,000**, **120 ×10³/µL** or **1.20 ×10⁵**. They all mean the same thing. If a result looks shockingly low, check the unit first, and sometimes clumping in the tube gives a falsely low count that a repeat test corrects."
+      },
+      {
+        "type": "heading",
+        "text": "Why Platelets Fall"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Dengue**: the most common reason in India in the rainy season",
+          "**Other viral fevers**, chikungunya, malaria, typhoid and severe infections",
+          "**Medicines** (some antibiotics, heparin and others), and heavy alcohol use",
+          "Low **vitamin B12 or folate**, liver disease, or an enlarged spleen",
+          "Pregnancy (a mild fall is common late in pregnancy)",
+          "Less often: immune conditions (ITP) or bone marrow problems, which need a specialist"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "In Dengue: What Really Matters"
+      },
+      {
+        "type": "list",
+        "items": [
+          "The riskiest time is often **when the fever comes down** (around days 3–7). That's when to watch most closely",
+          "Doctors watch the **trend of platelets and haematocrit (PCV)**, plus warning signs and fluid intake, not one number",
+          "Drink **plenty of fluids**: water, ORS, coconut water, soups",
+          "Use **paracetamol only** for fever, as directed. **No ibuprofen, diclofenac or aspirin**",
+          "**Platelet transfusion is not routinely needed**, even for fairly low counts without bleeding. Doctors decide based on bleeding and the overall picture"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "What you notice",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Watch",
+            "Mildly low count with a viral fever, eating and drinking well, no bleeding",
+            "Fluids, rest, repeat the test as your doctor advises"
+          ],
+          [
+            "🟡 See a doctor today",
+            "Dengue suspected, platelets falling day by day, or a low count without fever",
+            "Consultation and follow-up tests"
+          ],
+          [
+            "🔴 Hospital now",
+            "Bleeding gums or nose, red spots on skin, black stools, blood in vomit or urine, heavy periods",
+            "Go to hospital"
+          ],
+          [
+            "🔴 Hospital now",
+            "Severe tummy pain, repeated vomiting, restlessness, cold clammy hands, very little urine, or fainting",
+            "Go to hospital (warning signs of severe dengue)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Papaya leaf juice or kiwi will raise platelets fast.\"",
+            "Evidence is limited. They don't replace fluids, monitoring and a doctor's care. Never delay hospital for home remedies"
+          ],
+          [
+            "\"Every low count needs a platelet transfusion.\"",
+            "Most people recover without one. Transfusions have risks and are used for bleeding or very low counts"
+          ],
+          [
+            "\"Antibiotics will bring platelets up.\"",
+            "Dengue is viral. Antibiotics don't help unless a doctor finds a bacterial infection"
+          ],
+          [
+            "\"Once the fever goes, the danger is over.\"",
+            "In dengue, the days after the fever falls need the closest watch"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**All platelet reports with dates** (the trend matters)",
+          "Days of fever, and the dengue or malaria test results",
+          "Any **bleeding**, rash, tummy pain or vomiting",
+          "How much you are **drinking and passing urine**",
+          "**Medicines** taken, especially painkillers"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "For a **mildly low count without warning signs**, an **online consultation** with a general physician helps you understand the report, plan repeat tests and know exactly what to watch for at home. For any warning sign, go to the nearest hospital first. (See our guides on dengue warning signs, viral fever, body ache, and blood tests explained.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (WHO dengue guidelines, National Centre for Vector Borne Diseases Control (India), NHS). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "Har barsaat mein parivaar ke WhatsApp groups mein wahi message ghoomta hai: \"platelets gir gaye, papite ke patte ka ras, kiwi, bakri ka doodh laao.\" Girte platelets darawne lagte hain, khaaskar dengue ke mausam mein. Lekin **sirf number poori kahaani nahi batata**, aur kai logon ko bina zaroorat platelets chadha diye jaate hain. Yahan jaaniye number ka matlab, kya sach mein maayne rakhta hai, aur kab hospital jaana hai."
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "⚡ Seedha jawaab",
+        "text": "Normal platelets lagbhag **1.5–4.5 lakh per microlitre** hote hain. Dengue aur viral bukhaar mein yeh aksar kuch din girte hain aur phir **apne aap theek ho jaate hain**. **Sahi number se zyada khatre ke sanket maayne rakhte hain**: masoodon ya naak se khoon, kaali potty, ulti ya peshaab mein khoon, pet mein tez dard, baar-baar ulti, ya bahut zyada kamzori ho to abhi hospital jaayein. Dengue ho sakta hai to **ibuprofen, aspirin aur doosri NSAID** na lein."
+      },
+      {
+        "type": "heading",
+        "text": "Number Kaise Padhein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Platelet count (per microlitre)",
+          "Aamtaur par matlab"
+        ],
+        "rows": [
+          [
+            "1.5–4.5 lakh",
+            "Normal"
+          ],
+          [
+            "1–1.5 lakh",
+            "Thoda kam. Viral bukhaar mein aam. Aksar nazar rakhein aur salaah ke anusaar dobara test"
+          ],
+          [
+            "50,000–1 lakh",
+            "Madhyam kam. Doctor ki follow-up chahiye, dengue mein aksar roz count"
+          ],
+          [
+            "20,000 se kam, ya koi bhi count bleeding ke saath",
+            "Hospital ki dekhbhaal chahiye"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "tip",
+        "title": "Report alag-alag tarah likhi jaati hai",
+        "text": "Ek hi value **1.2 lakh**, **120,000**, **120 ×10³/µL** ya **1.20 ×10⁵** likhi ja sakti hai. Sabka matlab same hai. Result chaunkane wala kam lage to pehle unit dekhein, aur kabhi tube mein platelets ke chipakne se jhootha kam count aata hai jo dobara test mein theek ho jaata hai."
+      },
+      {
+        "type": "heading",
+        "text": "Platelets Kyun Girte Hain"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Dengue**: barsaat mein India mein sabse aam wajah",
+          "**Doosre viral bukhaar**, chikungunya, malaria, typhoid aur gambhir infection",
+          "**Dawaiyan** (kuch antibiotic, heparin aur anya), aur zyada sharaab",
+          "**Vitamin B12 ya folate** ki kami, liver ki bimaari, ya badi tilli",
+          "Pregnancy (aakhri mahinon mein halka girna aam hai)",
+          "Kam hi: immune bimaari (ITP) ya bone marrow ki dikkat, jismein specialist chahiye"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Dengue Mein: Sach Mein Kya Maayne Rakhta Hai"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Sabse khatarnaak samay aksar **bukhaar utarne ke baad** (lagbhag din 3–7) hota hai. Tab sabse zyada nazar rakhein",
+          "Doctor ek number nahi, **platelets aur haematocrit (PCV) ka trend**, khatre ke sanket aur paani ka intake dekhte hain",
+          "**Khoob paani piyein**: paani, ORS, nariyal paani, soup",
+          "Bukhaar mein **sirf paracetamol**, nirdesh ke anusaar. **Ibuprofen, diclofenac ya aspirin nahi**",
+          "**Platelet chadhaana har baar zaroori nahi**, bina bleeding ke kaafi kam count mein bhi. Doctor bleeding aur poori sthiti dekh kar tay karte hain"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aap kya dekhte hain",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Nazar rakhein",
+            "Viral bukhaar mein thoda kam count, achha kha-pee rahe hain, bleeding nahi",
+            "Paani, aaram, doctor ki salaah se dobara test"
+          ],
+          [
+            "🟡 Aaj doctor ko dikhayein",
+            "Dengue ka shak, roz platelets gir rahe, ya bina bukhaar ke kam count",
+            "Consultation aur follow-up test"
+          ],
+          [
+            "🔴 Abhi hospital",
+            "Masoodon ya naak se khoon, twacha par laal daane, kaali potty, ulti ya peshaab mein khoon, zyada periods",
+            "Hospital jaayein"
+          ],
+          [
+            "🔴 Abhi hospital",
+            "Pet mein tez dard, baar-baar ulti, bechaini, thande chipchipe haath, bahut kam peshaab, ya behoshi",
+            "Hospital jaayein (gambhir dengue ke sanket)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Papite ke patte ka ras ya kiwi platelets jaldi badhaate hain.\"",
+            "Saboot kam hai. Yeh paani, nigraani aur doctor ki dekhbhaal ki jagah nahi le sakte. Gharelu nuskhon ke liye hospital jaane mein der kabhi na karein"
+          ],
+          [
+            "\"Har kam count mein platelet chadhaana padta hai.\"",
+            "Zyadatar log bina iske theek hote hain. Isme khatre hain aur yeh bleeding ya bahut kam count mein hota hai"
+          ],
+          [
+            "\"Antibiotic se platelets badhenge.\"",
+            "Dengue viral hai. Antibiotic tabhi madad karti hai jab doctor bacterial infection paayein"
+          ],
+          [
+            "\"Bukhaar utar gaya to khatra khatam.\"",
+            "Dengue mein bukhaar utarne ke baad ke din sabse zyada nazar maangte hain"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Taareekh ke saath saari platelet reports** (trend zaroori hai)",
+          "Bukhaar ke din, aur dengue ya malaria test ke result",
+          "Koi **bleeding**, daane, pet dard ya ulti",
+          "Kitna **paani pee rahe hain aur peshaab** aa raha hai",
+          "Li gayi **dawaiyan**, khaaskar painkiller"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "**Bina khatre ke sanket ke thode kam count** mein general physician se **online consultation** report samajhne, dobara test plan karne aur ghar par theek kis cheez par nazar rakhni hai, yeh jaanne mein madad karta hai. Kisi bhi khatre ke sanket par pehle nazdeeki hospital jaayein. (Dengue ke khatre ke sanket, viral bukhaar, badan dard aur blood test par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (WHO dengue guidelines, National Centre for Vector Borne Diseases Control (India), NHS) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
   }
 ];
