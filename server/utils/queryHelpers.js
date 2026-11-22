@@ -17,6 +17,17 @@ const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // Build a case-insensitive "contains" RegExp from user input, safely.
 const safeContainsRegex = (input) => new RegExp(escapeRegex(input), 'i');
 
+// Doctor-name search. Patients type "Dr Pooja Singh" or "Dr. Pooja" but many
+// doctors are stored without the title ("Pooja Singh"), so a plain contains
+// match found nobody. We drop a leading Dr/Dr./Doctor/डॉ and then require every
+// remaining word to appear in the name, in any order ("singh pooja" works too).
+const nameRegex = (input) => {
+  const raw = String(input).trim();
+  const cleaned = raw.replace(/^(dr\b\.?|doctor\b|डॉ\.?)\s*/i, '').trim();
+  const words = cleaned.split(/\s+/).filter(Boolean).slice(0, 6);
+  if (words.length === 0) return safeContainsRegex(raw);
+  return new RegExp(words.map((w) => `(?=.*${escapeRegex(w)})`).join(''), 'i');
+};
 // Specialty search: case-insensitive, but the term must START a word, so
 // "Urologist" no longer matches "neUROLOGIST" (and "Dermatology" doesn't
 // leak into unrelated words). "cardio" still finds "Cardiologist",
@@ -36,4 +47,4 @@ const getPagination = (req, { defaultLimit = 20, maxLimit = 100 } = {}) => {
   return { page, limit, skip };
 };
 
-module.exports = { escapeRegex, safeContainsRegex, specialtyRegex, getPagination };
+module.exports = { escapeRegex, safeContainsRegex, nameRegex, specialtyRegex, getPagination };

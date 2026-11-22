@@ -13,7 +13,7 @@
 const User = require('../models/User');
 const Appointment = require('../models/Appointment');
 const Review = require('../models/Review');
-const { safeContainsRegex, specialtyRegex, getPagination } = require('../utils/queryHelpers');
+const { safeContainsRegex, nameRegex, specialtyRegex, getPagination } = require('../utils/queryHelpers');
 const { getSpecializationSynonyms } = require('../utils/specializationSynonyms');
 const { countBySpecialty } = require('../utils/specialtyCounts');
 const { formatIndianPhone } = require('../utils/formatPhone');
@@ -260,7 +260,7 @@ const getAllDoctors = async (req, res) => {
 
     // If filtering by name (search)
     if (req.query.name) {
-      filter.name = safeContainsRegex(req.query.name);
+      filter.name = nameRegex(req.query.name);
     }
 
     // Filter by max consultation fee
