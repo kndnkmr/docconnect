@@ -17,6 +17,7 @@ import { getSocket } from '../services/socket';
 import { useAuth } from '../context/AuthContext';
 import PaymentBox from '../components/PaymentBox';
 import { bookingStage, BOOKING_STEP } from '../utils/paymentFlow';
+import RescheduleModal from './dashboard/RescheduleModal';
 import { formatDoctorName } from '../utils/formatName';
 import { useLang } from '../context/LangContext';
 
@@ -25,6 +26,7 @@ const TXT = {
   en: {
     noBooking: 'No booking details found', goDashboard: 'Open my appointments',
     hero: {
+      pickSlot: (dr) => ({ icon: '⏰', title: 'Your booked time has passed', sub: `${dr} could not confirm in time. Pick a new time and carry on. Your details are saved, so you do not need to book again.` }),
       confirming: (dr) => ({ icon: '📨', title: `Request sent to ${dr}`, sub: 'Doctors usually confirm within a few hours. You can close this page — we\'ll tell you.' }),
       pay: (dr, fee) => ({ icon: '✅', title: `${dr} confirmed!`, sub: fee ? `Pay Rs. ${fee} now to lock your slot.` : 'Your slot is confirmed.' }),
       checking: (dr) => ({ icon: '🧾', title: 'Payment sent — thank you', sub: `${dr} will check it and mark it paid. Nothing else to do.` }),
@@ -45,6 +47,7 @@ const TXT = {
     ],
     now: 'now',
     payTitle: 'Pay now',
+    pickBtn: '📅 Pick a new time',
     bookAgain: 'Book another slot',
     browseMore: 'Browse More Doctors',
     dateLocale: 'en-IN',
@@ -58,6 +61,7 @@ const TXT = {
   hi: {
     noBooking: 'कोई बुकिंग विवरण नहीं मिला', goDashboard: 'मेरे अपॉइंटमेंट खोलें',
     hero: {
+      pickSlot: (dr) => ({ icon: '⏰', title: 'आपका बुक किया हुआ समय निकल चुका है', sub: `${dr} समय पर पुष्टि नहीं कर सके। नया समय चुनें और आगे बढ़ें। आपकी जानकारी सेव है, दोबारा बुक करने की ज़रूरत नहीं।` }),
       confirming: (dr) => ({ icon: '📨', title: `${dr} को अनुरोध भेजा गया`, sub: 'डॉक्टर आमतौर पर कुछ घंटों में पुष्टि करते हैं। आप यह पेज बंद कर सकते हैं — हम आपको बताएंगे।' }),
       pay: (dr, fee) => ({ icon: '✅', title: `${dr} ने पुष्टि कर दी!`, sub: fee ? `अपना स्लॉट पक्का करने के लिए अभी Rs. ${fee} का भुगतान करें।` : 'आपका स्लॉट पक्का है।' }),
       checking: (dr) => ({ icon: '🧾', title: 'भुगतान भेज दिया — धन्यवाद', sub: `${dr} इसे जांचकर पेड मार्क करेंगे। आपको और कुछ नहीं करना है।` }),
@@ -78,6 +82,7 @@ const TXT = {
     ],
     now: 'अभी',
     payTitle: 'अभी भुगतान करें',
+    pickBtn: '📅 नया समय चुनें',
     bookAgain: 'दूसरा स्लॉट बुक करें',
     browseMore: 'और डॉक्टर देखें',
     dateLocale: 'hi-IN',
@@ -91,6 +96,7 @@ const TXT = {
 };
 
 const HERO_STYLE = {
+  pickSlot: 'from-amber-500 to-orange-600',
   confirming: 'from-primary-600 to-primary-700',
   pay: 'from-green-600 to-emerald-700',
   checking: 'from-green-600 to-emerald-700',
@@ -110,6 +116,7 @@ function BookingConfirmation() {
   const [apt, setApt] = useState(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const payRef = useRef(null);
+  const [pickOpen, setPickOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -205,6 +212,19 @@ function BookingConfirmation() {
           <p className="text-white/90 mt-2 text-sm sm:text-base">{hero.sub}</p>
         </div>
 
+        {/* Booked time passed: pick a new one on this same booking. */}
+        {apt && s === 'pickSlot' && (
+          <div className="mb-6">
+            <button onClick={() => setPickOpen(true)} className="btn btn-primary w-full text-base py-3">{t.pickBtn}</button>
+          </div>
+        )}
+        {pickOpen && (
+          <RescheduleModal
+            appointment={apt}
+            onClose={() => setPickOpen(false)}
+            onDone={() => { setPickOpen(false); load(); }}
+          />
+        )}
         {/* PAY HERE — the payment box appears as soon as the doctor confirms. */}
         {apt && (s === 'pay' || s === 'checking') && (
           <div ref={payRef} className={`mb-6 rounded-2xl p-4 ${s === 'pay' ? 'bg-white border-2 border-orange-300 shadow-md' : 'bg-white border border-gray-200'}`}>
@@ -246,7 +266,7 @@ function BookingConfirmation() {
         </div>
 
         {/* Steps — the current one is highlighted and moves forward live. */}
-        {s !== 'cancelled' && (
+        {s !== 'cancelled' && s !== 'pickSlot' && (
           <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6 shadow-sm">
             <h3 className="font-bold text-gray-800 mb-4">{t.nextTitle}</h3>
             <ol className="relative space-y-4">

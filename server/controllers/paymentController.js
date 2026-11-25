@@ -67,6 +67,7 @@ async function loadOwn(req) {
 function assertOpen(apt) {
   if (apt.status === 'cancelled') throw new PaymentError(400, 'This appointment was cancelled');
   if (apt.paymentStatus === 'paid') throw new PaymentError(400, 'This appointment is already marked as paid');
+  if (apt.confirmedLate) throw new PaymentError(400, 'The booked time has already passed. Please pick a new time first, then pay.');
 }
 
 const shortWhen = (apt) =>

@@ -3,6 +3,7 @@ import { availabilityAPI, appointmentAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { useLang } from '../../context/LangContext';
 import { useAuth } from '../../context/AuthContext';
+import { needsNewSlot } from '../../utils/paymentFlow';
 
 // Fixed UI text. Doctors/admins always see English.
 const TXT = {
@@ -23,6 +24,10 @@ const TXT = {
     cancel: 'Cancel',
     submitting: 'Rescheduling…',
     confirm: 'Confirm Reschedule',
+    lateTitle: 'Pick a new time',
+    lateIntro: (dr) => `The time you booked with ${dr} has passed. Choose a new time. Your details are saved, so you do not need to book again.`,
+    lateConfirm: 'Save new time',
+    lateDoneKeep: 'New time saved. Please complete the payment to lock it.',
   },
   hi: {
     yourDoctor: 'आपके डॉक्टर',
@@ -41,6 +46,10 @@ const TXT = {
     cancel: 'रद्द करें',
     submitting: 'समय बदल रहे हैं…',
     confirm: 'नया समय पक्का करें',
+    lateTitle: 'नया समय चुनें',
+    lateIntro: (dr) => `${dr} के साथ आपका बुक किया हुआ समय निकल चुका है। नया समय चुनें। आपकी जानकारी सेव है, दोबारा बुक करने की ज़रूरत नहीं।`,
+    lateConfirm: 'नया समय सेव करें',
+    lateDoneKeep: 'नया समय सेव हो गया। अब भुगतान करके इसे पक्का करें।',
   },
 };
 
@@ -62,6 +71,7 @@ function RescheduleModal({ appointment, onClose, onDone }) {
   const t = TXT[hi ? 'hi' : 'en'];
 
   if (!appointment) return null;
+  const late = needsNewSlot(appointment);
 
   const doctorId = appointment.doctor?._id || appointment.doctor;
   const doctorName = appointment.doctor?.name ? `Dr. ${appointment.doctor.name}` : t.yourDoctor;
@@ -96,9 +106,9 @@ function RescheduleModal({ appointment, onClose, onDone }) {
     }
     setSubmitting(true);
     try {
-      await appointmentAPI.reschedule(appointment._id, { date, timeSlot: selectedSlot });
-      toast.success(t.done, { duration: 6000 });
-      onDone?.();
+      const { data } = await appointmentAPI.reschedule(appointment._id, { date, timeSlot: selectedSlot });
+      toast.success(data?.keepConfirmed ? t.lateDoneKeep : t.done, { duration: 6000 });
+      onDone?.(data);
     } catch (error) {
       toast.error(error.response?.data?.message || t.failed);
     } finally {
@@ -110,9 +120,9 @@ function RescheduleModal({ appointment, onClose, onDone }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in">
         <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-1">{t.title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">{late ? t.lateTitle : t.title}</h3>
           <p className="text-sm text-gray-500 mb-4">
-            {t.intro(doctorName)}
+            {late ? t.lateIntro(doctorName) : t.intro(doctorName)}
           </p>
 
           <div className="mb-4">
@@ -171,7 +181,7 @@ function RescheduleModal({ appointment, onClose, onDone }) {
               disabled={submitting || !date || !selectedSlot}
               className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-60"
             >
-              {submitting ? t.submitting : t.confirm}
+              {submitting ? t.submitting : late ? t.lateConfirm : t.confirm}
             </button>
           </div>
         </div>

@@ -344,6 +344,14 @@ const updateAppointmentStatus = async (req, res) => {
     // Update ONLY the fields that should change — protect timeSlot and date
     const statusBefore = appointment.status;
     appointment.status = status;
+    // Confirmed after the time had already started: the booked slot is gone, so
+    // the patient is asked to pick a new one (same appointment, no re-booking).
+    let confirmedLate = false;
+    if (status === 'confirmed') {
+      const w = slotWindowMs(appointment.date, appointment.timeSlot);
+      confirmedLate = !!(w && w.start <= Date.now());
+      appointment.confirmedLate = confirmedLate;
+    }
     if (status === 'cancelled') {
       const why = typeof req.body.cancellationReason === 'string' ? req.body.cancellationReason.trim().slice(0, MAX_CANCEL_REASON) : '';
       appointment.cancellationReason = why || (statusBefore === 'pending' ? 'Declined by the doctor' : 'Cancelled by the doctor');
@@ -385,7 +393,14 @@ const updateAppointmentStatus = async (req, res) => {
       const fee = Number(appointment.doctor.consultationFee) || 0;
       const payDue = fee > 0 && (!appointment.paymentStatus || appointment.paymentStatus === 'pending');
       const when = `${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' })} at ${appointment.timeSlot}`;
-      sendPushToUser(appointment.patient._id, {
+      if (confirmedLate) {
+        sendPushToUser(appointment.patient._id, {
+          title: `Dr. ${appointment.doctor.name} accepted. Pick a new time`,
+          body: `Your time (${when}) has already passed. Tap to choose a new time. Your details are saved.`,
+          url: `/booking-confirmation?id=${appointment._id}`,
+          tag: `appointment-${appointment._id}`
+        });
+      } else sendPushToUser(appointment.patient._id, {
         title: payDue ? `✅ Dr. ${appointment.doctor.name} confirmed — pay Rs. ${fee}` : 'Appointment confirmed',
         body: payDue
           ? `${when}. Tap to pay and lock your slot.`
@@ -410,7 +425,10 @@ const updateAppointmentStatus = async (req, res) => {
     }
 
     res.json({
-      message: `Appointment ${status} successfully`,
+      message: confirmedLate
+        ? 'Confirmed. The booked time has already passed, so the patient will be asked to pick a new time.'
+        : `Appointment ${status} successfully`,
+      confirmedLate,
       appointment
     });
 
@@ -571,7 +589,12 @@ const rescheduleAppointment = async (req, res) => {
     // reason, symptoms, consent, consultationType, family info, notes, etc.
     appointment.date = new Date(date);
     appointment.timeSlot = timeSlot;
-    appointment.status = 'pending';        // doctor must re-confirm the new time
+    // Normally the doctor re-confirms the new time. If the doctor already
+    // confirmed late (the old time had passed), they have said yes: stay
+    // confirmed so the patient goes straight to payment.
+    const keepConfirmed = appointment.status === 'confirmed' && appointment.confirmedLate === true;
+    appointment.status = keepConfirmed ? 'confirmed' : 'pending';
+    appointment.confirmedLate = false;
     appointment.meetingLink = '';           // old link no longer applies
     appointment.callActive = false;
     appointment.callStartedAt = null;
@@ -580,6 +603,7 @@ const rescheduleAppointment = async (req, res) => {
     appointment.reminderSentAt = null;      // let the 1-hour reminder fire again
     appointment.confirmReminderSentAt = null; // doctor may need a "please confirm" nudge again
     appointment.payReminderSentAt = null;     // and the patient a "please pay" one
+    appointment.slotPassedNudgeAt = null;
 
     try {
       // Validate only what changed, so an old appointment with some legacy
@@ -599,17 +623,24 @@ const rescheduleAppointment = async (req, res) => {
     const newDateLabel = new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'UTC' });
     sendPushToUser(appointment.doctor._id ? appointment.doctor._id : appointment.doctor, {
       title: 'Appointment rescheduled',
-      body: `${req.user.name} moved their appointment to ${newDateLabel} at ${timeSlot}. Please re-confirm.`,
+      body: keepConfirmed
+        ? `${req.user.name} chose a new time: ${newDateLabel} at ${timeSlot}. It stays confirmed. No action needed.`
+        : `${req.user.name} moved their appointment to ${newDateLabel} at ${timeSlot}. Please re-confirm.`,
       url: '/dashboard',
       tag: `appointment-${appointment._id}`
     });
-    const patient = await User.findById(req.user._id).select('name phone email patientId');
-    sendAppointmentNotification(doctor, patient, appointment);
-    // Admin notification — a rescheduled appointment is pending again.
-    sendAdminBookingNotification(doctor, patient, appointment);
+    if (!keepConfirmed) {
+      const patient = await User.findById(req.user._id).select('name phone email patientId');
+      sendAppointmentNotification(doctor, patient, appointment);
+      // Admin notification — a rescheduled appointment is pending again.
+      sendAdminBookingNotification(doctor, patient, appointment);
+    }
 
     res.json({
-      message: 'Appointment rescheduled. Waiting for the doctor to confirm the new time.',
+      keepConfirmed,
+      message: keepConfirmed
+        ? 'New time saved. Please complete the payment to lock it.'
+        : 'Appointment rescheduled. Waiting for the doctor to confirm the new time.',
       appointment
     });
 

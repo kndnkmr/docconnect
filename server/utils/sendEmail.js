@@ -104,6 +104,22 @@ const sendAppointmentNotification = async (doctor, patient, appointment) => {
 };
 
 const sendAppointmentConfirmation = async (patient, doctor, appointment) => {
+  // Confirmed after the booked time had passed: ask for a new time instead.
+  if (appointment.confirmedLate) {
+    const subject = `Dr. ${doctor.name} accepted. Please pick a new time`;
+    const htmlLate = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="border: 1px solid #e5e7eb; padding: 24px; border-radius: 8px;">
+        <p style="color: #4b5563;">Hi ${esc(patient.name)},</p>
+        <p style="color: #4b5563;">Dr. ${esc(doctor.name)} has accepted your appointment request, but the time you booked (${new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', timeZone: 'UTC' })}, ${appointment.timeSlot}) has already passed.</p>
+        <p style="color: #4b5563;"><strong>Please pick a new time.</strong> Your details are saved, so you do not need to book again.</p>
+        <a href="https://www.promedicoz.in/booking-confirmation?id=${appointment._id}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 12px;">Pick a new time</a>
+        <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">This is an automated notification from ProMedicoz.</p>
+      </div>
+    </div>`;
+    if (!patient.email) return { success: false, reason: 'No patient email' };
+    return await sendEmail({ to: patient.email, subject, html: htmlLate });
+  }
   const subject = `Appointment Confirmed — Dr. ${doctor.name}`;
 
   const html = `

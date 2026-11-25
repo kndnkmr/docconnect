@@ -35,7 +35,7 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
-import { paymentStage } from '../utils/paymentFlow';
+import { paymentStage, needsNewSlot } from '../utils/paymentFlow';
 import { readUpiFromImage, isValidUpiId, sameUpi } from '../utils/upiQr';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
@@ -154,6 +154,10 @@ const PATIENT_TXT = {
     doctorNotJoined: "Doctor not joined yet? They'll ring you; you can also:",
     whatsappSupport: '💬 WhatsApp support',
     hintPending: '⏳ Waiting for doctor to confirm your appointment.',
+    lateTitle: '⏰ Your booked time has passed',
+    lateConfirmed: (dr) => `${dr} accepted after your time. Pick a new time and carry on. Your details are saved, so you do not need to book again.`,
+    latePending: (dr) => `${dr} has not confirmed yet and your time has passed. Pick a new time. Your details are saved, so you do not need to book again.`,
+    lateBtn: '📅 Pick a new time',
     hintPay: '💳 Next: pay using the box above, then upload the payment screenshot.',
     joinCall: (type) => (type === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'),
     hintPaidCall: (type) => `✅ Payment confirmed! Click "${type === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at your appointment time.`,
@@ -265,6 +269,10 @@ const PATIENT_TXT = {
     doctorNotJoined: 'डॉक्टर अभी नहीं जुड़े? वे आपको कॉल करेंगे; आप ये भी कर सकते हैं:',
     whatsappSupport: '💬 WhatsApp पर सहायता',
     hintPending: '⏳ डॉक्टर के अपॉइंटमेंट पक्की करने का इंतज़ार है।',
+    lateTitle: '⏰ आपका बुक किया हुआ समय निकल चुका है',
+    lateConfirmed: (dr) => `${dr} ने आपके समय के बाद स्वीकार किया। नया समय चुनें और आगे बढ़ें। आपकी जानकारी सेव है, दोबारा बुक करने की ज़रूरत नहीं।`,
+    latePending: (dr) => `${dr} ने अभी पुष्टि नहीं की और आपका समय निकल चुका है। नया समय चुनें। आपकी जानकारी सेव है, दोबारा बुक करने की ज़रूरत नहीं।`,
+    lateBtn: '📅 नया समय चुनें',
     hintPay: '💳 अगला कदम: ऊपर दिए बॉक्स से भुगतान करें, फिर भुगतान का स्क्रीनशॉट अपलोड करें।',
     joinCall: (type) => (type === 'video' ? '📹 वीडियो कॉल से जुड़ें' : '📞 फ़ोन कॉल से जुड़ें'),
     hintPaidCall: (type) => `✅ भुगतान हो गया! अपॉइंटमेंट के समय "${type === 'video' ? '📹 वीडियो कॉल से जुड़ें' : '📞 फ़ोन कॉल से जुड़ें'}" दबाएं।`,
@@ -1069,8 +1077,12 @@ function Dashboard() {
     try {
       let data = { status: newStatus };
       if (meetingLink) data.meetingLink = meetingLink;
-      await appointmentAPI.updateStatus(appointmentId, data);
-      toast.success(`Appointment ${newStatus}`);
+      const res = await appointmentAPI.updateStatus(appointmentId, data);
+      if (res?.data?.confirmedLate) {
+        toast.success('Confirmed. The booked time had already passed, so the patient will be asked to pick a new time.', { duration: 7000 });
+      } else {
+        toast.success(`Appointment ${newStatus}`);
+      }
       fetchAppointments();
       if (isDoctor) fetchPendingCount();
     } catch (error) {
@@ -2125,6 +2137,22 @@ function Dashboard() {
                       {apt.meetingLink && <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors">{pt.joinMeetingLink}</a>}
                       {/* Patient payment steps — every state has a way forward
                           (pay / waiting / proof sent / paid). See PaymentBox. */}
+                      {/* Booked time passed (doctor confirmed late, or never
+                          confirmed): pick a new time on this same booking. */}
+                      {isPatient && needsNewSlot(apt) && (
+                        <div className="mt-3 p-4 bg-amber-50 border-2 border-amber-300 rounded-xl">
+                          <p className="font-bold text-amber-900 text-sm">{pt.lateTitle}</p>
+                          <p className="text-sm text-amber-900 mt-1">
+                            {(apt.status === 'confirmed' ? pt.lateConfirmed : pt.latePending)(apt.doctor?.name ? `Dr. ${apt.doctor.name}` : 'The doctor')}
+                          </p>
+                          <button
+                            onClick={() => setRescheduleModal({ open: true, appointment: apt })}
+                            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700"
+                          >
+                            {pt.lateBtn}
+                          </button>
+                        </div>
+                      )}
                       {isPatient && (
                         <PaymentBox apt={apt} user={user} onChanged={fetchAppointments} onViewReceipt={setReceiptImage} />
                       )}
@@ -2200,10 +2228,10 @@ function Dashboard() {
                       {!isPatient && apt.paymentStatus === 'paid' && <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">✓ Payment Confirmed</span>}
 
                       {/* Next step guidance */}
-                      <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg">
+                      <div className={`mt-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg ${isPatient && needsNewSlot(apt) ? 'hidden' : ''}`}>
                         <p className="text-xs text-blue-700 font-medium">
-                          {isPatient && apt.status === 'pending' && pt.hintPending}
-                          {isPatient && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && pt.hintPay}
+                          {isPatient && apt.status === 'pending' && !needsNewSlot(apt) && pt.hintPending}
+                          {isPatient && apt.status === 'confirmed' && !needsNewSlot(apt) && (!apt.paymentStatus || apt.paymentStatus === 'pending') && pt.hintPay}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && pt.hintPaidCall(apt.consultationType)}
                           {isPatient && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && pt.hintPaidClinic}
                         </p>

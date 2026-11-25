@@ -12,17 +12,43 @@ export const REMIND_EVERY_MS = 6 * 60 * 60 * 1000; // then at most every 6h
 //   'proof'   → screenshot or UTR sent: view/replace, remind, support
 //   'paid'    → doctor/admin confirmed
 //   null      → nothing to show (pending request, cancelled, free follow-up)
+// When the booked slot starts (ms since epoch), or null if it can't be read.
+// apt.date is midnight UTC of the IST calendar day; timeSlot is IST wall-clock.
+export function slotStartMs(apt) {
+  if (!apt) return null;
+  const d = new Date(apt.date);
+  const m = String(apt.timeSlot || '').match(/^\s*(\d{1,2}):(\d{2})\s*([AP]M)/i);
+  if (isNaN(d.getTime()) || !m) return null;
+  let h = Number(m[1]) % 12;
+  if (/p/i.test(m[3])) h += 12;
+  const dayUtc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return dayUtc + (h * 60 + Number(m[2]) - 330) * 60000;
+}
+// The booked time is gone and the patient has to pick a new one on the SAME
+// appointment: either the doctor never confirmed and the time passed, or the
+// doctor confirmed after it passed (server sets confirmedLate). Not once they
+// have started paying.
+export function needsNewSlot(apt, now = Date.now()) {
+  if (!apt || (apt.paymentStatus && apt.paymentStatus !== 'pending')) return false;
+  if (apt.status === 'confirmed') return apt.confirmedLate === true;
+  if (apt.status === 'pending') {
+    const start = slotStartMs(apt);
+    return start !== null && start <= now;
+  }
+  return false;
+}
 export function paymentStage(apt) {
   if (!apt || apt.status === 'cancelled') return null;
   if (apt.paymentStatus === 'paid') return 'paid';
   if (apt.paymentStatus === 'patient_claimed') {
     return apt.paymentScreenshot || apt.paymentUTR ? 'proof' : 'waiting';
   }
-  if (apt.status === 'confirmed') return 'pay';
+  if (apt.status === 'confirmed') return needsNewSlot(apt) ? null : 'pay';
   return null;
 }
 
 // Where a booking is in the patient's journey (live booking page):
+//   'pickSlot'   → booked time passed: pick a new time, same booking
 //   'confirming' → waiting for the doctor to confirm      (step 1)
 //   'pay'        → confirmed, patient should pay now       (step 2)
 //   'checking'   → patient paid / sent proof, doctor checks (step 3)
@@ -32,6 +58,7 @@ export function bookingStage(apt) {
   if (!apt) return null;
   if (apt.status === 'cancelled') return 'cancelled';
   if (apt.status === 'completed') return 'done';
+  if (needsNewSlot(apt)) return 'pickSlot';
   if (apt.status === 'pending') return 'confirming';
   const fee = Number(apt.doctor && apt.doctor.consultationFee) || 0;
   const p = paymentStage(apt);
@@ -40,7 +67,7 @@ export function bookingStage(apt) {
   if (p === 'waiting' || p === 'proof') return 'checking';
   return 'confirming';
 }
-export const BOOKING_STEP = { confirming: 0, pay: 1, checking: 2, ready: 3, done: 3 };
+export const BOOKING_STEP = { pickSlot: 0, confirming: 0, pay: 1, checking: 2, ready: 3, done: 3 };
 
 // One-tap UPI link (opens GPay / PhonePe / Paytm / BHIM with the payee,
 // amount and a note filled in). The note carries the patient ID + date so the

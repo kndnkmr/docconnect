@@ -9,6 +9,8 @@
 //           since the doctor was just notified of the new booking).
 //   Patient: CONFIRMED, payment NOT started, not a free follow-up, slot
 //           starts within 2h.
+//   Patient: still PENDING after the booked time has passed (doctor never
+//           confirmed): told once to pick a new time on the same booking.
 // (Payment-confirmation reminders live in utils/paymentFollowUp.js.)
 // Doctor pushes stay generic — no patient names on a lock screen.
 
@@ -45,6 +47,12 @@ function needsPayReminder(apt, now) {
   return w.start - now <= PAY_BEFORE_SLOT_MS;
 }
 
+// Booking still pending although its time has started (within the last 3 days)?
+function needsSlotPassedNudge(apt, now) {
+  if (apt.status !== 'pending' || apt.slotPassedNudgeAt) return false;
+  const w = slotWindowMs(apt.date, apt.timeSlot);
+  return !!w && w.start <= now && w.start >= now - 3 * DAY;
+}
 const runJourneyReminders = async (now = Date.now()) => {
   let doctors = 0;
   let patients = 0;
@@ -88,10 +96,27 @@ const runJourneyReminders = async (now = Date.now()) => {
       await Appointment.updateOne({ _id: apt._id }, { $set: { payReminderSentAt: new Date(now) } });
       patients += 1;
     }
+    // Pending bookings whose time has already passed: tell the patient once.
+    const stale = await Appointment.find({
+      status: 'pending',
+      slotPassedNudgeAt: null,
+      date: { $gte: new Date(now - 4 * DAY), $lte: new Date(now + DAY) },
+    }).select('patient doctor date timeSlot status slotPassedNudgeAt').limit(500);
+    for (const apt of stale) {
+      if (!needsSlotPassedNudge(apt, now)) continue;
+      sendPushToUser(String(apt.patient), {
+        title: 'Your appointment time has passed',
+        body: `The doctor has not confirmed ${label(apt)} yet. Tap to pick a new time. Your details are saved.`,
+        url: `/booking-confirmation?id=${apt._id}`,
+        tag: `passed-${apt._id}`,
+      });
+      await Appointment.updateOne({ _id: apt._id }, { $set: { slotPassedNudgeAt: new Date(now) } });
+      patients += 1;
+    }
   } catch (error) {
     console.error('[journey-reminders] Error:', error.message);
   }
   return { doctors, patients };
 };
 
-module.exports = { runJourneyReminders, needsConfirmReminder, needsPayReminder };
+module.exports = { runJourneyReminders, needsConfirmReminder, needsPayReminder, needsSlotPassedNudge };

@@ -204,6 +204,12 @@ const appointmentSchema = new mongoose.Schema({
   confirmReminderSentAt: { type: Date, default: null },
   // Patient reminded to pay (confirmed, unpaid, slot within 2h; once).
   payReminderSentAt: { type: Date, default: null },
+  // Doctor confirmed AFTER the booked time had already started. The patient is
+  // asked to pick a new time on the same appointment (reschedule keeps it
+  // confirmed, so they go straight to payment). Cleared by the reschedule.
+  confirmedLate: { type: Boolean, default: false },
+  // Patient told once that a still-pending booking's time has passed.
+  slotPassedNudgeAt: { type: Date, default: null },
   // Admin checked the refund for a paid-then-cancelled appointment.
   refundCheckedAt: { type: Date, default: null },
   refundCheckedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
