@@ -58,10 +58,11 @@ test('classify: each stuck case lands in the right group', () => {
     aptAt(now, -5 * H, { status: 'cancelled', paymentStatus: 'paid' }),    // → paidCancelled
     aptAt(now, -5 * H, { status: 'cancelled', paymentStatus: 'paid', refundCheckedAt: new Date() }), // checked → fine
     aptAt(now, -5 * H, { status: 'cancelled' }),                           // unpaid cancel → fine
+    aptAt(now, 24 * H, { status: 'confirmed', paymentStatus: 'patient_claimed', paymentClaimedAt: new Date(now - 1 * H), paymentDisputedAt: new Date(now - 30 * 60000) }), // doctor says not received → paymentDisputed, right away
   ], now);
   assert.deepStrictEqual(
     Object.fromEntries(Object.entries(g).map(([k, v]) => [k, v.length])),
-    { notConfirmed: 2, paymentWaiting: 1, unpaidSoon: 1, slotPassedOpen: 1, paidCancelled: 1 }
+    { paymentDisputed: 1, notConfirmed: 2, paymentWaiting: 1, unpaidSoon: 1, slotPassedOpen: 1, paidCancelled: 1 }
   );
   assert.ok(slotWindowMs(g.notConfirmed[0].date, g.notConfirmed[0].timeSlot).start
     <= slotWindowMs(g.notConfirmed[1].date, g.notConfirmed[1].timeSlot).start, 'most urgent first');

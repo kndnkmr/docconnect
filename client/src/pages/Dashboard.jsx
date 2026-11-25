@@ -1144,6 +1144,22 @@ function Dashboard() {
     }
   };
 
+  // Doctor: the patient says they paid but the money is not there.
+  const handleNotReceived = async (appointmentId) => {
+    if (statusBusy) return;
+    const note = window.prompt('You did not receive this payment?\n\nThe patient will be asked to send the UPI reference or a clearer screenshot, and ProMedicoz support will be able to look into it.\n\nOptional note (e.g. "nothing in my UPI app today"):', '');
+    if (note === null) return;
+    setStatusBusy(appointmentId);
+    try {
+      const { data } = await appointmentAPI.paymentNotReceived(appointmentId, note);
+      toast.success(data.message, { duration: 7000 });
+      fetchAppointments();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not send this. Please try again.');
+    } finally {
+      setStatusBusy(null);
+    }
+  };
   // ---- Patient: Cancel appointment ----
   const handleCancel = async () => {
     try {
@@ -2287,6 +2303,11 @@ function Dashboard() {
                       )}
                       {isDoctor && apt.status === 'confirmed' && apt.paymentStatus !== 'paid' && (
                         <button onClick={() => handleMarkPaid(apt._id)} disabled={statusBusy === apt._id} className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm hover:bg-orange-600 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'Mark Paid'}</button>
+                      )}
+                      {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && (
+                        apt.paymentDisputedAt
+                          ? <span className="px-3 py-2 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">❌ You said not received</span>
+                          : <button onClick={() => handleNotReceived(apt._id)} disabled={statusBusy === apt._id} className="px-4 py-2 bg-white border border-red-300 text-red-700 rounded-lg text-sm hover:bg-red-50 disabled:opacity-60">❌ Not received</button>
                       )}
                       {/* Optional: message the patient the confirmation directly on
                           WhatsApp (free, manual — opens WhatsApp with a pre-filled

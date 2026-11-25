@@ -87,11 +87,14 @@ function markClaimed(apt) {
   if (apt.paymentStatus !== 'patient_claimed') {
     apt.paymentStatus = 'patient_claimed';
     apt.paymentClaimedAt = new Date();
+    apt.paymentDisputedAt = null; // a fresh claim starts clean
+    apt.paymentDisputeNote = '';
     apt.paymentDoctorNudgedAt = null;
     apt.paymentAdminAlertedAt = null;
   }
 }
 
+const { logEvent } = require('../utils/appointmentEvents');
 const paymentView = (apt) => ({
   _id: apt._id,
   paymentStatus: apt.paymentStatus,
@@ -99,6 +102,7 @@ const paymentView = (apt) => ({
   paymentUTR: apt.paymentUTR,
   paymentClaimedAt: apt.paymentClaimedAt,
   paymentReminderSentAt: apt.paymentReminderSentAt,
+  paymentDisputedAt: apt.paymentDisputedAt,
 });
 
 // ---- Upload (or replace) a payment screenshot. Counts as "I've paid". ----
@@ -109,8 +113,12 @@ const uploadPaymentScreenshot = async (req, res) => {
     if (!req.file) throw new PaymentError(400, 'Please choose a screenshot of your payment');
 
     const replacing = !!apt.paymentScreenshot;
+    const prevShot = apt.paymentScreenshot;
+    const firstClaim = apt.paymentStatus !== 'patient_claimed';
     apt.paymentScreenshot = await uploadFile(req.file.buffer, req.file.mimetype, 'promedicoz/payments');
     markClaimed(apt);
+    if (firstClaim) logEvent(apt, { role: 'patient', by: req.user._id, action: 'paid_claimed' });
+    logEvent(apt, { role: 'patient', by: req.user._id, action: 'screenshot_sent', data: { url: apt.paymentScreenshot, replaced: prevShot || undefined } });
     await apt.save({ validateModifiedOnly: true });
 
     tellDoctor(req, apt, replacing ? 'Payment receipt updated' : 'Payment receipt received',
@@ -131,6 +139,8 @@ const notifyPayment = async (req, res) => {
     const wasClaimed = apt.paymentStatus === 'patient_claimed';
     if (utr) apt.paymentUTR = utr;
     markClaimed(apt);
+    if (!wasClaimed) logEvent(apt, { role: 'patient', by: req.user._id, action: 'paid_claimed' });
+    if (utr) logEvent(apt, { role: 'patient', by: req.user._id, action: 'utr_sent', data: { utr } });
     await apt.save({ validateModifiedOnly: true });
 
     if (!wasClaimed || utr) {
@@ -151,6 +161,8 @@ const undoPaymentClaim = async (req, res) => {
     if (apt.paymentStatus !== 'patient_claimed') {
       return res.json({ message: 'Payment details are showing again', ...paymentView(apt) });
     }
+    // Keep what they had sent: it stays visible to admin in the timeline.
+    logEvent(apt, { role: 'patient', by: req.user._id, action: 'claim_undone', data: { utr: apt.paymentUTR || undefined, screenshot: apt.paymentScreenshot || undefined } });
     apt.paymentStatus = 'pending';
     apt.paymentClaimedAt = null;
     apt.paymentScreenshot = '';
@@ -187,12 +199,44 @@ const remindDoctorAboutPayment = async (req, res) => {
       });
     }
     apt.paymentReminderSentAt = new Date();
+    logEvent(apt, { role: 'patient', by: req.user._id, action: 'reminded_doctor' });
     await apt.save({ validateModifiedOnly: true });
     tellDoctor(req, apt, 'Reminder: payment to check',
       `A patient is waiting for you to confirm their payment for ${shortWhen(apt)}. Check your UPI app, then tap "Mark Paid".`);
     res.json({ message: 'Reminder sent to the doctor', nextReminderAt: new Date(now + REMIND_EVERY_MS), ...paymentView(apt) });
   } catch (error) {
     send(res, error, 'Reminding doctor');
+  }
+};
+
+// ---- Doctor: "I did not receive this payment" ----
+// PUT /api/appointments/:id/payment-not-received  body { note? }
+// The patient said they paid, the doctor can't find it. Tells the patient what
+// to send, and flags the booking for admin (Needs help + Investigate).
+const doctorPaymentNotReceived = async (req, res) => {
+  try {
+    const note = req.body && req.body.note !== undefined ? String(req.body.note).trim() : '';
+    if (note.length > MAX_NOTE) throw new PaymentError(400, `Note is too long (max ${MAX_NOTE} characters)`);
+    const apt = await Appointment.findById(req.params.id);
+    if (!apt) throw new PaymentError(404, 'Appointment not found');
+    if (String(apt.doctor) !== String(req.user._id)) throw new PaymentError(403, 'Not authorized');
+    if (apt.paymentStatus !== 'patient_claimed') throw new PaymentError(400, 'The patient has not said they paid for this appointment');
+    if (!apt.paymentDisputedAt) {
+      apt.paymentDisputedAt = new Date();
+      apt.paymentDisputeNote = note;
+      logEvent(apt, { role: 'doctor', by: req.user._id, action: 'not_received', note });
+      await apt.save({ validateModifiedOnly: true });
+      sendPushToUser(String(apt.patient), {
+        title: 'The doctor could not find your payment',
+        body: `For ${shortWhen(apt)}. Please send the UPI reference (UTR) or a clear screenshot, or contact ProMedicoz support.`,
+        url: `/booking-confirmation?id=${apt._id}`,
+        tag: `payment-${apt._id}`,
+      });
+      appointmentChanged(req, apt, { paymentDisputed: true });
+    }
+    res.json({ message: 'Noted. The patient has been asked to send the UPI reference or a clearer screenshot, and ProMedicoz support can see this.', appointment: paymentView(apt), paymentDisputedAt: apt.paymentDisputedAt });
+  } catch (error) {
+    send(res, error, 'Reporting payment not received');
   }
 };
 
@@ -222,6 +266,7 @@ const adminPaymentAction = async (req, res) => {
       apt.paymentMarkedBy = req.user._id;
       apt.paymentMarkedByRole = 'admin';
       apt.paymentAdminNote = note;
+      logEvent(apt, { role: 'admin', by: req.user._id, action: 'admin_marked_paid', note, data: { amount } });
       await apt.save({ validateModifiedOnly: true });
       appointmentChanged(req, apt, { paymentStatus: 'paid' });
       sendPushToUser(String(apt.patient), {
@@ -238,6 +283,7 @@ const adminPaymentAction = async (req, res) => {
       if (apt.paymentStatus === 'paid' && !note) {
         throw new PaymentError(400, 'Please add a note explaining why a paid appointment is being reset');
       }
+      logEvent(apt, { role: 'admin', by: req.user._id, action: 'admin_reset', note, data: { was: apt.paymentStatus, utr: apt.paymentUTR || undefined, screenshot: apt.paymentScreenshot || undefined } });
       apt.paymentStatus = 'pending';
       apt.paidAt = null;
       apt.amountCollected = 0;
@@ -281,6 +327,7 @@ const adminRefundChecked = async (req, res) => {
     apt.refundCheckedAt = new Date();
     apt.refundCheckedBy = req.user._id;
     apt.refundNote = note;
+    logEvent(apt, { role: 'admin', by: req.user._id, action: 'refund_checked', note });
     await apt.save({ validateModifiedOnly: true });
     res.json({ message: 'Marked as refund checked.' });
   } catch (error) {
@@ -290,6 +337,6 @@ const adminRefundChecked = async (req, res) => {
 
 module.exports = {
   adminRefundChecked,
-  uploadPaymentScreenshot, notifyPayment, undoPaymentClaim, remindDoctorAboutPayment, adminPaymentAction,
+  uploadPaymentScreenshot, notifyPayment, undoPaymentClaim, remindDoctorAboutPayment, adminPaymentAction, doctorPaymentNotReceived,
   REMIND_AFTER_MS, REMIND_EVERY_MS,
 };

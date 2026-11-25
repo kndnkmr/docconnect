@@ -47,6 +47,12 @@ router.put('/appointments/:id/refund-checked', adminRefundChecked);
 // DELETE /api/admin/users/:id - Remove a user (permanent)
 router.delete('/users/:id', deleteUser);
 
+// POST /api/admin/users/:id/warn - send a warning (the person sees the text)
+router.post('/users/:id/warn', require('../controllers/adminController').warnUser);
+// GET /api/admin/appointments/:id/investigate - silent, read-only timeline + evidence + track record
+router.get('/appointments/:id/investigate', require('../controllers/adminController').investigateAppointment);
+// POST /api/admin/appointments/:id/note - add an admin note to the timeline
+router.post('/appointments/:id/note', require('../controllers/adminController').addAdminNote);
 // PUT /api/admin/users/:id/suspension - Deactivate/reactivate a user (keeps records)
 router.put('/users/:id/suspension', setUserSuspension);
 

@@ -332,7 +332,7 @@ const login = async (req, res) => {
     // Block suspended accounts from logging in
     if (user.isSuspended) {
       return res.status(401).json({
-        message: 'This account has been suspended. Contact support@promedicoz.in if you believe this is a mistake.'
+        message: `This account has been suspended${user.suspendedReason ? `. Reason: ${user.suspendedReason}` : ''}. Contact support@promedicoz.in if you believe this is a mistake.`
       });
     }
 

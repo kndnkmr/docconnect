@@ -232,6 +232,8 @@ export const appointmentAPI = {
 
   // "I haven't paid yet" — brings the QR / upload options back (patient only)
   undoPaymentClaim: (id) => API.put(`/appointments/${id}/undo-payment-claim`),
+  // Doctor: "I did not receive this payment" (asks the patient for proof, flags it for admin)
+  paymentNotReceived: (id, note = '') => API.put(`/appointments/${id}/payment-not-received`, { note }),
 
   // Remind the doctor to confirm a payment (patient; server rate-limits)
   remindPayment: (id) => API.post(`/appointments/${id}/payment-reminder`),
@@ -352,6 +354,11 @@ export const adminAPI = {
   // Payment help: { action: 'mark_paid', amount?, note? } or { action: 'reset', note? }
   paymentAction: (id, data) => API.put(`/admin/appointments/${id}/payment`, data),
 
+  // Silent, read-only: steps, timeline, evidence, chat counts, track record
+  investigate: (id) => API.get(`/admin/appointments/${id}/investigate`),
+  addNote: (id, note) => API.post(`/admin/appointments/${id}/note`, { note }),
+  // Warn a user (they see the text). Body: { reason, appointmentId? }
+  warnUser: (id, data) => API.post(`/admin/users/${id}/warn`, data),
   // Patients who may be stuck, grouped (Admin → Needs help)
   getNeedsHelp: () => API.get('/admin/needs-help'),
 
@@ -362,8 +369,8 @@ export const adminAPI = {
   deleteUser: (id) => API.delete(`/admin/users/${id}`),
 
   // Deactivate/reactivate a user (keeps records)
-  setSuspension: (id, suspend, reason) =>
-    API.put(`/admin/users/${id}/suspension`, { suspend, reason }),
+  setSuspension: (id, suspend, reason, appointmentId) =>
+    API.put(`/admin/users/${id}/suspension`, { suspend, reason, appointmentId }),
 
   // Mark/unmark a doctor as "Verified by ProMedicoz"
   setVerification: (id, verified) =>

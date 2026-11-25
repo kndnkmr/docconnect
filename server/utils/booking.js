@@ -237,6 +237,7 @@ async function createBooking({ patientId, body, consentIP = '', consentBy = 'pat
     consentIP,
     consentBy,
     bookedByAdmin: bookedByAdmin || null,
+    events: [{ at: new Date(), by: bookedByAdmin || patientId, role: bookedByAdmin ? 'admin' : 'patient', action: 'booked', note: '' }],
   };
   // If this is a repeat booking, link to original appointment
   if (originalAppointmentId) appointmentData.originalAppointment = originalAppointmentId;

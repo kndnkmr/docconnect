@@ -15,6 +15,9 @@ const { sendEmail, sendAppointmentConfirmation } = require('../utils/sendEmail')
 const { sendPushToUser } = require('../utils/push');
 const { fixEmailIndex, fixSlotIndex, getSlotGuardStatus } = require('../utils/fixIndexes');
 const { safeContainsRegex, getPagination } = require('../utils/queryHelpers');
+const { stepsFor } = require('../utils/appointmentSteps');
+const { investigate } = require('../utils/investigate');
+const { logEvent } = require('../utils/appointmentEvents');
 
 // ============================================
 // GET STATS - Dashboard overview numbers
@@ -126,6 +129,13 @@ const getAllAppointments = async (req, res) => {
       filter.paymentStatus = req.query.paymentStatus;
     }
 
+    // Flag filter: dispute = patient says paid, doctor says not received.
+    if (req.query.flag) {
+      if (req.query.flag !== 'dispute') return res.status(400).json({ message: 'Invalid flag filter' });
+      filter.paymentStatus = 'patient_claimed';
+      filter.paymentDisputedAt = { $ne: null };
+    }
+
     // Search: Patient ID, patient/doctor name, or phone. Matches the people
     // first, then their appointments — so it covers ALL appointments, not
     // just the latest page.
@@ -145,6 +155,7 @@ const getAllAppointments = async (req, res) => {
     const appointments = await Appointment.find(filter)
       .populate('doctor', 'name specialization phone consultationFee')
       .populate('patient', 'name email phone patientId')
+      .select('-events')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -152,7 +163,8 @@ const getAllAppointments = async (req, res) => {
     const total = await Appointment.countDocuments(filter);
 
     res.json({
-      appointments,
+      // Each row says where the patient and the doctor are right now.
+      appointments: appointments.map((a) => ({ ...a.toObject(), steps: stepsFor(a) })),
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -195,6 +207,7 @@ const confirmAppointmentAsAdmin = async (req, res) => {
     }
 
     appointment.status = 'confirmed';
+    require('../utils/appointmentEvents').logEvent(appointment, { role: 'admin', by: req.user._id, action: 'admin_confirmed' });
     if (meetingLink) appointment.meetingLink = meetingLink;
     appointment.markModified('status');
     await appointment.save({ validateModifiedOnly: true });
@@ -273,7 +286,8 @@ const deleteUser = async (req, res) => {
 
 const setUserSuspension = async (req, res) => {
   try {
-    const { suspend, reason } = req.body;
+    const { suspend, appointmentId } = req.body;
+    const reason = typeof req.body.reason === 'string' ? req.body.reason.trim().slice(0, 300) : '';
 
     const user = await User.findById(req.params.id);
 
@@ -285,11 +299,33 @@ const setUserSuspension = async (req, res) => {
     if (user.role === 'admin') {
       return res.status(400).json({ message: 'Cannot suspend admin accounts' });
     }
+    // A suspension needs a reason: the person is told why, and it is the record.
+    if (suspend && !reason) {
+      return res.status(400).json({ message: 'Please write the reason. The person is told why.' });
+    }
 
     user.isSuspended = !!suspend;
     user.suspendedAt = suspend ? new Date() : null;
-    user.suspendedReason = suspend ? (reason || '') : '';
+    user.suspendedReason = suspend ? reason : '';
+    user.suspendedBy = suspend ? req.user._id : null;
     await user.save({ validateModifiedOnly: true });
+
+    if (suspend) {
+      sendPushToUser(String(user._id), {
+        title: 'Your ProMedicoz account is suspended',
+        body: `Reason: ${reason}. Contact support@promedicoz.in if you think this is a mistake.`,
+        url: '/',
+        tag: `suspended-${user._id}`,
+      });
+    }
+    // Leave a mark on the appointment it came from (if any).
+    if (appointmentId) {
+      const apt = await Appointment.findById(appointmentId);
+      if (apt) {
+        logEvent(apt, { role: 'admin', by: req.user._id, action: suspend ? 'admin_suspended' : 'admin_note', note: suspend ? reason : `Reactivated ${user.name}`, data: { user: user.role, userId: String(user._id) } });
+        await apt.save({ validateModifiedOnly: true });
+      }
+    }
 
     res.json({
       message: suspend
@@ -306,6 +342,71 @@ const setUserSuspension = async (req, res) => {
   } catch (error) {
     console.error('Set user suspension error:', error.message);
     res.status(500).json({ message: 'Error updating account status' });
+  }
+};
+
+// ============================================
+// WARN A USER - tell them what they did wrong (kept on their record)
+// ============================================
+// POST /api/admin/users/:id/warn  body { reason, appointmentId? }
+const warnUser = async (req, res) => {
+  try {
+    const reason = typeof req.body.reason === 'string' ? req.body.reason.trim().slice(0, 300) : '';
+    if (!reason) return res.status(400).json({ message: 'Please write what the warning is for. The person sees this text.' });
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.role === 'admin') return res.status(400).json({ message: 'Cannot warn admin accounts' });
+    const apt = req.body.appointmentId ? await Appointment.findById(req.body.appointmentId) : null;
+    user.warnings = [...(user.warnings || []), { at: new Date(), by: req.user._id, reason, appointment: apt ? apt._id : null }].slice(-20);
+    await user.save({ validateModifiedOnly: true });
+    sendPushToUser(String(user._id), {
+      title: 'A notice from ProMedicoz',
+      body: reason,
+      url: '/dashboard',
+      tag: `warning-${user._id}`,
+    });
+    if (apt) {
+      logEvent(apt, { role: 'admin', by: req.user._id, action: 'admin_warned', note: reason, data: { user: user.role, userId: String(user._id) } });
+      await apt.save({ validateModifiedOnly: true });
+    }
+    res.json({ message: `Warning sent to ${user.name}.`, warnings: user.warnings.length });
+  } catch (error) {
+    console.error('Warn user error:', error.message);
+    res.status(500).json({ message: 'Error sending the warning' });
+  }
+};
+
+// ============================================
+// INVESTIGATE AN APPOINTMENT (silent, read-only)
+// ============================================
+// GET /api/admin/appointments/:id/investigate
+// Steps for both sides, timeline, evidence, chat counts (never the text),
+// call info and each person's track record. Nobody is notified.
+const investigateAppointment = async (req, res) => {
+  try {
+    const result = await investigate(req.params.id);
+    if (!result) return res.status(404).json({ message: 'Appointment not found' });
+    res.json(result);
+  } catch (error) {
+    if (error.kind === 'ObjectId') return res.status(400).json({ message: 'Invalid appointment ID' });
+    console.error('Investigate error:', error.message);
+    res.status(500).json({ message: 'Error loading the investigation' });
+  }
+};
+
+// POST /api/admin/appointments/:id/note  body { note }
+const addAdminNote = async (req, res) => {
+  try {
+    const note = typeof req.body.note === 'string' ? req.body.note.trim().slice(0, 300) : '';
+    if (!note) return res.status(400).json({ message: 'Please write a note' });
+    const apt = await Appointment.findById(req.params.id);
+    if (!apt) return res.status(404).json({ message: 'Appointment not found' });
+    logEvent(apt, { role: 'admin', by: req.user._id, action: 'admin_note', note });
+    await apt.save({ validateModifiedOnly: true });
+    res.json({ message: 'Note saved' });
+  } catch (error) {
+    console.error('Admin note error:', error.message);
+    res.status(500).json({ message: 'Error saving the note' });
   }
 };
 
@@ -1319,4 +1420,4 @@ const backupDownload = (req, res) => {
   }
 };
 
-module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin };
+module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin, warnUser, investigateAppointment, addAdminNote };

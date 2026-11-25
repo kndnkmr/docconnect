@@ -21,6 +21,7 @@ const { sendPushToUser, RING_PUSH_OPTS } = require('../utils/push');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 const { createBooking, BookingError, BOOKABLE_DOCTOR, followUpDateOk, followUpDayLabel } = require('../utils/booking');
 const { slotProblem, slotWindowMs } = require('../utils/slots');
+const { logEvent } = require('../utils/appointmentEvents');
 const { appointmentChanged } = require('../utils/live');
 
 // Free-text caps (stop unbounded payloads being stored).
@@ -150,6 +151,7 @@ const getMyAppointments = async (req, res) => {
 
     // Fetch the page's appointments with the usual populate, then restore order.
     const docs = await Appointment.find({ _id: { $in: orderedIds } })
+      .select('-events -paymentDisputeNote') // admin-only (see models/Appointment.js)
       .populate('doctor', 'name specialization profilePhoto consultationFee upiId upiQrCode phone city googleMapsLink googleReviewLink consultationModes isAdminVerified')
       .populate('patient', 'name email phone patientId bloodGroup allergies currentMedications medicalHistory emergencyContactName emergencyContactPhone insuranceProvider insurancePolicyNumber');
 
@@ -356,6 +358,12 @@ const updateAppointmentStatus = async (req, res) => {
       const why = typeof req.body.cancellationReason === 'string' ? req.body.cancellationReason.trim().slice(0, MAX_CANCEL_REASON) : '';
       appointment.cancellationReason = why || (statusBefore === 'pending' ? 'Declined by the doctor' : 'Cancelled by the doctor');
     }
+    logEvent(appointment, {
+      role: 'doctor', by: req.user._id,
+      action: status === 'confirmed' ? (confirmedLate ? 'confirmed_late' : 'confirmed')
+        : status === 'cancelled' ? (statusBefore === 'pending' ? 'declined' : 'cancelled') : 'completed',
+      note: status === 'cancelled' ? appointment.cancellationReason : '',
+    });
     // Stamp when it became completed, so the review-request job can wait a few
     // hours before nudging the patient to rate (and only for genuinely-finished
     // consults). Set once; don't overwrite if somehow re-marked.
@@ -478,6 +486,7 @@ const cancelAppointment = async (req, res) => {
     appointment.cancellationReason = (typeof cancellationReason === 'string' && cancellationReason.trim())
       ? cancellationReason.trim().slice(0, MAX_CANCEL_REASON)
       : 'Cancelled by patient';
+    logEvent(appointment, { role: 'patient', by: req.user._id, action: 'cancelled', note: appointment.cancellationReason });
 
     await appointment.save();
 
@@ -584,6 +593,7 @@ const rescheduleAppointment = async (req, res) => {
       });
     }
 
+    const wasAt = { date: appointment.date, timeSlot: appointment.timeSlot };
     // ---- Apply the move ----
     // Change ONLY the timing + fields that logically reset; preserve payment,
     // reason, symptoms, consent, consultationType, family info, notes, etc.
@@ -604,6 +614,7 @@ const rescheduleAppointment = async (req, res) => {
     appointment.confirmReminderSentAt = null; // doctor may need a "please confirm" nudge again
     appointment.payReminderSentAt = null;     // and the patient a "please pay" one
     appointment.slotPassedNudgeAt = null;
+    logEvent(appointment, { role: 'patient', by: req.user._id, action: 'rescheduled', data: { from: wasAt, to: { date, timeSlot }, stayedConfirmed: keepConfirmed } });
 
     try {
       // Validate only what changed, so an old appointment with some legacy
@@ -693,6 +704,7 @@ const markPayment = async (req, res) => {
     appointment.amountCollected = req.body.amount ? Number(req.body.amount) : (appointment.doctor.consultationFee || 0);
     appointment.paymentMarkedBy = req.user._id;
     appointment.paymentMarkedByRole = req.user.role === 'admin' ? 'admin' : 'doctor';
+    logEvent(appointment, { role: req.user.role === 'admin' ? 'admin' : 'doctor', by: req.user._id, action: 'marked_paid', data: { amount: appointment.amountCollected } });
     await appointment.save();
 
     appointmentChanged(req, appointment, { paymentStatus: 'paid' });

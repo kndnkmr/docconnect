@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { GROUPS, waLink, ago, messageFor } from '../src/utils/needsHelp.js';
 
 test('groups match the server keys, in urgency order', () => {
-  assert.deepEqual(GROUPS.map((g) => g.key), ['notConfirmed', 'paymentWaiting', 'unpaidSoon', 'slotPassedOpen', 'paidCancelled', 'noPhone']);
+  assert.deepEqual(GROUPS.map((g) => g.key), ['paymentDisputed', 'notConfirmed', 'paymentWaiting', 'unpaidSoon', 'slotPassedOpen', 'paidCancelled', 'noPhone']);
 });
 
 test('WhatsApp links: digits only, India code added, junk refused', () => {
@@ -26,4 +26,10 @@ test('messages name the people, slot and UTR', () => {
   assert.match(messageFor('notConfirmed', apt, 'doctor'), /Dr\. Anjali.*Bharti.*1 Jan.*10:30 AM.*confirm/);
   assert.match(messageFor('paymentWaiting', apt, 'doctor'), /432109876543/);
   assert.match(messageFor('unpaidSoon', apt, 'patient'), /Hello Bharti.*payment/);
+});
+
+test('disputed payment: WhatsApp texts for the doctor and the patient mention the UTR and ask for proof', () => {
+  const apt = { patient: { name: 'Usha' }, doctor: { name: 'Pooja' }, date: '2026-11-25T00:00:00Z', timeSlot: '12:30 PM - 1:00 PM', paymentUTR: '412345678901' };
+  assert.match(messageFor('paymentDisputed', apt, 'doctor'), /not received.*412345678901/);
+  assert.match(messageFor('paymentDisputed', apt, 'patient'), /could not find your payment.*UTR/);
 });

@@ -473,6 +473,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  // Which admin suspended the account (audit).
+  suspendedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  // Warnings sent by an admin (newest last, capped at 20).
+  warnings: {
+    type: [{
+      _id: false,
+      at: { type: Date, default: Date.now },
+      by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+      reason: { type: String, default: '' },
+      appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment', default: null },
+    }],
+    default: [],
+  },
 
   // --- Last Login Info (for security/audit) ---
   lastLoginAt: {

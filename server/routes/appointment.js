@@ -36,6 +36,7 @@ const {
   notifyPayment,
   undoPaymentClaim,
   remindDoctorAboutPayment,
+  doctorPaymentNotReceived,
 } = require('../controllers/paymentController');
 
 // Import middleware
@@ -116,6 +117,8 @@ router.put('/:id/payment-screenshot', authorize('patient'), upload.single('scree
 router.put('/:id/notify-payment', authorize('patient'), notifyPayment);
 router.put('/:id/undo-payment-claim', authorize('patient'), undoPaymentClaim);
 router.post('/:id/payment-reminder', authorize('patient'), remindDoctorAboutPayment);
+// DOCTOR: "I did not receive this payment" (flags it for admin, asks the patient for proof)
+router.put('/:id/payment-not-received', authorize('doctor'), doctorPaymentNotReceived);
 
 module.exports = router;
 

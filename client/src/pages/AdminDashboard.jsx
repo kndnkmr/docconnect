@@ -2,6 +2,7 @@
 // Admin Dashboard - Manage users and appointments
 // ============================================
 
+import StepChips from './admin/StepChips';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { adminAPI, announcementAPI, complaintAPI, reviewAPI, blogViewAPI } from '../services/api';
 // "Help patient" (edit details/family, book on their behalf) + "+ New patient".
@@ -11,6 +12,7 @@ const HelpPatient = lazy(() => import('./admin/HelpPatient'));
 const PaymentHelp = lazy(() => import('./admin/PaymentHelp'));
 // "Needs help" — patients who may be stuck (grouped, with one-tap actions).
 const NeedsHelp = lazy(() => import('./admin/NeedsHelp'));
+const Investigate = lazy(() => import('./admin/Investigate'));
 const NewPatientModal = lazy(() => import('./admin/HelpPatient').then((m) => ({ default: m.NewPatientModal })));
 // 🩺 Manage doctor (full profile control on their behalf) + "+ New doctor".
 const ManageDoctor = lazy(() => import('./admin/ManageDoctor'));
@@ -37,6 +39,7 @@ function AdminDashboard() {
   // Appointment search (Patient ID / name / phone) + payment filter + paging.
   const [appointmentSearch, setAppointmentSearch] = useState('');
   const [appointmentPaymentFilter, setAppointmentPaymentFilter] = useState('');
+  const [appointmentFlagFilter, setAppointmentFlagFilter] = useState('');
   const [appointmentPage, setAppointmentPage] = useState(1);
   const [appointmentHasMore, setAppointmentHasMore] = useState(false);
   // "Needs help" count (sidebar badge + Overview banner) and a refresh trigger.
@@ -410,6 +413,7 @@ function AdminDashboard() {
       const params = { limit: 50, page };
       if (appointmentStatusFilter) params.status = appointmentStatusFilter;
       if (appointmentPaymentFilter) params.paymentStatus = appointmentPaymentFilter;
+      if (appointmentFlagFilter) params.flag = appointmentFlagFilter;
       if (appointmentSearch.trim()) params.search = appointmentSearch.trim();
       const response = await adminAPI.getAppointments(params);
       const list = response.data.appointments || [];
@@ -424,6 +428,8 @@ function AdminDashboard() {
 
   // Payment help modal: the appointment being looked at (null = closed).
   const [paymentHelpApt, setPaymentHelpApt] = useState(null);
+  // Investigate panel: the appointment being looked at (null = closed).
+  const [investigateApt, setInvestigateApt] = useState(null);
 
   // Confirm a pending appointment on the doctor's behalf (doctors sometimes
   // forget). The patient gets the same confirmation email + push a doctor
@@ -545,7 +551,7 @@ function AdminDashboard() {
     if (activeTab === 'appointments') fetchAppointments();
     if (activeTab === 'complaints') fetchComplaints();
     if (activeTab === 'reviews') fetchReviews();
-  }, [activeTab, userRoleFilter, appointmentStatusFilter, appointmentPaymentFilter, complaintStatusFilter, reviewHiddenFilter]);
+  }, [activeTab, userRoleFilter, appointmentStatusFilter, appointmentPaymentFilter, appointmentFlagFilter, complaintStatusFilter, reviewHiddenFilter]);
 
   // Appointment search: wait for typing to pause before searching.
   const searchMounted = useRef(false);
@@ -925,6 +931,7 @@ function AdminDashboard() {
           <NeedsHelp
             onConfirm={handleConfirmAppointment}
             onPaymentHelp={setPaymentHelpApt}
+            onInvestigate={setInvestigateApt}
             onHelpPatient={(id) => setHelpPatient({ id, tab: 'details' })}
             onCountChange={setNeedsCount}
             refreshKey={needsRefresh}
@@ -1457,6 +1464,15 @@ function AdminDashboard() {
               <option value="patient_claimed">Awaiting verify</option>
               <option value="paid">Paid</option>
             </select>
+            <select
+              value={appointmentFlagFilter}
+              onChange={(e) => setAppointmentFlagFilter(e.target.value)}
+              aria-label="Filter by flag"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+            >
+              <option value="">Flag: any</option>
+              <option value="dispute">⚠ Paid vs not received</option>
+            </select>
           </div>
 
           {/* Appointments table */}
@@ -1470,6 +1486,7 @@ function AdminDashboard() {
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Date</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Time</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Status</th>
+                    <th className="px-4 py-3 text-sm font-medium text-gray-600">Where they are</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Payment</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Reason</th>
                     <th className="px-4 py-3 text-sm font-medium text-gray-600">Action</th>
@@ -1536,6 +1553,7 @@ function AdminDashboard() {
                           </div>
                         )}
                       </td>
+                      <td className="px-4 py-3"><StepChips steps={apt.steps} /></td>
                       <td className="px-4 py-3">
                         {(() => {
                           // Payment visibility for admin. paymentStatus:
@@ -1570,7 +1588,7 @@ function AdminDashboard() {
                           </button>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{apt.reason}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 max-w-[7rem] truncate">{apt.reason}</td>
                       <td className="px-4 py-3">
                         {apt.status === 'pending' ? (
                           <button
@@ -1580,9 +1598,15 @@ function AdminDashboard() {
                           >
                             ✓ Confirm
                           </button>
-                        ) : (
-                          <span className="text-gray-300 text-sm">—</span>
-                        )}
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={() => setInvestigateApt(apt)}
+                          className="block mt-1 text-xs text-purple-700 hover:underline whitespace-nowrap font-medium"
+                          title="Steps for both sides, timeline, evidence and track record. Silent."
+                        >
+                          🔎 Investigate
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -2362,6 +2386,16 @@ function AdminDashboard() {
             onClose={() => setHelpPatient(null)}
             onChanged={() => { fetchUsers(); setNeedsRefresh((k) => k + 1); }}
           />
+        )}
+        {investigateApt && (
+          <Suspense fallback={null}>
+            <Investigate
+              apt={investigateApt}
+              onClose={() => setInvestigateApt(null)}
+              onPaymentHelp={(a) => setPaymentHelpApt(a)}
+              onChanged={() => { if (activeTab === 'appointments') fetchAppointments(); setNeedsRefresh((k) => k + 1); }}
+            />
+          </Suspense>
         )}
         {paymentHelpApt && (
           <PaymentHelp

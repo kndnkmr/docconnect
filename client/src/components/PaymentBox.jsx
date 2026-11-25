@@ -104,6 +104,7 @@ const TXT = {
     utrHelp: 'Find it in your UPI app\'s history: tap the payment → "UPI transaction ID" or "Ref no." It\'s also in your bank\'s SMS. It is 12 digits.',
     // ---- waiting / proof ----
     waitingTitle: '⏳ Waiting for the doctor to confirm your payment',
+    disputed: 'The doctor could not find your payment. Please send the UPI reference (UTR) or a clear screenshot below. If you have paid, ProMedicoz support will help.',
     waitingHint: 'Adding a screenshot helps the doctor confirm faster.',
     addPaymentShot: '📎 Add payment screenshot',
     viewShotAria: 'View your payment screenshot',
@@ -176,6 +177,7 @@ const TXT = {
     utrAria: 'UPI reference नंबर',
     utrHelp: 'यह आपके UPI app की history में मिलेगा: पेमेंट पर दबाएँ → "UPI transaction ID" या "Ref no."। बैंक के SMS में भी होता है। यह 12 अंकों का होता है।',
     waitingTitle: '⏳ डॉक्टर के पेमेंट कन्फ़र्म करने का इंतज़ार है',
+    disputed: 'डॉक्टर को आपका पेमेंट नहीं मिला। कृपया नीचे UPI रेफ़रेंस (UTR) या साफ़ स्क्रीनशॉट भेजें। अगर आपने भुगतान किया है तो ProMedicoz सपोर्ट आपकी मदद करेगा।',
     waitingHint: 'स्क्रीनशॉट जोड़ने से डॉक्टर जल्दी कन्फ़र्म कर पाते हैं।',
     addPaymentShot: '📎 पेमेंट का स्क्रीनशॉट जोड़ें',
     viewShotAria: 'अपना पेमेंट स्क्रीनशॉट देखें',
@@ -535,6 +537,9 @@ export default function PaymentBox({ apt, user, onChanged, onViewReceipt }) {
     <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
       {hiddenFileInput}
       {qrOverlay}
+      {apt.paymentDisputedAt && (
+        <p className="mb-3 p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-800 font-medium">⚠️ {t.disputed}</p>
+      )}
       {stage === 'waiting' ? (
         <>
           <p className="text-sm font-semibold text-yellow-900">{t.waitingTitle}</p>

@@ -210,6 +210,23 @@ const appointmentSchema = new mongoose.Schema({
   confirmedLate: { type: Boolean, default: false },
   // Patient told once that a still-pending booking's time has passed.
   slotPassedNudgeAt: { type: Date, default: null },
+  // Doctor said "I did not receive this payment" (patient had claimed paid).
+  // Open while paymentStatus is still 'patient_claimed'; a new claim clears it.
+  paymentDisputedAt: { type: Date, default: null },
+  paymentDisputeNote: { type: String, default: '' },
+  // Who did what and when (utils/appointmentEvents.js). Append-only, capped.
+  events: {
+    type: [{
+      _id: false,
+      at: { type: Date, default: Date.now },
+      by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+      role: { type: String, default: 'system' },
+      action: { type: String, required: true },
+      note: { type: String, default: '' },
+      data: { type: mongoose.Schema.Types.Mixed },
+    }],
+    default: [],
+  },
   // Admin checked the refund for a paid-then-cancelled appointment.
   refundCheckedAt: { type: Date, default: null },
   refundCheckedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
@@ -341,8 +358,14 @@ const appointmentSchema = new mongoose.Schema({
   }
 
 }, {
-  timestamps: true
+  timestamps: true,
   // Adds createdAt (when booked) and updatedAt (when status last changed)
+  // The event log and the doctor's private dispute note are for admin only:
+  // they are never included when an appointment is sent to a patient or doctor.
+  // (Admin reads them through the Investigate endpoint, which uses toObject.)
+  toJSON: {
+    transform: (doc, ret) => { delete ret.events; delete ret.paymentDisputeNote; return ret; }
+  }
 });
 
 // ---- Indexes for performance ----

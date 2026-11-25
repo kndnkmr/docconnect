@@ -3,6 +3,7 @@
 // ============================================
 // Built live on each request from a few bounded queries. Groups:
 //   notConfirmed     pending, slot not started, and (booked 3h+ ago or slot within 4h)
+//   paymentDisputed  patient says paid, doctor says NOT received (needs admin now)
 //   paymentWaiting   patient says paid, doctor hasn't confirmed for 3h+
 //   unpaidSoon       confirmed, payment not started, slot within 2h (not follow-ups)
 //   slotPassedOpen   slot ended 2h+ ago (last 30 days) but still pending/confirmed
@@ -29,7 +30,7 @@ const withPeople = (query) => query
 
 // Pure: sort candidate appointments into groups (unit-tested).
 function classify(appointments, now) {
-  const groups = { notConfirmed: [], paymentWaiting: [], unpaidSoon: [], slotPassedOpen: [], paidCancelled: [] };
+  const groups = { paymentDisputed: [], notConfirmed: [], paymentWaiting: [], unpaidSoon: [], slotPassedOpen: [], paidCancelled: [] };
   for (const apt of appointments) {
     const w = slotWindowMs(apt.date, apt.timeSlot);
     const pay = apt.paymentStatus || 'pending';
@@ -40,6 +41,10 @@ function classify(appointments, now) {
     }
     if (!['pending', 'confirmed', 'completed'].includes(apt.status)) continue;
 
+    if (pay === 'patient_claimed' && apt.paymentDisputedAt) {
+      groups.paymentDisputed.push(apt);
+      continue;
+    }
     // Slot over (2h+ ago) but nobody closed it.
     if (w && ['pending', 'confirmed'].includes(apt.status) && w.end <= now - 2 * H) {
       groups.slotPassedOpen.push(apt);
@@ -62,6 +67,7 @@ function classify(appointments, now) {
   const startOf = (a) => (slotWindowMs(a.date, a.timeSlot) || { start: 0 }).start;
   groups.notConfirmed.sort((a, b) => startOf(a) - startOf(b));
   groups.unpaidSoon.sort((a, b) => startOf(a) - startOf(b));
+  groups.paymentDisputed.sort((a, b) => new Date(a.paymentDisputedAt) - new Date(b.paymentDisputedAt));
   groups.paymentWaiting.sort((a, b) => new Date(a.paymentClaimedAt || a.updatedAt) - new Date(b.paymentClaimedAt || b.updatedAt));
   groups.slotPassedOpen.sort((a, b) => startOf(b) - startOf(a));
   return groups;

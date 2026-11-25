@@ -4,6 +4,7 @@
 
 // Group order + labels shown on the Needs help screen.
 export const GROUPS = [
+  { key: 'paymentDisputed', tone: 'red', icon: '🚨', title: 'Patient says paid, doctor says NOT received', note: 'one of them is wrong. Investigate, then mark paid, reset, warn or suspend' },
   { key: 'notConfirmed', tone: 'red', icon: '🔴', title: 'Slot soon, not confirmed by doctor', note: 'doctor reminded automatically (3h after booking or 4h before the slot)' },
   { key: 'paymentWaiting', tone: 'orange', icon: '🟠', title: "Patient says paid, doctor hasn't confirmed", note: 'doctor reminded at 3h, you are emailed at 24h' },
   { key: 'unpaidSoon', tone: 'yellow', icon: '🟡', title: 'Confirmed, not paid, starts within 2h', note: 'patient reminded automatically' },
@@ -38,10 +39,12 @@ export function messageFor(group, apt, to) {
   const when = `${dayLabel(apt.date)}, ${apt.timeSlot}`;
   if (to === 'doctor') {
     if (group === 'notConfirmed') return `Hello Dr. ${doctor}, this is ProMedicoz support. ${patient} has booked ${when} and is waiting for your confirmation. Please confirm it from your ProMedicoz dashboard. Thank you.`;
+    if (group === 'paymentDisputed') return `Hello Dr. ${doctor}, this is ProMedicoz support. You marked the payment from ${patient} for ${when} as not received${apt.paymentUTR ? `, but they gave UPI ref ${apt.paymentUTR}` : ''}. Could you check your UPI app and bank statement once more and tell us what you find? Thank you.`;
     if (group === 'paymentWaiting') return `Hello Dr. ${doctor}, this is ProMedicoz support. ${patient} says they have paid for ${when}${apt.paymentUTR ? ` (UPI ref ${apt.paymentUTR})` : ''}. Could you check your UPI app and tap "Mark Paid"? Thank you.`;
     if (group === 'slotPassedOpen') return `Hello Dr. ${doctor}, this is ProMedicoz support. The appointment with ${patient} on ${when} is still open. Did it take place? Please mark it completed or cancelled on your dashboard.`;
     if (group === 'paidCancelled') return `Hello Dr. ${doctor}, this is ProMedicoz support. ${patient}'s appointment on ${when} was cancelled after payment. Has the refund been sent?`;
   }
+  if (group === 'paymentDisputed') return `Hello ${patient}, this is ProMedicoz support. Dr. ${doctor} could not find your payment for ${when}. Please reply with your UPI reference (UTR) and a screenshot of the payment so we can check it for you.`;
   if (group === 'unpaidSoon') return `Hello ${patient}, this is ProMedicoz support. Your appointment with Dr. ${doctor} is at ${when}. Please complete the payment from your ProMedicoz dashboard so the doctor can start on time. Reply here if you need help.`;
   if (group === 'paidCancelled') return `Hello ${patient}, this is ProMedicoz support about your cancelled appointment with Dr. ${doctor} on ${when}. We're checking your refund and will update you.`;
   return `Hello ${patient}, this is ProMedicoz support about your appointment with Dr. ${doctor} on ${when}.`;
