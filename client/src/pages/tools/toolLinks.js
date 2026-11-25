@@ -62,6 +62,7 @@ export const PREGNANCY_ARTICLE_SLUGS = new Set([
 // Period / fertility articles that show the "Find your fertile days" card.
 // (Deliberately not the puberty, menopause or contraception articles.)
 export const CYCLE_ARTICLE_SLUGS = new Set([
+  'ovulation-fertile-days-when-can-you-get-pregnant-guide',
   'trying-to-conceive-fertility-basics-guide',
   'irregular-periods-menstrual-cycle-basics-guide',
   'pcos-pcod-irregular-periods-guide',

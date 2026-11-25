@@ -163,4 +163,7 @@ export const INTERNAL_LINKS = {
   'sgpt': 'liver-function-test-sgpt-sgot-high-meaning-guide',
   'esr and crp': 'esr-crp-high-meaning-blood-test-guide',
   'crp': 'esr-crp-high-meaning-blood-test-guide',
+  'ovulation': 'ovulation-fertile-days-when-can-you-get-pregnant-guide',
+  'fertile days': 'ovulation-fertile-days-when-can-you-get-pregnant-guide',
+  'fertile window': 'ovulation-fertile-days-when-can-you-get-pregnant-guide',
 };

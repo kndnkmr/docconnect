@@ -42106,5 +42106,652 @@ export const articles = [
         "text": "Yeh trusted public health guidance (NHS, MedlinePlus (US National Library of Medicine), Testing.com) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
       }
     ]
+  },
+  {
+    "slug": "ovulation-fertile-days-when-can-you-get-pregnant-guide",
+    "title": "Ovulation and Fertile Days: When Can You Get Pregnant? (With a Cycle Chart)",
+    "description": "Your fertile days by cycle length, signs of ovulation, the best timing to try, myths that waste months, and when to see a doctor if you are not pregnant yet.",
+    "specialization": "Gynaecologist",
+    "publishedDate": "2026-11-26",
+    "readTime": "9 min",
+    "image": "🌸",
+    "content": [
+      {
+        "type": "intro",
+        "text": "\"How many days after my period can I get pregnant?\" is one of the most common questions women ask. The simple answer is that you can only get pregnant on about **6 days in each cycle**, and those days depend on **your own cycle length**, not on a fixed \"day 14\". Knowing your fertile days can cut months off trying, and it also explains why the \"safe days\" method so often fails. This guide gives you a chart for your cycle, the body signs to watch, the timing that works best, and clear points for when to see a gynaecologist."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Quick answer",
+        "text": "Ovulation usually happens about **14 days BEFORE your next period**. Your **fertile window is the 5 days before ovulation plus the day of ovulation**, because sperm can live up to 5 days while the egg lives only 12 to 24 hours. In a 28-day cycle that is roughly **day 9 to day 14** (day 1 = first day of bleeding). The best plan is sex **every 1 to 2 days during the fertile window**, or simply **every 2 to 3 days all month**. See a doctor if you are under 35 and not pregnant after **12 months**, or 35 and over after **6 months**."
+      },
+      {
+        "type": "heading",
+        "text": "Find Your Fertile Days (Cycle Chart)"
+      },
+      {
+        "type": "paragraph",
+        "text": "Count your cycle from the **first day of bleeding** to the day before your next period starts. Find your usual length below. Day 1 is the first day of your period."
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Your cycle length",
+          "Likely ovulation day",
+          "Fertile days",
+          "Best 3 days"
+        ],
+        "rows": [
+          [
+            "21 days",
+            "Day 7",
+            "Day 2 to 7",
+            "Day 5, 6, 7"
+          ],
+          [
+            "24 days",
+            "Day 10",
+            "Day 5 to 10",
+            "Day 8, 9, 10"
+          ],
+          [
+            "26 days",
+            "Day 12",
+            "Day 7 to 12",
+            "Day 10, 11, 12"
+          ],
+          [
+            "28 days",
+            "Day 14",
+            "Day 9 to 14",
+            "Day 12, 13, 14"
+          ],
+          [
+            "30 days",
+            "Day 16",
+            "Day 11 to 16",
+            "Day 14, 15, 16"
+          ],
+          [
+            "32 days",
+            "Day 18",
+            "Day 13 to 18",
+            "Day 16, 17, 18"
+          ],
+          [
+            "35 days",
+            "Day 21",
+            "Day 16 to 21",
+            "Day 19, 20, 21"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Why \"day 14\" is often wrong",
+        "text": "The time from ovulation to the next period is fairly fixed, about **12 to 14 days**. The first half of the cycle is what changes. So a woman with a 35-day cycle ovulates around **day 21**, not day 14. Many couples try only on day 14 and miss the window every month. If your cycle length changes a lot from month to month, the chart is only a guide, so use the body signs below."
+      },
+      {
+        "type": "heading",
+        "text": "Signs That You Are About to Ovulate"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Clear, slippery, stretchy vaginal discharge**, like raw egg white. This is the most useful sign: your most fertile days are when you see it",
+          "**More discharge than usual**, feeling wet rather than dry",
+          "**Mild pain on one side of the lower belly** for a few hours (called mittelschmerz)",
+          "**Higher sex drive** for a day or two",
+          "A **positive ovulation kit (LH test)**: ovulation usually follows within 24 to 36 hours",
+          "A small **rise in morning body temperature** (about 0.3°C). This appears after ovulation, so it confirms the pattern for next month rather than predicting this one"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How to Track Ovulation"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Method",
+          "How it works",
+          "Good to know"
+        ],
+        "rows": [
+          [
+            "Calendar or app",
+            "Predicts from your cycle length",
+            "Free and easy. Less reliable if your cycles are irregular"
+          ],
+          [
+            "Discharge (cervical mucus)",
+            "Watch for egg-white discharge",
+            "Free, and often the best sign once you learn it"
+          ],
+          [
+            "Ovulation kits (LH strips)",
+            "Urine test turns positive 1 to 1.5 days before ovulation",
+            "Low-cost strips are available. Can give false positives in PCOS"
+          ],
+          [
+            "Morning temperature",
+            "Rises after ovulation",
+            "Needs a thermometer and daily checks at the same time"
+          ],
+          [
+            "Follicle scan (ultrasound)",
+            "Doctor watches the egg grow",
+            "Useful when cycles are irregular or during fertility treatment"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "The Best Way to Time It"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Work out your likely fertile days from the chart, or use our free **Ovulation Calculator**",
+          "Have sex **every 1 to 2 days** in the fertile window, especially the **2 days before and the day of ovulation**",
+          "If tracking feels stressful, sex **every 2 to 3 days through the whole month** covers the window just as well",
+          "**No need to lie with your legs up** or use special positions. Sperm reach the womb within minutes",
+          "Avoid lubricants that are not \"fertility-friendly\". Some slow sperm down",
+          "Start **folic acid 400 mcg daily** now, ideally 1 to 3 months before you conceive, to protect the baby's brain and spine"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Long Does It Usually Take?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Time trying (regular sex, no contraception)",
+          "Couples who get pregnant"
+        ],
+        "rows": [
+          [
+            "In any one month",
+            "About 1 in 4 to 1 in 5"
+          ],
+          [
+            "Within 1 year",
+            "About 8 in 10 (around 84%)"
+          ],
+          [
+            "Within 2 years",
+            "About 9 in 10 (around 92%)"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "So **not getting pregnant in the first few months is normal**. Chances fall with age, especially after **35** for women. Weight, smoking, alcohol, thyroid problems and PCOS also affect fertility, in both partners."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Do not take fertility tablets on your own",
+        "text": "Medicines like **letrozole or clomiphene** are sometimes bought without a prescription. Taken without scans and a doctor's plan they can cause **twins or triplets, ovarian cysts, or a dangerous over-reaction of the ovaries**, and they do not help if the problem lies elsewhere. Use them only under a gynaecologist's care."
+      },
+      {
+        "type": "heading",
+        "text": "Your Questions Answered"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Question",
+          "Answer"
+        ],
+        "rows": [
+          [
+            "How many days after my period can I get pregnant?",
+            "It depends on your cycle. In a 28-day cycle the fertile days are about day 9 to 14. In shorter cycles it can be just 2 to 3 days after bleeding stops"
+          ],
+          [
+            "Can I get pregnant during my period?",
+            "Unlikely, but possible, especially with short cycles or long periods, because sperm can survive up to 5 days"
+          ],
+          [
+            "Can I get pregnant right after my period?",
+            "Yes, particularly if your cycle is 21 to 26 days long"
+          ],
+          [
+            "Are \"safe days\" a reliable way to avoid pregnancy?",
+            "No. Cycles shift with stress, illness and travel. Use a proper contraceptive method if you do not want a pregnancy"
+          ],
+          [
+            "Can I get pregnant with irregular periods?",
+            "Yes, but it is harder to know your fertile days. Use discharge signs or ovulation kits, and see a doctor to find the cause"
+          ],
+          [
+            "Does having sex every day lower the chances?",
+            "No. Daily or every-other-day sex in the fertile window is fine for most couples"
+          ],
+          [
+            "Can we choose a boy or a girl by timing?",
+            "No. Timing does not decide the baby's sex, and choosing the sex is illegal in India"
+          ],
+          [
+            "Should my husband get tested too?",
+            "Yes. Men's factors play a part in roughly a third to half of couples who struggle to conceive. A simple semen test is an early, low-cost step"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Fact"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Fact"
+        ],
+        "rows": [
+          [
+            "\"Every woman ovulates on day 14.\"",
+            "Only women with a 28-day cycle. Count back about 14 days from your next period"
+          ],
+          [
+            "\"Lie with legs up for 30 minutes after sex.\"",
+            "Not needed. Sperm reach the womb within minutes"
+          ],
+          [
+            "\"If it hasn't happened in 3 months, something is wrong.\"",
+            "Many healthy couples take 6 to 12 months. Give it a year if you are under 35"
+          ],
+          [
+            "\"Infertility is always the woman's problem.\"",
+            "Both partners should be checked. The cause is often in the man, or in both"
+          ],
+          [
+            "\"Ovulation pain means something is wrong.\"",
+            "Mild one-sided pain mid-cycle is normal. Severe or long-lasting pain needs a check"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How Worried Should I Be?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Your situation",
+          "What to do"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "Under 35, trying for less than a year, regular periods (21 to 35 days)",
+            "Keep trying every 2 to 3 days, take folic acid, track your fertile days"
+          ],
+          [
+            "🟡 See a doctor",
+            "Under 35 and no pregnancy after 12 months, or 35+ after 6 months, or 40+ from the start",
+            "Book a gynaecologist consultation. Both partners should be assessed"
+          ],
+          [
+            "🟡 See a doctor sooner",
+            "Periods irregular or absent, very painful periods, PCOS, thyroid problem, past pelvic infection or surgery, repeated miscarriages, or partner with a known problem",
+            "Do not wait a year. Book a consultation now"
+          ],
+          [
+            "🔴 Emergency",
+            "Positive pregnancy test with severe one-sided belly pain, shoulder-tip pain, heavy bleeding, fainting or dizziness",
+            "Go to hospital now. This can be an ectopic pregnancy"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Before You Consult, Note These"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Your **cycle lengths for the last 3 to 6 months** (first day of each period)",
+          "How long you have been trying, and how often you have sex",
+          "Any **ovulation kit results** or discharge signs you noticed",
+          "Past pregnancies, miscarriages, surgeries, infections, and current medicines",
+          "Your partner's age, health, smoking or alcohol, and any past semen test"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Many first steps in trying to conceive can start with an **online consultation** with a gynaecologist. The doctor can go over your cycle chart, explain when to try, order the right first tests for both partners (such as hormone tests, a thyroid test, an ultrasound and a semen test), and plan what comes next. Try our free **Ovulation Calculator** to see your fertile days for the next three cycles. (See our guides on trying to conceive, irregular periods, PCOS, folic acid before pregnancy, and pregnancy tests.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "A note on sources",
+        "text": "General education based on trusted public health guidance (NHS, NICE fertility guideline, American College of Obstetricians and Gynecologists, WHO). It does not replace an assessment by a doctor."
+      }
+    ],
+    "contentHi": [
+      {
+        "type": "intro",
+        "text": "\"Period ke kitne din baad pregnancy hoti hai?\" yeh mahilaon ke sabse aam sawaalon mein se ek hai. Seedha jawaab hai ki aap har cycle mein sirf **lagbhag 6 din** pregnant ho sakti hain, aur yeh din **aapki apni cycle ki lambai** par nirbhar karte hain, kisi tay \"14ve din\" par nahi. Apne fertile din jaanne se koshish ke mahine kam ho sakte hain, aur yeh bhi samajh aata hai ki \"safe days\" tarika itni baar kyun fail hota hai. Is guide mein aapki cycle ke liye chart hai, shareer ke sanket, sabse achhi timing, aur yeh bhi ki gynaecologist ko kab dikhaana chahiye."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "⚡ Seedha jawaab",
+        "text": "Ovulation aam taur par **agle period se lagbhag 14 din PEHLE** hota hai. Aapki **fertile window ovulation se 5 din pehle aur ovulation ka din** hai, kyunki sperm 5 din tak zinda reh sakte hain jabki anda sirf 12 se 24 ghante. 28 din ki cycle mein yeh lagbhag **9ve se 14ve din** tak hai (din 1 = bleeding ka pehla din). Sabse achha tarika hai fertile window mein **har 1 se 2 din** sambandh, ya bas **poore mahine har 2 se 3 din**. Doctor ko dikhaayein agar aapki umar 35 se kam hai aur **12 mahine** mein pregnancy nahi hui, ya 35 aur usse zyada hai to **6 mahine** baad."
+      },
+      {
+        "type": "heading",
+        "text": "Apne Fertile Din Jaanein (Cycle Chart)"
+      },
+      {
+        "type": "paragraph",
+        "text": "Apni cycle **bleeding ke pehle din** se agle period shuru hone se ek din pehle tak ginein. Neeche apni aam lambai dhoondhein. Din 1 aapke period ka pehla din hai."
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Aapki cycle ki lambai",
+          "Sambhavit ovulation din",
+          "Fertile din",
+          "Sabse achhe 3 din"
+        ],
+        "rows": [
+          [
+            "21 din",
+            "Din 7",
+            "Din 2 se 7",
+            "Din 5, 6, 7"
+          ],
+          [
+            "24 din",
+            "Din 10",
+            "Din 5 se 10",
+            "Din 8, 9, 10"
+          ],
+          [
+            "26 din",
+            "Din 12",
+            "Din 7 se 12",
+            "Din 10, 11, 12"
+          ],
+          [
+            "28 din",
+            "Din 14",
+            "Din 9 se 14",
+            "Din 12, 13, 14"
+          ],
+          [
+            "30 din",
+            "Din 16",
+            "Din 11 se 16",
+            "Din 14, 15, 16"
+          ],
+          [
+            "32 din",
+            "Din 18",
+            "Din 13 se 18",
+            "Din 16, 17, 18"
+          ],
+          [
+            "35 din",
+            "Din 21",
+            "Din 16 se 21",
+            "Din 19, 20, 21"
+          ]
+        ]
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "\"14va din\" aksar galat kyun hai",
+        "text": "Ovulation se agle period tak ka samay kaafi tay hota hai, lagbhag **12 se 14 din**. Cycle ka pehla hissa hi badalta hai. Isliye 35 din ki cycle wali mahila ka ovulation lagbhag **21ve din** hota hai, 14ve din nahi. Kai jode sirf 14ve din koshish karte hain aur har mahine window chook jaate hain. Agar aapki cycle har mahine bahut badalti hai to chart sirf andaaza hai, neeche diye shareer ke sanket dekhein."
+      },
+      {
+        "type": "heading",
+        "text": "Ovulation Paas Hone Ke Sanket"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Saaf, chikna, khinchne wala safed paani**, kachche ande ki safedi jaisa. Yeh sabse kaam ka sanket hai: jab yeh dikhe tab aapke sabse fertile din hain",
+          "**Aam se zyada discharge**, sookha nahi balki geela mehsoos hona",
+          "**Pet ke neeche ek taraf halka dard** kuch ghanton ke liye (ise mittelschmerz kehte hain)",
+          "Ek-do din **sambandh ki ichchha zyada**",
+          "**Ovulation kit (LH test) positive**: ovulation aam taur par 24 se 36 ghante mein hota hai",
+          "Subah ke **shareer ke taapmaan mein halka badhaav** (lagbhag 0.3°C). Yeh ovulation ke baad aata hai, isliye yeh is mahine ka andaaza nahi balki agle mahine ke liye pattern batata hai"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Ovulation Kaise Track Karein"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Tarika",
+          "Kaise kaam karta hai",
+          "Jaanne layak"
+        ],
+        "rows": [
+          [
+            "Calendar ya app",
+            "Cycle ki lambai se andaaza",
+            "Muft aur aasaan. Be-niyam cycle mein kam bharosemand"
+          ],
+          [
+            "Discharge (cervical mucus)",
+            "Ande ki safedi jaisa discharge dekhein",
+            "Muft, aur seekh lene par aksar sabse achha sanket"
+          ],
+          [
+            "Ovulation kit (LH strips)",
+            "Peshaab ka test ovulation se 1 se 1.5 din pehle positive",
+            "Sasti strips milti hain. PCOS mein galat positive aa sakta hai"
+          ],
+          [
+            "Subah ka taapmaan",
+            "Ovulation ke baad badhta hai",
+            "Thermometer aur roz ek hi samay par jaanch chahiye"
+          ],
+          [
+            "Follicle scan (ultrasound)",
+            "Doctor ande ko badhte hue dekhte hain",
+            "Be-niyam cycle ya fertility ilaaj mein kaam ka"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Sahi Timing Kaise Rakhein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "Chart se apne sambhavit fertile din nikaalein, ya hamaara muft **Ovulation Calculator** istemaal karein",
+          "Fertile window mein **har 1 se 2 din** sambandh banaayein, khaaskar **ovulation se 2 din pehle aur ovulation ke din**",
+          "Agar tracking se tanaav ho to **poore mahine har 2 se 3 din** sambandh bhi window ko utna hi achhe se cover karta hai",
+          "**Pair upar karke letne** ya khaas position ki zaroorat nahi. Sperm minuton mein garbhashay tak pahunch jaate hain",
+          "Jo lubricant \"fertility-friendly\" na ho use na lein. Kuch sperm ki raftaar dheemi karte hain",
+          "Abhi se **roz folic acid 400 mcg** shuru karein, behtar ho ki garbh se 1 se 3 mahine pehle, taaki bachche ke dimaag aur reedh ki suraksha ho"
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Aam Taur Par Kitna Samay Lagta Hai?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Koshish ka samay (niyamit sambandh, bina contraception)",
+          "Kitne jode pregnant hote hain"
+        ],
+        "rows": [
+          [
+            "Kisi ek mahine mein",
+            "Lagbhag 4 mein se 1 se 5 mein se 1"
+          ],
+          [
+            "1 saal mein",
+            "Lagbhag 10 mein se 8 (karib 84%)"
+          ],
+          [
+            "2 saal mein",
+            "Lagbhag 10 mein se 9 (karib 92%)"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Isliye **pehle kuch mahinon mein pregnancy na hona normal hai**. Umar ke saath sambhaavna ghatati hai, khaaskar mahilaon mein **35** ke baad. Vazan, smoking, sharaab, thyroid ki dikkat aur PCOS bhi fertility par asar daalte hain, dono saathiyon mein."
+      },
+      {
+        "type": "callout",
+        "variant": "warning",
+        "title": "Fertility ki goliyan apne aap na lein",
+        "text": "**Letrozole ya clomiphene** jaisi dawaayein kabhi kabhi bina parche ke khareedi jaati hain. Bina scan aur doctor ke plan ke inse **judwaan ya teen bachche, ovary mein cyst, ya ovary ka khatarnaak reaction** ho sakta hai, aur agar dikkat kahin aur hai to yeh madad nahi karti. Inhe sirf gynaecologist ki dekhrekh mein lein."
+      },
+      {
+        "type": "heading",
+        "text": "Aapke Sawaalon Ke Jawaab"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Sawaal",
+          "Jawaab"
+        ],
+        "rows": [
+          [
+            "Period ke kitne din baad pregnancy ho sakti hai?",
+            "Aapki cycle par nirbhar hai. 28 din ki cycle mein fertile din lagbhag 9 se 14 hain. Chhoti cycle mein bleeding rukne ke 2 se 3 din baad hi ho sakte hain"
+          ],
+          [
+            "Kya period ke dauraan pregnancy ho sakti hai?",
+            "Kam sambhaavna, par ho sakti hai, khaaskar chhoti cycle ya lambe period mein, kyunki sperm 5 din tak zinda reh sakte hain"
+          ],
+          [
+            "Kya period khatm hote hi pregnancy ho sakti hai?",
+            "Haan, khaaskar agar aapki cycle 21 se 26 din ki hai"
+          ],
+          [
+            "Kya \"safe days\" pregnancy se bachne ka bharosemand tarika hai?",
+            "Nahi. Tanaav, beemari aur safar se cycle badal jaati hai. Pregnancy nahi chahiye to sahi contraceptive tarika apnaayein"
+          ],
+          [
+            "Be-niyam period mein pregnancy ho sakti hai?",
+            "Haan, par fertile din jaanna mushkil hota hai. Discharge ke sanket ya ovulation kit istemaal karein, aur wajah jaanne ke liye doctor ko dikhaayein"
+          ],
+          [
+            "Roz sambandh banane se sambhaavna ghatati hai?",
+            "Nahi. Zyadatar jodon ke liye fertile window mein roz ya ek din chhod kar sambandh theek hai"
+          ],
+          [
+            "Kya timing se ladka ya ladki chuna ja sakta hai?",
+            "Nahi. Timing se bachche ka ling tay nahi hota, aur Bharat mein ling chunna kaanooni apraadh hai"
+          ],
+          [
+            "Kya pati ki bhi jaanch honi chahiye?",
+            "Haan. Jo jode pregnancy mein dikkat jhelte hain, unmein se lagbhag ek-tihaai se aadhe mein purush ki wajah bhi hoti hai. Semen test ek shuruaati, sasta kadam hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Myth vs Sach"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Myth",
+          "Sach"
+        ],
+        "rows": [
+          [
+            "\"Har mahila ka ovulation 14ve din hota hai.\"",
+            "Sirf 28 din ki cycle wali mahilaon ka. Agle period se lagbhag 14 din peechhe ginein"
+          ],
+          [
+            "\"Sambandh ke baad 30 minute pair upar karke letein.\"",
+            "Zaroorat nahi. Sperm minuton mein garbhashay tak pahunch jaate hain"
+          ],
+          [
+            "\"3 mahine mein nahi hua to kuch gadbad hai.\"",
+            "Kai swasth jodon ko 6 se 12 mahine lagte hain. 35 se kam umar ho to ek saal dein"
+          ],
+          [
+            "\"Bachcha na hona hamesha mahila ki dikkat hai.\"",
+            "Dono saathiyon ki jaanch honi chahiye. Wajah aksar purush mein, ya dono mein hoti hai"
+          ],
+          [
+            "\"Ovulation ka dard matlab kuch gadbad hai.\"",
+            "Cycle ke beech ek taraf halka dard normal hai. Tez ya lamba dard ho to jaanch karayein"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Kitni Chinta Karein?"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "",
+          "Aapki sthiti",
+          "Kya karein"
+        ],
+        "rows": [
+          [
+            "🟢 Normal",
+            "35 se kam umar, ek saal se kam koshish, niyamit period (21 se 35 din)",
+            "Har 2 se 3 din koshish jaari rakhein, folic acid lein, fertile din track karein"
+          ],
+          [
+            "🟡 Doctor ko dikhaayein",
+            "35 se kam umar aur 12 mahine mein pregnancy nahi, ya 35+ aur 6 mahine baad, ya 40+ shuru se hi",
+            "Gynaecologist se consultation book karein. Dono saathiyon ki jaanch honi chahiye"
+          ],
+          [
+            "🟡 Jaldi dikhaayein",
+            "Period be-niyam ya band, bahut dard wale period, PCOS, thyroid ki dikkat, pehle pelvic infection ya operation, baar baar miscarriage, ya saathi ko koi jaani hui dikkat",
+            "Ek saal ka intezaar na karein. Abhi consultation book karein"
+          ],
+          [
+            "🔴 Emergency",
+            "Pregnancy test positive aur pet mein ek taraf tez dard, kandhe ki nok mein dard, zyada bleeding, behoshi ya chakkar",
+            "Abhi hospital jaayein. Yeh ectopic pregnancy ho sakti hai"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Consultation Se Pehle Yeh Note Karein"
+      },
+      {
+        "type": "steps",
+        "items": [
+          "**Pichhle 3 se 6 mahine ki cycle ki lambai** (har period ka pehla din)",
+          "Kab se koshish kar rahe hain, aur kitni baar sambandh banate hain",
+          "Koi **ovulation kit ke result** ya discharge ke sanket jo aapne dekhe",
+          "Pehle ki pregnancy, miscarriage, operation, infection, aur abhi ki dawaayein",
+          "Saathi ki umar, sehat, smoking ya sharaab, aur pehle hua koi semen test"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Pregnancy ki koshish ke kai shuruaati kadam gynaecologist se **online consultation** se shuru ho sakte hain. Doctor aapka cycle chart dekh sakte hain, koshish ka sahi samay samjha sakte hain, dono saathiyon ke liye sahi shuruaati test likh sakte hain (jaise hormone test, thyroid test, ultrasound aur semen test), aur aage ka plan bana sakte hain. Agle teen cycle ke apne fertile din dekhne ke liye hamaara muft **Ovulation Calculator** try karein. (Pregnancy ki koshish, be-niyam period, PCOS, pregnancy se pehle folic acid, aur pregnancy test par hamaari guides dekhein.)"
+      },
+      {
+        "type": "callout",
+        "variant": "info",
+        "title": "Sources par ek note",
+        "text": "Yeh trusted public health guidance (NHS, NICE fertility guideline, American College of Obstetricians and Gynecologists, WHO) par aadhaarit general jaankari hai. Yeh doctor ke aakalan ki jagah nahi le sakti."
+      }
+    ]
   }
 ];

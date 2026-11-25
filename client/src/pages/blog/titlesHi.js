@@ -427,4 +427,5 @@ export const titlesHi = {
   "toddler-tantrums-how-to-handle-guide": "Chhote Bachche Ki Zid Aur Gussa: Kyun Hota Hai Aur Shaanti Se Kaise Sambhaalein",
   "liver-function-test-sgpt-sgot-high-meaning-guide": "LFT Mein SGPT Ya SGOT High Aaya? Iska Matlab Kya Hai Aur Ab Kya Karein",
   "esr-crp-high-meaning-blood-test-guide": "Blood Test Mein ESR Ya CRP High? Yeh Sujan Wale Test Asal Mein Kya Batate Hain",
+  "ovulation-fertile-days-when-can-you-get-pregnant-guide": "Period Ke Kitne Din Baad Pregnancy Hoti Hai? Ovulation Aur Fertile Days Ki Poori Jaankari",
 };
