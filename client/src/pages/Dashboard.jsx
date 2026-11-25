@@ -27,6 +27,7 @@ const loadVideoCall = () => import('../components/VideoCall');
 const ChatBox = lazy(loadChatBox);
 const VideoCall = lazy(loadVideoCall);
 import AnnouncementBanner from '../components/AnnouncementBanner';
+import CollapsibleCard from '../components/CollapsibleCard';
 import toast from 'react-hot-toast';
 import PaymentBox from '../components/PaymentBox';
 import CallAlertsBox from '../components/CallAlertsBox';
@@ -1475,10 +1476,86 @@ function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingOnboardingSteps.length, doctorDataReady, isDoctor]);
 
+  const pushNudge = showPushNudge && (
+
+        <div className="mb-6 p-4 sm:p-5 bg-gradient-to-r from-indigo-600 to-primary-700 text-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3">
+            <span className="text-3xl">🔔</span>
+            <div>
+              <p className="font-bold text-base">{pt.pushTitle}</p>
+              <p className="text-sm text-indigo-100 mt-0.5">
+                {isDoctor
+                  ? "Get notified the instant a patient books, pays, or messages you — right on your phone, even when the app is closed. No email needed."
+                  : pt.pushDesc}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
+            <button
+              onClick={handleEnablePush}
+              className="px-5 py-2.5 bg-white text-indigo-700 rounded-lg text-sm font-semibold hover:bg-gray-100 whitespace-nowrap"
+            >
+              {pt.pushOn}
+            </button>
+            <button
+              onClick={dismissPushNudge}
+              className="text-indigo-200 hover:text-white text-xl px-1"
+              aria-label={pt.dismiss}
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+  );
+
+  // Welcome banner. Shown first for doctors, in its old place for patients.
+  const welcomeHeader = (
+      <div className={`${isDoctor ? 'mb-4' : 'mb-8'} relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-800 text-white p-6 sm:p-8 shadow-md`}>
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" aria-hidden="true" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
+            <p className="text-primary-100 mt-1 text-sm sm:text-base">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
+            {live !== null && (
+              <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-white/15 text-[11px] font-medium" role="status" aria-live="polite">
+                <span className={`w-2 h-2 rounded-full ${live ? 'bg-green-300' : 'bg-amber-300 animate-pulse'}`} aria-hidden="true" />
+                {live ? pt.live : pt.reconnecting}
+              </span>
+            )}
+          </div>
+
+          {/* At-a-glance stat chips — tap to jump to the relevant view. */}
+          <div className="flex gap-3 flex-shrink-0">
+            {isDoctor && (
+              <button
+                onClick={() => { goToTab('appointments'); setAptStatusFilter('pending'); setPage(1); }}
+                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
+              >
+                <div className="text-2xl font-bold leading-none">{pendingCount}</div>
+                <div className="text-primary-100 text-xs mt-1">Pending</div>
+              </button>
+            )}
+            {pagination && typeof pagination.totalAppointments === 'number' && (
+              <button
+                onClick={() => { goToTab('appointments'); if (isDoctor) setAptStatusFilter(''); setPage(1); }}
+                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
+              >
+                <div className="text-2xl font-bold leading-none">{pagination.totalAppointments}</div>
+                <div className="text-primary-100 text-xs mt-1">{isDoctor ? 'Total' : (pt.tabAppointments || 'Appointments')}</div>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Admin announcements (fee notices, policy updates, etc.) */}
       <AnnouncementBanner />
+
+      {/* Doctors: Welcome comes first so it is never pushed off screen. */}
+      {isDoctor && welcomeHeader}
 
       {/* Patient came here from the booking form ("Add family member" /
           "Account Settings"): one tap back, with the form still filled in. */}
@@ -1519,36 +1596,7 @@ function Dashboard() {
       {/* iPhone Safari can't turn on alerts until ProMedicoz is on the Home
           Screen: show the 3-tap guide card there (nothing on Android). */}
       {!isPushSupported() && <IosAlertsCard who={isDoctor ? 'doctor' : 'patient'} className="mb-6" />}
-      {showPushNudge && (
-        <div className="mb-6 p-4 sm:p-5 bg-gradient-to-r from-indigo-600 to-primary-700 text-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start sm:items-center gap-3">
-            <span className="text-3xl">🔔</span>
-            <div>
-              <p className="font-bold text-base">{pt.pushTitle}</p>
-              <p className="text-sm text-indigo-100 mt-0.5">
-                {isDoctor
-                  ? "Get notified the instant a patient books, pays, or messages you — right on your phone, even when the app is closed. No email needed."
-                  : pt.pushDesc}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
-            <button
-              onClick={handleEnablePush}
-              className="px-5 py-2.5 bg-white text-indigo-700 rounded-lg text-sm font-semibold hover:bg-gray-100 whitespace-nowrap"
-            >
-              {pt.pushOn}
-            </button>
-            <button
-              onClick={dismissPushNudge}
-              className="text-indigo-200 hover:text-white text-xl px-1"
-              aria-label={pt.dismiss}
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-      )}
+      {!isDoctor && pushNudge}
 
       {/* Email Verification Banner for unverified doctors */}
       {isDoctor && user && !user.isVerified && (
@@ -1594,58 +1642,6 @@ function Dashboard() {
             className="hidden"
             onChange={(e) => uploadProfilePhoto(e.target.files[0])}
           />
-        </div>
-      )}
-
-      {/* Doctor onboarding checklist — the concrete "what do I do next"
-          guidance that was missing after email verification + photo. Hides
-          itself automatically once every step is done. */}
-      {isDoctor && doctorDataReady && pendingOnboardingSteps.length > 0 && (
-        <div className="mb-6 bg-white border-2 border-primary-200 rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="font-semibold text-gray-800 text-lg">🚀 Finish setting up your profile</h3>
-            <span className="text-sm text-gray-500 whitespace-nowrap">{onboardingSteps.length - pendingOnboardingSteps.length} of {onboardingSteps.length} done</span>
-          </div>
-          <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4 overflow-hidden">
-            <div
-              className="bg-primary-600 h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${((onboardingSteps.length - pendingOnboardingSteps.length) / onboardingSteps.length) * 100}%` }}
-            />
-          </div>
-          <p className="text-sm text-gray-500 mb-4">Complete these so patients can actually find and book you.</p>
-          <div className="space-y-2">
-            {onboardingSteps.map((step, idx) => (
-              <div key={step.key} className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-colors ${step.done ? 'bg-green-50' : 'bg-gray-50'}`}>
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Crisp vector circle (not a plain colored <span> + text glyph) —
-                      matches the VerifiedBadge convention used elsewhere on the site.
-                      Shows the step number until complete, then a checkmark. */}
-                  {step.done ? (
-                    <svg width="28" height="28" viewBox="0 0 24 24" className="flex-shrink-0" role="img" aria-label="Completed">
-                      <circle cx="12" cy="12" r="12" fill="#22c55e" />
-                      <path d="M7 12.5L10.3 16L17 9" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                    </svg>
-                  ) : (
-                    <span className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-xs font-bold text-gray-500">
-                      {idx + 1}
-                    </span>
-                  )}
-                  <div className="min-w-0">
-                    <p className={`text-sm font-medium ${step.done ? 'text-green-800 line-through' : 'text-gray-800'}`}>{step.label}</p>
-                    {!step.done && <p className="text-xs text-gray-500">{step.hint}</p>}
-                  </div>
-                </div>
-                {!step.done && (
-                  <button
-                    onClick={step.action}
-                    className="flex-shrink-0 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-medium hover:bg-primary-700 whitespace-nowrap"
-                  >
-                    {step.actionLabel}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
@@ -1724,6 +1720,8 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Doctor promotion / setup cards: one-line rows that open on tap, so they
+          never push Welcome and the appointments off the screen. */}
       {/* Grow-your-practice: share your own public profile with your existing
           patients so they can book you online too. Their word-of-mouth is the
           highest-trust, zero-cost way to bring users. Shown once the doctor's
@@ -1749,7 +1747,8 @@ function Dashboard() {
           catch { window.prompt('Copy this invite message:', shareMsg); }
         };
         return (
-          <div className="mb-6 p-4 sm:p-5 bg-green-50 border border-green-200 rounded-xl">
+          <CollapsibleCard icon="📣" title="Bring your own patients online">
+          <div className="p-4 sm:p-5 bg-green-50 border border-green-200 rounded-xl">
             <div className="flex items-start gap-3">
               <span className="text-2xl">📣</span>
               <div className="flex-1">
@@ -1820,52 +1819,71 @@ function Dashboard() {
               </div>
             </div>
           </div>
+          </CollapsibleCard>
         );
       })()}
 
-      {/* Welcome Header — a modern "command center" banner. The gradient and
-          layered stat chips make the logged-in home feel like a real
-          dashboard rather than a bare heading on grey. Numbers shown here are
-          only the globally-reliable totals (pendingCount is the true count
-          across ALL pages; pagination.totalAppointments is the full total) —
-          never per-page-derived figures that could mislead once paginated. */}
-      <div className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-800 text-white p-6 sm:p-8 shadow-md">
-        <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" aria-hidden="true" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">{isDoctor ? `Welcome, Dr. ${user?.name}!` : pt.welcome(user?.name)}</h1>
-            <p className="text-primary-100 mt-1 text-sm sm:text-base">{isDoctor ? 'Manage your practice and appointments' : pt.welcomeSub}</p>
-            {live !== null && (
-              <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-white/15 text-[11px] font-medium" role="status" aria-live="polite">
-                <span className={`w-2 h-2 rounded-full ${live ? 'bg-green-300' : 'bg-amber-300 animate-pulse'}`} aria-hidden="true" />
-                {live ? pt.live : pt.reconnecting}
-              </span>
-            )}
+      {/* Doctor onboarding checklist — the concrete "what do I do next"
+          guidance that was missing after email verification + photo. Hides
+          itself automatically once every step is done. */}
+      {isDoctor && doctorDataReady && pendingOnboardingSteps.length > 0 && (
+        <CollapsibleCard icon="🚀" title="Finish setting up your profile" tone="blue" meta={`${onboardingSteps.length - pendingOnboardingSteps.length} of ${onboardingSteps.length} done`}>
+        <div className="bg-white border-2 border-primary-200 rounded-xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-semibold text-gray-800 text-lg">🚀 Finish setting up your profile</h3>
+            <span className="text-sm text-gray-500 whitespace-nowrap">{onboardingSteps.length - pendingOnboardingSteps.length} of {onboardingSteps.length} done</span>
           </div>
-
-          {/* At-a-glance stat chips — tap to jump to the relevant view. */}
-          <div className="flex gap-3 flex-shrink-0">
-            {isDoctor && (
-              <button
-                onClick={() => { goToTab('appointments'); setAptStatusFilter('pending'); setPage(1); }}
-                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
-              >
-                <div className="text-2xl font-bold leading-none">{pendingCount}</div>
-                <div className="text-primary-100 text-xs mt-1">Pending</div>
-              </button>
-            )}
-            {pagination && typeof pagination.totalAppointments === 'number' && (
-              <button
-                onClick={() => { goToTab('appointments'); if (isDoctor) setAptStatusFilter(''); setPage(1); }}
-                className="text-left bg-white/15 hover:bg-white/25 backdrop-blur-sm rounded-xl px-4 py-3 transition-colors min-w-[88px]"
-              >
-                <div className="text-2xl font-bold leading-none">{pagination.totalAppointments}</div>
-                <div className="text-primary-100 text-xs mt-1">{isDoctor ? 'Total' : (pt.tabAppointments || 'Appointments')}</div>
-              </button>
-            )}
+          <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4 overflow-hidden">
+            <div
+              className="bg-primary-600 h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${((onboardingSteps.length - pendingOnboardingSteps.length) / onboardingSteps.length) * 100}%` }}
+            />
+          </div>
+          <p className="text-sm text-gray-500 mb-4">Complete these so patients can actually find and book you.</p>
+          <div className="space-y-2">
+            {onboardingSteps.map((step, idx) => (
+              <div key={step.key} className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-colors ${step.done ? 'bg-green-50' : 'bg-gray-50'}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  {/* Crisp vector circle (not a plain colored <span> + text glyph) —
+                      matches the VerifiedBadge convention used elsewhere on the site.
+                      Shows the step number until complete, then a checkmark. */}
+                  {step.done ? (
+                    <svg width="28" height="28" viewBox="0 0 24 24" className="flex-shrink-0" role="img" aria-label="Completed">
+                      <circle cx="12" cy="12" r="12" fill="#22c55e" />
+                      <path d="M7 12.5L10.3 16L17 9" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    </svg>
+                  ) : (
+                    <span className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-xs font-bold text-gray-500">
+                      {idx + 1}
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className={`text-sm font-medium ${step.done ? 'text-green-800 line-through' : 'text-gray-800'}`}>{step.label}</p>
+                    {!step.done && <p className="text-xs text-gray-500">{step.hint}</p>}
+                  </div>
+                </div>
+                {!step.done && (
+                  <button
+                    onClick={step.action}
+                    className="flex-shrink-0 px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs font-medium hover:bg-primary-700 whitespace-nowrap"
+                  >
+                    {step.actionLabel}
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+        </CollapsibleCard>
+      )}
+
+      {isDoctor && pushNudge && (
+        <CollapsibleCard icon="🔔" title="Turn on alerts" tone="indigo">
+          {pushNudge}
+        </CollapsibleCard>
+      )}
+
+      {!isDoctor && welcomeHeader}
 
       {/* Tab Navigation — modern segmented pills in a soft rail. Behaviour is
           unchanged (same keys, same onClick); only the styling moved from a
