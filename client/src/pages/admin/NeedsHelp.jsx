@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { adminAPI } from '../../services/api';
 import { GROUPS, waLink, ago, messageFor } from '../../utils/needsHelp';
+import TidyOld from './TidyOld';
 
 const TONES = {
   red: { box: 'border-red-200', head: 'bg-red-50 text-red-800', row: 'border-red-100' },
@@ -127,6 +128,7 @@ export default function NeedsHelp({ onConfirm, onPaymentHelp, onInvestigate, onH
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4 sm:p-5">
+      <TidyOld onDone={load} />
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           <h2 className="text-lg font-bold text-gray-800">Patients who may be stuck</h2>

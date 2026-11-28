@@ -394,6 +394,28 @@ const investigateAppointment = async (req, res) => {
   }
 };
 
+// GET /api/admin/old-appointments        → preview counts (changes nothing)
+// POST /api/admin/old-appointments/tidy  → close them (body { confirm: true })
+const oldAppointments = require('../utils/oldAppointments');
+const previewOldAppointments = async (req, res) => {
+  try {
+    res.json(await oldAppointments.previewOld());
+  } catch (error) {
+    console.error('Old appointments preview error:', error.message);
+    res.status(500).json({ message: 'Error checking old appointments' });
+  }
+};
+const tidyOldAppointments = async (req, res) => {
+  try {
+    if (req.body.confirm !== true) return res.status(400).json({ message: 'Please confirm first' });
+    const r = await oldAppointments.tidyOld(req.user._id);
+    res.json({ message: `Tidied ${r.total} old appointments (${r.counts['expire-pending']} expired requests, ${r.counts.complete} marked completed, ${r.counts['close-unpaid']} unpaid ones closed).`, ...r });
+  } catch (error) {
+    console.error('Tidy old appointments error:', error.message);
+    res.status(500).json({ message: 'Error tidying old appointments' });
+  }
+};
+
 // POST /api/admin/appointments/:id/note  body { note }
 const addAdminNote = async (req, res) => {
   try {
@@ -1420,4 +1442,4 @@ const backupDownload = (req, res) => {
   }
 };
 
-module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin, warnUser, investigateAppointment, addAdminNote };
+module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin, warnUser, investigateAppointment, addAdminNote, previewOldAppointments, tidyOldAppointments };

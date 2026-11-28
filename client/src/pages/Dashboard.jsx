@@ -35,7 +35,7 @@ import { startRinging, stopRinging, unlockAudio, wantsCallAlerts, showNoShowHelp
 import { loadDraft, saveDraft, clearDraft, listDrafts, savedAgo, DRAFT_TTL } from '../utils/drafts';
 import { diffProfile, profileProblems, payloadFor, profileProgress, googleReviewLinkOk } from '../utils/profileAutosave';
 import { formatDoctorName } from '../utils/formatName';
-import { paymentStage, needsNewSlot } from '../utils/paymentFlow';
+import { paymentStage, needsNewSlot, slotStartMs } from '../utils/paymentFlow';
 import { readUpiFromImage, isValidUpiId, sameUpi } from '../utils/upiQr';
 
 // Tabs: each loads the first time it's opened, so a patient never downloads
@@ -2101,12 +2101,21 @@ function Dashboard() {
                     <span className={`absolute left-0 inset-y-0 w-1.5 ${getStatusAccent(apt.status)}`} aria-hidden="true" />
                     <div className="flex-grow">
                       <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-2.5">
-                        <h3 className="font-bold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : apt.patient?.name || 'Unknown Patient'}</h3>
-                        {isDoctor && apt.patient?.patientId && <span className="text-xs text-gray-400 font-mono">{apt.patient.patientId}</span>}
+                        {/* For a family booking the PATIENT is the family member
+                            (e.g. Manya), not the account holder who booked
+                            (e.g. Bharti). The doctor sees the real patient first. */}
+                        <h3 className="font-bold text-gray-800">{isPatient ? `Dr. ${apt.doctor?.name || 'Unknown'}` : (apt.bookedFor === 'family' && apt.familyMemberName) ? apt.familyMemberName : apt.patient?.name || 'Unknown Patient'}</h3>
+                        {isDoctor && !(apt.bookedFor === 'family' && apt.familyMemberName) && apt.patient?.patientId && <span className="text-xs text-gray-400 font-mono">{apt.patient.patientId}</span>}
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{getStatusLabel(apt.status)}</span>
+                        {isDoctor && ['pending', 'confirmed'].includes(apt.status) && (() => { const st = slotStartMs(apt); return st !== null && st < Date.now() - 2 * 3600 * 1000; })() && (
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200" title="The time of this appointment is over, but it was never closed">⏱ Time passed, not closed</span>
+                        )}
                       </div>
                       <p className="text-gray-600 text-sm flex items-center gap-1.5"><span aria-hidden="true">📅</span> {formatDate(apt.date)} <span className="text-gray-300">·</span> <span aria-hidden="true">🕐</span> {apt.timeSlot}</p>
-                      {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">📞 Patient Phone: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
+                      {isDoctor && apt.bookedFor === 'family' && apt.familyMemberName && (
+                        <p className="text-purple-700 text-sm mt-1 font-medium">👪 Booked by {apt.patient?.name || 'the account holder'}{apt.patient?.patientId ? ` (${apt.patient.patientId})` : ''} for {apt.familyMemberName}</p>
+                      )}
+                      {isDoctor && apt.patient?.phone && <p className="text-gray-600 text-sm mt-1">📞 {apt.bookedFor === 'family' && apt.familyMemberName ? `${apt.patient?.name || 'Account holder'}'s phone (booked this)` : 'Patient Phone'}: <a href={`tel:${apt.patient.phone}`} className="text-primary-600 hover:underline">{apt.patient.phone}</a></p>}
                       <p className="text-gray-500 text-sm mt-1">{pt.reason} {apt.reason}</p>
                       {apt.symptoms?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -2119,12 +2128,12 @@ function Dashboard() {
                           tucked behind the expander below. */}
                       {isDoctor && apt.patient?.allergies && (
                         <p className="text-sm mt-1.5 font-medium text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1 inline-block">
-                          ⚠️ Allergies: {apt.patient.allergies}
+                          ⚠️ Allergies{apt.bookedFor === 'family' && apt.familyMemberName ? ` of ${apt.patient?.name || 'the account holder'} (not ${apt.familyMemberName})` : ''}: {apt.patient.allergies}
                         </p>
                       )}
                       {isDoctor && (apt.patient?.currentMedications || apt.patient?.medicalHistory || apt.patient?.bloodGroup || apt.patient?.emergencyContactName || apt.patient?.insuranceProvider) && (
                         <details className="mt-1.5 text-sm text-gray-600">
-                          <summary className="cursor-pointer text-primary-600 hover:underline select-none">More medical info</summary>
+                          <summary className="cursor-pointer text-primary-600 hover:underline select-none">More medical info{apt.bookedFor === 'family' && apt.familyMemberName ? ` (of ${apt.patient?.name || 'the account holder'}, not ${apt.familyMemberName})` : ''}</summary>
                           <div className="mt-1 pl-2 space-y-0.5">
                             {apt.patient?.bloodGroup && <p>Blood Group: <span className="font-medium">{apt.patient.bloodGroup}</span></p>}
                             {apt.patient?.currentMedications && <p>Current Medications: {apt.patient.currentMedications}</p>}
@@ -2143,7 +2152,7 @@ function Dashboard() {
                           </div>
                         </details>
                       )}
-                      {apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">{pt.bookedFor(apt.familyMemberName)}</p>}
+                      {isPatient && apt.bookedFor === 'family' && apt.familyMemberName && <p className="text-purple-600 text-sm mt-1 font-medium">{pt.bookedFor(apt.familyMemberName)}</p>}
                       {apt.bookedByAdmin && (
                         <p className="mt-1 inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-200">
                           🤝 {isDoctor ? 'Booked by ProMedicoz support (patient agreed on call)' : pt.bookedBySupport}
@@ -2261,7 +2270,9 @@ function Dashboard() {
                               : <>{pt.hintDoneWaitRx}</>
                           )}
                           {isPatient && apt.status === 'cancelled' && pt.hintCancelled}
-                          {isDoctor && apt.status === 'pending' && '🔔 New request! Confirm or reject this appointment.'}
+                          {isDoctor && apt.status === 'pending' && (slotStartMs(apt) !== null && slotStartMs(apt) < Date.now()
+                            ? '⏱ This time has passed. Confirm to ask the patient for a new time, or Reject to close it.'
+                            : '🔔 New request! Confirm or reject this appointment.')}
                           {isDoctor && apt.status === 'confirmed' && (!apt.paymentStatus || apt.paymentStatus === 'pending') && '⏳ Waiting for patient to make payment.'}
                           {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'patient_claimed' && (
                             (apt.paymentScreenshot

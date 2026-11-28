@@ -51,6 +51,9 @@ router.delete('/users/:id', deleteUser);
 router.post('/users/:id/warn', require('../controllers/adminController').warnUser);
 // GET /api/admin/appointments/:id/investigate - silent, read-only timeline + evidence + track record
 router.get('/appointments/:id/investigate', require('../controllers/adminController').investigateAppointment);
+// Old open appointments: preview, then tidy (admin confirms)
+router.get('/old-appointments', require('../controllers/adminController').previewOldAppointments);
+router.post('/old-appointments/tidy', require('../controllers/adminController').tidyOldAppointments);
 // POST /api/admin/appointments/:id/note - add an admin note to the timeline
 router.post('/appointments/:id/note', require('../controllers/adminController').addAdminNote);
 // PUT /api/admin/users/:id/suspension - Deactivate/reactivate a user (keeps records)

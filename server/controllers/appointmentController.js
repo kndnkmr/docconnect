@@ -131,14 +131,21 @@ const getMyAppointments = async (req, res) => {
     // We compute this order with a small aggregation that returns the ordered
     // ids for this page, then fetch those with the usual populate (so nothing
     // downstream changes).
+    // Order: 1) open and still ahead (today onwards), soonest first;
+    //        2) open but the day has passed (needs closing), newest first;
+    //        3) completed / cancelled, newest first.
+    // Without group 2 an old unclosed request sat above today's patients.
+    const todayStart = new Date(`${new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10)}T00:00:00Z`);
     const ordered = await Appointment.aggregate([
       { $match: filter },
       { $addFields: {
-          _grp: { $cond: [{ $in: ['$status', ['pending', 'confirmed']] }, 0, 1] },
+          _open: { $in: ['$status', ['pending', 'confirmed']] },
           _ts: { $toLong: '$date' }
       } },
       { $addFields: {
-          // Upcoming: sort ascending by date. Past: ascending by -date = newest first.
+          _grp: { $cond: [{ $and: ['$_open', { $gte: ['$date', todayStart] }] }, 0, { $cond: ['$_open', 1, 2] }] }
+      } },
+      { $addFields: {
           _key: { $cond: [{ $eq: ['$_grp', 0] }, '$_ts', { $multiply: ['$_ts', -1] }] }
       } },
       { $sort: { _grp: 1, _key: 1, createdAt: 1 } },
@@ -146,7 +153,6 @@ const getMyAppointments = async (req, res) => {
       { $limit: limit },
       { $project: { _id: 1 } }
     ]);
-
     const orderedIds = ordered.map((o) => o._id);
 
     // Fetch the page's appointments with the usual populate, then restore order.

@@ -230,6 +230,10 @@ connectWithRetry()
     // Doctor "please confirm" (pending 3h / slot within 4h) and patient
     // "please pay" (slot within 2h) nudges, once each (utils/journeyReminders.js).
     setInterval(runJourneyReminders, 10 * 60 * 1000);
+    // Pending requests nobody confirmed (3 to 14 days after their time): expire
+    // them and tell the patient once. The older backlog is tidied from Admin.
+    const { autoExpireRecent } = require('./utils/oldAppointments');
+    setInterval(() => autoExpireRecent().catch((e) => console.error('[old-appointments]', e.message)), 10 * 60 * 1000);
 
     // Daily (~7 PM IST) summary to doctors of profile changes the admin made
     // for them (fee/UPI/QR changes are told at once). utils/adminEditNotes.js.
