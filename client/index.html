@@ -75,6 +75,11 @@
         document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') loadGA(); });
       })();
     </script>
+    <!-- Open the connections to the API and the image host while the app code
+         downloads, so the first doctor list / photos do not wait for a fresh
+         TLS handshake (about 100-250 ms on a phone). -->
+    <link rel="preconnect" href="https://docconnect-sg.onrender.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />

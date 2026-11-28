@@ -24,6 +24,7 @@ const DOCTOR_FIELDS = 'name specialization phone consultationFee';
 const PATIENT_FIELDS = 'name email phone patientId';
 
 const withPeople = (query) => query
+  .select('-events')
   .populate('doctor', DOCTOR_FIELDS)
   .populate('patient', PATIENT_FIELDS)
   .limit(LIMIT);

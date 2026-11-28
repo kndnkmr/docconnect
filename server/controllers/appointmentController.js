@@ -136,6 +136,10 @@ const getMyAppointments = async (req, res) => {
     //        3) completed / cancelled, newest first.
     // Without group 2 an old unclosed request sat above today's patients.
     const todayStart = new Date(`${new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10)}T00:00:00Z`);
+    // The total only needs the filter, so it runs at the same time as the
+    // ordering query instead of after everything (each database trip is ~60 ms
+    // because the database is in another city).
+    const totalPromise = Appointment.countDocuments(filter);
     const ordered = await Appointment.aggregate([
       { $match: filter },
       { $addFields: {
@@ -170,26 +174,25 @@ const getMyAppointments = async (req, res) => {
     // button. One query for the whole page.
     const withWindow = docs.filter((d) => d.followUpDeadline).map((d) => d._id);
     const usedFollowUp = {};
-    if (withWindow.length) {
-      const used = await Appointment.find({
-        originalAppointment: { $in: withWindow },
-        isFollowUp: true,
-        status: { $ne: 'cancelled' },
-      }).select('originalAppointment date timeSlot');
-      used.forEach((u) => { usedFollowUp[String(u.originalAppointment)] = { _id: u._id, date: u.date, timeSlot: u.timeSlot }; });
-    }
-
-    // Which of these appointments already have a prescription (so the card
-    // can say "💊 Prescription ready" and update live). One query per page.
     const rxByApt = {};
-    if (docs.length) {
-      const rxs = await Prescription.find({ appointment: { $in: docs.map((d) => d._id) } })
-        .select('appointment medicines updatedAt');
-      rxs.forEach((r) => {
-        rxByApt[String(r.appointment)] = { _id: r._id, medicineCount: (r.medicines || []).length, updatedAt: r.updatedAt };
-      });
-    }
-
+    // Free follow-ups already booked, and which visits already have a
+    // prescription: two independent lookups, run together.
+    const [used, rxs] = await Promise.all([
+      withWindow.length
+        ? Appointment.find({
+          originalAppointment: { $in: withWindow },
+          isFollowUp: true,
+          status: { $ne: 'cancelled' },
+        }).select('originalAppointment date timeSlot')
+        : [],
+      docs.length
+        ? Prescription.find({ appointment: { $in: docs.map((d) => d._id) } }).select('appointment medicines updatedAt')
+        : [],
+    ]);
+    used.forEach((u) => { usedFollowUp[String(u.originalAppointment)] = { _id: u._id, date: u.date, timeSlot: u.timeSlot }; });
+    rxs.forEach((r) => {
+      rxByApt[String(r.appointment)] = { _id: r._id, medicineCount: (r.medicines || []).length, updatedAt: r.updatedAt };
+    });
     const appointments = orderedIds
       .map((id) => byId[id.toString()])
       .filter(Boolean)
@@ -203,7 +206,7 @@ const getMyAppointments = async (req, res) => {
         return obj;
       });
 
-    const total = await Appointment.countDocuments(filter);
+    const total = await totalPromise;
 
     res.json({
       appointments,

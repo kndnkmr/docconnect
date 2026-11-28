@@ -46,11 +46,16 @@ function invalidatePublic() {
 // Express middleware: after any successful write under these API areas,
 // clear the cache.
 const WRITE_AREAS = /^\/api\/(appointments|availability|doctors|admin|reviews|auth|family-members)\b/;
+// Writes that never change anything the public lists show: logging in or out,
+// password flows, call ringing, payment proofs, chat reminders, prescription
+// reminders. Clearing the cache for these made every login and every call
+// throw away the 30-second answers for everybody.
+const HARMLESS_WRITES = /^\/api\/(auth\/(login|logout|refresh|forgot-password|reset-password|resend-verification|google|otp)|appointments\/[^/]+\/(call|call-log|payment-screenshot|notify-payment|undo-payment-claim|payment-reminder|payment-not-received|ask-prescription|no-prescription|no-show-nudge)|appointments\/[^/]+\/call-log\/[^/]+\/end)\b/;
 function invalidateOnWrites(req, res, next) {
-  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS' && WRITE_AREAS.test(req.path)) {
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS' && WRITE_AREAS.test(req.path) && !HARMLESS_WRITES.test(req.path)) {
     res.on('finish', () => { if (res.statusCode < 400) invalidatePublic(); });
   }
   next();
 }
 
-module.exports = { cachePublic, invalidatePublic, invalidateOnWrites, _store: store };
+module.exports = { cachePublic, invalidatePublic, invalidateOnWrites, HARMLESS_WRITES, _store: store };

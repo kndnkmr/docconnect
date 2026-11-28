@@ -599,14 +599,24 @@ function Dashboard() {
     }
   };
 
+  // The appointment list reloads when the page, search or a filter changes.
   useEffect(() => {
     fetchAppointments();
+  }, [page, aptSearchDebounced, aptStatusFilter, aptWhenFilter, aptSpecificDate]);
+  // Everything else is loaded ONCE when the dashboard opens. It used to reload
+  // with the list, so every filter click or page change also re-requested the
+  // doctor's profile, availability, reports, prescriptions and waiting list
+  // (about 6 extra requests each time). Live changes still arrive through the
+  // socket, and coming back to the tab refreshes (see the catch-up effect).
+  useEffect(() => {
     fetchUnreadCounts();
     if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); fetchDoctorReports(); fetchDoctorPrescriptions(); fetchRxDue(); }
-    // Refresh unread counts every 30 seconds
-    const interval = setInterval(fetchUnreadCounts, 30000);
+    // Refresh unread counts every 30 seconds, but not while the tab is hidden
+    // (returning to the tab refreshes immediately).
+    const interval = setInterval(() => { if (document.visibilityState === 'visible') fetchUnreadCounts(); }, 30000);
     return () => clearInterval(interval);
-  }, [page, aptSearchDebounced, aptStatusFilter, aptWhenFilter, aptSpecificDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // The true total pending count (for the "new request" banner) is fetched
   // independently of the main list — it must stay accurate regardless of
