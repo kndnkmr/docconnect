@@ -210,6 +210,11 @@ const appointmentSchema = new mongoose.Schema({
   confirmedLate: { type: Boolean, default: false },
   // Patient told once that a still-pending booking's time has passed.
   slotPassedNudgeAt: { type: Date, default: null },
+  // When the doctor confirmed (the payment reminders count from here), and the
+  // payment reminders already sent (utils/payReminders.js).
+  confirmedAt: { type: Date, default: null },
+  payRemindCount: { type: Number, default: 0 },
+  payRemindLastAt: { type: Date, default: null },
   // Doctor said "I did not receive this payment" (patient had claimed paid).
   // Open while paymentStatus is still 'patient_claimed'; a new claim clears it.
   paymentDisputedAt: { type: Date, default: null },

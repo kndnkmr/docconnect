@@ -6,6 +6,7 @@
 //   paymentDisputed  patient says paid, doctor says NOT received (needs admin now)
 //   paymentWaiting   patient says paid, doctor hasn't confirmed for 3h+
 //   unpaidSoon       confirmed, payment not started, slot within 2h (not follow-ups)
+//   unpaidWaiting    confirmed 3h+ ago, payment still not started, slot later (not follow-ups)
 //   slotPassedOpen   slot ended 2h+ ago (last 30 days) but still pending/confirmed
 //   paidCancelled    cancelled after being paid / claimed (last 60 days), refund not checked
 //   noPhone          patient accounts with no mobile number
@@ -31,7 +32,7 @@ const withPeople = (query) => query
 
 // Pure: sort candidate appointments into groups (unit-tested).
 function classify(appointments, now) {
-  const groups = { paymentDisputed: [], notConfirmed: [], paymentWaiting: [], unpaidSoon: [], slotPassedOpen: [], paidCancelled: [] };
+  const groups = { paymentDisputed: [], notConfirmed: [], paymentWaiting: [], unpaidSoon: [], unpaidWaiting: [], slotPassedOpen: [], paidCancelled: [] };
   for (const apt of appointments) {
     const w = slotWindowMs(apt.date, apt.timeSlot);
     const pay = apt.paymentStatus || 'pending';
@@ -62,12 +63,17 @@ function classify(appointments, now) {
       if (age >= 3 * H || w.start - now <= 4 * H) groups.notConfirmed.push(apt);
     } else if (apt.status === 'confirmed' && pay === 'pending' && !apt.isFollowUp && w.start - now <= 2 * H) {
       groups.unpaidSoon.push(apt);
+    } else if (apt.status === 'confirmed' && pay === 'pending' && !apt.isFollowUp && !apt.confirmedLate
+      && Number(apt.doctor && apt.doctor.consultationFee) > 0
+      && now - new Date(apt.confirmedAt || apt.updatedAt).getTime() >= 3 * H) {
+      groups.unpaidWaiting.push(apt);
     }
   }
   // Most urgent first.
   const startOf = (a) => (slotWindowMs(a.date, a.timeSlot) || { start: 0 }).start;
   groups.notConfirmed.sort((a, b) => startOf(a) - startOf(b));
   groups.unpaidSoon.sort((a, b) => startOf(a) - startOf(b));
+  groups.unpaidWaiting.sort((a, b) => startOf(a) - startOf(b));
   groups.paymentDisputed.sort((a, b) => new Date(a.paymentDisputedAt) - new Date(b.paymentDisputedAt));
   groups.paymentWaiting.sort((a, b) => new Date(a.paymentClaimedAt || a.updatedAt) - new Date(b.paymentClaimedAt || b.updatedAt));
   groups.slotPassedOpen.sort((a, b) => startOf(b) - startOf(a));

@@ -54,6 +54,8 @@ router.get('/appointments/:id/investigate', require('../controllers/adminControl
 // Old open appointments: preview, then tidy (admin confirms)
 router.get('/old-appointments', require('../controllers/adminController').previewOldAppointments);
 router.post('/old-appointments/tidy', require('../controllers/adminController').tidyOldAppointments);
+// Remind a patient to pay (app notification), from Needs help
+router.post('/appointments/:id/remind-payment', require('../controllers/adminController').remindPaymentAsAdmin);
 // POST /api/admin/appointments/:id/note - add an admin note to the timeline
 router.post('/appointments/:id/note', require('../controllers/adminController').addAdminNote);
 // PUT /api/admin/users/:id/suspension - Deactivate/reactivate a user (keeps records)

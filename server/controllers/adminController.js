@@ -207,6 +207,7 @@ const confirmAppointmentAsAdmin = async (req, res) => {
     }
 
     appointment.status = 'confirmed';
+    appointment.confirmedAt = new Date();
     require('../utils/appointmentEvents').logEvent(appointment, { role: 'admin', by: req.user._id, action: 'admin_confirmed' });
     if (meetingLink) appointment.meetingLink = meetingLink;
     appointment.markModified('status');
@@ -413,6 +414,37 @@ const tidyOldAppointments = async (req, res) => {
   } catch (error) {
     console.error('Tidy old appointments error:', error.message);
     res.status(500).json({ message: 'Error tidying old appointments' });
+  }
+};
+
+// POST /api/admin/appointments/:id/remind-payment
+// Admin sends the patient a "please pay" reminder right now (app notification).
+// Only for a confirmed, unpaid, paid-fee visit; at most once every 2 hours.
+const remindPaymentAsAdmin = async (req, res) => {
+  try {
+    const apt = await Appointment.findById(req.params.id)
+      .populate('doctor', 'name consultationFee')
+      .populate('patient', 'name');
+    if (!apt) return res.status(404).json({ message: 'Appointment not found' });
+    const fee = Number(apt.doctor && apt.doctor.consultationFee) || 0;
+    if (apt.status !== 'confirmed') return res.status(400).json({ message: 'Only a confirmed appointment can be reminded about payment' });
+    if (apt.confirmedLate) return res.status(400).json({ message: 'This patient needs to pick a new time first. They are asked to do that already' });
+    if ((apt.paymentStatus || 'pending') !== 'pending') return res.status(400).json({ message: 'The patient has already started or finished paying' });
+    if (apt.isFollowUp || fee <= 0) return res.status(400).json({ message: 'No payment is due for this appointment' });
+    const last = apt.payRemindLastAt ? new Date(apt.payRemindLastAt).getTime() : 0;
+    if (Date.now() - last < 2 * 3600 * 1000) {
+      return res.status(429).json({ message: 'A reminder was sent less than 2 hours ago. Try WhatsApp instead.' });
+    }
+    const { reminderText } = require('../utils/payReminders');
+    const text = reminderText(2, apt, (apt.doctor && apt.doctor.name) || '', fee);
+    sendPushToUser(String(apt.patient._id), { ...text, url: `/booking-confirmation?id=${apt._id}`, tag: `pay-ladder-${apt._id}` });
+    apt.payRemindLastAt = new Date();
+    logEvent(apt, { role: 'admin', by: req.user._id, action: 'pay_reminder', note: 'Admin sent a payment reminder', data: { manual: true } });
+    await apt.save({ validateModifiedOnly: true });
+    res.json({ message: `Reminder sent to ${apt.patient.name}. If they do not have app notifications on, message them on WhatsApp too.` });
+  } catch (error) {
+    console.error('Admin remind payment error:', error.message);
+    res.status(500).json({ message: 'Could not send the reminder' });
   }
 };
 
@@ -1442,4 +1474,4 @@ const backupDownload = (req, res) => {
   }
 };
 
-module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin, warnUser, investigateAppointment, addAdminNote, previewOldAppointments, tidyOldAppointments };
+module.exports = { getBackups, runBackupNow, backupDownload, getDbCheck, fixSlotIndexAdmin, getNeedsHelp, getStats, getAllUsers, getUserById, getAllAppointments, deleteUser, setUserSuspension, setDoctorVerification, getAnalytics, migrateBase64Images, generateResetLink, findDuplicatePhones, freeUpContactInfo, backfillPatientIds, backfillDoctorLanguages, sendDoctorSetupReminder, markEmailVerified, updateDoctorContact, updateDoctorLocation, updateDoctorAvailability, updateDoctorProfileAdmin, confirmAppointmentAsAdmin, fixEmailIndexAdmin, warnUser, investigateAppointment, addAdminNote, previewOldAppointments, tidyOldAppointments, remindPaymentAsAdmin };

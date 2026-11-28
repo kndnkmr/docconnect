@@ -29,6 +29,7 @@ const ACTION_TEXT = {
   admin_suspended: 'Suspended the account (admin)',
   admin_note: 'Admin note',
   refund_checked: 'Refund checked (admin)',
+  pay_reminder: 'Payment reminder sent to the patient',
   expired: 'Request expired (the doctor did not confirm in time)',
   auto_closed: 'Closed automatically (time passed, no payment)',
 };

@@ -8,6 +8,7 @@ export const GROUPS = [
   { key: 'notConfirmed', tone: 'red', icon: '🔴', title: 'Slot soon, not confirmed by doctor', note: 'doctor reminded automatically (3h after booking or 4h before the slot)' },
   { key: 'paymentWaiting', tone: 'orange', icon: '🟠', title: "Patient says paid, doctor hasn't confirmed", note: 'doctor reminded at 3h, you are emailed at 24h' },
   { key: 'unpaidSoon', tone: 'yellow', icon: '🟡', title: 'Confirmed, not paid, starts within 2h', note: 'patient reminded automatically' },
+  { key: 'unpaidWaiting', tone: 'yellow', icon: '🟡', title: 'Confirmed, waiting for payment', note: 'patient reminded automatically at 1h, 6h and 24h. Remind again or message on WhatsApp' },
   { key: 'slotPassedOpen', tone: 'gray', icon: '⚪', title: 'Slot passed, still open', note: 'ended 2h+ ago, still pending/confirmed. Did it happen?' },
   { key: 'paidCancelled', tone: 'gray', icon: '⚪', title: 'Paid, then cancelled: check refund', note: 'check the refund with the doctor, then mark it checked' },
   { key: 'noPhone', tone: 'gray', icon: '⚪', title: 'Patients with no mobile number', note: 'add it via Help patient' },
@@ -45,6 +46,7 @@ export function messageFor(group, apt, to) {
     if (group === 'paidCancelled') return `Hello Dr. ${doctor}, this is ProMedicoz support. ${patient}'s appointment on ${when} was cancelled after payment. Has the refund been sent?`;
   }
   if (group === 'paymentDisputed') return `Hello ${patient}, this is ProMedicoz support. Dr. ${doctor} could not find your payment for ${when}. Please reply with your UPI reference (UTR) and a screenshot of the payment so we can check it for you.`;
+  if (group === 'unpaidWaiting') return `Hello ${patient}, this is ProMedicoz support. Dr. ${doctor} has confirmed your appointment on ${when}. Please complete the payment from your ProMedicoz dashboard to lock your slot. Reply here if you need any help with paying.`;
   if (group === 'unpaidSoon') return `Hello ${patient}, this is ProMedicoz support. Your appointment with Dr. ${doctor} is at ${when}. Please complete the payment from your ProMedicoz dashboard so the doctor can start on time. Reply here if you need help.`;
   if (group === 'paidCancelled') return `Hello ${patient}, this is ProMedicoz support about your cancelled appointment with Dr. ${doctor} on ${when}. We're checking your refund and will update you.`;
   return `Hello ${patient}, this is ProMedicoz support about your appointment with Dr. ${doctor} on ${when}.`;

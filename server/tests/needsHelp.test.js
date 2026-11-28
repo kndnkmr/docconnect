@@ -58,11 +58,14 @@ test('classify: each stuck case lands in the right group', () => {
     aptAt(now, -5 * H, { status: 'cancelled', paymentStatus: 'paid' }),    // → paidCancelled
     aptAt(now, -5 * H, { status: 'cancelled', paymentStatus: 'paid', refundCheckedAt: new Date() }), // checked → fine
     aptAt(now, -5 * H, { status: 'cancelled' }),                           // unpaid cancel → fine
+    aptAt(now, 3 * 24 * H, { status: 'confirmed', confirmedAt: new Date(now - 5 * H), doctor: { consultationFee: 300 } }), // confirmed 5h ago, still unpaid, slot later → unpaidWaiting
+    aptAt(now, 3 * 24 * H, { status: 'confirmed', confirmedAt: new Date(now - 1 * H), doctor: { consultationFee: 300 } }), // confirmed only 1h ago → fine for now
+    aptAt(now, 3 * 24 * H, { status: 'confirmed', confirmedAt: new Date(now - 9 * H), doctor: { consultationFee: 0 } }), // free consultation → nothing to pay
     aptAt(now, 24 * H, { status: 'confirmed', paymentStatus: 'patient_claimed', paymentClaimedAt: new Date(now - 1 * H), paymentDisputedAt: new Date(now - 30 * 60000) }), // doctor says not received → paymentDisputed, right away
   ], now);
   assert.deepStrictEqual(
     Object.fromEntries(Object.entries(g).map(([k, v]) => [k, v.length])),
-    { paymentDisputed: 1, notConfirmed: 2, paymentWaiting: 1, unpaidSoon: 1, slotPassedOpen: 1, paidCancelled: 1 }
+    { paymentDisputed: 1, notConfirmed: 2, paymentWaiting: 1, unpaidSoon: 1, unpaidWaiting: 1, slotPassedOpen: 1, paidCancelled: 1 }
   );
   assert.ok(slotWindowMs(g.notConfirmed[0].date, g.notConfirmed[0].timeSlot).start
     <= slotWindowMs(g.notConfirmed[1].date, g.notConfirmed[1].timeSlot).start, 'most urgent first');

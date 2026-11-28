@@ -66,6 +66,18 @@ export default function NeedsHelp({ onConfirm, onPaymentHelp, onInvestigate, onH
     }
   };
 
+  const remindNow = async (apt) => {
+    setBusyId(apt._id);
+    try {
+      const { data: r } = await adminAPI.remindPayment(apt._id);
+      toast.success(r.message, { duration: 7000 });
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not send the reminder');
+    } finally {
+      setBusyId('');
+    }
+  };
   const confirm = async (apt) => {
     setBusyId(apt._id);
     try {
@@ -84,6 +96,7 @@ export default function NeedsHelp({ onConfirm, onPaymentHelp, onInvestigate, onH
     if (groupKey === 'paymentDisputed') detail = `Doctor said not received ${ago(apt.paymentDisputedAt)} ago · ${apt.paymentUTR ? `UTR ${apt.paymentUTR}` : apt.paymentScreenshot ? 'screenshot sent' : 'no proof'} · ${detail}`;
     if (groupKey === 'paymentWaiting') detail = `Waiting ${ago(apt.paymentClaimedAt || apt.updatedAt)} · ${apt.paymentUTR ? `UTR ${apt.paymentUTR}` : apt.paymentScreenshot ? 'screenshot sent' : 'no proof'} · ${detail}`;
     if (groupKey === 'unpaidSoon') detail += ` · ${apt.consultationType}`;
+    if (groupKey === 'unpaidWaiting') detail = `Confirmed ${ago(apt.confirmedAt || apt.updatedAt)} ago · ${apt.payRemindCount || 0} reminder${apt.payRemindCount === 1 ? '' : 's'} sent · Rs. ${d.consultationFee || '?'} · ${detail}`;
     if (groupKey === 'slotPassedOpen') detail += ` · ${apt.status} · ${apt.paymentStatus === 'paid' ? 'paid' : 'unpaid'}`;
     if (groupKey === 'paidCancelled') detail += ` · ${apt.paymentStatus === 'paid' ? 'paid' : 'patient said paid'}${apt.amountCollected ? ` Rs. ${apt.amountCollected}` : ''}`;
 
@@ -99,7 +112,10 @@ export default function NeedsHelp({ onConfirm, onPaymentHelp, onInvestigate, onH
           {groupKey === 'notConfirmed' && (
             <button type="button" disabled={busyId === apt._id} onClick={() => confirm(apt)} className="px-2.5 py-1.5 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 disabled:opacity-60">✓ Confirm</button>
           )}
-          {['paymentDisputed', 'paymentWaiting'].includes(groupKey) && onInvestigate && (
+          {groupKey === 'unpaidWaiting' && (
+            <button type="button" disabled={busyId === apt._id} onClick={() => remindNow(apt)} className="px-2.5 py-1.5 bg-yellow-500 text-white rounded-lg text-xs font-semibold hover:bg-yellow-600 disabled:opacity-60">🔔 Remind now</button>
+          )}
+          {['paymentDisputed', 'paymentWaiting', 'unpaidWaiting'].includes(groupKey) && onInvestigate && (
             <button type="button" onClick={() => onInvestigate(apt)} className="px-2.5 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-semibold hover:bg-purple-700">🔎 Investigate</button>
           )}
           {['paymentWaiting', 'unpaidSoon', 'paymentDisputed'].includes(groupKey) && (
@@ -109,7 +125,7 @@ export default function NeedsHelp({ onConfirm, onPaymentHelp, onInvestigate, onH
             <button type="button" disabled={busyId === apt._id} onClick={() => refundChecked(apt)} className="px-2.5 py-1.5 bg-gray-800 text-white rounded-lg text-xs font-semibold hover:bg-gray-900 disabled:opacity-60">✓ Refund checked</button>
           )}
           {groupKey !== 'unpaidSoon' && <WaButton phone={d.phone} text={messageFor(groupKey, apt, 'doctor')} label="WhatsApp doctor" />}
-          {['unpaidSoon', 'slotPassedOpen', 'paidCancelled', 'paymentDisputed'].includes(groupKey) && <WaButton phone={p.phone} text={messageFor(groupKey, apt, 'patient')} label="WhatsApp patient" />}
+          {['unpaidSoon', 'unpaidWaiting', 'slotPassedOpen', 'paidCancelled', 'paymentDisputed'].includes(groupKey) && <WaButton phone={p.phone} text={messageFor(groupKey, apt, 'patient')} label="WhatsApp patient" />}
         </div>
       </div>
     );

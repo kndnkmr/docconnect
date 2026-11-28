@@ -362,6 +362,7 @@ const updateAppointmentStatus = async (req, res) => {
       const w = slotWindowMs(appointment.date, appointment.timeSlot);
       confirmedLate = !!(w && w.start <= Date.now());
       appointment.confirmedLate = confirmedLate;
+      appointment.confirmedAt = new Date();
     }
     if (status === 'cancelled') {
       const why = typeof req.body.cancellationReason === 'string' ? req.body.cancellationReason.trim().slice(0, MAX_CANCEL_REASON) : '';

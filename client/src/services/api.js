@@ -363,6 +363,8 @@ export const adminAPI = {
   addNote: (id, note) => API.post(`/admin/appointments/${id}/note`, { note }),
   // Warn a user (they see the text). Body: { reason, appointmentId? }
   warnUser: (id, data) => API.post(`/admin/users/${id}/warn`, data),
+  // Send a payment reminder to a patient right now
+  remindPayment: (id) => API.post(`/admin/appointments/${id}/remind-payment`),
   // Old appointments nobody closed: preview counts, then tidy (needs confirm: true)
   previewOldAppointments: () => API.get('/admin/old-appointments'),
   tidyOldAppointments: () => API.post('/admin/old-appointments/tidy', { confirm: true }),
