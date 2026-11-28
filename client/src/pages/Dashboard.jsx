@@ -165,6 +165,8 @@ const PATIENT_TXT = {
     directions: '📍 Get Directions',
     hintDone: '✅ Consultation done.',
     hintDoneWaitRx: '✅ Consultation done. Your prescription will appear here the moment your doctor writes it.',
+    askRx: '🔔 Ask my doctor for the prescription',
+    askRxSending: 'Sending…',
     hintCancelled: '❌ This appointment was cancelled.',
     reschedule: 'Reschedule',
     cancel: 'Cancel',
@@ -280,6 +282,8 @@ const PATIENT_TXT = {
     directions: '📍 रास्ता देखें',
     hintDone: '✅ डॉक्टर से बात पूरी हुई।',
     hintDoneWaitRx: '✅ डॉक्टर से बात पूरी हुई। डॉक्टर जैसे ही पर्चा लिखेंगे, वह यहाँ दिख जाएगा।',
+    askRx: '🔔 डॉक्टर से पर्चा माँगें',
+    askRxSending: 'भेज रहे हैं…',
     hintCancelled: '❌ यह अपॉइंटमेंट रद्द हो गई है।',
     reschedule: 'समय बदलें',
     cancel: 'रद्द करें',
@@ -458,6 +462,11 @@ function Dashboard() {
   const [rateModal, setRateModal] = useState({ open: false, id: null });
   const [googleAsk, setGoogleAsk] = useState({ open: false, link: '', name: '' }); // "Also rate on Google" after an in-app rating
   const [prescriptionModal, setPrescriptionModal] = useState({ open: false, id: null });
+  // Doctor: visits finished but no prescription yet, and the "write it now?"
+  // sheet that opens right after a call ends.
+  const [rxDue, setRxDue] = useState([]);
+  const [afterCall, setAfterCall] = useState(null); // { id, name }
+  const [askBusy, setAskBusy] = useState(null);
   const [chatAppointmentId, setChatAppointmentId] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
   const [unreadMessages, setUnreadMessages] = useState({});
@@ -593,7 +602,7 @@ function Dashboard() {
   useEffect(() => {
     fetchAppointments();
     fetchUnreadCounts();
-    if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); fetchDoctorReports(); fetchDoctorPrescriptions(); }
+    if (isDoctor) { fetchProfile(); fetchAvailabilityStatus(); fetchDoctorReports(); fetchDoctorPrescriptions(); fetchRxDue(); }
     // Refresh unread counts every 30 seconds
     const interval = setInterval(fetchUnreadCounts, 30000);
     return () => clearInterval(interval);
@@ -1054,6 +1063,13 @@ function Dashboard() {
   const handleCloseCall = async () => {
     const idPart = videoCallAppointmentId ? videoCallAppointmentId.split('|')[0] : null;
     setVideoCallAppointmentId(null);
+    // Doctor: the call just ended, so offer to write the prescription now.
+    if (isDoctor && idPart) {
+      const a = appointments.find((x) => x._id === idPart);
+      if (a && ['confirmed', 'completed'].includes(a.status) && !(a.prescriptionInfo || doctorPrescriptions.some((p) => (p.appointment?._id || p.appointment) === idPart))) {
+        setAfterCall({ id: idPart, name: patientNameOf(a), status: a.status });
+      }
+    }
     inCallRef.current = false;
     if (idPart) {
       try { await appointmentAPI.setCall(idPart, false); } catch (e) { /* silent */ }
@@ -1065,7 +1081,7 @@ function Dashboard() {
   // Complete used to send two requests (the second failing with a confusing
   // red error). Reject asks first — a cancelled booking can't be undone.
   const [statusBusy, setStatusBusy] = useState(null); // appointment id
-  const handleStatusUpdate = async (appointmentId, newStatus, meetingLink) => {
+  const handleStatusUpdate = async (appointmentId, newStatus, meetingLink, extra = {}) => {
     if (statusBusy) return;
     if (newStatus === 'cancelled') {
       const apt = appointments.find((a) => a._id === appointmentId);
@@ -1077,12 +1093,17 @@ function Dashboard() {
     try {
       let data = { status: newStatus };
       if (meetingLink) data.meetingLink = meetingLink;
+      if (extra.noPrescription) data.noPrescription = true;
       const res = await appointmentAPI.updateStatus(appointmentId, data);
       if (res?.data?.confirmedLate) {
         toast.success('Confirmed. The booked time had already passed, so the patient will be asked to pick a new time.', { duration: 7000 });
+      } else if (newStatus === 'completed' && !extra.noPrescription) {
+        const a = appointments.find((x) => x._id === appointmentId);
+        offerWrite(appointmentId, `Visit finished${a ? ` for ${patientNameOf(a)}` : ''}.`);
       } else {
         toast.success(`Appointment ${newStatus}`);
       }
+      if (newStatus === 'completed') fetchRxDue();
       fetchAppointments();
       if (isDoctor) fetchPendingCount();
     } catch (error) {
@@ -1120,7 +1141,9 @@ function Dashboard() {
     try {
       if (came) await appointmentAPI.updateStatus(apt._id, { status: 'completed' });
       else await appointmentAPI.markNoShow(apt._id);
-      toast.success(came ? 'Marked as done. The patient will be asked to rate the visit.' : 'Marked as didn\'t come.');
+      if (came) offerWrite(apt._id, `Marked as done. ${patientNameOf(apt)} will be asked to rate the visit.`);
+      else toast.success('Marked as didn\'t come.');
+      if (came) fetchRxDue();
       setAttendanceDue((list) => list.filter((a) => a._id !== apt._id));
       fetchAppointments();
     } catch (error) {
@@ -1130,6 +1153,51 @@ function Dashboard() {
     }
   };
 
+  // ---- After the consultation: prescription follow-up ----
+  const fetchRxDue = async () => {
+    try {
+      const { data } = await appointmentAPI.prescriptionDue();
+      setRxDue(Array.isArray(data.appointments) ? data.appointments : []);
+    } catch { /* the card just stays hidden */ }
+  };
+  // Who is the patient? For a family booking it is the family member.
+  const patientNameOf = (a) => (a?.bookedFor === 'family' && a?.familyMemberName) ? a.familyMemberName : (a?.patient?.name || 'the patient');
+  // A toast with a one-tap "Write prescription" shortcut.
+  const offerWrite = (appointmentId, text) => {
+    toast((t) => (
+      <span className="text-sm">
+        {text}{' '}
+        <button
+          type="button"
+          onClick={() => { toast.dismiss(t.id); setPrescriptionModal({ open: true, id: appointmentId }); }}
+          className="ml-1 px-2.5 py-1 bg-purple-600 text-white rounded-md text-xs font-semibold"
+        >
+          ✍️ Write prescription
+        </button>
+      </span>
+    ), { duration: 9000 });
+  };
+  const handleNoPrescription = async (appointmentId) => {
+    try {
+      await appointmentAPI.noPrescription(appointmentId);
+      setRxDue((l) => l.filter((a) => a._id !== appointmentId));
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not save');
+    }
+  };
+  // Patient: one tap reminds the doctor (the server allows it once a day).
+  const askForRx = async (appointmentId) => {
+    if (askBusy) return;
+    setAskBusy(appointmentId);
+    try {
+      const { data } = await appointmentAPI.askPrescription(appointmentId);
+      toast.success(data.message, { duration: 7000 });
+    } catch (error) {
+      toast(error.response?.data?.message || 'Could not send the reminder', { icon: 'ℹ️' });
+    } finally {
+      setAskBusy(null);
+    }
+  };
   const handleMarkPaid = async (appointmentId) => {
     if (statusBusy) return;
     setStatusBusy(appointmentId);
@@ -1204,13 +1272,14 @@ function Dashboard() {
     const medicines = Array.isArray(values.medicines) ? rowsToMedicines(values.medicines) : [];
     const testsRecommended = values.tests ? values.tests.split(',').map(t => t.trim()).filter(t => t) : [];
     try {
-      await prescriptionAPI.create({
+      const { data: made } = await prescriptionAPI.create({
         appointmentId: prescriptionModal.id, diagnosis: values.diagnosis,
         medicines, testsRecommended, notes: values.notes || '',
         followUpDays: values.followUpDays ? parseInt(values.followUpDays) : 0
       });
       clearDraft(`rx:${prescriptionModal.id}`, userId);
-      toast.success('Prescription created!');
+      toast.success(made && made.completed ? 'Prescription sent. The visit is finished.' : 'Prescription created!');
+      setRxDue((l) => l.filter((a) => a._id !== prescriptionModal.id));
       setPrescriptionModal({ open: false, id: null });
       fetchAppointments();
       fetchDoctorPrescriptions();
@@ -1727,6 +1796,31 @@ function Dashboard() {
               );
             })}
           </ul>
+        </div>
+      )}
+
+      {/* Visits that are finished but still have no prescription. */}
+      {isDoctor && activeTab === 'appointments' && rxDue.length > 0 && (
+        <div id="rx-due-card" className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-xl">
+          <p className="font-semibold text-purple-900">✍️ {rxDue.length === 1 ? '1 patient is' : `${rxDue.length} patients are`} waiting for a prescription</p>
+          <ul className="mt-3 space-y-2">
+            {rxDue.slice(0, 6).map((a) => {
+              const dayTxt = new Date(a.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+              return (
+                <li key={a._id} className="bg-white rounded-lg border border-purple-100 p-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 break-words">{patientNameOf(a)}</p>
+                    <p className="text-xs text-gray-500">{dayTxt} · {(a.timeSlot || '').split(' - ')[0]}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setPrescriptionModal({ open: true, id: a._id })} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700">Write</button>
+                    <button type="button" onClick={() => handleNoPrescription(a._id)} className="px-3 py-1.5 bg-white border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50" title="Remove from this list. No prescription is needed for this visit.">Not needed</button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          {rxDue.length > 6 && <p className="text-xs text-purple-800 mt-2">+ {rxDue.length - 6} more. Write or clear these first.</p>}
         </div>
       )}
 
@@ -2267,7 +2361,19 @@ function Dashboard() {
                           {isPatient && apt.status === 'completed' && (
                             apt.prescriptionInfo
                               ? <>{pt.hintDone}</>
-                              : <>{pt.hintDoneWaitRx}</>
+                              : (
+                                <>
+                                  {pt.hintDoneWaitRx}
+                                  <button
+                                    type="button"
+                                    onClick={() => askForRx(apt._id)}
+                                    disabled={askBusy === apt._id}
+                                    className="block mt-2 px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-50 disabled:opacity-60"
+                                  >
+                                    {askBusy === apt._id ? pt.askRxSending : pt.askRx}
+                                  </button>
+                                </>
+                              )
                           )}
                           {isPatient && apt.status === 'cancelled' && pt.hintCancelled}
                           {isDoctor && apt.status === 'pending' && (slotStartMs(apt) !== null && slotStartMs(apt) < Date.now()
@@ -2280,8 +2386,8 @@ function Dashboard() {
                               : '💳 Patient says paid — no receipt uploaded. Check your UPI app, then click "Mark Paid".')
                             + (apt.paymentUTR ? ` UPI ref (UTR): ${apt.paymentUTR}` : '')
                           )}
-                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After consultation, click "Mark Complete".`}
-                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After consultation, click "Mark Complete".'}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType !== 'in-person' && `✅ Ready! Click "${apt.consultationType === 'video' ? '📹 Join Video Call' : '📞 Join Audio Call'}" at appointment time. After the consultation, tap "Write prescription and finish".`}
+                          {isDoctor && apt.status === 'confirmed' && apt.paymentStatus === 'paid' && apt.consultationType === 'in-person' && '✅ Payment received. After the consultation, tap "Write prescription and finish".'}
                           {isDoctor && apt.status === 'completed' && (
                             <>
                               {aptReport && !aptReport.isReviewed && (
@@ -2358,7 +2464,10 @@ function Dashboard() {
                           )}
                           {/* Only once the consultation has started (server checks too). */}
                           {hasStarted(apt) && (
-                            <button onClick={() => handleStatusUpdate(apt._id, 'completed')} disabled={statusBusy === apt._id} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'Mark Complete'}</button>
+                            <>
+                              <button onClick={() => setPrescriptionModal({ open: true, id: apt._id })} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700">✍️ Write prescription and finish</button>
+                              <button onClick={() => handleStatusUpdate(apt._id, 'completed', undefined, { noPrescription: true })} disabled={statusBusy === apt._id} className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-60">{statusBusy === apt._id ? 'Saving…' : 'No prescription needed: just finish'}</button>
+                            </>
                           )}
                         </>
                       )}
@@ -2889,6 +2998,29 @@ function Dashboard() {
         </div>
       )}
 
+      {/* Right after a call ends: offer the prescription while it is fresh. */}
+      {afterCall && !videoCallAppointmentId && (
+        <div className="fixed inset-0 z-[90] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label="Write the prescription now">
+          <button type="button" className="absolute inset-0 bg-black/40" onClick={() => setAfterCall(null)} aria-label="Close" />
+          <div className="relative w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl p-5 shadow-xl">
+            <p className="text-lg font-bold text-gray-900">Consultation with {afterCall.name} ended</p>
+            <p className="text-sm text-gray-600 mt-1">Write the prescription now, while it is fresh?{afterCall.status === 'confirmed' ? ' It also finishes the visit.' : ''}</p>
+            <button
+              type="button"
+              onClick={() => { const id = afterCall.id; setAfterCall(null); setPrescriptionModal({ open: true, id }); }}
+              className="mt-4 w-full px-4 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700"
+            >
+              ✍️ Write prescription now
+            </button>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => setAfterCall(null)} className="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl text-sm hover:bg-gray-50">Later</button>
+              {afterCall.status === 'confirmed' ? (
+                <button type="button" onClick={() => { const id = afterCall.id; setAfterCall(null); handleStatusUpdate(id, 'completed', undefined, { noPrescription: true }); }} className="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl text-sm hover:bg-gray-50">Just finish</button>
+              ) : <span />}
+            </div>
+          </div>
+        </div>
+      )}
       {/* Video Call */}
       {videoCallAppointmentId && (
         <Suspense fallback={

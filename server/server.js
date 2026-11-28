@@ -232,6 +232,9 @@ connectWithRetry()
     setInterval(runJourneyReminders, 10 * 60 * 1000);
     // Pending requests nobody confirmed (3 to 14 days after their time): expire
     // them and tell the patient once. The older backlog is tidied from Admin.
+    // A completed visit with no prescription 2 hours later: one push to the doctor.
+    const { runPrescriptionNudge } = require('./utils/prescriptionNudge');
+    setInterval(() => runPrescriptionNudge().catch((e) => console.error('[rx-nudge]', e.message)), 10 * 60 * 1000);
     const { autoExpireRecent } = require('./utils/oldAppointments');
     setInterval(() => autoExpireRecent().catch((e) => console.error('[old-appointments]', e.message)), 10 * 60 * 1000);
 

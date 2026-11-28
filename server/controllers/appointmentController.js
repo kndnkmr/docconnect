@@ -373,6 +373,7 @@ const updateAppointmentStatus = async (req, res) => {
     // Stamp when it became completed, so the review-request job can wait a few
     // hours before nudging the patient to rate (and only for genuinely-finished
     // consults). Set once; don't overwrite if somehow re-marked.
+    if (status === 'completed' && req.body.noPrescription === true) appointment.rxNotNeeded = true;
     if (status === 'completed' && !appointment.completedAt) {
       appointment.completedAt = new Date();
       appointment.completedBy = 'doctor';

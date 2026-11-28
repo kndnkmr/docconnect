@@ -214,6 +214,11 @@ const appointmentSchema = new mongoose.Schema({
   // Open while paymentStatus is still 'patient_claimed'; a new claim clears it.
   paymentDisputedAt: { type: Date, default: null },
   paymentDisputeNote: { type: String, default: '' },
+  // Prescription follow-up: the doctor said none is needed; the doctor was
+  // nudged once; the patient last tapped "Ask my doctor for the prescription".
+  rxNotNeeded: { type: Boolean, default: false },
+  rxNudgedAt: { type: Date, default: null },
+  rxAskedAt: { type: Date, default: null },
   // Who did what and when (utils/appointmentEvents.js). Append-only, capped.
   events: {
     type: [{

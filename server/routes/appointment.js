@@ -71,6 +71,11 @@ router.get('/incoming-calls', getIncomingCalls);
 const { getAttendanceDue, markNoShow } = require('../controllers/attendanceController');
 router.get('/attendance-due', authorize('doctor'), getAttendanceDue);
 router.put('/:id/no-show', authorize('doctor'), markNoShow);
+// ---- After the consultation: prescription follow-up (also before '/:id') ----
+const { getPrescriptionDue, markNoPrescription, askForPrescription } = require('../controllers/prescriptionFollowUpController');
+router.get('/prescription-due', authorize('doctor'), getPrescriptionDue);
+router.put('/:id/no-prescription', authorize('doctor'), markNoPrescription);
+router.put('/:id/ask-prescription', authorize('patient'), askForPrescription);
 
 // ---- BOTH: View single appointment ----
 // GET /api/appointments/:id

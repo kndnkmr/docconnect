@@ -6,6 +6,9 @@ const Prescription = require('../models/Prescription');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { sendPushToUser } = require('../utils/push');
+const { slotWindowMs } = require('../utils/slots');
+const { logEvent } = require('../utils/appointmentEvents');
+const { appointmentChanged } = require('../utils/live');
 const { getPagination, safeContainsRegex } = require('../utils/queryHelpers');
 
 // Notify the patient the instant a prescription is written/updated, so it
@@ -101,6 +104,22 @@ function parseFollowUpDays(raw) {
   return n;
 }
 
+// Writing a prescription for a consultation that has started finishes the
+// visit, so the doctor has ONE step after the consultation (not "Mark Complete"
+// first, then find the prescription button). A future appointment is left
+// alone. Returns true when it changed the status.
+async function finishVisitIfStarted(req, appointment) {
+  if (appointment.status !== 'confirmed') return false;
+  const w = slotWindowMs(appointment.date, appointment.timeSlot);
+  if (w && Date.now() < w.start) return false;
+  appointment.status = 'completed';
+  appointment.completedAt = new Date();
+  appointment.completedBy = 'doctor';
+  logEvent(appointment, { role: 'doctor', by: req.user._id, action: 'completed', note: 'Completed by writing the prescription' });
+  await appointment.save({ validateModifiedOnly: true });
+  try { appointmentChanged(req, appointment, { status: 'completed' }); } catch { /* live update is a nicety */ }
+  return true;
+}
 const followUpDeadlineFrom = (days) => {
   const deadline = new Date();
   deadline.setDate(deadline.getDate() + days);
@@ -166,11 +185,13 @@ const createPrescription = async (req, res) => {
         await appointment.save({ validateModifiedOnly: true });
       }
 
+      const finishedEarly = await finishVisitIfStarted(req, appointment);
       notifyPrescriptionUpdate(req, existing);
 
       return res.json({
         message: 'Prescription updated successfully',
-        prescription: existing
+        prescription: existing,
+        completed: finishedEarly
       });
     }
 
@@ -191,11 +212,13 @@ const createPrescription = async (req, res) => {
       await appointment.save({ validateModifiedOnly: true });
     }
 
+    const finished = await finishVisitIfStarted(req, appointment);
     notifyPrescriptionUpdate(req, prescription);
 
     res.status(201).json({
-      message: 'Prescription created successfully',
-      prescription
+      message: finished ? 'Prescription created and the visit is finished' : 'Prescription created successfully',
+      prescription,
+      completed: finished
     });
 
   } catch (error) {

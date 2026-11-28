@@ -206,6 +206,10 @@ export const appointmentAPI = {
   // Doctor: "Did these patients come?" (server/utils/attendance.js)
   attendanceDue: () => API.get('/appointments/attendance-due'),
   markNoShow: (id) => API.put(`/appointments/${id}/no-show`),
+  // After the consultation: who is waiting for a prescription, and the one-tap shortcuts
+  prescriptionDue: () => API.get('/appointments/prescription-due'),
+  noPrescription: (id) => API.put(`/appointments/${id}/no-prescription`),
+  askPrescription: (id) => API.put(`/appointments/${id}/ask-prescription`),
 
   // Update status (doctor only)
   updateStatus: (id, data) => API.put(`/appointments/${id}/status`, data),
